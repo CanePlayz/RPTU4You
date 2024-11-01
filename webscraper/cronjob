@@ -1,0 +1,1 @@
+*/5 * * * * python /webscraper/scraper_script.py >> /var/log/cron.log 2>&1
