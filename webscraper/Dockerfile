@@ -14,4 +14,5 @@ COPY cronjob /etc/cron.d/scraper-cron
 RUN chmod 0644 /etc/cron.d/scraper-cron && \
     crontab /etc/cron.d/scraper-cron
 RUN touch /var/log/cron.log
-CMD cron && tail -f /var/log/cron.log
+
+CMD ["sh", "-c", "cron && tail -f /var/log/cron.log"]
