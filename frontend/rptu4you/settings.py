@@ -26,7 +26,8 @@ SECRET_KEY = "django-insecure-(7bb#)z*@+%@6do94)7104yy6zkbs)rm#9n7cc(4ejof)0bf0#
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "www.scilab-0041.informatik.uni-kl.de",
+    "131.246.169.169",
+    "scilab-0041.informatik.uni-kl.de",
 ]
 
 
