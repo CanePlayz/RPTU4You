@@ -13,8 +13,7 @@ services:
       - backend
 
   django:
-    build:
-      context: ./frontend
+    image: caneplayz/rptu4you-frontend:latest
     environment:
       DATABASE_URL: postgres://admin:password@db:5432/mydb
     ports:
@@ -28,8 +27,7 @@ services:
              python manage.py runserver 0.0.0.0:8000"
 
   scraper:
-    build:
-      context: ./webscraper
+    image: caneplayz/rptu4you-scraper:latest
     environment:
       DATABASE_URL: postgres://admin:password@db:5432/mydb
     networks:
