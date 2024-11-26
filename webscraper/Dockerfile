@@ -3,6 +3,7 @@ FROM python:3.13-slim
 WORKDIR /webscraper
 
 COPY requirements.txt .
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 COPY webscraper.py .
