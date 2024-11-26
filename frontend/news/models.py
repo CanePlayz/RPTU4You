@@ -1,76 +1,67 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db import models
 
-# Benutzer-Modell
+
+class Quelle(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    url = models.URLField()
+
+
+class Fachschaft(Quelle):
+    pass
+
+
+class Rundmail(Quelle):
+    rundmail_id = models.IntegerField(unique=True)
+
+
+class InterneWebsite(Quelle):
+    pass
+
+
+class ExterneWebsite(Quelle):
+    pass
+
+
+class Standort(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+
 class User(AbstractUser):
-    ROLE_CHOICES = [
-        ('Student', 'Student'),
-        ('Angestellter', 'Angestellter'),
-    ]
-    LOCATION_CHOICES = [
-        ('Kaiserlautern', 'Kaiserlautern'),
-        ('Landau', 'Landau'),
-        ('Beides', 'Beides'),
+    rollen = [
+        ("Student", "Student"),
+        ("Angestellter", "Angestellter"),
     ]
 
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
-    location = models.CharField(max_length=20, choices=LOCATION_CHOICES)
-    job_offer = models.BooleanField(default=False)
-    uni_info = models.BooleanField(default=False)
+    rolle = models.CharField(max_length=20, choices=rollen)
+    standorte = models.ManyToManyField(Standort, blank=True)
+    fachschaften = models.ManyToManyField(Fachschaft, blank=True)
+    stellenangebote = models.BooleanField(default=False)
+    uni_infos = models.BooleanField(default=False)
     events = models.BooleanField(default=False)
-    external_uni = models.BooleanField(default=False)
-    surveys = models.BooleanField(default=False)
-    interessiert = models.ManyToManyField('Fachschaft',blank=True)
+    externe_news = models.BooleanField(default=False)
+    umfragen = models.BooleanField(default=False)
 
-class Fachschaft(models.Model):
-    name = models.CharField(max_length=100)
-    url = models.URLField()
-    
-class Rundmail(models.Model):
-    id = models.IntegerField()
-    url = models.URLField()
-
-class ExterneWebsite(models.Model):
-    name = models.CharField(max_length=100)
-    url = models.URLField() 
-
-class InterneWebsite(models.Model):
-    name = models.CharField(max_length=100)
-    url = models.URLField()
 
 class News(models.Model):
-    LOCATION_CHOICES = [
-        ('Kaiserlautern', 'Kaiserlautern'),
-        ('Landau', 'Landau'),
-        ('Beides', 'Beides'),
-    ]
-
     link = models.URLField()
-    title = models.CharField(max_length=255)
-    created_date = models.DateField()
-    location = models.CharField(max_length=20, choices=LOCATION_CHOICES)
-    job_offer = models.BooleanField()
+    titel = models.CharField(max_length=255, unique=True)
+    erstellungsdatum = models.DateField()
+
+    standorte = models.ManyToManyField(Standort, blank=True)
+    stellenangebot = models.BooleanField()
     uni_info = models.BooleanField()
-    events = models.BooleanField()
-    external_uni = models.BooleanField()
-    surveys = models.BooleanField()
+    event = models.BooleanField()
+    externe_news = models.BooleanField()
+    umfragen = models.BooleanField()
 
-    Fachschaft = models.ForeignKey(Fachschaft,blank=True)
-    ExterneWebsite = models.ForeignKey(ExterneWebsite,blank=True)
-    Rundmail = models.ForeignKey(Rundmail,blank=True)
-    InterneWebsite = models.ForeignKey(InterneWebsite,blank=True)
-
-    quelle_typ = models.CharField(max_length=20, choices=[('Fachschaft','Fachschaft'),('ExterneWebsite','ExterneWebsite'),('Rundmail','Rundmail'),('InterneWebsite','InterneWebsite')])
-
-class NewsCategory(models.Model):
-    CATEGORY_CHOICES = [
-        ('Quelle', 'Quelle'),
-        ('Jobangebot', 'Jobangebot'),
-        ('Allg Infos', 'Allg Infos'),
-        ('Veranstaltungen', 'Veranstaltungen'),
-        ('Uni Extern', 'Uni Extern'),
-        ('Umfragen', 'Umfragen'),
-    ]
-
-    news = models.ForeignKey(News, on_delete=models.CASCADE)
-    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+    quelle = models.ForeignKey(Quelle, on_delete=models.CASCADE)
+    quelle_typ = models.CharField(
+        max_length=20,
+        choices=[
+            ("Fachschaft", "Fachschaft"),
+            ("Externe Website", "Externe Website"),
+            ("Rundmail", "Rundmail"),
+            ("Interne Website", "Interne Website"),
+        ],
+    )
