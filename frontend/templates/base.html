@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}
+        No Title
+        {% endblock %}
+    </title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+
+<body>
+    <div id="wrapper">
+        {% block content %}
+        No content
+        {% endblock %}
+    </div>
+</body>
+
+</html>
