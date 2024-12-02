@@ -53,6 +53,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
 ROOT_URLCONF = "rptu4you.urls"
 
 TEMPLATES = [
