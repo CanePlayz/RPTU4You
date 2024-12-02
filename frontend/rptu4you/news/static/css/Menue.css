@@ -1,0 +1,136 @@
+html{
+  overflow-y: scroll;
+}
+body {
+  margin: 0;
+  background-color: #5793d3;
+  font-family: 'Red Hat Text';
+}
+
+/* Menü Zentrum*/
+.menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  background-color: #5793d3;
+  border-bottom: 2px solid #042c58;
+}
+
+.menu-center {
+  flex: 0.8;
+  display: flex;
+  justify-content: space-evenly;
+  background-color: #042c58;
+  height: 40px;
+  border-radius: 5px;
+}
+
+.menu a {
+  font-size: 22px;
+  font-weight: 900;
+  text-decoration: none;
+  color: #fff;
+  padding: 10px 16px;
+  position: relative;
+  display: inline-block;
+}
+
+
+.menu-center a::before {
+  content: "";
+  width: 100%;
+  height: 4px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  background: #fff;
+  transform: scale3d(0, 1, 1);
+  transform-origin: 50% 50%;
+  transition: 0.5s transform ease;
+}
+
+.menu-center a:hover::before {
+  transform: scale3d(1, 1, 1);
+}
+
+.menu-center {
+  margin: 0 10px;
+}
+
+/* Menü rechts und links*/
+
+.menu-left, .menu-right {
+  flex: 0 0 200px; 
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-icon {
+  margin-top: -5px;
+  margin-left: 53px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+/* Dropdown */
+
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 80px;
+  left: 0;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  z-index: 1000;
+  min-width: 150px;
+  border: 2px solid #042c58;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 10px 15px;
+  text-decoration: none;
+  color: #042c58;
+  border-bottom: 2px solid #042c58;
+  transition: background-color 0.3s;
+}
+
+.dropdown-menu a:hover {
+  background-color: #042c58;
+  color: #ffffff;
+}
+
+.dropdown-menu a:last-child {
+  border-bottom: none;
+}
+
+aside {
+  position: relative;
+  background-color: #fff;
+  width: 300px;
+  height: 500px;
+  border-radius: 5px;
+}
+
+.aside-left {
+  margin-left: 10px;
+}
+
+.aside-right {
+  margin-right: 10px;
+  float: right;
+}
+
+
