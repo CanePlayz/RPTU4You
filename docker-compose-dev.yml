@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  django:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgres://admin:password@db:5432/mydb
+    ports:
+      - "8000:8000"
+    networks:
+      - backend
+    depends_on:
+      - db
+    command: >
+      sh -c "python manage.py makemigrations &&
+              python manage.py migrate &&
+              python manage.py runserver 0.0.0.0:8000"
+
+  scraper:
+    build:
+      context: ./webscraper
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgres://admin:password@db:5432/mydb
+    networks:
+      - backend
+    depends_on:
+      - db
+    command: cron -f
+
+networks:
+  backend:
+
+volumes:
+  db_data:
