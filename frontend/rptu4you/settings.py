@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "131.246.169.169",
+    "localhost",
     "scilab-0041.informatik.uni-kl.de",
 ]
 
@@ -54,7 +55,7 @@ MIDDLEWARE = [
 ]
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / "news/static",
 ]
 
 ROOT_URLCONF = "rptu4you.urls"
