@@ -1,35 +1,10 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <link rel="stylesheet" href="Menue.css">
-  <link href='https://fonts.googleapis.com/css?family=Red Hat Text' rel='stylesheet'>
-</head>
-<body>
+{% extends "base.html" %}
 
-  <nav class="menu">
-   <div class="menu-left">
-    <img src="rptu.jpg" alt="Profil">
-    </div>
-    
-    <div class="menu-center">
-      <a href="LatestNews.html">Latest News</a>
-      <a href="#">ForYou Page</a>
-      <a href="Fachschaften.html">Fachschaften</a>
-    </div>
+{% block title %}
+  Latest News
+{% endblock %}
 
-    <div class="menu-right dropdown-container">
-      <img src="Profil.png" alt="Profil" class="profile-icon">
-      <div class="dropdown-menu">
-        <a href="#">Anmeldedaten</a>
-        <a href="#">Fragebogen</a>
-        <a href="#">Datenschutz</a>
-        <a href="#">Abmelden</a>
-      </div>
-    </div>
-  </nav>
-  <script src="Menue.js"></script>
-</body>
-</html>
+{% block content %}
+<h2>News<h2>
+{% endblock %}
+
