@@ -17,9 +17,9 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from news import views
+from rptu4you.news import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('Latest_News/', views.Latest_News, name='Latest_News'),
+    path("Latest_News/", views.Latest_News, name="Latest_News"),
 ]
