@@ -12,8 +12,6 @@ services:
 
   django:
     image: caneplayz/rptu4you-frontend:latest
-    environment:
-      DATABASE_URL: postgres://admin:password@db:5432/mydb
     ports:
       - "8000:8000"
     networks:
@@ -27,8 +25,6 @@ services:
 
   scraper:
     image: caneplayz/rptu4you-scraper:latest
-    environment:
-      DATABASE_URL: postgres://admin:password@db:5432/mydb
     networks:
       - backend
     depends_on:

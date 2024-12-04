@@ -14,8 +14,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    environment:
-      DATABASE_URL: postgres://admin:password@db:5432/mydb
     ports:
       - "8000:8000"
     networks:
@@ -31,8 +29,6 @@ services:
     build:
       context: ./webscraper
       dockerfile: Dockerfile
-    environment:
-      DATABASE_URL: postgres://admin:password@db:5432/mydb
     networks:
       - backend
     depends_on:
