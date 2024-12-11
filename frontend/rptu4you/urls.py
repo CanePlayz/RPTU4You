@@ -18,7 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from frontend.rptu4you.news.views import receive_news, views
+from rptu4you.news.views import receive_news, views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
