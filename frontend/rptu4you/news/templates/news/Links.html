@@ -1,42 +1,13 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
+{% extends "base.html" %}
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fachschaften</title>
-    <link rel="stylesheet" href="Menue.css">
-    <link rel="stylesheet" href="Fachschaft.css">
-    <link href='https://fonts.googleapis.com/css?family=Red Hat Text' rel='stylesheet'>
-</head>
-
-<body>
-
-    <nav class="menu">
-        <div class="menu-left">
-         <img src="rptu.jpg" alt="Profil">
-         </div>
-         
-         <div class="menu-center">
-           <a href="LatestNews.html">Latest News</a>
-           <a href="#">ForYou Page</a>
-           <a href="Fachschaften.html">Fachschaften</a>
-         </div>
-     
-         <div class="menu-right dropdown-container">
-           <img src="Profil.png" alt="Profil" class="profile-icon">
-           <div class="dropdown-menu">
-             <a href="#">Anmeldedaten</a>
-             <a href="#">Fragebogen</a>
-             <a href="#">Datenschutz</a>
-             <a href="#">Abmelden</a>
-           </div>
-         </div>
-       </nav>
-       <script src="Menue.js"></script>
-
-
+{% block title %}
+Uni-Links
+{% endblock %}
+{% block head-optional %}
+<link rel="stylesheet" href="Fachschaft.css">
+{% endblock %}
     
+{% block content %}
     <div class="fachschaften">
    
         <a id="Architektur_Link" class="Link" href="https://www.architektur.uni-kl.de/fachschaft/">Architektur</a>
@@ -78,5 +49,4 @@
         <a id="Wiwi_Link" class="Link" href="https://wiwi.rptu.de/fachschaft/aktuelles">Wirtschaftswissenschaften</a>  
         <a id="Wiwi_Bild" class="Bild" href="https://wiwi.rptu.de/fachschaft/aktuelles"><img class="LogoFS" src="FS_Wiwi.jpg" alt="Logo der Fachschaft Wirtschaftswissenschaften" /> </a>
     </div>
-</body>
-</html>
+    {% endblock %}

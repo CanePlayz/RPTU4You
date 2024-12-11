@@ -22,6 +22,8 @@ from frontend.rptu4you.news.views import receive_news, views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("Latest_News/", views.Latest_News, name="Latest_News"),
     path("api/news", receive_news.ReceiveNews.as_view(), name="receive_news"),
+    path("News/", views.News, name="News"),
+    path("Links/", views.Links, name="Links"),
+    path("ForYouPage/", views.ForYouPage, name="ForYouPage"),
 ]
