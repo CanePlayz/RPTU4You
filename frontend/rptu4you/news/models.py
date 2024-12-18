@@ -47,6 +47,7 @@ class News(models.Model):
     link = models.URLField()
     titel = models.CharField(max_length=255, unique=True)
     erstellungsdatum = models.DateField()
+    text = models.TextField()
 
     standorte = models.ManyToManyField(Standort, blank=True)
     stellenangebot = models.BooleanField()
