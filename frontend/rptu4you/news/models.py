@@ -43,6 +43,17 @@ class User(AbstractUser):
     umfragen = models.BooleanField(default=False)
 
 
+class Kategorie(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    """ stellenangebot = models.BooleanField()
+    uni_info = models.BooleanField()
+    event = models.BooleanField()
+    externe_news = models.BooleanField()
+    umfragen = models.BooleanField()
+    studierende = models.ManyToManyField(User, blank=True) """
+
+
 class News(models.Model):
     link = models.URLField()
     titel = models.CharField(max_length=255, unique=True)
@@ -50,11 +61,7 @@ class News(models.Model):
     text = models.TextField()
 
     standorte = models.ManyToManyField(Standort, blank=True)
-    stellenangebot = models.BooleanField()
-    uni_info = models.BooleanField()
-    event = models.BooleanField()
-    externe_news = models.BooleanField()
-    umfragen = models.BooleanField()
+    kategorien = models.ManyToManyField(Kategorie, blank=True)
 
     quelle = models.ForeignKey(Quelle, on_delete=models.CASCADE)
     quelle_typ = models.CharField(
@@ -62,6 +69,7 @@ class News(models.Model):
         choices=[
             ("Fachschaft", "Fachschaft"),
             ("Externe Website", "Externe Website"),
+            ("Sammel-Rundmail", "Sammel-Rundmail"),
             ("Rundmail", "Rundmail"),
             ("Interne Website", "Interne Website"),
         ],
