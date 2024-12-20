@@ -2,155 +2,251 @@ import json
 
 import bs4
 import requests
-from util import send_to_frontend
+from util.send_to_frontend import send_to_frontend
+
+
+def fetch_rundmail_archive() -> str:
+    # Archiv-Seite der Rundmail aufrufen
+    return requests.get("https://rundmail.rptu.de/archive").text
+
+
+def parse_rundmail_archive(html: str) -> list[bs4.element.Tag]:
+    # Archiv-Seite in BeautifulSoup-Objekt umwandeln
+    soup: bs4.BeautifulSoup = bs4.BeautifulSoup(html, "html.parser")
+    # Alle Einträge im Archiv extrahieren
+    return soup.find_all(name="tr")[1:]
 
 
 def remove_fixes(subject: str) -> str:
-    replacements = [
+    # Präfixe und Suffixe entfernen
+    replacements: list[str] = [
         "[Mitarbeitende] ",
         "[Studierende] ",
         " #KL",
         " #LD",
     ]
+    subject_processed: str = subject
     for r in replacements:
-        subject_clean = subject.replace(r, "")
-    return subject_clean
+        subject_processed = subject_processed.replace(r, "")
+
+    return subject_processed
 
 
 def clean_text(text: str) -> str:
-    # Entferne Escape-Sequenzen
-    text = text.replace("\\r\\n", "<br>")
-    # Ersetze HTML-Tags durch ihre entsprechenden Zeichen
-    text = text.replace('\\"', '"')
-    return text
+    # Unicode-Zeichen für Zeilenumbrüche entfernen
+    text_processed: str = text.replace("\\r\\n", "<br>")
+    # Escaping von Anführungszeichen entfernen
+    text_processed: str = text.replace('\\"', '"')
+
+    return text_processed
+
+
+def extract_locations(subject: str) -> list:
+    # Standorte aus Subject extrahieren
+    if subject.endswith("#KL"):
+        return ["Kaiserslautern"]
+    elif subject.endswith("#LD"):
+        return ["Landau"]
+    else:
+        return ["Kaiserslautern", "Landau"]
+
+
+def extract_categories(subject: str, category_name: str) -> list[str]:
+    # Kategorien aus Subject und Kategoriename extrahieren
+    categories = []
+
+    if subject.startswith("[Mitarbeitende]"):
+        categories.append("Mitarbeitende")
+    if subject.startswith("[Studierende]"):
+        categories.append("Studierende")
+
+    if category_name == "Veranstaltungen":
+        categories.append("Veranstaltung")
+    elif category_name == "Umfragen":
+        categories.append("Umfrage")
+
+    return categories
+
+
+def create_news_entry(
+    link: str,
+    title: str,
+    date: str,
+    text: str,
+    locations: list,
+    categories: list[str],
+    source: str,
+) -> dict:
+    return {
+        "link": link,
+        "titel": title,
+        "erstellungsdatum": date,
+        "text": text,
+        "standorte": locations,
+        "kategorien": categories,
+        "quelle": source,
+    }
+
+
+def process_archiv_eintrag(archive_entry: bs4.element.Tag) -> dict | list[dict]:
+    # Link zu Archiv-Eintrag extrahieren
+    link = archive_entry.find(name="a")
+    if isinstance(link, bs4.element.Tag):
+        href = link.get("href")
+    complete_link: str = f"https://rundmail.rptu.de{href}"
+
+    # Archiv-Eintrag aufrufen und in BeautifulSoup-Objekt umwandeln
+    archive_entry_html: str = requests.get(complete_link).text
+    archive_entry_soup: bs4.BeautifulSoup = bs4.BeautifulSoup(
+        archive_entry_html, "html.parser"
+    )
+
+    if isinstance(archive_entry_soup, bs4.element.Tag):
+        # Datum extrahieren
+        date = archive_entry.find(name="td", class_="created_at")
+        if isinstance(date, bs4.element.Tag):
+            datum_clean: str = date.text.strip()
+
+        # Subject extrahieren
+        subject = archive_entry.find(name="td", class_="subject")
+        if isinstance(subject, bs4.element.Tag):
+            subject_clean: str = subject.text.strip()
+
+    # Archiv-Eintrag verarbeiten
+    if subject_clean.startswith("Sammel-Rundmail"):
+        return process_sammel_rundmail(archive_entry_soup, complete_link, datum_clean)
+    else:
+        return process_rundmail(
+            archive_entry_soup, complete_link, datum_clean, subject_clean
+        )
+
+
+def process_sammel_rundmail(
+    archive_entry_soup: bs4.BeautifulSoup,
+    link: str,
+    date: str,
+) -> list[dict]:
+    news_of_archive_entry: list[dict] = []
+
+    # Message-Overview finden
+    messages_overview = archive_entry_soup.find(name="div", class_="messages-overview")
+
+    # Kategorien extrahieren
+    if isinstance(messages_overview, bs4.element.Tag):
+        categories_in_archive_entry: bs4.ResultSet[bs4.element.Tag] = (
+            messages_overview.find_all(name="h5", class_="mt-4")
+        )
+
+    # Einträge in allen Kategorien verarbeiten
+    for category in categories_in_archive_entry:
+        # Kategorienamen und Einträge extrahieren
+        category_name: str = category.text
+        category_list_with_news_entries = category.find_next_sibling(name="ul")
+        if isinstance(category_list_with_news_entries, bs4.element.Tag):
+            news_entries_in_category: bs4.ResultSet[bs4.element.Tag] = (
+                category_list_with_news_entries.find_all(name="li")
+            )
+
+        # Einträge in Kategorie verarbeiten
+        for news_entry in news_entries_in_category:
+            # Subject und Eintrag-ID extrahieren
+            a_element = news_entry.find(name="a")
+            if isinstance(a_element, bs4.element.Tag):
+                news_entry_subject: str = a_element.text
+                news_entry_id = a_element.get("href")
+                if isinstance(news_entry_id, str):
+                    news_entry_id_clean: str = news_entry_id.replace("#", "")
+
+            # Eintrag aufrufen und daraus Text extrahieren
+            news_entry_heading = archive_entry_soup.find(
+                name="h2", id=news_entry_id_clean
+            )
+            if isinstance(news_entry_heading, bs4.element.Tag):
+                news_entry_body = news_entry_heading.find_next_sibling(name="div")
+                if isinstance(news_entry_body, bs4.element.Tag):
+                    news_text = news_entry_body.find(name="p", class_="whitespaces")
+                    if isinstance(news_text, bs4.element.Tag):
+                        news_text_without_tag: str = news_text.decode_contents()
+
+            # Standorte und Kategorien extrahieren
+            locations: list[str] = extract_locations(news_entry_subject)
+            extracted_categories: list[str] = extract_categories(
+                news_entry_subject, category_name
+            )
+
+            # Präfixe und Suffixe entfernen
+            news_entry_subject_clean: str = remove_fixes(news_entry_subject)
+
+            # Eintrag erstellen
+            news_of_archive_entry.append(
+                create_news_entry(
+                    f"{link}#{news_entry_id}",
+                    news_entry_subject_clean,
+                    date,
+                    news_text_without_tag,
+                    locations,
+                    extracted_categories,
+                    "Sammel-Rundmail",
+                )
+            )
+
+    return news_of_archive_entry
+
+
+def process_rundmail(
+    archive_entry_soup: bs4.BeautifulSoup, link: str, date: str, subject: str
+) -> dict:
+    # p-Element mit Text finden
+    text_element = archive_entry_soup.find(name="p", class_="whitespaces")
+
+    # Text aus p-Element extrahieren
+    if isinstance(text_element, bs4.element.Tag):
+        text = text_element.decode_contents()
+    else:
+        exit()
+
+    # Standorte aus Subject extrahieren
+    locations: list[str] = extract_locations(subject)
+
+    # Präfixe und Suffixe entfernen
+    subject_clean: str = remove_fixes(subject)
+
+    # Eintrag erstellen
+    return create_news_entry(
+        link,
+        subject_clean,
+        date,
+        text,
+        locations,
+        [],
+        "Sammel-Rundmail",
+    )
 
 
 def main():
-    rundmail_archiv = requests.get("https://rundmail.rptu.de/archive").text
+    # Rundmail-Archiv aufrufen und verarbeiten
+    rundmail_archive: str = fetch_rundmail_archive()
+    archive_entries: list[bs4.element.Tag] = parse_rundmail_archive(rundmail_archive)
     news: list[dict] = []
-    soup: bs4.BeautifulSoup = bs4.BeautifulSoup(rundmail_archiv, "html.parser")
 
-    # Alle Tabellenzeilen finden
-    news_einträge = soup.find_all(name="tr")[0:]
-
-    # Durch alle Einträge im Archiv iterieren
-    for archiv_eintrag in news_einträge[1:20]:
-        link = f"https://rundmail.rptu.de{archiv_eintrag.find(name="a").get("href")}"
-        eintrag_html = requests.get(link).text
-        eintrag_soup = bs4.BeautifulSoup(eintrag_html, "html.parser")
-
-        # Datum von Eintrag finden
-        datum = archiv_eintrag.find(name="td", class_="created_at").text.strip()
-
-        # Subject von Eintrag finden und prüfen, ob es sich um eine Rundmail handelt
-        subject: str = archiv_eintrag.find(name="td", class_="subject").text
-
-        # Sammel-Rundmail
-        if subject.startswith("Sammel-Rundmail"):
-            messages_overview = eintrag_soup.find(
-                name="div", class_="messages-overview"
-            )
-            if isinstance(messages_overview, bs4.element.Tag):
-                kategorien = messages_overview.find_all(name="h5", class_="mt-4")
-            else:
-                kategorien = []
-            for kategorie in kategorien:
-                kategorie_name = kategorie.text
-                kategorie_einträge = kategorie.find_next_sibling(name="ul").find_all(
-                    name="li"
-                )
-
-                for kategorie_eintrag in kategorie_einträge:
-                    a_element: bs4.element.Tag = kategorie_eintrag.find(name="a")
-                    if isinstance(a_element, bs4.element.Tag):
-                        subject = a_element.text
-                        eintrag_id = a_element.get("href")
-                        if isinstance(eintrag_id, str):
-                            eintrag_id = eintrag_id.replace("#", "")
-
-                    heading_eintrag = eintrag_soup.find(name="h2", id=eintrag_id)
-                    if isinstance(heading_eintrag, bs4.element.Tag):
-                        accordion_body = heading_eintrag.find_next_sibling(name="div")
-                        if isinstance(accordion_body, bs4.element.Tag):
-                            text = accordion_body.find(name="p", class_="whitespaces")
-                            if isinstance(text, bs4.element.Tag):
-                                text = text.decode_contents()
-
-                    # Standorte aus Subject extrahieren
-                    if subject.endswith("#KL"):
-                        standorte = ["Kaiserslautern"]
-                    elif subject.endswith("#LD"):
-                        standorte = ["Landau"]
-                    else:
-                        standorte = ["Kaiserslautern", "Landau"]
-
-                    kategorien = []
-                    if subject.startswith("[Mitarbeitende]"):
-                        kategorien.append("Mitarbeitende")
-                    if subject.startswith("[Studierende]"):
-                        kategorien.append("Studierende")
-
-                    if kategorie_name == "Veranstaltungen":
-                        kategorien.append("Veranstaltung")
-                    elif kategorie_name == "Umfragen":
-                        kategorien.append("Umfrage")
-
-                    # Präfixe und Suffixe entfernen
-                    subject_clean = remove_fixes(subject)
-
-                    # Eintrag erstellen
-                    eintrag = {
-                        "link": f"{link}#{eintrag_id}",
-                        "titel": subject_clean,
-                        "erstellungsdatum": datum,
-                        "text": text,
-                        "standorte": standorte,
-                        "kategorien": kategorien,
-                        "quelle": "Sammel-Rundmail",
-                    }
-
-                    news.append(eintrag)
-
-        # Rundmail
+    # Einträge im Archiv verarbeiten
+    for archive_entry in archive_entries[0:20]:
+        entry: dict | list[dict] = process_archiv_eintrag(archive_entry)
+        if isinstance(entry, dict):
+            news.append(entry)
         else:
-            # p-Element mit Text finden
-            text_element = eintrag_soup.find(name="p", class_="whitespaces")
+            news.extend(entry)
 
-            # Text aus p-Element extrahieren
-            if isinstance(text_element, bs4.element.Tag):
-                text = text_element.decode_contents()
-            else:
-                exit()
+    # Einträge in JSON-Datei speichern zum Testen
+    json_data = json.dumps(news, ensure_ascii=False)
+    json_data_encoded = json_data.encode("utf-8")
+    with open("rundmail.json", "wb") as file:
+        file.write(json_data_encoded)
 
-            # Standorte aus Subject extrahieren
-            if subject.endswith("#KL"):  #
-                standorte = ["Kaiserslautern"]
-            elif subject.endswith("#LD"):
-                standorte = ["Landau"]
-            else:
-                standorte = ["Kaiserslautern", "Landau"]
-
-            # Präfixe und Suffixe entfernen
-            subject_clean = remove_fixes(subject)
-
-            # Eintrag erstellen
-            eintrag = {
-                "link": link,
-                "titel": subject,
-                "erstellungsdatum": datum,
-                "text": text,
-                "standorte": standorte,
-                "kategorien": [],
-                "quelle": "Rundmail",
-            }
-            news.append(eintrag)
-
-    # JSON-Daten erstellen
-    json_data = clean_text(json.dumps(news, ensure_ascii=False))
-    json_data = json_data.encode("utf-8")
-
-    # POST-Anfrage an Frontend senden
-    # send_to_frontend.send_to_frontend(json_data)
+    # Einträge an Frontend senden
+    json_data: str = clean_text(json.dumps(news, ensure_ascii=False))
+    json_data_encoded: bytes = json_data.encode("utf-8")
+    # send_to_frontend(json_data_encoded)
 
 
 main()
