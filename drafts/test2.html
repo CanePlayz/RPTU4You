@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html lang="de">
+
+<head>
+    <title>Blatt 6</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style2.css">
+</head>
+
+<body>
+    <div id="wrapper">
+        <button class="news-item">
+            <h1>Fachschaftsrat löst sich auf</h1>
+            <p>19.12.2024 | Fachschaftsrat Informatik</p>
+            <span class="toggle-hint">[Klicken zum Aufklappen]</span>
+            <div class="news-content">
+                <p>Der Fachschaftsrat Informatik hat sich aufgrund von mangelnder Beteiligung der Studierenden
+                    aufgelöst. Zukünftige Aufgaben werden vom Dekanat übernommen.</p>
+            </div>
+        </button>
+        <button class="news-item">
+            <h1>Neuer Studiengang: Informatik und Wirtschaft</h1>
+            <p>19.12.2024 | Fachbereich Informatik</p>
+        </button>
+        <button class="news-item">
+            <h1>Neue Bibliothek eröffnet</h1>
+            <p>20.12.2024 | Universitätsbibliothek</p>
+        </button>
+        <button class="news-item">
+            <h1>Weihnachtsfeier der Informatik</h1>
+            <p>21.12.2024 | Fachbereich Informatik</p>
+        </button>
+        <button class="news-item">
+            <h1>Vorlesungsfreie Zeit beginnt</h1>
+            <p>22.12.2024 | Universitätsverwaltung</p>
+        </button>
+        <button class="news-item">
+            <h1>Vorlesungsfreie Zeit beginnt</h1>
+            <p>22.12.2024 | Universitätsverwaltung</p>
+        </button>
+        <button class="news-item">
+            <h1>Vorlesungsfreie Zeit beginnt</h1>
+            <p>22.12.2024 | Universitätsverwaltung</p>
+        </button>
+        <button class="news-item">
+            <h1>Vorlesungsfreie Zeit beginnt</h1>
+            <p>22.12.2024 | Universitätsverwaltung</p>
+        </button>
+        <script>
+            document.querySelectorAll('.news-item').forEach(button => {
+                button.addEventListener('click', () => {
+                    const content = button.querySelector('.news-content');
+
+                    // Toggle visibility
+                    if (content.style.display === 'none' || !content.style.display) {
+                        content.style.display = 'block';
+                    } else {
+                        content.style.display = 'none';
+                    }
+                });
+            });
+        </script>
+    </div>
+</body>
+
+</html>
