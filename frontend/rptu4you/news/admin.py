@@ -12,5 +12,6 @@ admin.site.register(Kategorie)
 admin.site.register(News)
 
 b = 3
+c=4
 
 admin.site.register(User)
