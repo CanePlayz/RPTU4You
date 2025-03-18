@@ -2,7 +2,7 @@ import json
 
 import bs4
 import requests
-from util.send_to_frontend import send_to_frontend
+import scraper.util.send_to_frontend as send_to_frontend
 
 
 def fetch_rundmail_archive() -> str:
@@ -14,7 +14,7 @@ def parse_rundmail_archive(html: str) -> list[bs4.element.Tag]:
     # Archiv-Seite in BeautifulSoup-Objekt umwandeln
     soup: bs4.BeautifulSoup = bs4.BeautifulSoup(html, "html.parser")
     # Alle Einträge im Archiv extrahieren
-    return soup.find_all(name="tr")[1:]
+    return soup.find_all(name="tr")[1:]  # type: ignore
 
 
 def remove_fixes(subject: str) -> str:
@@ -76,6 +76,7 @@ def create_news_entry(
     locations: list,
     categories: list[str],
     source: str,
+    quelle_id: str,
 ) -> dict:
     return {
         "link": link,
@@ -85,10 +86,14 @@ def create_news_entry(
         "standorte": locations,
         "kategorien": categories,
         "quelle": source,
+        "rundmail_id": quelle_id,
+        "quelle_name": (
+            title if source == "Rundmail" else f"Sammel-Rundmail vom {date.split()[0]}"
+        ),
     }
 
 
-def process_archiv_eintrag(archive_entry: bs4.element.Tag) -> dict | list[dict]:
+def process_archive_entry(archive_entry: bs4.element.Tag) -> dict | list[dict]:
     # Link zu Archiv-Eintrag extrahieren
     link = archive_entry.find(name="a")
     if isinstance(link, bs4.element.Tag):
@@ -114,28 +119,36 @@ def process_archiv_eintrag(archive_entry: bs4.element.Tag) -> dict | list[dict]:
 
     # Archiv-Eintrag verarbeiten
     if subject_clean.startswith("Sammel-Rundmail"):
-        return process_sammel_rundmail(archive_entry_soup, complete_link, datum_clean)
+        return process_sammel_rundmail(
+            archive_entry_soup,
+            complete_link,
+            datum_clean,
+        )
     else:
         return process_rundmail(
-            archive_entry_soup, complete_link, datum_clean, subject_clean
+            archive_entry_soup,
+            complete_link,
+            datum_clean,
+            subject_clean,
         )
 
 
 def process_sammel_rundmail(
-    archive_entry_soup: bs4.BeautifulSoup,
-    link: str,
-    date: str,
+    archive_entry_soup: bs4.BeautifulSoup, link: str, date: str
 ) -> list[dict]:
     news_of_archive_entry: list[dict] = []
 
     # Message-Overview finden
     messages_overview = archive_entry_soup.find(name="div", class_="messages-overview")
 
+    # ID extrahieren
+    quelle_id = link.split("/")[-1]
+
     # Kategorien extrahieren
     if isinstance(messages_overview, bs4.element.Tag):
         categories_in_archive_entry: bs4.ResultSet[bs4.element.Tag] = (
             messages_overview.find_all(name="h5", class_="mt-4")
-        )
+        )  # type: ignore
 
     # Einträge in allen Kategorien verarbeiten
     for category in categories_in_archive_entry:
@@ -145,7 +158,7 @@ def process_sammel_rundmail(
         if isinstance(category_list_with_news_entries, bs4.element.Tag):
             news_entries_in_category: bs4.ResultSet[bs4.element.Tag] = (
                 category_list_with_news_entries.find_all(name="li")
-            )
+            )  # type: ignore
 
         # Einträge in Kategorie verarbeiten
         for news_entry in news_entries_in_category:
@@ -187,6 +200,7 @@ def process_sammel_rundmail(
                     locations,
                     extracted_categories,
                     "Sammel-Rundmail",
+                    quelle_id,
                 )
             )
 
@@ -211,27 +225,24 @@ def process_rundmail(
     # Präfixe und Suffixe entfernen
     subject_clean: str = remove_fixes(subject)
 
+    # ID extrahieren
+    quelle_id = link.split("/")[-1]
+
     # Eintrag erstellen
     return create_news_entry(
-        link,
-        subject_clean,
-        date,
-        text,
-        locations,
-        [],
-        "Sammel-Rundmail",
+        link, subject_clean, date, text, locations, [], "Rundmail", quelle_id
     )
 
 
 def main():
     # Rundmail-Archiv aufrufen und verarbeiten
     rundmail_archive: str = fetch_rundmail_archive()
-    archive_entries: list[bs4.element.Tag] = parse_rundmail_archive(rundmail_archive)
+    archive_entries: list[bs4.element.Tag] = parse_rundmail_archive(rundmail_archive)  # type: ignore
     news: list[dict] = []
 
     # Einträge im Archiv verarbeiten
     for archive_entry in archive_entries[0:20]:
-        entry: dict | list[dict] = process_archiv_eintrag(archive_entry)
+        entry: dict | list[dict] = process_archive_entry(archive_entry)
         if isinstance(entry, dict):
             news.append(entry)
         else:
@@ -247,6 +258,3 @@ def main():
     json_data: str = clean_text(json.dumps(news, ensure_ascii=False))
     json_data_encoded: bytes = json_data.encode("utf-8")
     # send_to_frontend(json_data_encoded)
-
-
-main()

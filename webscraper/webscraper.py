@@ -1,3 +1,3 @@
-from scraper import *
+import scraper.rundmail
 
-rundmail.main()
+scraper.rundmail.main()
