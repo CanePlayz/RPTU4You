@@ -11,4 +11,6 @@ admin.site.register(Standort)
 admin.site.register(Kategorie)
 admin.site.register(News)
 
+b = 3
+
 admin.site.register(User)
