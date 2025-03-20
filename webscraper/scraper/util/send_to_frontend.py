@@ -1,7 +1,7 @@
 import requests
 
 
-def send_to_frontend(data):
+def send_data(data):
     response = requests.post(
         "http://django:8000/api/news",
         data=data,

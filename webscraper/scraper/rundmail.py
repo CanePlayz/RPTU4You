@@ -267,7 +267,7 @@ def main():
         else:
             news.extend(entry)
 
-    # Einträge in JSON-Datei speichern zum Testen
+    # Einträge in JSON-Datei speichern (zum Testen)
     """ json_data = json.dumps(news, ensure_ascii=False)
     json_data_encoded = json_data.encode("utf-8")
     with open("rundmail.json", "wb") as file:
@@ -276,4 +276,4 @@ def main():
     # Einträge an Frontend senden
     json_data: str = json.dumps(news, ensure_ascii=False)
     json_data_encoded: bytes = json_data.encode("utf-8")
-    send_to_frontend.send_to_frontend(json_data_encoded)
+    send_to_frontend.send_data(json_data_encoded)
