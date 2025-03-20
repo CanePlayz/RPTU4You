@@ -7,7 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
-from ..models import News, Quelle, Standort
+from ..models import Kategorie, News, Quelle, Rundmail, Standort
 
 API_KEY = "0jdf3wfjq98w3jdf9w8"
 
@@ -28,37 +28,67 @@ class ReceiveNews(View):
                 news_entry["quelle_typ"] == "Rundmail"
                 or news_entry["quelle_typ"] == "Sammel-Rundmail"
             ):
-                quelle_id = news_entry["quelle_id"]
+                quelle_id = news_entry["rundmail_id"]
                 # Nachschauen, ob bereits ein Quelle-Objekt mit dieser ID existiert
-                quelle, created = Quelle.objects.get_or_create(
+                rundmail, created = Rundmail.objects.get_or_create(
                     rundmail_id=quelle_id,
                     defaults={
                         "rundmail_id": quelle_id,
                     },
                 )
                 if created:
-                    quelle.name = news_entry["quelle_name"]
+                    rundmail.name = news_entry["quelle_name"]
                     if news_entry["quelle_typ"] == "Rundmail":
-                        quelle.url = news_entry["link"]
+                        rundmail.url = news_entry["link"]
                     elif news_entry["quelle_typ"] == "Sammel-Rundmail":
-                        quelle.url = news_entry["link"].split("#")[0]
+                        rundmail.url = news_entry["link"].split("#")[0]
+                    rundmail.save()
 
             erstellungsdatum = datetime.strptime(
-                news_entry["erstellungsdatum"], "%Y-%m-%d %H:%M:%S"
+                news_entry["erstellungsdatum"], "%d.%m.%Y %H:%M:%S"
             ).date()
 
-            news_item = News.objects.create(
-                link=news_entry["link"],
-                titel=news_entry["titel"],
-                erstellungsdatum=erstellungsdatum,
-                text=news_entry["text"],
-                quelle=quelle,
-                quelle_typ=news_entry["quelle_typ"],
-            )
+            # News-Objekt erstellen
+            # Überprüfen, ob bereits ein News-Objekt mit diesem Titel existiert
+            existing_news = News.objects.filter(titel=news_entry["titel"]).first()
+            if not existing_news:
+                news_item = News.objects.create(
+                    link=news_entry["link"],
+                    titel=news_entry["titel"],
+                    erstellungsdatum=erstellungsdatum,
+                    text=news_entry["text"],
+                    quelle=rundmail,
+                    quelle_typ=news_entry["quelle_typ"],
+                )
 
-            # Standorte hinzufügen
-            if "Kaiserslautern" in news_entry["standorte"]:
-                standort_kl = Standort.objects.get(name="Kaiserslautern")
-                news_item.standorte.add(standort_kl)
+                # Standorte hinzufügen
+                if "Kaiserslautern" in news_entry["standorte"]:
+                    standort_kl, _ = Standort.objects.get_or_create(
+                        name="Kaiserslautern"
+                    )
+                    news_item.standorte.add(standort_kl)
+                if "Landau" in news_entry["standorte"]:
+                    standort_ld, _ = Standort.objects.get_or_create(name="Landau")
+                    news_item.standorte.add(standort_ld)
 
-        return JsonResponse({"status": "success", "news_id": news_item.pk})
+                # Kategorien hinzufügen
+                for category in news_entry["kategorien"]:
+                    if category == "Veranstaltung":
+                        category_object, _ = Kategorie.objects.get_or_create(
+                            name="Veranstaltung"
+                        )
+                    elif category == "Umfrage":
+                        category_object, _ = Kategorie.objects.get_or_create(
+                            name="Umfrage"
+                        )
+                    elif category == "Mitarbeitende":
+                        category_object, _ = Kategorie.objects.get_or_create(
+                            name="Mitarbeitende"
+                        )
+                    elif category == "Studierende":
+                        category_object, _ = Kategorie.objects.get_or_create(
+                            name="Studierende"
+                        )
+                    news_item.kategorien.add(category_object)
+
+        return JsonResponse({"status": "success"})

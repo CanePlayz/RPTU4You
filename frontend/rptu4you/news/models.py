@@ -3,7 +3,7 @@ from django.db import models
 
 
 class Quelle(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(unique=True)
     url = models.URLField()
 
 
@@ -12,7 +12,7 @@ class Fachschaft(Quelle):
 
 
 class Rundmail(Quelle):
-    rundmail_id = models.IntegerField(unique=True)
+    rundmail_id = models.CharField(max_length=20, unique=True)
 
 
 class InterneWebsite(Quelle):
@@ -61,11 +61,12 @@ class News(models.Model):
 
     quelle = models.ForeignKey(Quelle, on_delete=models.CASCADE)
     quelle_typ = models.CharField(
-        max_length=20,
+        max_length=35,
         choices=[
             ("Fachschaft", "Fachschaft"),
             ("Externe Website", "Externe Website"),
             ("Sammel-Rundmail", "Sammel-Rundmail"),
+            ("Stellenangebote Sammel-Rundmail", "Stellenangebote Sammel-Rundmail"),
             ("Rundmail", "Rundmail"),
             ("Interne Website", "Interne Website"),
         ],

@@ -6,7 +6,7 @@ COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-COPY webscraper.py .
+COPY . .
 
 RUN apt-get update && apt-get install -y cron
 

@@ -78,6 +78,13 @@ def create_news_entry(
     source: str,
     quelle_id: str,
 ) -> dict:
+    if source == "Rundmail":
+        quelle_name = title
+    elif source == "Sammel-Rundmail":
+        quelle_name = f"Sammel-Rundmail vom {date.split()[0]}"
+    elif source == "Stellenangebote Sammel-Rundmail":
+        quelle_name = f"Stellenangebote Sammel-Rundmail vom {date.split()[0]}"
+
     return {
         "link": link,
         "titel": title,
@@ -85,11 +92,9 @@ def create_news_entry(
         "text": text,
         "standorte": locations,
         "kategorien": categories,
-        "quelle": source,
+        "quelle_typ": source,
         "rundmail_id": quelle_id,
-        "quelle_name": (
-            title if source == "Rundmail" else f"Sammel-Rundmail vom {date.split()[0]}"
-        ),
+        "quelle_name": quelle_name,
     }
 
 
@@ -124,6 +129,13 @@ def process_archive_entry(archive_entry: bs4.element.Tag) -> dict | list[dict]:
             complete_link,
             datum_clean,
         )
+    elif subject_clean.startswith("Stellenangebote Sammel-Rundmail"):
+        return process_sammel_rundmail(
+            archive_entry_soup,
+            complete_link,
+            datum_clean,
+            stellenangebote=True,
+        )
     else:
         return process_rundmail(
             archive_entry_soup,
@@ -134,7 +146,10 @@ def process_archive_entry(archive_entry: bs4.element.Tag) -> dict | list[dict]:
 
 
 def process_sammel_rundmail(
-    archive_entry_soup: bs4.BeautifulSoup, link: str, date: str
+    archive_entry_soup: bs4.BeautifulSoup,
+    link: str,
+    date: str,
+    stellenangebote: bool = False,
 ) -> list[dict]:
     news_of_archive_entry: list[dict] = []
 
@@ -199,7 +214,11 @@ def process_sammel_rundmail(
                     news_text_without_tag,
                     locations,
                     extracted_categories,
-                    "Sammel-Rundmail",
+                    (
+                        "Sammel-Rundmail"
+                        if not stellenangebote
+                        else "Stellenangebote Sammel-Rundmail"
+                    ),
                     quelle_id,
                 )
             )
@@ -241,7 +260,7 @@ def main():
     news: list[dict] = []
 
     # Einträge im Archiv verarbeiten
-    for archive_entry in archive_entries[0:20]:
+    for archive_entry in archive_entries[:20]:
         entry: dict | list[dict] = process_archive_entry(archive_entry)
         if isinstance(entry, dict):
             news.append(entry)
@@ -249,12 +268,12 @@ def main():
             news.extend(entry)
 
     # Einträge in JSON-Datei speichern zum Testen
-    json_data = json.dumps(news, ensure_ascii=False)
+    """ json_data = json.dumps(news, ensure_ascii=False)
     json_data_encoded = json_data.encode("utf-8")
     with open("rundmail.json", "wb") as file:
-        file.write(json_data_encoded)
+        file.write(json_data_encoded) """
 
     # Einträge an Frontend senden
-    json_data: str = clean_text(json.dumps(news, ensure_ascii=False))
+    json_data: str = json.dumps(news, ensure_ascii=False)
     json_data_encoded: bytes = json_data.encode("utf-8")
-    # send_to_frontend(json_data_encoded)
+    send_to_frontend.send_to_frontend(json_data_encoded)
