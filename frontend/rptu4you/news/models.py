@@ -1,3 +1,5 @@
+from tabnanny import verbose
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -6,25 +8,37 @@ class Quelle(models.Model):
     name = models.CharField(unique=True)
     url = models.URLField()
 
+    class Meta:
+        verbose_name_plural = "Quellen"
+
 
 class Fachschaft(Quelle):
-    pass
+    class Meta:
+        verbose_name_plural = "Fachschaften"
 
 
 class Rundmail(Quelle):
     rundmail_id = models.CharField(max_length=20, unique=True)
 
+    class Meta:
+        verbose_name_plural = "Rundmails"
+
 
 class InterneWebsite(Quelle):
-    pass
+    class Meta:
+        verbose_name_plural = "Interne Websites"
 
 
 class ExterneWebsite(Quelle):
-    pass
+    class Meta:
+        verbose_name_plural = "Externe Websites"
 
 
 class Standort(models.Model):
     name = models.CharField(max_length=100, unique=True)
+
+    class Meta:
+        verbose_name_plural = "Standorte"
 
 
 class Kategorie(models.Model):
@@ -37,6 +51,9 @@ class Kategorie(models.Model):
     umfragen = models.BooleanField()
     studierende = models.ManyToManyField(User, blank=True) """
 
+    class Meta:
+        verbose_name_plural = "Kategorien"
+
 
 class User(AbstractUser):
     rollen = [
@@ -48,6 +65,9 @@ class User(AbstractUser):
     standorte = models.ManyToManyField(Standort, blank=True)
     fachschaften = models.ManyToManyField(Fachschaft, blank=True)
     präferenzen = models.ManyToManyField(Kategorie, blank=True)
+
+    class Meta:
+        verbose_name_plural = "User"
 
 
 class News(models.Model):
@@ -71,3 +91,6 @@ class News(models.Model):
             ("Interne Website", "Interne Website"),
         ],
     )
+
+    class Meta:
+        verbose_name_plural = "News"
