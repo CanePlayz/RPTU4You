@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import datetime
 from pydoc import text
 
@@ -7,7 +8,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
-from ..models import Kategorie, News, Quelle, Rundmail, Standort
+from ..models import Kategorie, News, Rundmail, Standort
 
 API_KEY = "0jdf3wfjq98w3jdf9w8"
 
@@ -15,8 +16,9 @@ API_KEY = "0jdf3wfjq98w3jdf9w8"
 @method_decorator(csrf_exempt, name="dispatch")
 class ReceiveNews(View):
     def post(self, request):
-        api_key = request.headers.get("API-Key")
-        if api_key != API_KEY:
+        api_key = os.getenv("API_KEY")
+        api_key_request = request.headers.get("API-Key")
+        if api_key != api_key_request:
             return JsonResponse({"error": "Unauthorized"}, status=401)
 
         data = json.loads(request.body)
