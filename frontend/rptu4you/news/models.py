@@ -27,22 +27,6 @@ class Standort(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
 
-class User(AbstractUser):
-    rollen = [
-        ("Student", "Student"),
-        ("Angestellter", "Angestellter"),
-    ]
-
-    rolle = models.CharField(max_length=20, choices=rollen)
-    standorte = models.ManyToManyField(Standort, blank=True)
-    fachschaften = models.ManyToManyField(Fachschaft, blank=True)
-    stellenangebote = models.BooleanField(default=False)
-    uni_infos = models.BooleanField(default=False)
-    events = models.BooleanField(default=False)
-    externe_news = models.BooleanField(default=False)
-    umfragen = models.BooleanField(default=False)
-
-
 class Kategorie(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
@@ -52,6 +36,18 @@ class Kategorie(models.Model):
     externe_news = models.BooleanField()
     umfragen = models.BooleanField()
     studierende = models.ManyToManyField(User, blank=True) """
+
+
+class User(AbstractUser):
+    rollen = [
+        ("Student", "Student"),
+        ("Angestellter", "Angestellter"),
+    ]
+
+    rolle = models.CharField(max_length=20, choices=rollen)
+    standorte = models.ManyToManyField(Standort, blank=True)
+    fachschaften = models.ManyToManyField(Fachschaft, blank=True)
+    präferenzen = models.ManyToManyField(Kategorie, blank=True)
 
 
 class News(models.Model):
