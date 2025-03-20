@@ -75,14 +75,15 @@ def create_news_entry(
     text: str,
     locations: list,
     categories: list[str],
-    source: str,
-    quelle_id: str,
+    source_type: str,
+    rundmail_id: str,
 ) -> dict:
-    if source == "Rundmail":
+    # Name der Quelle ist bei Einzel-Rundmails der Titel und bei Sammel-Rundmails "Sammel-Rundmail vom <Datum>"
+    if source_type == "Rundmail":
         quelle_name = title
-    elif source == "Sammel-Rundmail":
+    elif source_type == "Sammel-Rundmail":
         quelle_name = f"Sammel-Rundmail vom {date.split()[0]}"
-    elif source == "Stellenangebote Sammel-Rundmail":
+    elif source_type == "Stellenangebote Sammel-Rundmail":
         quelle_name = f"Stellenangebote Sammel-Rundmail vom {date.split()[0]}"
 
     return {
@@ -92,9 +93,9 @@ def create_news_entry(
         "text": text,
         "standorte": locations,
         "kategorien": categories,
-        "quelle_typ": source,
-        "rundmail_id": quelle_id,
+        "quelle_typ": source_type,
         "quelle_name": quelle_name,
+        "rundmail_id": rundmail_id,
     }
 
 
@@ -156,8 +157,8 @@ def process_sammel_rundmail(
     # Message-Overview finden
     messages_overview = archive_entry_soup.find(name="div", class_="messages-overview")
 
-    # ID extrahieren
-    quelle_id = link.split("/")[-1]
+    # Rundmail-ID extrahieren
+    rundmail_id = link.split("/")[-1]
 
     # Kategorien extrahieren
     if isinstance(messages_overview, bs4.element.Tag):
@@ -219,7 +220,7 @@ def process_sammel_rundmail(
                         if not stellenangebote
                         else "Stellenangebote Sammel-Rundmail"
                     ),
-                    quelle_id,
+                    rundmail_id,
                 )
             )
 

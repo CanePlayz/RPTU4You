@@ -16,28 +16,33 @@ API_KEY = "0jdf3wfjq98w3jdf9w8"
 @method_decorator(csrf_exempt, name="dispatch")
 class ReceiveNews(View):
     def post(self, request):
+        # API-Key prüfen
         api_key = os.getenv("API_KEY")
         api_key_request = request.headers.get("API-Key")
         if api_key != api_key_request:
             return JsonResponse({"error": "Unauthorized"}, status=401)
 
+        # JSON-Daten aus dem Request-Body laden
         data = json.loads(request.body)
 
         # News-Objekte erstellen
         for news_entry in data:
-            # Quelle erstellen
+
+            # Quellen-Objekt erstellen
             if (
                 news_entry["quelle_typ"] == "Rundmail"
                 or news_entry["quelle_typ"] == "Sammel-Rundmail"
             ):
-                quelle_id = news_entry["rundmail_id"]
-                # Nachschauen, ob bereits ein Quelle-Objekt mit dieser ID existiert
+                rundmail_id = news_entry["rundmail_id"]
+                # Nachschauen, ob bereits ein Quelle-Objekt mit dieser ID existiert, falls nicht, dann erstellen
                 rundmail, created = Rundmail.objects.get_or_create(
-                    rundmail_id=quelle_id,
+                    rundmail_id=rundmail_id,
                     defaults={
-                        "rundmail_id": quelle_id,
+                        "rundmail_id": rundmail_id,
                     },
                 )
+
+                # Wenn das Quelle-Objekt neu erstellt wurde, die URL und den Namen setzen
                 if created:
                     rundmail.name = news_entry["quelle_name"]
                     if news_entry["quelle_typ"] == "Rundmail":
@@ -46,6 +51,7 @@ class ReceiveNews(View):
                         rundmail.url = news_entry["link"].split("#")[0]
                     rundmail.save()
 
+            # Erstellungsdatum parsen
             erstellungsdatum = datetime.strptime(
                 news_entry["erstellungsdatum"], "%d.%m.%Y %H:%M:%S"
             ).date()
