@@ -33,7 +33,7 @@ class User(AbstractUser):
         ("Angestellter", "Angestellter"),
     ]
 
-    rolle = models.CharField(max_length=20, choices=rollen)
+    rolle = models.CharField(max_length=20, choices=rollen, default="Student")
     standorte = models.ManyToManyField(Standort, blank=True)
     fachschaften = models.ManyToManyField(Fachschaft, blank=True)
     stellenangebote = models.BooleanField(default=False)
@@ -42,6 +42,14 @@ class User(AbstractUser):
     externe_news = models.BooleanField(default=False)
     umfragen = models.BooleanField(default=False)
 
+def save(self, *args, **kwargs):
+        # Standardwert für standorte nur bei neuen Nutzern setzen
+    if not self.pk:  # Wenn der Nutzer neu erstellt wird
+        super().save(*args, **kwargs)  # Erst speichern, um eine ID zu bekommen
+        kaiserslautern = Standort.objects.get(name="Kaiserslautern")
+        self.standorte.add(kaiserslautern)  # Kaiserslautern hinzufügen
+    else:
+            super().save(*args, **kwargs)  # Bei Updates nur speichern
 
 class Kategorie(models.Model):
     name = models.CharField(max_length=100, unique=True)

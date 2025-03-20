@@ -31,7 +31,7 @@
            <img src= "{% static 'images/Profil.png' %}" alt="Profil" class="profile-icon">
            <div class="dropdown-menu">
             {% if user.is_authenticated %}
-             <a href="#">Fragebogen</a>
+            <a href="{% url 'preferences' %}">Fragebogen</a>
              <a href="#">Datenschutz</a>
              <a href="{% url 'logout' %}">Abmelden</a>
             {% else %}

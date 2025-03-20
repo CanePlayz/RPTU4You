@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Präferenzen</title>
+    <style>
+        .option-box {
+            display: inline-block;
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .option-box input {
+            display: none; /* Versteckt die Standard-Checkbox/Radio-Buttons */
+        }
+        .option-box.selected {
+            background-color: #d3f3d3; /* Grün bei Auswahl */
+        }
+        .question-group {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Deine Präferenzen</h1>
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="question-group">
+            <h3>Welche Rolle?</h3>
+            {% for value, label in form.rolle.field.choices %}
+                <label class="option-box {% if form.rolle.value == value %}selected{% endif %}">
+                    <input type="radio" name="{{ form.rolle.name }}" value="{{ value }}" {% if form.rolle.value == value %}checked{% endif %}>
+                    {{ label }}
+                </label>
+            {% endfor %}    
+        </div>
+
+        <div class="question-group">
+            <h3>Welcher Standort?</h3>
+            {% for standort in form.standorte.field.queryset %}
+                <label class="option-box {% if standort.id in form.standorte.value %}selected{% endif %}">
+                    <input type="checkbox" name="{{ form.standorte.name }}" value="{{ standort.id }}" {% if standort.id in form.standorte.value %}checked{% endif %}>
+                    {{ standort.name }}
+                </label>
+            {% endfor %}
+        </div>
+
+        <div class="question-group">
+            <h3>Welche Fachschaft?</h3>
+            {% for fachschaft in form.fachschaften.field.queryset %}
+                <label class="option-box {% if fachschaft.id in form.fachschaften.value %}selected{% endif %}">
+                    <input type="checkbox" name="{{ form.fachschaften.name }}" value="{{ fachschaft.id }}" {% if fachschaft.id in form.fachschaften.value %}checked{% endif %}>
+                    {{ fachschaft.name }}
+                </label>
+            {% endfor %}
+        </div>
+
+        <div class="question-group">
+            <h3>Stellenangebote?</h3>
+            {% for value, label in form.stellenangebote.field.choices %}
+                <label class="option-box {% if form.stellenangebote.value|stringformat:'s' == value|stringformat:'s' %}selected{% endif %}">
+                    <input type="radio" name="{{ form.stellenangebote.name }}" value="{{ value }}" {% if form.stellenangebote.value|stringformat:'s' == value|stringformat:'s' %}checked{% endif %}>
+                    {{ label }}
+                </label>
+            {% endfor %}
+        </div>
+
+        <div class="question-group">
+            <h3>Uni-Infos?</h3>
+            {% for value, label in form.uni_infos.field.choices %}
+                <label class="option-box {% if form.uni_infos.value|stringformat:'s' == value|stringformat:'s' %}selected{% endif %}">
+                    <input type="radio" name="{{ form.uni_infos.name }}" value="{{ value }}" {% if form.uni_infos.value|stringformat:'s' == value|stringformat:'s' %}checked{% endif %}>
+                    {{ label }}
+                </label>
+            {% endfor %}
+        </div>
+
+        <div class="question-group">
+            <h3>Events?</h3>
+            {% for value, label in form.events.field.choices %}
+                <label class="option-box {% if form.events.value|stringformat:'s' == value|stringformat:'s' %}selected{% endif %}">
+                    <input type="radio" name="{{ form.events.name }}" value="{{ value }}" {% if form.events.value|stringformat:'s' == value|stringformat:'s' %}checked{% endif %}>
+                    {{ label }}
+                </label>
+            {% endfor %}
+        </div>
+
+        <div class="question-group">
+            <h3>Externe News?</h3>
+            {% for value, label in form.externe_news.field.choices %}
+                <label class="option-box {% if form.externe_news.value|stringformat:'s' == value|stringformat:'s' %}selected{% endif %}">
+                    <input type="radio" name="{{ form.externe_news.name }}" value="{{ value }}" {% if form.externe_news.value|stringformat:'s' == value|stringformat:'s' %}checked{% endif %}>
+                    {{ label }}
+                </label>
+            {% endfor %}
+        </div>
+
+        <div class="question-group">
+            <h3>Umfragen?</h3>
+            {% for value, label in form.umfragen.field.choices %}
+                <label class="option-box {% if form.umfragen.value|stringformat:'s' == value|stringformat:'s' %}selected{% endif %}">
+                    <input type="radio" name="{{ form.umfragen.name }}" value="{{ value }}" {% if form.umfragen.value|stringformat:'s' == value|stringformat:'s' %}checked{% endif %}>
+                    {{ label }}
+                </label>
+            {% endfor %}
+        </div>
+
+        <button type="submit">Speichern</button>
+    </form>
+
+    <script>
+        document.querySelectorAll('.option-box').forEach(box => {
+            box.addEventListener('click', function() {
+                const input = this.querySelector('input');
+                if (input.type === 'radio') {
+                    // Bei Radio-Buttons: alle anderen in der Gruppe deselektieren
+                    this.parentElement.querySelectorAll('.option-box').forEach(sibling => {
+                        sibling.classList.remove('selected');
+                    });
+                    input.checked = true;
+                    this.classList.add('selected');
+                } else if (input.type === 'checkbox') {
+                    // Bei Checkboxen: Toggle
+                    input.checked = !input.checked;
+                    if (input.checked) {
+                        this.classList.add('selected');
+                    } else {
+                        this.classList.remove('selected');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

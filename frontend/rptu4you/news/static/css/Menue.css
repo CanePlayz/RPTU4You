@@ -8,6 +8,7 @@ body {
 }
 
 /* Menü Zentrum*/
+
 .menu {
   display: flex;
   justify-content: space-between;
@@ -35,7 +36,6 @@ body {
   position: relative;
   display: inline-block;
 }
-
 
 .menu-center a::before {
   content: "";
