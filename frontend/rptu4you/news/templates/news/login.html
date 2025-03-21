@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Anmelden</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <label>Benutzername:</label><input type="text" name="username"><br>
+        <label>Passwort:</label><input type="password" name="password"><br>
+        <button type="submit">Anmelden</button>
+    </form>
+    <p>Noch kein Konto? <a href="{% url 'register' %}">Registrieren</a></p>
+{% endblock %}
