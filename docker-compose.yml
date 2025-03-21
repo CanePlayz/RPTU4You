@@ -12,6 +12,8 @@ services:
 
   django:
     image: caneplayz/rptu4you-frontend:latest
+    environment:
+      - API_KEY=${API_KEY}
     ports:
       - "8000:8000"
     networks:
@@ -19,13 +21,14 @@ services:
     depends_on:
       - db
     command: >
-      sh -c " python manage.py createsuperuser --noinput --username admin --email
-              python manage.py makemigrations &&
-              python manage.py migrate &&
-              python manage.py runserver 0.0.0.0:8000"
+      sh -c "python manage.py makemigrations &&
+            python manage.py migrate &&
+            python manage.py runserver 0.0.0.0:8000"
 
   scraper:
     image: caneplayz/rptu4you-scraper:latest
+    environment:
+      - API_KEY=${API_KEY}
     networks:
       - backend
     depends_on:

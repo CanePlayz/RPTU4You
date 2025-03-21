@@ -30,6 +30,7 @@ ALLOWED_HOSTS = [
     "131.246.169.169",
     "localhost",
     "scilab-0041.informatik.uni-kl.de",
+    "django",
 ]
 
 

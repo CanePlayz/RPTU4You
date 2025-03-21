@@ -1,7 +1,8 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from ..forms import UserCreationForm, PreferencesForm
+from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import redirect, render
+
+from ..forms import PreferencesForm, UserCreationForm
 
 
 # Create your views here.
@@ -46,15 +47,15 @@ def ForYouPage(request):
     if not request.user.is_authenticated:
         messages.warning(request, 'Die For You-Seite ist nur mit Anmeldung einsehbar.')
         return redirect('login')
-    else: 
+    else:
         return render(request, "news/ForYouPage.html")
-    
+
 def update_preferences(request):
     if request.method == 'POST':
         form = PreferencesForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('ForYouPage')  
+            return redirect('ForYouPage')
     else:
         form = PreferencesForm(instance=request.user)
-    return render(request, 'news/preferences.html', {'form': form})
+    return render(request, 'news/preferences.html', {'form': form})    return render(request, 'news/preferences.html', {'form': form})
