@@ -57,45 +57,41 @@ class ReceiveNews(View):
 
             # News-Objekt erstellen
             # Überprüfen, ob bereits ein News-Objekt mit diesem Titel existiert
-            existing_news = News.objects.filter(titel=news_entry["titel"]).first()
-            if not existing_news:
-                news_item = News.objects.create(
-                    link=news_entry["link"],
-                    titel=news_entry["titel"],
-                    erstellungsdatum=erstellungsdatum,
-                    text=news_entry["text"],
-                    quelle=rundmail,
-                    quelle_typ=news_entry["quelle_typ"],
-                )
+            news_item, _ = News.objects.get_or_create(
+                titel=news_entry["titel"],
+                defaults={
+                    "link": news_entry["link"],
+                    "erstellungsdatum": erstellungsdatum,
+                    "text": news_entry["text"],
+                    "quelle": rundmail,
+                    "quelle_typ": news_entry["quelle_typ"],
+                },
+            )
 
-                # Standorte hinzufügen
-                if "Kaiserslautern" in news_entry["standorte"]:
-                    standort_kl, _ = Standort.objects.get_or_create(
-                        name="Kaiserslautern"
+            # Standorte hinzufügen
+            if "Kaiserslautern" in news_entry["standorte"]:
+                standort_kl, _ = Standort.objects.get_or_create(name="Kaiserslautern")
+                news_item.standorte.add(standort_kl)
+            if "Landau" in news_entry["standorte"]:
+                standort_ld, _ = Standort.objects.get_or_create(name="Landau")
+                news_item.standorte.add(standort_ld)
+
+            # Kategorien hinzufügen
+            for category in news_entry["kategorien"]:
+                if category == "Veranstaltung":
+                    category_object, _ = Kategorie.objects.get_or_create(
+                        name="Veranstaltung"
                     )
-                    news_item.standorte.add(standort_kl)
-                if "Landau" in news_entry["standorte"]:
-                    standort_ld, _ = Standort.objects.get_or_create(name="Landau")
-                    news_item.standorte.add(standort_ld)
-
-                # Kategorien hinzufügen
-                for category in news_entry["kategorien"]:
-                    if category == "Veranstaltung":
-                        category_object, _ = Kategorie.objects.get_or_create(
-                            name="Veranstaltung"
-                        )
-                    elif category == "Umfrage":
-                        category_object, _ = Kategorie.objects.get_or_create(
-                            name="Umfrage"
-                        )
-                    elif category == "Mitarbeitende":
-                        category_object, _ = Kategorie.objects.get_or_create(
-                            name="Mitarbeitende"
-                        )
-                    elif category == "Studierende":
-                        category_object, _ = Kategorie.objects.get_or_create(
-                            name="Studierende"
-                        )
-                    news_item.kategorien.add(category_object)
+                elif category == "Umfrage":
+                    category_object, _ = Kategorie.objects.get_or_create(name="Umfrage")
+                elif category == "Mitarbeitende":
+                    category_object, _ = Kategorie.objects.get_or_create(
+                        name="Mitarbeitende"
+                    )
+                elif category == "Studierende":
+                    category_object, _ = Kategorie.objects.get_or_create(
+                        name="Studierende"
+                    )
+                news_item.kategorien.add(category_object)
 
         return JsonResponse({"status": "success"})
