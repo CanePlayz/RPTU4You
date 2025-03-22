@@ -116,8 +116,8 @@ def process_archive_entry(archive_entry: bs4.element.Tag) -> dict | list[dict]:
         # Datum extrahieren
         date = archive_entry.find(name="td", class_="created_at")
         if isinstance(date, bs4.element.Tag):
-            datum_clean: str = date.text.strip()
-            date_clean: datetime = datetime.strptime(datum_clean, "%d.%m.%Y %H:%M:%S")
+            date_text: str = date.text.strip()
+            date_object: datetime = datetime.strptime(date_text, "%d.%m.%Y %H:%M:%S")
 
         # Subject extrahieren
         subject = archive_entry.find(name="td", class_="subject")
@@ -129,20 +129,20 @@ def process_archive_entry(archive_entry: bs4.element.Tag) -> dict | list[dict]:
         return process_sammel_rundmail(
             archive_entry_soup,
             complete_link,
-            date_clean,
+            date_object,
         )
     elif subject_clean.startswith("Stellenangebote Sammel-Rundmail"):
         return process_sammel_rundmail(
             archive_entry_soup,
             complete_link,
-            date_clean,
+            date_object,
             stellenangebote=True,
         )
     else:
         return process_rundmail(
             archive_entry_soup,
             complete_link,
-            date_clean,
+            date_object,
             subject_clean,
         )
 
