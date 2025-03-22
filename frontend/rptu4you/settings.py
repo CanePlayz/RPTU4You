@@ -57,7 +57,7 @@ MIDDLEWARE = [
 ]
 
 STATICFILES_DIRS = [
-    BASE_DIR / "news/static",
+    os.path.join(BASE_DIR, "rptu4you/news/static"),
 ]
 
 ROOT_URLCONF = "rptu4you.urls"
