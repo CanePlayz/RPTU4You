@@ -37,7 +37,7 @@ services:
       - backend
     depends_on:
       - db
-    command: cron -f
+    command: python -u scheduler.py
 
 networks:
   backend:
