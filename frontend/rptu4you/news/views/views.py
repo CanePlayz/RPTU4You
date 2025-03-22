@@ -1,8 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 
-from ..forms import PreferencesForm, UserCreationForm
+from ..forms import PreferencesForm, UserCreationForm2
 
 
 # Create your views here.
@@ -34,13 +36,13 @@ def logout_view(request):
 
 def register_view(request):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = UserCreationForm2(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, "Registrierung erfolgreich! Bitte melde dich an.")
             return redirect("login")
     else:
-        form = UserCreationForm()
+        form = UserCreationForm2()
     return render(request, "news/register.html", {"form": form})
 
 
@@ -52,7 +54,8 @@ def ForYouPage(request):
         return render(request, "news/ForYouPage.html")
 
 
-def update_preferences(request):
+@login_required
+def update_preferences(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = PreferencesForm(request.POST, instance=request.user)
         if form.is_valid():

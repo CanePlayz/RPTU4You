@@ -26,8 +26,8 @@ urlpatterns = [
     path("", views.News, name="News"),
     path("Links/", views.Links, name="Links"),
     path("ForYouPage/", views.ForYouPage, name="ForYouPage"),
-    path('login/', views.login_view, name='login'),
-    path('logout/', views.logout_view, name='logout'),
-    path('register/', views.register_view, name='register'),
-    path('preferences/', views.update_preferences, name='preferences'),
+    path("login/", views.login_view, name="login"),
+    path("logout/", views.logout_view, name="logout"),
+    path("register/", views.register_view, name="register"),
+    path("preferences/", views.update_preferences, name="preferences"),
 ]

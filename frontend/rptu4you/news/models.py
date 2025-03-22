@@ -41,24 +41,14 @@ class Standort(models.Model):
         verbose_name_plural = "Standorte"
 
 
-def save(self, *args, **kwargs):
+""" def save(self, *args, **kwargs):
     # Standardwert für standorte nur bei neuen Nutzern setzen
     if not self.pk:  # Wenn der Nutzer neu erstellt wird
         super().save(*args, **kwargs)  # Erst speichern, um eine ID zu bekommen
         kaiserslautern = Standort.objects.get(name="Kaiserslautern")
         self.standorte.add(kaiserslautern)  # Kaiserslautern hinzufügen
     else:
-        super().save(*args, **kwargs)  # Bei Updates nur speichern
-
-
-def save(self, *args, **kwargs):
-    # Standardwert für standorte nur bei neuen Nutzern setzen
-    if not self.pk:  # Wenn der Nutzer neu erstellt wird
-        super().save(*args, **kwargs)  # Erst speichern, um eine ID zu bekommen
-        kaiserslautern = Standort.objects.get(name="Kaiserslautern")
-        self.standorte.add(kaiserslautern)  # Kaiserslautern hinzufügen
-    else:
-        super().save(*args, **kwargs)  # Bei Updates nur speichern
+        super().save(*args, **kwargs)  # Bei Updates nur speichern """
 
 
 class Kategorie(models.Model):
