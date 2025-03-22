@@ -22,8 +22,9 @@ from rptu4you.news.views import receive_news, views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/news", receive_news.ReceiveNews.as_view(), name="receive_news"),
-    path("News/", views.News, name="News"),
-    path("", views.News, name="News"),
+    path("api/news/rundmail/date", views.request_date, name="request_date"),
+    path("News/", views.news_view, name="News"),
+    path("", views.news_view, name="News"),
     path("Links/", views.Links, name="Links"),
     path("ForYouPage/", views.ForYouPage, name="ForYouPage"),
     path("login/", views.login_view, name="login"),

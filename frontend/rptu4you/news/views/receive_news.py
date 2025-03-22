@@ -1,7 +1,6 @@
 import json
 import os
 from datetime import datetime
-from pydoc import text
 
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
@@ -52,9 +51,9 @@ class ReceiveNews(View):
                     rundmail.save()
 
             # Erstellungsdatum parsen
-            erstellungsdatum = datetime.strptime(
+            erstellungsdatum: datetime = datetime.strptime(
                 news_entry["erstellungsdatum"], "%d.%m.%Y %H:%M:%S"
-            ).date()
+            )
 
             # News-Objekt erstellen
             # Überprüfen, ob bereits ein News-Objekt mit diesem Titel existiert

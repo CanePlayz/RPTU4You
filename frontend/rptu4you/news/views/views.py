@@ -1,14 +1,17 @@
+import os
+from datetime import datetime
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 
 from ..forms import PreferencesForm, UserCreationForm2
+from ..models import News
 
 
-# Create your views here.
-def News(request):
+def news_view(request):
     return render(request, "news/News.html")
 
 
@@ -31,7 +34,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect("News")
+    return redirect("news_view")
 
 
 def register_view(request):
@@ -64,3 +67,19 @@ def update_preferences(request: HttpRequest) -> HttpResponse:
     else:
         form = PreferencesForm(instance=request.user)
     return render(request, "news/preferences.html", {"form": form})
+
+
+def request_date(request):
+    # API-Key prüfen
+    api_key = os.getenv("API_KEY")
+    api_key_request = request.headers.get("API-Key")
+    if api_key != api_key_request:
+        return JsonResponse({"error": "Unauthorized"}, status=401)
+
+    # Prüfen, ob News-Objekte vorhanden sind
+    if not News.objects.exists():
+        return JsonResponse({"error": "No news available"}, status=404)
+
+    date: datetime = News.objects.latest("erstellungsdatum").erstellungsdatum
+
+    return JsonResponse({"date": date.strftime("%d.%m.%Y %H:%M:%S")})

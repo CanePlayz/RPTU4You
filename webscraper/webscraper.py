@@ -1,3 +1,4 @@
 import scraper.rundmail as rundmail
 
-rundmail.main()
+if __name__ == "__main__":
+    rundmail.main()

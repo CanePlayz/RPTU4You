@@ -54,13 +54,6 @@ class Standort(models.Model):
 class Kategorie(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
-    """ stellenangebot = models.BooleanField()
-    uni_info = models.BooleanField()
-    event = models.BooleanField()
-    externe_news = models.BooleanField()
-    umfragen = models.BooleanField()
-    studierende = models.ManyToManyField(User, blank=True) """
-
     class Meta:
         verbose_name_plural = "Kategorien"
 
@@ -83,7 +76,7 @@ class User(AbstractUser):
 class News(models.Model):
     link = models.URLField()
     titel = models.CharField(max_length=255, unique=True)
-    erstellungsdatum = models.DateField()
+    erstellungsdatum = models.DateTimeField()
     text = models.TextField()
 
     standorte = models.ManyToManyField(Standort, blank=True)
