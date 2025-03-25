@@ -1,5 +1,3 @@
-from tabnanny import verbose
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -8,11 +6,17 @@ class Quelle(models.Model):
     name = models.CharField(unique=True)
     url = models.URLField()
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         verbose_name_plural = "Quellen"
 
 
 class Fachschaft(Quelle):
+    def __str__(self):
+        return self.name
+
     class Meta:
         verbose_name_plural = "Fachschaften"
 
@@ -20,22 +24,34 @@ class Fachschaft(Quelle):
 class Rundmail(Quelle):
     rundmail_id = models.CharField(max_length=20, unique=True)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         verbose_name_plural = "Rundmails"
 
 
 class InterneWebsite(Quelle):
+    def __str__(self):
+        return self.name
+
     class Meta:
         verbose_name_plural = "Interne Websites"
 
 
 class ExterneWebsite(Quelle):
+    def __str__(self):
+        return self.name
+
     class Meta:
         verbose_name_plural = "Externe Websites"
 
 
 class Standort(models.Model):
     name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         verbose_name_plural = "Standorte"
@@ -54,12 +70,8 @@ class Standort(models.Model):
 class Kategorie(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
-    """ stellenangebot = models.BooleanField()
-    uni_info = models.BooleanField()
-    event = models.BooleanField()
-    externe_news = models.BooleanField()
-    umfragen = models.BooleanField()
-    studierende = models.ManyToManyField(User, blank=True) """
+    def __str__(self):
+        return self.name
 
     class Meta:
         verbose_name_plural = "Kategorien"
@@ -76,6 +88,9 @@ class User(AbstractUser):
     fachschaften = models.ManyToManyField(Fachschaft, blank=True)
     präferenzen = models.ManyToManyField(Kategorie, blank=True)
 
+    def __str__(self):
+        return self.username
+
     class Meta:
         verbose_name_plural = "User"
 
@@ -83,7 +98,7 @@ class User(AbstractUser):
 class News(models.Model):
     link = models.URLField()
     titel = models.CharField(max_length=255, unique=True)
-    erstellungsdatum = models.DateField()
+    erstellungsdatum = models.DateTimeField()
     text = models.TextField()
 
     standorte = models.ManyToManyField(Standort, blank=True)
@@ -101,6 +116,9 @@ class News(models.Model):
             ("Interne Website", "Interne Website"),
         ],
     )
+
+    def __str__(self):
+        return self.titel
 
     class Meta:
         verbose_name_plural = "News"

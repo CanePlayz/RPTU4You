@@ -1,8 +1,8 @@
-import json
+from datetime import date, datetime
 
 import bs4
 import requests
-import scraper.util.send_to_frontend as send_to_frontend
+import scraper.util.frontend_interaction as frontend_interaction
 
 
 def fetch_rundmail_archive() -> str:
@@ -71,7 +71,7 @@ def extract_categories(subject: str, category_name: str) -> list[str]:
 def create_news_entry(
     link: str,
     title: str,
-    date: str,
+    date: datetime,
     text: str,
     locations: list,
     categories: list[str],
@@ -82,9 +82,9 @@ def create_news_entry(
     if source_type == "Rundmail":
         quelle_name = title
     elif source_type == "Sammel-Rundmail":
-        quelle_name = f"Sammel-Rundmail vom {date.split()[0]}"
+        quelle_name = f"Sammel-Rundmail vom {date.strftime('%d.%m.%Y')}"
     elif source_type == "Stellenangebote Sammel-Rundmail":
-        quelle_name = f"Stellenangebote Sammel-Rundmail vom {date.split()[0]}"
+        quelle_name = f"Stellenangebote Sammel-Rundmail vom {date.strftime('%d.%m.%Y')}"
 
     return {
         "link": link,
@@ -116,7 +116,8 @@ def process_archive_entry(archive_entry: bs4.element.Tag) -> dict | list[dict]:
         # Datum extrahieren
         date = archive_entry.find(name="td", class_="created_at")
         if isinstance(date, bs4.element.Tag):
-            datum_clean: str = date.text.strip()
+            date_text: str = date.text.strip()
+            date_object: datetime = datetime.strptime(date_text, "%d.%m.%Y %H:%M:%S")
 
         # Subject extrahieren
         subject = archive_entry.find(name="td", class_="subject")
@@ -128,20 +129,20 @@ def process_archive_entry(archive_entry: bs4.element.Tag) -> dict | list[dict]:
         return process_sammel_rundmail(
             archive_entry_soup,
             complete_link,
-            datum_clean,
+            date_object,
         )
     elif subject_clean.startswith("Stellenangebote Sammel-Rundmail"):
         return process_sammel_rundmail(
             archive_entry_soup,
             complete_link,
-            datum_clean,
+            date_object,
             stellenangebote=True,
         )
     else:
         return process_rundmail(
             archive_entry_soup,
             complete_link,
-            datum_clean,
+            date_object,
             subject_clean,
         )
 
@@ -149,7 +150,7 @@ def process_archive_entry(archive_entry: bs4.element.Tag) -> dict | list[dict]:
 def process_sammel_rundmail(
     archive_entry_soup: bs4.BeautifulSoup,
     link: str,
-    date: str,
+    date: datetime,
     stellenangebote: bool = False,
 ) -> list[dict]:
     news_of_archive_entry: list[dict] = []
@@ -228,7 +229,7 @@ def process_sammel_rundmail(
 
 
 def process_rundmail(
-    archive_entry_soup: bs4.BeautifulSoup, link: str, date: str, subject: str
+    archive_entry_soup: bs4.BeautifulSoup, link: str, date: datetime, subject: str
 ) -> dict:
     # p-Element mit Text finden
     text_element = archive_entry_soup.find(name="p", class_="whitespaces")
@@ -255,6 +256,10 @@ def process_rundmail(
 
 
 def main():
+    # Datum der letzten gescrapten Rundmail abrufen
+    last_scraped_date: datetime | None = frontend_interaction.request_date()
+    print(last_scraped_date)
+
     # Rundmail-Archiv aufrufen und verarbeiten
     rundmail_archive: str = fetch_rundmail_archive()
     archive_entries: list[bs4.element.Tag] = parse_rundmail_archive(rundmail_archive)  # type: ignore
@@ -263,9 +268,22 @@ def main():
     # Einträge im Archiv verarbeiten
     for archive_entry in archive_entries[:20]:
         entry: dict | list[dict] = process_archive_entry(archive_entry)
+
         if isinstance(entry, dict):
+            date_of_news_entry = entry["erstellungsdatum"]
+        else:
+            date_of_news_entry = entry[0]["erstellungsdatum"]
+
+        print(date_of_news_entry)
+
+        if date_of_news_entry == last_scraped_date:
+            break
+
+        if isinstance(entry, dict):
+            print(f"Rundmail: {date_of_news_entry} - {entry["titel"]}")
             news.append(entry)
         else:
+            print(f"Sammel-Rundmail: {date_of_news_entry} - {entry[0]['titel']}")
             news.extend(entry)
 
     # Einträge in JSON-Datei speichern (zum Testen)
@@ -275,6 +293,4 @@ def main():
         file.write(json_data_encoded) """
 
     # Einträge an Frontend senden
-    json_data: str = json.dumps(news, ensure_ascii=False)
-    json_data_encoded: bytes = json_data.encode("utf-8")
-    send_to_frontend.send_data(json_data_encoded)
+    frontend_interaction.send_data(news)

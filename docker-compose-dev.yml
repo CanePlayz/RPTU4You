@@ -16,6 +16,9 @@ services:
       dockerfile: Dockerfile
     environment:
       - API_KEY=${API_KEY}
+      - DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME}
+      - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
+      - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
     ports:
       - "8000:8000"
     networks:
@@ -37,7 +40,7 @@ services:
       - backend
     depends_on:
       - db
-    command: cron -f
+    command: python -u scheduler.py
 
 networks:
   backend:
