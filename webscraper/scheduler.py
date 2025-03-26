@@ -1,4 +1,4 @@
-import scraper.presse as presse
+import scraper.newsroom.pressemitteilungen as pressemitteilungen
 import scraper.rundmail as rundmail
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.interval import IntervalTrigger
@@ -16,10 +16,10 @@ def main():
     )
 
     scheduler.add_job(
-        func=presse.main,
+        func=pressemitteilungen.main,
         trigger=IntervalTrigger(minutes=1),
-        id="presse_job",
-        name="Presse-Scraper",
+        id="newsroom_job",
+        name="Newsroom-Scraper",
         replace_existing=True,
     )
 
@@ -28,4 +28,5 @@ def main():
 
 
 if __name__ == "__main__":
+    main()
     main()

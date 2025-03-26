@@ -1,3 +1,3 @@
-import scraper.presse as presse
+import webscraper.scraper.newsroom.pressemitteilungen as pressemitteilungen
 
-presse.main()
+pressemitteilungen.main()
