@@ -1,3 +1,4 @@
+import scraper.presse as presse
 import scraper.rundmail as rundmail
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.interval import IntervalTrigger
@@ -11,6 +12,14 @@ def main():
         trigger=IntervalTrigger(minutes=1),
         id="rundmail_job",
         name="Rundmail-Scraper",
+        replace_existing=True,
+    )
+
+    scheduler.add_job(
+        func=presse.main,
+        trigger=IntervalTrigger(minutes=1),
+        id="presse_job",
+        name="Presse-Scraper",
         replace_existing=True,
     )
 

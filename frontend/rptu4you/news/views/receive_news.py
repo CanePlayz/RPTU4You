@@ -7,7 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
-from ..models import Kategorie, News, Rundmail, Standort
+from ..models import InterneWebsite, Kategorie, News, Quelle, Rundmail, Standort
 
 API_KEY = "0jdf3wfjq98w3jdf9w8"
 
@@ -34,7 +34,7 @@ class ReceiveNews(View):
             ):
                 rundmail_id = news_entry["rundmail_id"]
                 # Nachschauen, ob bereits ein Quelle-Objekt mit dieser ID existiert, falls nicht, dann erstellen
-                rundmail, created = Rundmail.objects.get_or_create(
+                quelle, created = Rundmail.objects.get_or_create(
                     rundmail_id=rundmail_id,
                     defaults={
                         "rundmail_id": rundmail_id,
@@ -43,12 +43,21 @@ class ReceiveNews(View):
 
                 # Wenn das Quelle-Objekt neu erstellt wurde, die URL und den Namen setzen
                 if created:
-                    rundmail.name = news_entry["quelle_name"]
+                    quelle.name = news_entry["quelle_name"]
                     if news_entry["quelle_typ"] == "Rundmail":
-                        rundmail.url = news_entry["link"]
+                        quelle.url = news_entry["link"]
                     elif news_entry["quelle_typ"] == "Sammel-Rundmail":
-                        rundmail.url = news_entry["link"].split("#")[0]
-                    rundmail.save()
+                        quelle.url = news_entry["link"].split("#")[0]
+                    quelle.save()
+
+            if news_entry["quelle_typ"] == "Interne Website":
+                quelle, _ = InterneWebsite.objects.get_or_create(
+                    name=news_entry["quelle_name"],
+                    defaults={
+                        "name": news_entry["quelle_name"],
+                        "url": "https://rptu.de/newsroom",
+                    },
+                )
 
             # Erstellungsdatum parsen
             erstellungsdatum: datetime = datetime.strptime(
@@ -63,7 +72,7 @@ class ReceiveNews(View):
                     "link": news_entry["link"],
                     "erstellungsdatum": erstellungsdatum,
                     "text": news_entry["text"],
-                    "quelle": rundmail,
+                    "quelle": quelle,
                     "quelle_typ": news_entry["quelle_typ"],
                 },
             )
