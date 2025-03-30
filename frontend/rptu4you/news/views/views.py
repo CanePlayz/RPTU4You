@@ -8,7 +8,7 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 
 from ..forms import PreferencesForm, UserCreationForm2
-from ..models import News
+from ..models import News,CalendarEvent
 
 
 def news_view(request):
@@ -83,3 +83,28 @@ def request_date(request):
     date: datetime = News.objects.latest("erstellungsdatum").erstellungsdatum
 
     return JsonResponse({"date": date.strftime("%d.%m.%Y %H:%M:%S")})
+
+# Ansicht für die große Kalenderseite
+@login_required
+def calendar_page(request):
+    return render(request, "news/calendar.html", {"is_authenticated": request.user.is_authenticated})
+
+# API-Endpunkt für Kalender-Events
+def calendar_events(request):
+    if request.user.is_authenticated:
+        events = CalendarEvent.objects.filter(user=request.user) | CalendarEvent.objects.filter(is_global=True)
+    else:
+        events = CalendarEvent.objects.filter(is_global=True)
+
+    event_data = [
+        {
+            "title": event.title,
+            "start": event.start.isoformat(),
+            "end": event.end.isoformat() if event.end else None,
+            "description": event.description
+        }
+        for event in events
+    ]
+    
+    return JsonResponse(event_data, safe=False)
+    #return JsonResponse({"events": event_data})

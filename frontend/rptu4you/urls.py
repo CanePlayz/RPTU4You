@@ -31,4 +31,6 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     path("register/", views.register_view, name="register"),
     path("preferences/", views.update_preferences, name="preferences"),
+    path("kalender/", views.calendar_page, name="calendar_page"),
+    path("api/calendar-events/", views.calendar_events, name="calendar_events"),
 ]

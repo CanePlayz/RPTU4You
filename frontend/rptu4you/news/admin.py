@@ -10,5 +10,5 @@ admin.site.register(ExterneWebsite)
 admin.site.register(Standort)
 admin.site.register(Kategorie)
 admin.site.register(News)
-
 admin.site.register(User)
+admin.site.register(CalendarEvent)

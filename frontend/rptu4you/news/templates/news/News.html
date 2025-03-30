@@ -5,6 +5,48 @@
 {% endblock %}
 
 {% block content %}
-<h2>News<h2>
+  <h2>News</h2>
+
+  <div style="display: flex;">
+    <!-- Linke Seite: News -->
+    <div style="flex: 3;">
+      {% for news in news_list %}
+        <h3>{{ news.titel }}</h3>
+        <p>{{ news.text }}</p>
+      {% endfor %}
+    </div>
+
+    <!-- Rechte Seite: Kleiner Kalender -->
+    <div style="flex: 1; padding-left: 20px;">
+      <h3>📅 Dein Kalender</h3>
+      <div id="small-calendar"></div>
+      <a href="{% url 'calendar_page' %}" style="display: block; text-align: center; margin-top: 10px;">
+        ➡ Zum großen Kalender
+      </a>
+    </div>
+  </div>
+
 {% endblock %}
 
+<!-- JS für den kleinen Kalender -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.2.0/dist/fullcalendar.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#small-calendar').fullCalendar({
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month'
+      },
+      events: '/api/calendar-events/',  // API-Route für Kalender-Events
+      dateClick: function(info) {
+        window.location.href = "{% url 'calendar_page' %}";  // Weiterleitung zur großen Kalenderseite
+      },
+      locale: 'de',
+      height: 250,
+      contentHeight: 250,
+      eventLimit: true
+    });
+  });
+</script>

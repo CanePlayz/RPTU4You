@@ -122,3 +122,18 @@ class News(models.Model):
 
     class Meta:
         verbose_name_plural = "News"
+
+
+class CalendarEvent(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    start = models.DateTimeField()
+    end = models.DateTimeField(blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="calendar_events", null=True, blank=True)
+    is_global = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name_plural = "Kalendereinträge"

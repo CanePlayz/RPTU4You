@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Dein Kalender
+{% endblock %}
+
+{% block head-optional %}
+
+<style>
+  #calendar {
+    height: 100vh;
+  }
+
+  .fc-event-title {
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+  }
+
+  .event-description {
+    display: block;
+    font-size: 0.9em;
+    color: #555;
+    margin-top: 2px;
+  }
+
+  .fc-daygrid-event {
+    white-space: normal;
+    padding: 4px;
+  }
+</style>
+
+{% endblock %}
+
+{% block content %}
+  <h2>Dein Kalender</h2>
+  
+  <div id="calendar"></div>
+
+<!-- FullCalendar Styles und Scripts -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      locale: 'de',
+      editable: false,
+      events: '/api/calendar-events/',
+      eventDidMount: function(info) {
+        // Titel und Beschreibung anpassen
+        var titleEl = info.el.querySelector('.fc-event-title');
+        var description = info.event.extendedProps.description || info.event._def.extendedProps.description || ''; // Fallback fÃ¼r direkte description
+
+        if (titleEl) {
+          // Wenn description leer ist, nur den Titel anzeigen, sonst Titel + Beschreibung
+          if (description) {
+            titleEl.innerHTML = `${info.event.title}<br><span class="event-description">${description}</span>`;
+          } else {
+            titleEl.innerHTML = info.event.title; // Kein <br> bei leerer Beschreibung
+          }
+        }
+      }
+    });
+    calendar.render();
+  });
+</script>
+
+{% endblock %}
