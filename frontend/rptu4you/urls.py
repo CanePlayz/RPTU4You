@@ -33,4 +33,6 @@ urlpatterns = [
     path("preferences/", views.update_preferences, name="preferences"),
     path("kalender/", views.calendar_page, name="calendar_page"),
     path("api/calendar-events/", views.calendar_events, name="calendar_events"),
+    path("api/create-event/", views.create_event, name="create_event"),
+    path("api/delete-event/<int:event_id>/", views.delete_event, name="delete_event"),
 ]

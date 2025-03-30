@@ -5,8 +5,11 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.http import require_POST
 
+import json
 from ..forms import PreferencesForm, UserCreationForm2
 from ..models import News,CalendarEvent
 
@@ -98,13 +101,56 @@ def calendar_events(request):
 
     event_data = [
         {
+            "id": event.id,  # Hier wird die id des Events hinzugefügt
             "title": event.title,
             "start": event.start.isoformat(),
             "end": event.end.isoformat() if event.end else None,
-            "description": event.description
+            "description": event.description,
+            "user_id": event.user.id if event.user else None
         }
         for event in events
     ]
     
     return JsonResponse(event_data, safe=False)
-    #return JsonResponse({"events": event_data})
+
+
+@csrf_protect  # CSRF-Schutz aktivieren
+@login_required
+def create_event(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            title = data.get("title")
+            start = data.get("start")
+            end = data.get("end")
+            description = data.get("description", "")
+
+            if not title or not start:
+                return JsonResponse({"error": "Titel und Startzeit sind erforderlich."}, status=400)
+
+            CalendarEvent.objects.create(
+                user=request.user,  # Event gehört dem aktuellen Nutzer
+                title=title,
+                start=start,
+                end=end if end else None,
+                description=description
+            )
+
+            return JsonResponse({"message": "Event erfolgreich gespeichert."}, status=201)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Ungültige JSON-Daten."}, status=400)
+
+    return JsonResponse({"error": "Methode nicht erlaubt."}, status=405)
+
+@login_required
+@require_POST  # Erlaubt nur POST-Anfragen
+@csrf_protect  # Stellt sicher, dass CSRF-Token geprüft wird
+def delete_event(request, event_id):
+    event = get_object_or_404(CalendarEvent, id=event_id)
+
+    if event.user == request.user or request.user.is_staff:
+        event.delete()
+        return JsonResponse({"success": True})
+    else:
+        return JsonResponse({"success": False, "error": "Keine Berechtigung"}, status=403)
+
