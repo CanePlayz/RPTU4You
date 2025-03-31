@@ -21,20 +21,24 @@ def Links(request):
 
 
 def login_view(request):
-    next_url = request.GET.get("next", "ForYouPage")  # Standard-Weiterleitung
-    
+    # Hole next_url aus GET oder POST, je nach Kontext
+    if request.method == "POST":
+        next_url = request.POST.get("next", "ForYouPage")  # Priorisiere POST nach Formularabsendung
+    else:
+        next_url = request.GET.get("next", "ForYouPage")   # Initialer GET-Request
+
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect(request.POST.get("next", next_url))  # Verlässlicher Redirect
+            return redirect(next_url)  # Verwende next_url direkt
         else:
             messages.error(request, "Ungültige Anmeldedaten.")
-    
-    return render(request, "news/login.html", {"next": next_url})
+            # Bei Fehler: next_url bleibt erhalten für das erneute Rendern
 
+    return render(request, "news/login.html", {"next": next_url})
 
 
 def logout_view(request):
@@ -91,10 +95,10 @@ def request_date(request):
 
 
 # Alternative mit Nachricht für nicht angemeldete Benutzer
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def calendar_page(request):
-    if not request.user.is_authenticated:
-        messages.warning(request, "Die Kalenderseite ist nur mit Anmeldung einsehbar.")
-        return redirect("login")
     return render(request, "news/calendar.html", {"is_authenticated": request.user.is_authenticated})
 
 # API-Endpunkt für Kalender-Events
