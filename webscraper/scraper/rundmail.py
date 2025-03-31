@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import datetime
 
 import bs4
 import requests
@@ -258,7 +258,6 @@ def process_rundmail(
 def main():
     # Datum der letzten gescrapten Rundmail abrufen
     last_scraped_date: datetime | None = frontend_interaction.request_date()
-    print(last_scraped_date)
 
     # Rundmail-Archiv aufrufen und verarbeiten
     rundmail_archive: str = fetch_rundmail_archive()
@@ -274,16 +273,12 @@ def main():
         else:
             date_of_news_entry = entry[0]["erstellungsdatum"]
 
-        print(date_of_news_entry)
-
         if date_of_news_entry == last_scraped_date:
             break
 
         if isinstance(entry, dict):
-            print(f"Rundmail: {date_of_news_entry} - {entry["titel"]}")
             news.append(entry)
         else:
-            print(f"Sammel-Rundmail: {date_of_news_entry} - {entry[0]['titel']}")
             news.extend(entry)
 
     # Einträge in JSON-Datei speichern (zum Testen)
@@ -293,4 +288,4 @@ def main():
         file.write(json_data_encoded) """
 
     # Einträge an Frontend senden
-    frontend_interaction.send_data(news)
+    frontend_interaction.send_data(news, "Rundmail-Scraper")

@@ -33,7 +33,7 @@ def request_date():
         return None
 
 
-def send_data(data):
+def send_data(data, type):
     api_key = os.getenv("API_KEY")
     json_data = json.dumps(data, default=datetime_serializer)
     response = requests.post(
@@ -44,4 +44,4 @@ def send_data(data):
             "API-Key": api_key,
         },
     )
-    print(response.status_code, response.text)
+    print(f"{type} - Status Code: {response.status_code}")
