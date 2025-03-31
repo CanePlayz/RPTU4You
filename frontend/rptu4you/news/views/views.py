@@ -1,6 +1,5 @@
 import os
 from datetime import datetime
-
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -8,7 +7,6 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
-
 import json
 from ..forms import PreferencesForm, UserCreationForm2
 from ..models import News,CalendarEvent
@@ -41,7 +39,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect("news_view")
+    return redirect("News")
 
 
 def register_view(request):
@@ -91,9 +89,12 @@ def request_date(request):
 
     return JsonResponse({"date": date.strftime("%d.%m.%Y %H:%M:%S")})
 
-# Ansicht für die große Kalenderseite
-@login_required
+
+# Alternative mit Nachricht für nicht angemeldete Benutzer
 def calendar_page(request):
+    if not request.user.is_authenticated:
+        messages.warning(request, "Die Kalenderseite ist nur mit Anmeldung einsehbar.")
+        return redirect("login")
     return render(request, "news/calendar.html", {"is_authenticated": request.user.is_authenticated})
 
 # API-Endpunkt für Kalender-Events
