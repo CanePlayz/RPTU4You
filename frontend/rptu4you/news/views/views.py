@@ -13,6 +13,7 @@ from django.db import models
 import json
 from ..forms import PreferencesForm, UserCreationForm2
 from ..models import News,CalendarEvent
+import traceback
 
 
 def news_view(request):
@@ -152,6 +153,7 @@ def calendar_events(request):
     return JsonResponse(event_data, safe=False)
 
 
+
 @csrf_protect  # CSRF-Schutz aktivieren
 @login_required
 def create_event(request):
@@ -166,17 +168,45 @@ def create_event(request):
             if not title or not start:
                 return JsonResponse({"error": "Titel und Startzeit sind erforderlich."}, status=400)
 
-            CalendarEvent.objects.create(
-                user=request.user,  # Event gehört dem aktuellen Nutzer
+            try:
+                start_datetime = datetime.fromisoformat(start)
+                start_datetime = timezone.make_aware(start_datetime, timezone.get_current_timezone())
+            except ValueError:
+                return JsonResponse({"error": "Startzeit hat ein ungültiges Format."}, status=400)
+
+            now = timezone.now()
+
+            if start_datetime < now:
+                return JsonResponse({"error": "Der Startzeitpunkt darf nicht in der Vergangenheit liegen."}, status=400)
+
+            end_datetime = None
+            if end:
+                try:
+                    end_datetime = datetime.fromisoformat(end)
+                    end_datetime = timezone.make_aware(end_datetime, timezone.get_current_timezone())
+                except ValueError:
+                    return JsonResponse({"error": "Endzeit hat ein ungültiges Format."}, status=400)
+
+                if end_datetime < start_datetime:
+                    return JsonResponse({"error": "Der Endzeitpunkt darf nicht vor dem Startzeitpunkt liegen."}, status=400)
+
+            event = CalendarEvent.objects.create(
+                user=request.user,
                 title=title,
-                start=start,
-                end=end if end else None,
+                start=start_datetime,
+                end=end_datetime if end_datetime else None,
                 description=description
             )
 
             return JsonResponse({"message": "Event erfolgreich gespeichert."}, status=201)
+
         except json.JSONDecodeError:
             return JsonResponse({"error": "Ungültige JSON-Daten."}, status=400)
+        except Exception as e:
+            error_message = f"Fehler bei der Event-Erstellung: {str(e)}"
+            print(error_message)
+            print(traceback.format_exc())
+            return JsonResponse({"error": error_message}, status=500)
 
     return JsonResponse({"error": "Methode nicht erlaubt."}, status=405)
 
