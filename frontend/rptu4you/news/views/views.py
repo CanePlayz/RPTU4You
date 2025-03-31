@@ -23,16 +23,20 @@ def Links(request):
 
 
 def login_view(request):
+    next_url = request.GET.get("next", "ForYouPage")  # Standard-Weiterleitung
+    
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect("ForYouPage")
+            return redirect(request.POST.get("next", next_url))  # Verlässlicher Redirect
         else:
             messages.error(request, "Ungültige Anmeldedaten.")
-    return render(request, "news/login.html")
+    
+    return render(request, "news/login.html", {"next": next_url})
+
 
 
 def logout_view(request):

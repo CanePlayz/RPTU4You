@@ -35,7 +35,7 @@
              <a href="#">Datenschutz</a>
              <a href="{% url 'logout' %}">Abmelden</a>
             {% else %}
-            <a href="{% url 'login' %}">Anmelden</a>
+            <a href="{% url 'login' %}?next={{ request.path }}">Anmelden</a>
             <a href="{% url 'register' %}">Registrieren</a>
             {% endif %}
 

@@ -1,16 +1,32 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block title %}Anmelden{% endblock %}
+
 {% block content %}
-    <h1>Anmelden</h1>
-    {% if messages %}
+<h2>Anmelden</h2>
+
+{% if messages %}
+    <ul>
         {% for message in messages %}
-            <p>{{ message }}</p>
+            <li>{{ message }}</li>
         {% endfor %}
-    {% endif %}
-    <form method="post">
-        {% csrf_token %}
-        <label>Benutzername:</label><input type="text" name="username"><br>
-        <label>Passwort:</label><input type="password" name="password"><br>
-        <button type="submit">Anmelden</button>
-    </form>
-    <p>Noch kein Konto? <a href="{% url 'register' %}">Registrieren</a></p>
+    </ul>
+{% endif %}
+
+<form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+    
+    <!-- Speichert die vorherige Seite -->
+    <input type="hidden" name="next" value="{{ next }}">
+    
+    <label for="username">Benutzername:</label>
+    <input type="text" name="username" required>
+
+    <label for="password">Passwort:</label>
+    <input type="password" name="password" required>
+
+    <button type="submit">Anmelden</button>
+</form>
+
+<p>Noch keinen Account? <a href="{% url 'register' %}">Jetzt registrieren</a></p>
 {% endblock %}
