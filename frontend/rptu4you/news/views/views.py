@@ -7,13 +7,42 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
+from datetime import datetime
+from django.utils import timezone 
+from django.db import models
 import json
 from ..forms import PreferencesForm, UserCreationForm2
 from ..models import News,CalendarEvent
 
 
 def news_view(request):
-    return render(request, "news/News.html")
+    now = timezone.now()  # Aktuelle Zeit mit Zeitzone
+
+    if request.user.is_authenticated:
+        # Eigene Termine des Benutzers
+        user_events = CalendarEvent.objects.filter(
+            start__gte=now,
+            user=request.user
+        )
+        # Globale Termine
+        global_events = CalendarEvent.objects.filter(
+            start__gte=now,
+            is_global=True
+        )
+        # Kombiniere beide Querysets und sortiere, nimm die ersten 3
+        upcoming_events = (user_events | global_events).distinct().order_by('start')[:3]
+
+    else:
+        # Nicht angemeldete Benutzer: Nur globale Termine
+        upcoming_events = CalendarEvent.objects.filter(
+            start__gte=now,  # Nur zukünftige Termine
+            is_global=True   # Nur globale Termine
+        ).order_by('start')[:3]
+
+    context = {
+        'upcoming_events': upcoming_events
+    }
+    return render(request, "news/News.html", context)
 
 
 def Links(request):

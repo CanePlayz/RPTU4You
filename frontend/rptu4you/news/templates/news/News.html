@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-  <h2>News</h2>
+<h2>Latest News</h2>
 
   <div style="display: flex;">
     <!-- Linke Seite: News -->
@@ -18,10 +18,20 @@
 
     <!-- Rechte Seite: Kleiner Kalender -->
     <div style="flex: 1; padding-left: 20px;">
-      <h3>📅 Dein Kalender</h3>
-      <div id="small-calendar"></div>
-      <a href="{% url 'calendar_page' %}" style="display: block; text-align: center; margin-top: 10px;">
-        ➡ Zum großen Kalender
+      <h3>Nächste Termine</h3>
+
+        {% if upcoming_events %}
+          <ul>
+          {% for event in upcoming_events %}
+            <li>{{ event.start|date:"d.m.Y H:i" }} - {{ event.title }}</li>
+          {% endfor %}
+          </ul>
+        {% else %}
+          <p>Keine anstehenden Termine.</p>
+        {% endif %}
+
+      <a href="{% url 'calendar_page' %}" style="margin-top: 10px;">
+        Mein Kalender
       </a>
     </div>
   </div>
