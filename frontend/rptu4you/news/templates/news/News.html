@@ -7,56 +7,134 @@
 {% block content %}
 <h2>Latest News</h2>
 
-  <div style="display: flex;">
-    <!-- Linke Seite: News -->
-    <div style="flex: 3;">
-      {% for news in news_list %}
-        <h3>{{ news.titel }}</h3>
-        <p>{{ news.text }}</p>
+<div style="display: flex;">
+  <!-- Linke Seite: News -->
+  <div style="flex: 3;">
+    <ul id="news-container">
+      {% for news in news_articles %}
+        <li class="news-item">
+          <h3>{{ news.titel }}</h3>
+          <p>Erstellt am: {{ news.erstellungsdatum|date:"d.m.Y" }}</p>
+
+          {% if news.quelle_typ %}
+            <p>Quelle: {{ news.quelle_typ }}</p>
+          {% else %}
+            <p>Quelle: Keine Quelle</p>
+          {% endif %}
+          
+          <p><a href="{{ news.link }}">Link zur Webseite</a></p>
+
+          <a href="{% url 'news_detail' news.id %}">Weiterlesen</a>
+          <hr>
+        </li>
       {% endfor %}
-    </div>
-
-    <!-- Rechte Seite: Kleiner Kalender -->
-    <div style="flex: 1; padding-left: 20px;">
-      <h3>Nächste Termine</h3>
-
-        {% if upcoming_events %}
-          <ul>
-          {% for event in upcoming_events %}
-            <li>{{ event.start|date:"d.m.Y H:i" }} - {{ event.title }}</li>
-          {% endfor %}
-          </ul>
-        {% else %}
-          <p>Keine anstehenden Termine.</p>
-        {% endif %}
-
-      <a href="{% url 'calendar_page' %}" style="margin-top: 10px;">
-        Mein Kalender
-      </a>
-    </div>
+    </ul>
   </div>
 
-{% endblock %}
+  <!-- Rechte Seite: Kleiner Kalender -->
+  <div style="flex: 1; padding-left: 20px;">
+    <h3>Nächste Termine</h3>
+    {% if upcoming_events %}
+      <ul>
+        {% for event in upcoming_events %}
+          <li>{{ event.start|date:"d.m.Y H:i" }} - {{ event.title }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Keine anstehenden Termine.</p>
+    {% endif %}
+    <a href="{% url 'calendar_page' %}" style="margin-top: 10px;">
+      Mein Kalender
+    </a>
+  </div>
+</div>
 
 <!-- JS für den kleinen Kalender -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.2.0/dist/fullcalendar.min.js"></script>
 <script>
-  $(document).ready(function() {
-    $('#small-calendar').fullCalendar({
-      header: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'month'
-      },
-      events: '/api/calendar-events/',  // API-Route für Kalender-Events
-      dateClick: function(info) {
-        window.location.href = "{% url 'calendar_page' %}";  // Weiterleitung zur großen Kalenderseite
-      },
-      locale: 'de',
-      height: 250,
-      contentHeight: 250,
-      eventLimit: true
-    });
+$(document).ready(function() {
+  // FullCalendar Initialisierung für den kleinen Kalender
+  $('#small-calendar').fullCalendar({
+    header: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'month'
+    },
+    events: '/api/calendar-events/',  // API-Route für Kalender-Events
+    dateClick: function(info) {
+      window.location.href = "{% url 'calendar_page' %}";  // Weiterleitung zur großen Kalenderseite
+    },
+    locale: 'de',
+    height: 250,
+    contentHeight: 250,
+    eventLimit: true
   });
+
+  // Infinite Scroll Script für News
+  let currentPage = 1;  // Startpage
+  let loading = false;   // Verhindert mehrfaches Laden
+
+  function loadMoreNews() {
+    if (loading) return;
+    loading = true;
+
+    // Protokollierung zur Fehlerbehebung
+    console.log(`Lade mehr Nachrichten, Seite ${currentPage + 1}`);
+
+    fetch(`/api/news/?page=${currentPage + 1}`)
+      .then(response => response.json())
+      .then(data => {
+        const newsContainer = document.getElementById("news-container");
+
+        // Überprüfen, ob Nachrichten vorhanden sind
+        if (data.news && data.news.length > 0) {
+          // Neue News zur Liste hinzufügen
+          data.news.forEach(article => {
+            const newsItem = document.createElement("li");
+            newsItem.classList.add("news-item");
+            newsItem.innerHTML = `
+              <h3>${article.titel}</h3>
+              <p>Erstellt am: ${article.erstellungsdatum}</p>
+              <p><strong>Quelle:</strong> ${article.quelle_typ || 'Keine Quelle'}</p>
+              <p><a href="${article.link}">Link zur Webseite</a></p>
+              <a href="/news/${article.id}">Weiterlesen</a>
+              <hr>
+            `;
+            newsContainer.appendChild(newsItem);
+          });
+
+          // Wenn es noch eine nächste Seite gibt, die Seite um eins erhöhen
+          if (data.next_page) {
+            currentPage++;
+          }
+        } else {
+          console.log("Keine weiteren Nachrichten vorhanden.");
+        }
+
+        loading = false;
+      })
+      .catch(err => {
+        console.error("Fehler beim Laden von News:", err);
+        loading = false;
+      });
+  }
+
+  // Scroll Event für Infinite Scroll
+  $(window).scroll(function() {
+    // Debugging: Konsolenprotokoll zur Überprüfung des Scroll-Status
+    console.log(`Scroll-Position: ${$(window).scrollTop()} + $(window).height(): ${$(window).height()} = $(document).height(): ${$(document).height()}`);
+
+    // Prüfen, ob der Benutzer das Ende der Seite erreicht hat
+    if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+      loadMoreNews();  // Mehr News laden
+    }
+  });
+
+  // Initial News Laden
+  loadMoreNews();
+});
+
 </script>
+
+{% endblock %}

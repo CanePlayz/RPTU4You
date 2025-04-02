@@ -7,9 +7,9 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
-from datetime import datetime
 from django.utils import timezone 
 from django.db import models
+from django.core.paginator import Paginator
 import json
 from ..forms import PreferencesForm, UserCreationForm2
 from ..models import News,CalendarEvent,User 
@@ -20,32 +20,55 @@ from django.contrib.auth import update_session_auth_hash
 def news_view(request):
     now = timezone.now()  # Aktuelle Zeit mit Zeitzone
 
-    if request.user.is_authenticated:
-        # Eigene Termine des Benutzers
-        user_events = CalendarEvent.objects.filter(
-            start__gte=now,
-            user=request.user
-        )
-        # Globale Termine
-        global_events = CalendarEvent.objects.filter(
-            start__gte=now,
-            is_global=True
-        )
-        # Kombiniere beide Querysets und sortiere, nimm die ersten 3
-        upcoming_events = (user_events | global_events).distinct().order_by('start')[:3]
+    # News abrufen (neueste zuerst)
+    news_articles = News.objects.all().order_by("-erstellungsdatum")
 
+    if request.user.is_authenticated:
+        # Eigene und globale Termine abrufen
+        user_events = CalendarEvent.objects.filter(start__gte=now, user=request.user)
+        global_events = CalendarEvent.objects.filter(start__gte=now, is_global=True)
+        upcoming_events = (user_events | global_events).distinct().order_by('start')[:3]
     else:
-        # Nicht angemeldete Benutzer: Nur globale Termine
-        upcoming_events = CalendarEvent.objects.filter(
-            start__gte=now,  # Nur zukünftige Termine
-            is_global=True   # Nur globale Termine
-        ).order_by('start')[:3]
+        # Nur globale Termine für nicht angemeldete Benutzer
+        upcoming_events = CalendarEvent.objects.filter(start__gte=now, is_global=True).order_by('start')[:3]
 
     context = {
-        'upcoming_events': upcoming_events
+        'upcoming_events': upcoming_events,
+        'news_articles': news_articles  # Füge die News zur Template-Variable hinzu
     }
     return render(request, "news/News.html", context)
 
+def paginated_news(request):
+    # Hole die Seite aus den GET-Parametern
+    page = request.GET.get('page', 1)
+
+    # Lade alle News und paginiere sie
+    news_list = News.objects.all().order_by("-erstellungsdatum")
+    paginator = Paginator(news_list, 10)  # 10 News pro Seite
+
+    try:
+        news_page = paginator.page(page)
+    except:
+        return JsonResponse({"error": "Invalid page number"}, status=400)
+
+    news_data = [
+        {
+            "id": news.id,
+            "titel": news.titel,
+            "text": news.text,
+            "erstellungsdatum": news.erstellungsdatum.strftime("%d.%m.%Y %H:%M:%S"),
+            "link": news.link,
+            "quelle_typ": news.quelle_typ,  # Annahme, dass Quelle als Typ gespeichert ist
+        }
+        for news in news_page
+    ]
+    
+    return JsonResponse({"news": news_data, "next_page": news_page.has_next()})
+
+
+def news_detail(request, news_id):
+    news_item = get_object_or_404(News, id=news_id)
+    return render(request, 'news/detail.html', {'news': news_item})
 
 def Links(request):
     return render(request, "news/Links.html")
@@ -260,4 +283,3 @@ def delete_event(request, event_id):
         return JsonResponse({"success": True})
     else:
         return JsonResponse({"success": False, "error": "Keine Berechtigung"}, status=403)
-
