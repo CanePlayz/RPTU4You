@@ -8,5 +8,5 @@
 <h2>{{ news.titel }}</h2>
 <p>Erstellt am: {{ news.erstellungsdatum|date:"d.m.Y" }}</p>
 <p>Quelle: {{ news.quelle_typ }}</p>
-<p>{{ news.text }}</p>
+<p>{{ news.text|safe }}</p>
 {% endblock %}

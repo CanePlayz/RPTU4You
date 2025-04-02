@@ -11,23 +11,7 @@
   <!-- Linke Seite: News -->
   <div style="flex: 3;">
     <ul id="news-container">
-      {% for news in news_articles %}
-        <li class="news-item">
-          <h3>{{ news.titel }}</h3>
-          <p>Erstellt am: {{ news.erstellungsdatum|date:"d.m.Y" }}</p>
-
-          {% if news.quelle_typ %}
-            <p>Quelle: {{ news.quelle_typ }}</p>
-          {% else %}
-            <p>Quelle: Keine Quelle</p>
-          {% endif %}
-          
-          <p><a href="{{ news.link }}">Link zur Webseite</a></p>
-
-          <a href="{% url 'news_detail' news.id %}">Weiterlesen</a>
-          <hr>
-        </li>
-      {% endfor %}
+      <!-- News werden hier dynamisch eingefügt -->
     </ul>
   </div>
 
@@ -49,8 +33,9 @@
   </div>
 </div>
 
-<!-- JS für den kleinen Kalender -->
+<!-- JS für Infinite Scroll und Kalender -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.2.0/dist/fullcalendar.min.js"></script>
 <script>
 $(document).ready(function() {
@@ -61,9 +46,9 @@ $(document).ready(function() {
       center: 'title',
       right: 'month'
     },
-    events: '/api/calendar-events/',  // API-Route für Kalender-Events
+    events: '/api/calendar-events/',
     dateClick: function(info) {
-      window.location.href = "{% url 'calendar_page' %}";  // Weiterleitung zur großen Kalenderseite
+      window.location.href = "{% url 'calendar_page' %}";
     },
     locale: 'de',
     height: 250,
@@ -71,32 +56,37 @@ $(document).ready(function() {
     eventLimit: true
   });
 
-  // Infinite Scroll Script für News
-  let currentPage = 1;  // Startpage
-  let loading = false;   // Verhindert mehrfaches Laden
+  // Infinite Scroll für News
+  let currentPage = 0;
+  let loading = false;
+  let hasMore = true;
 
   function loadMoreNews() {
-    if (loading) return;
+    if (loading || !hasMore) return;
     loading = true;
 
-    // Protokollierung zur Fehlerbehebung
-    console.log(`Lade mehr Nachrichten, Seite ${currentPage + 1}`);
+    const nextPage = currentPage + 1;
+    console.log(`Lade Nachrichten für Seite ${nextPage}`);
 
-    fetch(`/api/news/?page=${currentPage + 1}`)
-      .then(response => response.json())
+    fetch(`/api/news/paginated?page=${nextPage}`)
+      .then(response => {
+        console.log("Response Status:", response.status);
+        if (!response.ok) throw new Error(`HTTP Fehler: ${response.status}`);
+        return response.json();
+      })
       .then(data => {
+        console.log("Daten von API:", data);
         const newsContainer = document.getElementById("news-container");
 
-        // Überprüfen, ob Nachrichten vorhanden sind
         if (data.news && data.news.length > 0) {
-          // Neue News zur Liste hinzufügen
           data.news.forEach(article => {
+            console.log("Verarbeite Artikel:", article.titel);
             const newsItem = document.createElement("li");
             newsItem.classList.add("news-item");
             newsItem.innerHTML = `
               <h3>${article.titel}</h3>
               <p>Erstellt am: ${article.erstellungsdatum}</p>
-              <p><strong>Quelle:</strong> ${article.quelle_typ || 'Keine Quelle'}</p>
+              <p>Quelle: ${article.quelle_typ || 'Keine Quelle'}</p>
               <p><a href="${article.link}">Link zur Webseite</a></p>
               <a href="/news/${article.id}">Weiterlesen</a>
               <hr>
@@ -104,12 +94,12 @@ $(document).ready(function() {
             newsContainer.appendChild(newsItem);
           });
 
-          // Wenn es noch eine nächste Seite gibt, die Seite um eins erhöhen
-          if (data.next_page) {
-            currentPage++;
-          }
+          currentPage++;
+          hasMore = data.next_page;
+          console.log(`Neue Seite: ${currentPage}, Noch mehr? ${hasMore}`);
         } else {
           console.log("Keine weiteren Nachrichten vorhanden.");
+          hasMore = false;
         }
 
         loading = false;
@@ -120,21 +110,14 @@ $(document).ready(function() {
       });
   }
 
-  // Scroll Event für Infinite Scroll
   $(window).scroll(function() {
-    // Debugging: Konsolenprotokoll zur Überprüfung des Scroll-Status
-    console.log(`Scroll-Position: ${$(window).scrollTop()} + $(window).height(): ${$(window).height()} = $(document).height(): ${$(document).height()}`);
-
-    // Prüfen, ob der Benutzer das Ende der Seite erreicht hat
     if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
-      loadMoreNews();  // Mehr News laden
+      loadMoreNews();
     }
   });
 
-  // Initial News Laden
-  loadMoreNews();
+  loadMoreNews();  // Initiales Laden
 });
-
 </script>
 
 {% endblock %}

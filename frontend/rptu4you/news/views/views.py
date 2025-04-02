@@ -20,9 +20,6 @@ from django.contrib.auth import update_session_auth_hash
 def news_view(request):
     now = timezone.now()  # Aktuelle Zeit mit Zeitzone
 
-    # News abrufen (neueste zuerst)
-    news_articles = News.objects.all().order_by("-erstellungsdatum")
-
     if request.user.is_authenticated:
         # Eigene und globale Termine abrufen
         user_events = CalendarEvent.objects.filter(start__gte=now, user=request.user)
@@ -34,7 +31,6 @@ def news_view(request):
 
     context = {
         'upcoming_events': upcoming_events,
-        'news_articles': news_articles  # Füge die News zur Template-Variable hinzu
     }
     return render(request, "news/News.html", context)
 
