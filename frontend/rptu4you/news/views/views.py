@@ -12,9 +12,10 @@ from django.utils import timezone
 from django.db import models
 import json
 from ..forms import PreferencesForm, UserCreationForm2
-from ..models import News,CalendarEvent
+from ..models import News,CalendarEvent,User 
 import traceback
-
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 
 def news_view(request):
     now = timezone.now()  # Aktuelle Zeit mit Zeitzone
@@ -95,6 +96,44 @@ def ForYouPage(request):
     else:
         return render(request, "news/ForYouPage.html")
 
+@login_required
+def account_view(request):
+    """
+    Ansicht für den Account-Bereich, wo Benutzer ihr Passwort und ihren Benutzernamen ändern können.
+    """
+    form = PasswordChangeForm(request.user)  # Formular initialisieren
+
+    if request.method == "POST":
+        if "change_password" in request.POST:
+            # Neues Passwort-Formular mit POST-Daten erstellen
+            form = PasswordChangeForm(request.user, request.POST)
+            if form.is_valid():
+                # Formular speichern und Benutzer aktualisieren
+                user = form.save()
+                # Session nach Passwortänderung aktualisieren, damit der Benutzer angemeldet bleibt
+                update_session_auth_hash(request, user)
+                messages.success(request, "Dein Passwort wurde erfolgreich geändert!")
+                return redirect("account")
+            else:
+                messages.error(request, "Bitte korrigiere die Fehler unten.")
+        
+        elif "change_username" in request.POST:
+            # Neuen Benutzernamen aus dem Formular holen
+            new_username = request.POST.get("new_username")
+            if new_username:
+                if User.objects.filter(username=new_username).exists():
+                    messages.error(request, "Dieser Benutzername ist bereits vergeben.")
+                else:
+                    request.user.username = new_username
+                    request.user.save()
+                    messages.success(request, "Dein Benutzername wurde geändert!")
+                return redirect("account")
+    
+    # Rendern der Account-Seite mit dem Formular und dem aktuellen Benutzernamen
+    return render(request, "news/account.html", {
+        "form": form,
+        "username": request.user.username
+    })
 
 @login_required
 def update_preferences(request: HttpRequest) -> HttpResponse:
