@@ -9,7 +9,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 def main():
     scheduler = BlockingScheduler()
 
-    time.sleep(10)
+    time.sleep(15)
 
     rundmail.main()
     pressemitteilungen.main()

@@ -2,12 +2,14 @@ import json
 import os
 from datetime import datetime
 
+from bs4 import BeautifulSoup
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
-from ..models import InterneWebsite, Kategorie, News, Quelle, Rundmail, Standort
+from ..models import *
+from .util import translate
 
 API_KEY = "0jdf3wfjq98w3jdf9w8"
 
@@ -71,7 +73,6 @@ class ReceiveNews(View):
                 defaults={
                     "link": news_entry["link"],
                     "erstellungsdatum": erstellungsdatum,
-                    "text": news_entry["text"],
                     "quelle": quelle,
                     "quelle_typ": news_entry["quelle_typ"],
                 },
@@ -109,5 +110,41 @@ class ReceiveNews(View):
                             name="Studierende"
                         )
                     news_item.kategorien.add(category_object)
+
+            # Deutschen Text speichern
+            if Text.objects.filter(news=news_item, sprache__name="Deutsch").exists():
+                continue
+            else:
+                text = Text(
+                    news=news_item,
+                    sprache=Sprache.objects.get(name="Deutsch"),
+                    text=news_entry["text"],
+                )
+                text.save()
+
+            # Übersetzungen prüfen und ggf. erstellen
+            languages = Sprache.objects.exclude(name="Deutsch")
+            for sprache in languages:
+                lang = sprache.name
+                code = sprache.code
+
+                # Prüfen, ob die Übersetzung bereits existiert
+                text = Text.objects.filter(news=news_item, sprache__name=lang)
+                if text.exists():
+                    # Übersetzung existiert bereits, daher überspringen
+                    continue
+                else:
+                    try:
+                        soup = BeautifulSoup(news_entry["text"], "html.parser")
+                        translate.translate_html(soup, from_lang="de", to_lang=code)
+                        translated_text = str(soup)
+                        text = Text(
+                            news=news_item,
+                            sprache=Sprache.objects.get(name=lang),
+                            text=translated_text,
+                        )
+                        text.save()
+                    except Exception as e:
+                        print(f"Fehler bei der Übersetzung für {lang}: {e}")
 
         return JsonResponse({"status": "success"})

@@ -125,6 +125,7 @@ class News(models.Model):
 
 class Sprache(models.Model):
     name = models.CharField(max_length=10, unique=True)
+    code = models.CharField(max_length=5, null=True)
 
     def __str__(self):
         return self.name
@@ -133,7 +134,7 @@ class Sprache(models.Model):
         verbose_name_plural = "Sprachen"
 
 
-class Texte(models.Model):
+class Text(models.Model):
     news = models.ForeignKey(News, on_delete=models.CASCADE, related_name="texte")
     text = models.TextField()
     sprache = models.ForeignKey(Sprache, on_delete=models.CASCADE)
