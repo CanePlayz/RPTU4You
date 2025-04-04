@@ -1,3 +1,5 @@
+import os
+import tempfile
 import time
 from datetime import datetime
 
@@ -11,8 +13,13 @@ from selenium.webdriver.common.by import By
 
 def setup_driver() -> webdriver.Chrome:
     options = Options()
+
+    """ # options.add_argument("--headless=new")
+    options.add_argument("--start-maximized") """
+
     options.add_argument("--headless=new")
     # options.add_argument("--start-maximized")
+
     options.add_argument("--log-level=3")
     options.add_experimental_option("excludeSwitches", ["enable-logging"])
     options.add_argument("--no-sandbox")
@@ -36,9 +43,9 @@ def unfold_news(driver: webdriver.Chrome) -> None:
             driver.execute_script(
                 "arguments[0].scrollIntoView({block: 'center'});", button
             )
-            time.sleep(1)
+            time.sleep(2)
             button.click()
-            time.sleep(1)
+            time.sleep(2)
 
 
 def create_news_entry(
