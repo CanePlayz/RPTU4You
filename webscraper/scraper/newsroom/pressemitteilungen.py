@@ -1,4 +1,4 @@
-import os
+import time
 from datetime import datetime
 
 import bs4
@@ -6,8 +6,7 @@ import requests
 import scraper.util.frontend_interaction as frontend_interaction
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
 
 
 def setup_driver() -> webdriver.Chrome:
@@ -18,7 +17,6 @@ def setup_driver() -> webdriver.Chrome:
     options.add_experimental_option("excludeSwitches", ["enable-logging"])
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    # service = Service(ChromeDriverManager().install(), log_output=os.devnull)
 
     driver: webdriver.Chrome = webdriver.Chrome(
         options=options,
@@ -28,20 +26,19 @@ def setup_driver() -> webdriver.Chrome:
 
 
 def unfold_news(driver: webdriver.Chrome) -> None:
-    """while True:
-    button = driver.find_element(By.CSS_SELECTOR, ".reload-news-records")
-    classes = button.get_attribute("class")
-    if classes:
-        # Überprüfe, ob der Button noch sichtbar ist
-        if "d-none" in classes:
-            break
-        driver.execute_script(
-            "arguments[0].scrollIntoView({block: 'center'});", button
-        )
-        time.sleep(1)
-        button.click()
-        time.sleep(1)"""
-    pass
+    while True:
+        button = driver.find_element(By.CSS_SELECTOR, ".reload-news-records")
+        classes = button.get_attribute("class")
+        if classes:
+            # Überprüfe, ob der Button noch sichtbar ist
+            if "d-none" in classes:
+                break
+            driver.execute_script(
+                "arguments[0].scrollIntoView({block: 'center'});", button
+            )
+            time.sleep(1)
+            button.click()
+            time.sleep(1)
 
 
 def create_news_entry(
