@@ -485,3 +485,4 @@ $RECYCLE.BIN/
 
 # Custom
 *.ps1
+venv3.12
