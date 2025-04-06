@@ -286,7 +286,7 @@ def delete_event(request, event_id):
 @login_required
 def export_ics(request):
     try:
-        events = CalendarEvent.objects.filter(user=request.user)
+        events = CalendarEvent.objects.filter(user=request.user) | CalendarEvent.objects.filter(is_global=True)
 
         cal = Calendar()
         cal.add("prodid", "-//Mein Kalender//mxm.dk//")
