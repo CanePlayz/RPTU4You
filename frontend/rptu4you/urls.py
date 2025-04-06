@@ -38,4 +38,6 @@ urlpatterns = [
     path("api/create-event/", views.create_event, name="create_event"),
     path("api/delete-event/<int:event_id>/", views.delete_event, name="delete_event"),
     path("account/", views.account_view, name="account"),
+    path("kalender/import/", views.import_ics, name="import_ics"),
+    path("kalender/export/", views.export_ics, name="export_ics"),
 ]

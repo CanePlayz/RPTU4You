@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
@@ -15,7 +15,9 @@ from ..forms import PreferencesForm, UserCreationForm2
 from ..models import News,CalendarEvent,User 
 import traceback
 from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth import update_session_auth_hash
+from icalendar import Calendar
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 def news_view(request):
     now = timezone.now()  # Aktuelle Zeit mit Zeitzone
@@ -279,3 +281,72 @@ def delete_event(request, event_id):
         return JsonResponse({"success": True})
     else:
         return JsonResponse({"success": False, "error": "Keine Berechtigung"}, status=403)
+
+@csrf_protect
+@login_required
+def export_ics(request):
+    try:
+        events = CalendarEvent.objects.filter(user=request.user)
+
+        cal = Calendar()
+        cal.add("prodid", "-//Mein Kalender//mxm.dk//")
+        cal.add("version", "2.0")
+
+        for event in events:
+            from icalendar import Event as IcsEvent
+            ics_event = IcsEvent()
+            ics_event.add("summary", event.title)
+            ics_event.add("dtstart", event.start)
+            if event.end:
+                ics_event.add("dtend", event.end)
+            if event.description:
+                ics_event.add("description", event.description)
+            ics_event.add("uid", f"{event.id}@example.com")
+            ics_event.add("dtstamp", timezone.now())
+            cal.add_component(ics_event)
+
+        ics_content = cal.to_ical()
+        response = HttpResponse(ics_content, content_type="text/calendar")
+        response["Content-Disposition"] = 'attachment; filename="export.ics"'
+        return response
+
+    except Exception as e:
+        messages.error(request, f"Fehler beim Exportieren: {str(e)}")
+        return redirect("calendar_page")
+
+
+@csrf_protect
+@login_required
+def import_ics(request):
+    if request.method == "POST" and request.FILES.get("ics_file"):
+        ics_file = request.FILES["ics_file"]
+        file_content = ics_file.read()
+
+        try:
+            calendar = Calendar.from_ical(file_content)
+            for component in calendar.walk():
+                if component.name == "VEVENT":
+                    title = str(component.get("summary", "Ohne Titel"))
+                    start = component.get("dtstart").dt
+                    end = component.get("dtend")
+                    end = end.dt if end else None
+                    description = str(component.get("description", ""))
+
+                    if isinstance(start, datetime) and not timezone.is_aware(start):
+                        start = timezone.make_aware(start, timezone.get_current_timezone())
+                    if end and isinstance(end, datetime) and not timezone.is_aware(end):
+                        end = timezone.make_aware(end, timezone.get_current_timezone())
+
+                    CalendarEvent.objects.create(
+                        user=request.user,
+                        title=title,
+                        start=start,
+                        end=end,
+                        description=description,
+                    )
+
+            messages.success(request, "ICS-Datei erfolgreich importiert.")
+        except Exception as e:
+            messages.error(request, f"Fehler beim Importieren: {str(e)}")
+
+    return redirect("calendar_page")
