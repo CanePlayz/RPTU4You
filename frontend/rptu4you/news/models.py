@@ -99,7 +99,6 @@ class News(models.Model):
     link = models.URLField()
     titel = models.CharField(max_length=255, unique=True)
     erstellungsdatum = models.DateTimeField()
-    text = models.TextField()
 
     standorte = models.ManyToManyField(Standort, blank=True)
     kategorien = models.ManyToManyField(Kategorie, blank=True)
@@ -124,12 +123,41 @@ class News(models.Model):
         verbose_name_plural = "News"
 
 
+class Sprache(models.Model):
+    name = models.CharField(max_length=10, unique=True)
+    code = models.CharField(max_length=5, null=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "Sprachen"
+
+
+class Text(models.Model):
+    news = models.ForeignKey(News, on_delete=models.CASCADE, related_name="texte")
+    text = models.TextField()
+    sprache = models.ForeignKey(Sprache, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.news.titel} - {self.sprache.name}"
+
+    class Meta:
+        verbose_name_plural = "Texte"
+
+
 class CalendarEvent(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     start = models.DateTimeField()
     end = models.DateTimeField(blank=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="calendar_events", null=True, blank=True)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="calendar_events",
+        null=True,
+        blank=True,
+    )
     is_global = models.BooleanField(default=False)
 
     def __str__(self):

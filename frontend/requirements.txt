@@ -1,3 +1,5 @@
+beautifulsoup4
+deep-translator
 django
 psycopg2-binary
 icalendar
