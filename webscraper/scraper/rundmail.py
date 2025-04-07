@@ -265,7 +265,7 @@ def main():
     news: list[dict] = []
 
     # Einträge im Archiv verarbeiten
-    for archive_entry in archive_entries[:20]:
+    for archive_entry in archive_entries:
         entry: dict | list[dict] = process_archive_entry(archive_entry)
 
         if isinstance(entry, dict):
