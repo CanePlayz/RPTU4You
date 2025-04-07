@@ -1,50 +1,72 @@
 import os
 from datetime import datetime
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
-from datetime import datetime
 from django.utils import timezone 
 from django.db import models
+from django.core.paginator import Paginator
 import json
 from ..forms import PreferencesForm, UserCreationForm2
-from ..models import News,CalendarEvent
+from ..models import News,CalendarEvent,User 
 import traceback
-
+from django.contrib.auth.forms import PasswordChangeForm
+from icalendar import Calendar
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 def news_view(request):
     now = timezone.now()  # Aktuelle Zeit mit Zeitzone
 
     if request.user.is_authenticated:
-        # Eigene Termine des Benutzers
-        user_events = CalendarEvent.objects.filter(
-            start__gte=now,
-            user=request.user
-        )
-        # Globale Termine
-        global_events = CalendarEvent.objects.filter(
-            start__gte=now,
-            is_global=True
-        )
-        # Kombiniere beide Querysets und sortiere, nimm die ersten 3
+        # Eigene und globale Termine abrufen
+        user_events = CalendarEvent.objects.filter(start__gte=now, user=request.user)
+        global_events = CalendarEvent.objects.filter(start__gte=now, is_global=True)
         upcoming_events = (user_events | global_events).distinct().order_by('start')[:3]
-
     else:
-        # Nicht angemeldete Benutzer: Nur globale Termine
-        upcoming_events = CalendarEvent.objects.filter(
-            start__gte=now,  # Nur zukünftige Termine
-            is_global=True   # Nur globale Termine
-        ).order_by('start')[:3]
+        # Nur globale Termine für nicht angemeldete Benutzer
+        upcoming_events = CalendarEvent.objects.filter(start__gte=now, is_global=True).order_by('start')[:3]
 
     context = {
-        'upcoming_events': upcoming_events
+        'upcoming_events': upcoming_events,
     }
     return render(request, "news/News.html", context)
 
+def paginated_news(request):
+    # Hole die Seite aus den GET-Parametern
+    page = request.GET.get('page', 1)
+
+    # Lade alle News und paginiere sie
+    news_list = News.objects.all().order_by("-erstellungsdatum")
+    paginator = Paginator(news_list, 10)  # 10 News pro Seite
+
+    try:
+        news_page = paginator.page(page)
+    except:
+        return JsonResponse({"error": "Invalid page number"}, status=400)
+
+    news_data = [
+        {
+            "id": news.id,
+            "titel": news.titel,
+            "text": news.text,
+            "erstellungsdatum": news.erstellungsdatum.strftime("%d.%m.%Y %H:%M:%S"),
+            "link": news.link,
+            "quelle_typ": news.quelle_typ,  # Annahme, dass Quelle als Typ gespeichert ist
+        }
+        for news in news_page
+    ]
+    
+    return JsonResponse({"news": news_data, "next_page": news_page.has_next()})
+
+
+def news_detail(request, news_id):
+    news_item = get_object_or_404(News, id=news_id)
+    return render(request, 'news/detail.html', {'news': news_item})
 
 def Links(request):
     return render(request, "news/Links.html")
@@ -95,6 +117,44 @@ def ForYouPage(request):
     else:
         return render(request, "news/ForYouPage.html")
 
+@login_required
+def account_view(request):
+    """
+    Ansicht für den Account-Bereich, wo Benutzer ihr Passwort und ihren Benutzernamen ändern können.
+    """
+    form = PasswordChangeForm(request.user)  # Formular initialisieren
+
+    if request.method == "POST":
+        if "change_password" in request.POST:
+            # Neues Passwort-Formular mit POST-Daten erstellen
+            form = PasswordChangeForm(request.user, request.POST)
+            if form.is_valid():
+                # Formular speichern und Benutzer aktualisieren
+                user = form.save()
+                # Session nach Passwortänderung aktualisieren, damit der Benutzer angemeldet bleibt
+                update_session_auth_hash(request, user)
+                messages.success(request, "Dein Passwort wurde erfolgreich geändert!")
+                return redirect("account")
+            else:
+                messages.error(request, "Bitte korrigiere die Fehler unten.")
+        
+        elif "change_username" in request.POST:
+            # Neuen Benutzernamen aus dem Formular holen
+            new_username = request.POST.get("new_username")
+            if new_username:
+                if User.objects.filter(username=new_username).exists():
+                    messages.error(request, "Dieser Benutzername ist bereits vergeben.")
+                else:
+                    request.user.username = new_username
+                    request.user.save()
+                    messages.success(request, "Dein Benutzername wurde geändert!")
+                return redirect("account")
+    
+    # Rendern der Account-Seite mit dem Formular und dem aktuellen Benutzernamen
+    return render(request, "news/account.html", {
+        "form": form,
+        "username": request.user.username
+    })
 
 @login_required
 def update_preferences(request: HttpRequest) -> HttpResponse:
@@ -222,3 +282,71 @@ def delete_event(request, event_id):
     else:
         return JsonResponse({"success": False, "error": "Keine Berechtigung"}, status=403)
 
+@csrf_protect
+@login_required
+def export_ics(request):
+    try:
+        events = CalendarEvent.objects.filter(user=request.user) | CalendarEvent.objects.filter(is_global=True)
+
+        cal = Calendar()
+        cal.add("prodid", "-//Mein Kalender//mxm.dk//")
+        cal.add("version", "2.0")
+
+        for event in events:
+            from icalendar import Event as IcsEvent
+            ics_event = IcsEvent()
+            ics_event.add("summary", event.title)
+            ics_event.add("dtstart", event.start)
+            if event.end:
+                ics_event.add("dtend", event.end)
+            if event.description:
+                ics_event.add("description", event.description)
+            ics_event.add("uid", f"{event.id}@example.com")
+            ics_event.add("dtstamp", timezone.now())
+            cal.add_component(ics_event)
+
+        ics_content = cal.to_ical()
+        response = HttpResponse(ics_content, content_type="text/calendar")
+        response["Content-Disposition"] = 'attachment; filename="export.ics"'
+        return response
+
+    except Exception as e:
+        messages.error(request, f"Fehler beim Exportieren: {str(e)}")
+        return redirect("calendar_page")
+
+
+@csrf_protect
+@login_required
+def import_ics(request):
+    if request.method == "POST" and request.FILES.get("ics_file"):
+        ics_file = request.FILES["ics_file"]
+        file_content = ics_file.read()
+
+        try:
+            calendar = Calendar.from_ical(file_content)
+            for component in calendar.walk():
+                if component.name == "VEVENT":
+                    title = str(component.get("summary", "Ohne Titel"))
+                    start = component.get("dtstart").dt
+                    end = component.get("dtend")
+                    end = end.dt if end else None
+                    description = str(component.get("description", ""))
+
+                    if isinstance(start, datetime) and not timezone.is_aware(start):
+                        start = timezone.make_aware(start, timezone.get_current_timezone())
+                    if end and isinstance(end, datetime) and not timezone.is_aware(end):
+                        end = timezone.make_aware(end, timezone.get_current_timezone())
+
+                    CalendarEvent.objects.create(
+                        user=request.user,
+                        title=title,
+                        start=start,
+                        end=end,
+                        description=description,
+                    )
+
+            messages.success(request, "ICS-Datei erfolgreich importiert.")
+        except Exception as e:
+            messages.error(request, f"Fehler beim Importieren: {str(e)}")
+
+    return redirect("calendar_page")
