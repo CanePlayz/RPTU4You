@@ -6,20 +6,29 @@ RUN apt-get update && apt-get install -y \
     unzip \
     curl \
     gnupg \
+    fonts-liberation \
+    libxss1 \
+    libappindicator3-1 \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libnspr4 \
+    libnss3 \
+    libu2f-udev \
+    libgbm1 \
+    xdg-utils \
     && apt-get clean
 
-# Installiere Google Chrome
-RUN curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get update && apt-get install -y google-chrome-stable
-
-RUN google-chrome --version
+# Chrome installieren
+RUN wget -q "https://storage.googleapis.com/chrome-for-testing-public/134.0.6998.35/linux64/chrome-linux64.zip" && \
+    unzip chrome-linux64.zip && \
+    mv chrome-linux64 /opt/chrome && \
+    ln -s /opt/chrome/chrome /usr/bin/google-chrome && \
+    rm chrome-linux64.zip
 
 # Installiere den passenden Chrome WebDriver
-RUN wget -q "https://storage.googleapis.com/chrome-for-testing-public/136.0.7091.0/linux64/chromedriver-linux64.zip" && \
+RUN wget -q "https://storage.googleapis.com/chrome-for-testing-public/134.0.6998.35/linux64/chromedriver-linux64.zip" && \
     unzip chromedriver-linux64.zip -d /usr/local/bin/ && \
     rm chromedriver-linux64.zip
-
 
 WORKDIR /webscraper
 

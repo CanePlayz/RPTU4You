@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Account{% endblock %}
+
+{% block content %}
+<h2>Account</h2>
+<p>Angemeldet als: {{ username }}</p>
+
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<h3>Passwort ändern</h3>
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="change_password" value="1">
+    {{ form.as_p }}
+    <button type="submit">Passwort ändern</button>
+</form>
+
+<h3>Benutzername ändern</h3>
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="change_username" value="1">
+    <input type="text" name="new_username" value="{{ username }}" required>
+    <button type="submit">Benutzername ändern</button>
+</form>
+
+<a href="{% url 'News' %}">Zurück zur Startseite</a>
+{% endblock %}

@@ -29,7 +29,6 @@
     padding: 4px;
   }
 
-  /* Pop-up Styling */
   #eventPopup {
     display: none;
     position: absolute;
@@ -41,133 +40,155 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
   }
+
+  .calendar-buttons {
+    margin-bottom: 10px;
+  }
+
+  .calendar-buttons button,
+  .calendar-buttons input[type="file"] {
+    margin-right: 10px;
+  }
+
+  .hidden-upload {
+    display: none;
+  }
 </style>
 {% endblock %}
 
 {% block content %}
-  <h2>Dein Kalender</h2>
+<h2>Dein Kalender</h2>
+
+<div class="calendar-buttons">
   <button id="openPopup">Neuen Termin erstellen</button>
-  <div id="calendar"></div>
+  <button onclick="document.getElementById('icsUpload').click();">ICS-Datei importieren</button>
+  <form id="icsForm" action="{% url 'import_ics' %}" method="post" enctype="multipart/form-data" style="display: inline;">
+    {% csrf_token %}
+    <input type="file" id="icsUpload" name="ics_file" accept=".ics" class="hidden-upload" onchange="document.getElementById('icsForm').submit();">
+  </form>
+  <a href="{% url 'export_ics' %}"><button>ICS-Datei exportieren</button></a>
+</div>
 
-  <!-- Pop-up für Event-Erstellung -->
-  <div id="eventPopup">
-    <h3>Neuer Termin</h3>
-    <form id="eventForm">
-      <input type="text" id="eventTitle" placeholder="Event Titel" required>
-      <input type="datetime-local" id="eventStart" required>
-      <input type="datetime-local" id="eventEnd">
-      <textarea id="eventDescription" placeholder="Beschreibung"></textarea>
-      <button type="submit">Hinzufügen</button>
-      <button type="button" id="closePopup">Schließen</button>
-    </form>
-  </div>
+<div id="calendar"></div>
 
-  <!-- CSRF-Token versteckt für JS abrufbar machen -->
-  <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
+<!-- Event-Pop-up -->
+<div id="eventPopup">
+  <h3>Neuer Termin</h3>
+  <form id="eventForm">
+    <input type="text" id="eventTitle" placeholder="Event Titel" required>
+    <input type="datetime-local" id="eventStart" required>
+    <input type="datetime-local" id="eventEnd">
+    <textarea id="eventDescription" placeholder="Beschreibung"></textarea>
+    <button type="submit">Hinzufügen</button>
+    <button type="button" id="closePopup">Schließen</button>
+  </form>
+</div>
 
-  <!-- FullCalendar Styles und Scripts -->
-  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      var calendarEl = document.getElementById("calendar");
-      var csrfToken = document.getElementById("csrfToken").value;
-      var eventPopup = document.getElementById("eventPopup");
-      var openPopupBtn = document.getElementById("openPopup");
-      var closePopupBtn = document.getElementById("closePopup");
-      var currentUserId = "{{ request.user.id }}";
+<input type="hidden" id="csrfToken" value="{{ csrf_token }}">
 
-      var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: "dayGridMonth",
-        headerToolbar: {
-          left: "prev,next today",
-          center: "title",
-          right: "dayGridMonth,timeGridWeek,timeGridDay",
-        },
-        locale: "de",
-        editable: false,
-        events: "/api/calendar-events/",
-        eventDidMount: function (info) {
-          var description = info.event.extendedProps.description || "";
-          var titleEl = info.el.querySelector(".fc-event-title");
-          if (titleEl) {
-            titleEl.innerHTML = `${info.event.title}<br><span class="event-description">${description}</span>`;
-          }
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var calendarEl = document.getElementById("calendar");
+    var csrfToken = document.getElementById("csrfToken").value;
+    var eventPopup = document.getElementById("eventPopup");
+    var openPopupBtn = document.getElementById("openPopup");
+    var closePopupBtn = document.getElementById("closePopup");
+    var currentUserId = "{{ request.user.id }}";
 
-          if (info.event.extendedProps.user_id == currentUserId) {
-            var deleteBtn = document.createElement("span");
-            deleteBtn.innerHTML = "❌";
-            deleteBtn.style.cursor = "pointer";
-            deleteBtn.style.marginLeft = "5px";
-            deleteBtn.style.color = "red";
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: "dayGridMonth",
+      headerToolbar: {
+        left: "prev,next today",
+        center: "title",
+        right: "dayGridMonth,timeGridWeek,timeGridDay",
+      },
+      locale: "de",
+      editable: false,
+      events: "/api/calendar-events/",
+      eventDidMount: function (info) {
+        var description = info.event.extendedProps.description || "";
+        var titleEl = info.el.querySelector(".fc-event-title");
+        if (titleEl) {
+          titleEl.innerHTML = `${info.event.title}<br><span class="event-description">${description}</span>`;
+        }
 
-            deleteBtn.onclick = function () {
-              if (confirm("Willst du dieses Event wirklich löschen?")) {
-                fetch(`/api/delete-event/${info.event.id}/`, {
-                  method: "POST",
-                  headers: {
-                    "X-CSRFToken": csrfToken,
-                    "Content-Type": "application/json",
-                  },
-                })
-                .then(response => response.json())
-                .then(data => {
-                  if (data.success) {
-                    calendar.getEventById(info.event.id).remove();
-                    location.reload();
-                  } else {
-                    alert("Löschen fehlgeschlagen: " + data.error);
-                  }
-                })
-                .catch(error => console.error("Fehler:", error));
-              }
-            };
-            info.el.appendChild(deleteBtn);
-          }
-        },
-      });
-      calendar.render();
+        if (info.event.extendedProps.user_id == currentUserId) {
+          var deleteBtn = document.createElement("span");
+          deleteBtn.innerHTML = "❌";
+          deleteBtn.style.cursor = "pointer";
+          deleteBtn.style.marginLeft = "5px";
+          deleteBtn.style.color = "red";
 
-      openPopupBtn.addEventListener("click", function () {
-        eventPopup.style.display = "block";
-      });
-
-      closePopupBtn.addEventListener("click", function () {
-        eventPopup.style.display = "none";
-      });
-
-      document.getElementById("eventForm").addEventListener("submit", function(event) {
-        event.preventDefault();
-        var title = document.getElementById("eventTitle").value;
-        var start = document.getElementById("eventStart").value;
-        var end = document.getElementById("eventEnd").value || null;
-        var description = document.getElementById("eventDescription").value;
-
-        fetch("/api/create-event/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrfToken
-          },
-          body: JSON.stringify({
-            title: title,
-            start: start,
-            end: end,
-            description: description
-          })
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.message) {
-            alert("Event hinzugefügt!");
-            calendar.refetchEvents();
-            eventPopup.style.display = "none";
-          } else {
-            alert("Fehler: " + data.error);
-          }
-        })
-        .catch(error => console.error("Fehler beim Erstellen des Events:", error));
-      });
+          deleteBtn.onclick = function () {
+            if (confirm("Willst du dieses Event wirklich löschen?")) {
+              fetch(`/api/delete-event/${info.event.id}/`, {
+                method: "POST",
+                headers: {
+                  "X-CSRFToken": csrfToken,
+                  "Content-Type": "application/json",
+                },
+              })
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  calendar.getEventById(info.event.id).remove();
+                  location.reload();
+                } else {
+                  alert("Löschen fehlgeschlagen: " + data.error);
+                }
+              })
+              .catch(error => console.error("Fehler:", error));
+            }
+          };
+          info.el.appendChild(deleteBtn);
+        }
+      },
     });
-  </script>
+
+    calendar.render();
+
+    openPopupBtn.addEventListener("click", function () {
+      eventPopup.style.display = "block";
+    });
+
+    closePopupBtn.addEventListener("click", function () {
+      eventPopup.style.display = "none";
+    });
+
+    document.getElementById("eventForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      var title = document.getElementById("eventTitle").value;
+      var start = document.getElementById("eventStart").value;
+      var end = document.getElementById("eventEnd").value || null;
+      var description = document.getElementById("eventDescription").value;
+
+      fetch("/api/create-event/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken
+        },
+        body: JSON.stringify({
+          title: title,
+          start: start,
+          end: end,
+          description: description
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
+          alert("Event hinzugefügt!");
+          calendar.refetchEvents();
+          eventPopup.style.display = "none";
+        } else {
+          alert("Fehler: " + data.error);
+        }
+      })
+      .catch(error => console.error("Fehler beim Erstellen des Events:", error));
+    });
+  });
+</script>
 {% endblock %}
