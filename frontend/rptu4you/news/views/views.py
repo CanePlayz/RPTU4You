@@ -1,23 +1,27 @@
+import json
 import os
+import traceback
 from datetime import datetime
+
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth import (authenticate, login, logout,
+                                 update_session_auth_hash)
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from django.core.paginator import Paginator
+from django.db import models
 from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
-from django.utils import timezone 
-from django.db import models
-from django.core.paginator import Paginator
-import json
-from ..forms import PreferencesForm, UserCreationForm2
-from ..models import News,CalendarEvent,User 
-import traceback
-from django.contrib.auth.forms import PasswordChangeForm
 from icalendar import Calendar
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
+
+from ..forms import PreferencesForm, UserCreationForm2
+from ..models import CalendarEvent, News, User
+
 
 def news_view(request):
     now = timezone.now()  # Aktuelle Zeit mit Zeitzone
@@ -26,19 +30,22 @@ def news_view(request):
         # Eigene und globale Termine abrufen
         user_events = CalendarEvent.objects.filter(start__gte=now, user=request.user)
         global_events = CalendarEvent.objects.filter(start__gte=now, is_global=True)
-        upcoming_events = (user_events | global_events).distinct().order_by('start')[:3]
+        upcoming_events = (user_events | global_events).distinct().order_by("start")[:3]
     else:
         # Nur globale Termine für nicht angemeldete Benutzer
-        upcoming_events = CalendarEvent.objects.filter(start__gte=now, is_global=True).order_by('start')[:3]
+        upcoming_events = CalendarEvent.objects.filter(
+            start__gte=now, is_global=True
+        ).order_by("start")[:3]
 
     context = {
-        'upcoming_events': upcoming_events,
+        "upcoming_events": upcoming_events,
     }
     return render(request, "news/News.html", context)
 
+
 def paginated_news(request):
     # Hole die Seite aus den GET-Parametern
-    page = request.GET.get('page', 1)
+    page = request.GET.get("page", 1)
 
     # Lade alle News und paginiere sie
     news_list = News.objects.all().order_by("-erstellungsdatum")
@@ -60,13 +67,14 @@ def paginated_news(request):
         }
         for news in news_page
     ]
-    
+
     return JsonResponse({"news": news_data, "next_page": news_page.has_next()})
 
 
 def news_detail(request, news_id):
     news_item = get_object_or_404(News, id=news_id)
-    return render(request, 'news/detail.html', {'news': news_item})
+    return render(request, "news/detail.html", {"news": news_item})
+
 
 def Links(request):
     return render(request, "news/Links.html")
@@ -75,9 +83,11 @@ def Links(request):
 def login_view(request):
     # Hole next_url aus GET oder POST, je nach Kontext
     if request.method == "POST":
-        next_url = request.POST.get("next", "ForYouPage")  # Priorisiere POST nach Formularabsendung
+        next_url = request.POST.get(
+            "next", "ForYouPage"
+        )  # Priorisiere POST nach Formularabsendung
     else:
-        next_url = request.GET.get("next", "ForYouPage")   # Initialer GET-Request
+        next_url = request.GET.get("next", "ForYouPage")  # Initialer GET-Request
 
     if request.method == "POST":
         username = request.POST["username"]
@@ -117,6 +127,7 @@ def ForYouPage(request):
     else:
         return render(request, "news/ForYouPage.html")
 
+
 @login_required
 def account_view(request):
     """
@@ -137,7 +148,7 @@ def account_view(request):
                 return redirect("account")
             else:
                 messages.error(request, "Bitte korrigiere die Fehler unten.")
-        
+
         elif "change_username" in request.POST:
             # Neuen Benutzernamen aus dem Formular holen
             new_username = request.POST.get("new_username")
@@ -149,12 +160,12 @@ def account_view(request):
                     request.user.save()
                     messages.success(request, "Dein Benutzername wurde geändert!")
                 return redirect("account")
-    
+
     # Rendern der Account-Seite mit dem Formular und dem aktuellen Benutzernamen
-    return render(request, "news/account.html", {
-        "form": form,
-        "username": request.user.username
-    })
+    return render(
+        request, "news/account.html", {"form": form, "username": request.user.username}
+    )
+
 
 @login_required
 def update_preferences(request: HttpRequest) -> HttpResponse:
@@ -187,14 +198,22 @@ def request_date(request):
 # Alternative mit Nachricht für nicht angemeldete Benutzer
 from django.contrib.auth.decorators import login_required
 
+
 @login_required
 def calendar_page(request):
-    return render(request, "news/calendar.html", {"is_authenticated": request.user.is_authenticated})
+    return render(
+        request,
+        "news/calendar.html",
+        {"is_authenticated": request.user.is_authenticated},
+    )
+
 
 # API-Endpunkt für Kalender-Events
 def calendar_events(request):
     if request.user.is_authenticated:
-        events = CalendarEvent.objects.filter(user=request.user) | CalendarEvent.objects.filter(is_global=True)
+        events = CalendarEvent.objects.filter(
+            user=request.user
+        ) | CalendarEvent.objects.filter(is_global=True)
     else:
         events = CalendarEvent.objects.filter(is_global=True)
 
@@ -205,13 +224,12 @@ def calendar_events(request):
             "start": event.start.isoformat(),
             "end": event.end.isoformat() if event.end else None,
             "description": event.description,
-            "user_id": event.user.id if event.user else None
+            "user_id": event.user.id if event.user else None,
         }
         for event in events
     ]
-    
-    return JsonResponse(event_data, safe=False)
 
+    return JsonResponse(event_data, safe=False)
 
 
 @csrf_protect  # CSRF-Schutz aktivieren
@@ -226,39 +244,61 @@ def create_event(request):
             description = data.get("description", "")
 
             if not title or not start:
-                return JsonResponse({"error": "Titel und Startzeit sind erforderlich."}, status=400)
+                return JsonResponse(
+                    {"error": "Titel und Startzeit sind erforderlich."}, status=400
+                )
 
             try:
                 start_datetime = datetime.fromisoformat(start)
-                start_datetime = timezone.make_aware(start_datetime, timezone.get_current_timezone())
+                start_datetime = timezone.make_aware(
+                    start_datetime, timezone.get_current_timezone()
+                )
             except ValueError:
-                return JsonResponse({"error": "Startzeit hat ein ungültiges Format."}, status=400)
+                return JsonResponse(
+                    {"error": "Startzeit hat ein ungültiges Format."}, status=400
+                )
 
             now = timezone.now()
 
             if start_datetime < now:
-                return JsonResponse({"error": "Der Startzeitpunkt darf nicht in der Vergangenheit liegen."}, status=400)
+                return JsonResponse(
+                    {
+                        "error": "Der Startzeitpunkt darf nicht in der Vergangenheit liegen."
+                    },
+                    status=400,
+                )
 
             end_datetime = None
             if end:
                 try:
                     end_datetime = datetime.fromisoformat(end)
-                    end_datetime = timezone.make_aware(end_datetime, timezone.get_current_timezone())
+                    end_datetime = timezone.make_aware(
+                        end_datetime, timezone.get_current_timezone()
+                    )
                 except ValueError:
-                    return JsonResponse({"error": "Endzeit hat ein ungültiges Format."}, status=400)
+                    return JsonResponse(
+                        {"error": "Endzeit hat ein ungültiges Format."}, status=400
+                    )
 
                 if end_datetime < start_datetime:
-                    return JsonResponse({"error": "Der Endzeitpunkt darf nicht vor dem Startzeitpunkt liegen."}, status=400)
+                    return JsonResponse(
+                        {
+                            "error": "Der Endzeitpunkt darf nicht vor dem Startzeitpunkt liegen."
+                        },
+                        status=400,
+                    )
 
             event = CalendarEvent.objects.create(
                 user=request.user,
                 title=title,
                 start=start_datetime,
                 end=end_datetime if end_datetime else None,
-                description=description
+                description=description,
             )
 
-            return JsonResponse({"message": "Event erfolgreich gespeichert."}, status=201)
+            return JsonResponse(
+                {"message": "Event erfolgreich gespeichert."}, status=201
+            )
 
         except json.JSONDecodeError:
             return JsonResponse({"error": "Ungültige JSON-Daten."}, status=400)
@@ -270,6 +310,7 @@ def create_event(request):
 
     return JsonResponse({"error": "Methode nicht erlaubt."}, status=405)
 
+
 @login_required
 @require_POST  # Erlaubt nur POST-Anfragen
 @csrf_protect  # Stellt sicher, dass CSRF-Token geprüft wird
@@ -280,13 +321,18 @@ def delete_event(request, event_id):
         event.delete()
         return JsonResponse({"success": True})
     else:
-        return JsonResponse({"success": False, "error": "Keine Berechtigung"}, status=403)
+        return JsonResponse(
+            {"success": False, "error": "Keine Berechtigung"}, status=403
+        )
+
 
 @csrf_protect
 @login_required
 def export_ics(request):
     try:
-        events = CalendarEvent.objects.filter(user=request.user) | CalendarEvent.objects.filter(is_global=True)
+        events = CalendarEvent.objects.filter(
+            user=request.user
+        ) | CalendarEvent.objects.filter(is_global=True)
 
         cal = Calendar()
         cal.add("prodid", "-//Mein Kalender//mxm.dk//")
@@ -294,6 +340,7 @@ def export_ics(request):
 
         for event in events:
             from icalendar import Event as IcsEvent
+
             ics_event = IcsEvent()
             ics_event.add("summary", event.title)
             ics_event.add("dtstart", event.start)
@@ -333,7 +380,9 @@ def import_ics(request):
                     description = str(component.get("description", ""))
 
                     if isinstance(start, datetime) and not timezone.is_aware(start):
-                        start = timezone.make_aware(start, timezone.get_current_timezone())
+                        start = timezone.make_aware(
+                            start, timezone.get_current_timezone()
+                        )
                     if end and isinstance(end, datetime) and not timezone.is_aware(end):
                         end = timezone.make_aware(end, timezone.get_current_timezone())
 

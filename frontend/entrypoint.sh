@@ -12,5 +12,8 @@ python create_superuser.py
 
 echo ""
 
-echo "Django starten..."
+echo "Translator starten..."
+python manage.py start_translator &
+
+echo "Server starten..."
 python manage.py runserver 0.0.0.0:8000

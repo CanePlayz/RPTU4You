@@ -117,34 +117,10 @@ class ReceiveNews(View):
             else:
                 text = Text(
                     news=news_item,
-                    sprache=Sprache.objects.get(name="Deutsch"),
                     text=news_entry["text"],
+                    titel=news_entry["titel"],
+                    sprache=Sprache.objects.get(name="Deutsch"),
                 )
                 text.save()
-
-            # Übersetzungen prüfen und ggf. erstellen
-            languages = Sprache.objects.exclude(name="Deutsch")
-            for sprache in languages:
-                lang = sprache.name
-                code = sprache.code
-
-                # Prüfen, ob die Übersetzung bereits existiert
-                text = Text.objects.filter(news=news_item, sprache__name=lang)
-                if text.exists():
-                    # Übersetzung existiert bereits, daher überspringen
-                    continue
-                else:
-                    try:
-                        soup = BeautifulSoup(news_entry["text"], "html.parser")
-                        translate.translate_html(soup, from_lang="de", to_lang=code)
-                        translated_text = str(soup)
-                        text = Text(
-                            news=news_item,
-                            sprache=Sprache.objects.get(name=lang),
-                            text=translated_text,
-                        )
-                        text.save()
-                    except Exception as e:
-                        print(f"Fehler bei der Übersetzung für {lang}: {e}")
 
         return JsonResponse({"status": "success"})
