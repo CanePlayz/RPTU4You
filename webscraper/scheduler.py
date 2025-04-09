@@ -16,7 +16,7 @@ def main():
 
     scheduler.add_job(
         func=rundmail.main,
-        trigger=IntervalTrigger(minutes=2),
+        trigger=IntervalTrigger(minutes=20),
         id="rundmail_job",
         name="Rundmail-Scraper",
         replace_existing=True,
@@ -24,7 +24,7 @@ def main():
 
     scheduler.add_job(
         func=pressemitteilungen.main,
-        trigger=IntervalTrigger(minutes=2),
+        trigger=IntervalTrigger(minutes=20),
         id="newsroom_job",
         name="Newsroom-Scraper",
         replace_existing=True,

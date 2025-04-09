@@ -125,7 +125,7 @@ class News(models.Model):
 
 class Sprache(models.Model):
     name = models.CharField(max_length=10, unique=True)
-    code = models.CharField(max_length=5, null=True)
+    code = models.CharField(max_length=5)
 
     def __str__(self):
         return self.name
@@ -137,6 +137,7 @@ class Sprache(models.Model):
 class Text(models.Model):
     news = models.ForeignKey(News, on_delete=models.CASCADE, related_name="texte")
     text = models.TextField()
+    titel = models.CharField(max_length=255)
     sprache = models.ForeignKey(Sprache, on_delete=models.CASCADE)
 
     def __str__(self):
