@@ -61,6 +61,15 @@ class ReceiveNews(View):
                     },
                 )
 
+            if news_entry["quelle_typ"] == "Fachschaft":
+                quelle, _ = Fachschaft.objects.get_or_create(
+                    name=news_entry["quelle_name"],
+                    defaults={
+                        "name": news_entry["quelle_name"],
+                        "url": "https://wiwi.rptu.de/aktuelles/aktuelles-und-mitteilungen",
+                    },
+                )
+
             # Erstellungsdatum parsen
             erstellungsdatum: datetime = datetime.strptime(
                 news_entry["erstellungsdatum"], "%d.%m.%Y %H:%M:%S"
