@@ -57,16 +57,6 @@ class Standort(models.Model):
         verbose_name_plural = "Standorte"
 
 
-""" def save(self, *args, **kwargs):
-    # Standardwert für standorte nur bei neuen Nutzern setzen
-    if not self.pk:  # Wenn der Nutzer neu erstellt wird
-        super().save(*args, **kwargs)  # Erst speichern, um eine ID zu bekommen
-        kaiserslautern = Standort.objects.get(name="Kaiserslautern")
-        self.standorte.add(kaiserslautern)  # Kaiserslautern hinzufügen
-    else:
-        super().save(*args, **kwargs)  # Bei Updates nur speichern """
-
-
 class Kategorie(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
@@ -83,7 +73,7 @@ class User(AbstractUser):
         ("Angestellter", "Angestellter"),
     ]
 
-    rolle = models.CharField(max_length=20, choices=rollen)
+    rolle = models.CharField(max_length=20, choices=rollen, blank=True)
     standorte = models.ManyToManyField(Standort, blank=True)
     fachschaften = models.ManyToManyField(Fachschaft, blank=True)
     präferenzen = models.ManyToManyField(Kategorie, blank=True)
@@ -97,7 +87,7 @@ class User(AbstractUser):
 
 class News(models.Model):
     link = models.URLField()
-    titel = models.CharField(max_length=255, unique=True)
+    titel = models.CharField(max_length=255)
     erstellungsdatum = models.DateTimeField()
 
     standorte = models.ManyToManyField(Standort, blank=True)
@@ -121,11 +111,17 @@ class News(models.Model):
 
     class Meta:
         verbose_name_plural = "News"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["titel", "erstellungsdatum"],
+                name="unique_news_titel_erstellungsdatum",
+            )
+        ]
 
 
 class Sprache(models.Model):
     name = models.CharField(max_length=10, unique=True)
-    code = models.CharField(max_length=5)
+    code = models.CharField(max_length=5, unique=True)
 
     def __str__(self):
         return self.name
@@ -138,13 +134,18 @@ class Text(models.Model):
     news = models.ForeignKey(News, on_delete=models.CASCADE, related_name="texte")
     text = models.TextField()
     titel = models.CharField(max_length=255)
-    sprache = models.ForeignKey(Sprache, on_delete=models.CASCADE)
+    sprache = models.ForeignKey(Sprache, on_delete=models.PROTECT)
 
     def __str__(self):
         return f"{self.news.titel} - {self.sprache.name}"
 
     class Meta:
         verbose_name_plural = "Texte"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["news", "sprache"], name="unique_news_sprache"
+            )
+        ]
 
 
 class CalendarEvent(models.Model):
