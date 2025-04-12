@@ -1,3 +1,4 @@
+import gzip
 import json
 import os
 from datetime import datetime
@@ -36,10 +37,12 @@ def request_date():
 def send_data(data, type):
     api_key = os.getenv("API_KEY")
     json_data = json.dumps(data, default=datetime_serializer)
+    compressed_data = gzip.compress(json_data.encode("utf-8"))
     response = requests.post(
         "http://django:8000/api/news",
-        data=json_data,
+        data=compressed_data,
         headers={
+            "Content-Encoding": "gzip",
             "Content-Type": "application/json; charset=utf-8",
             "API-Key": api_key,
         },

@@ -1,4 +1,7 @@
+import json
 from datetime import datetime
+from typing import cast
+from zoneinfo import ZoneInfo
 
 import bs4
 import requests
@@ -10,11 +13,11 @@ def fetch_rundmail_archive() -> str:
     return requests.get("https://rundmail.rptu.de/archive").text
 
 
-def parse_rundmail_archive(html: str) -> list[bs4.element.Tag]:
+def parse_rundmail_archive(html: str) -> bs4.ResultSet[bs4.element.Tag]:
     # Archiv-Seite in BeautifulSoup-Objekt umwandeln
     soup: bs4.BeautifulSoup = bs4.BeautifulSoup(html, "html.parser")
     # Alle Einträge im Archiv extrahieren
-    return soup.find_all(name="tr")[1:]  # type: ignore
+    return cast(bs4.ResultSet[bs4.element.Tag], soup.find_all(name="tr")[1:])
 
 
 def remove_fixes(subject: str) -> str:
@@ -30,15 +33,6 @@ def remove_fixes(subject: str) -> str:
         subject_processed = subject_processed.replace(r, "")
 
     return subject_processed
-
-
-def clean_text(text: str) -> str:
-    # Unicode-Zeichen für Zeilenumbrüche entfernen
-    text_processed: str = text.replace("\\r\\n", "<br>")
-    # Escaping von Anführungszeichen entfernen
-    text_processed: str = text.replace('\\"', '"')
-
-    return text_processed
 
 
 def extract_locations(subject: str) -> list:
@@ -114,10 +108,11 @@ def process_archive_entry(archive_entry: bs4.element.Tag) -> dict | list[dict]:
 
     if isinstance(archive_entry_soup, bs4.element.Tag):
         # Datum extrahieren
-        date = archive_entry.find(name="td", class_="created_at")
-        if isinstance(date, bs4.element.Tag):
-            date_text: str = date.text.strip()
+        date_element = archive_entry.find(name="td", class_="created_at")
+        if isinstance(date_element, bs4.element.Tag):
+            date_text: str = date_element.text.strip()
             date_object: datetime = datetime.strptime(date_text, "%d.%m.%Y %H:%M:%S")
+            date: datetime = date_object.replace(tzinfo=ZoneInfo("Europe/Berlin"))
 
         # Subject extrahieren
         subject = archive_entry.find(name="td", class_="subject")
@@ -129,20 +124,20 @@ def process_archive_entry(archive_entry: bs4.element.Tag) -> dict | list[dict]:
         return process_sammel_rundmail(
             archive_entry_soup,
             complete_link,
-            date_object,
+            date,
         )
     elif subject_clean.startswith("Stellenangebote Sammel-Rundmail"):
         return process_sammel_rundmail(
             archive_entry_soup,
             complete_link,
-            date_object,
+            date,
             stellenangebote=True,
         )
     else:
         return process_rundmail(
             archive_entry_soup,
             complete_link,
-            date_object,
+            date,
             subject_clean,
         )
 
@@ -163,9 +158,10 @@ def process_sammel_rundmail(
 
     # Kategorien extrahieren
     if isinstance(messages_overview, bs4.element.Tag):
-        categories_in_archive_entry: bs4.ResultSet[bs4.element.Tag] = (
-            messages_overview.find_all(name="h5", class_="mt-4")
-        )  # type: ignore
+        categories_in_archive_entry: bs4.ResultSet[bs4.element.Tag] = cast(
+            bs4.ResultSet[bs4.element.Tag],
+            messages_overview.find_all(name="h5", class_="mt-4"),
+        )
 
     # Einträge in allen Kategorien verarbeiten
     for category in categories_in_archive_entry:
@@ -173,9 +169,10 @@ def process_sammel_rundmail(
         category_name: str = category.text
         category_list_with_news_entries = category.find_next_sibling(name="ul")
         if isinstance(category_list_with_news_entries, bs4.element.Tag):
-            news_entries_in_category: bs4.ResultSet[bs4.element.Tag] = (
-                category_list_with_news_entries.find_all(name="li")
-            )  # type: ignore
+            news_entries_in_category: bs4.ResultSet[bs4.element.Tag] = cast(
+                bs4.ResultSet[bs4.element.Tag],
+                category_list_with_news_entries.find_all(name="li"),
+            )
 
         # Einträge in Kategorie verarbeiten
         for news_entry in news_entries_in_category:
@@ -261,7 +258,9 @@ def main():
 
     # Rundmail-Archiv aufrufen und verarbeiten
     rundmail_archive: str = fetch_rundmail_archive()
-    archive_entries: list[bs4.element.Tag] = parse_rundmail_archive(rundmail_archive)  # type: ignore
+    archive_entries: bs4.ResultSet[bs4.element.Tag] = parse_rundmail_archive(
+        rundmail_archive
+    )
     news: list[dict] = []
 
     # Einträge im Archiv verarbeiten
@@ -282,7 +281,9 @@ def main():
             news.extend(entry)
 
     # Einträge in JSON-Datei speichern (zum Testen)
-    """ json_data = json.dumps(news, ensure_ascii=False)
+    """ json_data = json.dumps(
+        news, ensure_ascii=False, default=frontend_interaction.datetime_serializer
+    )
     json_data_encoded = json_data.encode("utf-8")
     with open("rundmail.json", "wb") as file:
         file.write(json_data_encoded) """

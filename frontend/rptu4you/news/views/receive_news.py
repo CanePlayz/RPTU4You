@@ -1,3 +1,4 @@
+import gzip
 import json
 import os
 from datetime import datetime
@@ -24,7 +25,13 @@ class ReceiveNews(View):
             return JsonResponse({"error": "Unauthorized"}, status=401)
 
         # JSON-Daten aus dem Request-Body laden
-        data = json.loads(request.body)
+        # Prüfe den Content-Encoding Header
+        if request.headers.get("Content-Encoding") == "gzip":
+            decompressed_body = gzip.decompress(request.body)
+            data = json.loads(decompressed_body.decode("utf-8"))
+        else:
+            # Fallback, wenn nicht komprimiert
+            data = json.loads(request.body.decode("utf-8"))
 
         # News-Objekte erstellen
         for news_entry in data:
@@ -37,35 +44,32 @@ class ReceiveNews(View):
                 rundmail_id = news_entry["rundmail_id"]
                 # Nachschauen, ob bereits ein Quelle-Objekt mit dieser ID existiert, falls nicht, dann erstellen
                 quelle, created = Rundmail.objects.get_or_create(
-                    rundmail_id=rundmail_id,
+                    name=news_entry["quelle_name"],
                     defaults={
                         "rundmail_id": rundmail_id,
                     },
                 )
 
-                # Wenn das Quelle-Objekt neu erstellt wurde, die URL und den Namen setzen
+                # Wenn das Quelle-Objekt neu erstellt wurde, die URL setzen
                 if created:
-                    quelle.name = news_entry["quelle_name"]
                     if news_entry["quelle_typ"] == "Rundmail":
                         quelle.url = news_entry["link"]
                     elif news_entry["quelle_typ"] == "Sammel-Rundmail":
                         quelle.url = news_entry["link"].split("#")[0]
                     quelle.save()
 
-            if news_entry["quelle_typ"] == "Interne Website":
+            elif news_entry["quelle_typ"] == "Interne Website":
                 quelle, _ = InterneWebsite.objects.get_or_create(
                     name=news_entry["quelle_name"],
                     defaults={
-                        "name": news_entry["quelle_name"],
                         "url": "https://rptu.de/newsroom",
                     },
                 )
 
-            if news_entry["quelle_typ"] == "Fachschaft":
+            elif news_entry["quelle_typ"] == "Fachschaft":
                 quelle, _ = Fachschaft.objects.get_or_create(
                     name=news_entry["quelle_name"],
                     defaults={
-                        "name": news_entry["quelle_name"],
                         "url": "https://wiwi.rptu.de/aktuelles/aktuelles-und-mitteilungen",
                     },
                 )
