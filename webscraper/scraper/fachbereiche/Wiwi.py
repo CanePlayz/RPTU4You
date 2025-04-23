@@ -6,7 +6,6 @@ from zoneinfo import ZoneInfo
 import bs4
 import requests
 import scraper.util.frontend_interaction as frontend_interaction
-from numpy import isin
 from scraper.util.create_news_entry import create_news_entry
 
 
