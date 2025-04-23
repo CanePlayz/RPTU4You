@@ -4,8 +4,7 @@ import traceback
 from datetime import datetime
 
 from django.contrib import messages
-from django.contrib.auth import (authenticate, login, logout,
-                                 update_session_auth_hash)
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.core.files.base import ContentFile
@@ -43,6 +42,15 @@ def news_view(request):
     return render(request, "news/News.html", context)
 
 
+# Allgemine zentrale News-API, die News basierend auf verschiedenen Eingabe-Parametern zurückgibt:
+# - Gefiltert nach Benutzerpräferenzen in Bezug auf Inhalt, Standort usw.
+# - Mit einem Offset
+
+
+# Präferenzen werden sowohl bei direktem Aufruf der Website mit Filtern als auch bei JS-Anfragen immer in URL encoded und damit immer gleich verarbeitet
+
+
+# JS lädt auch aus dieser API die News, wenn die Seite geladen wird
 def paginated_news(request):
     # Hole die Seite aus den GET-Parametern
     page = request.GET.get("page", 1)
@@ -67,6 +75,8 @@ def paginated_news(request):
         }
         for news in news_page
     ]
+
+    # JSON-Objekte in fertigen, auslieferbaren HTML-Code umwandeln
 
     return JsonResponse({"news": news_data, "next_page": news_page.has_next()})
 

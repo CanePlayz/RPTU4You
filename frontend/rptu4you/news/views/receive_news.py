@@ -107,19 +107,19 @@ class ReceiveNews(View):
                 # Kategorien hinzufügen
                 for category in news_entry["kategorien"]:
                     if category == "Veranstaltung":
-                        category_object, _ = Kategorie.objects.get_or_create(
+                        category_object, _ = InhaltsKategorie.objects.get_or_create(
                             name="Veranstaltung"
                         )
                     elif category == "Umfrage":
-                        category_object, _ = Kategorie.objects.get_or_create(
+                        category_object, _ = InhaltsKategorie.objects.get_or_create(
                             name="Umfrage"
                         )
                     elif category == "Mitarbeitende":
-                        category_object, _ = Kategorie.objects.get_or_create(
+                        category_object, _ = InhaltsKategorie.objects.get_or_create(
                             name="Mitarbeitende"
                         )
                     elif category == "Studierende":
-                        category_object, _ = Kategorie.objects.get_or_create(
+                        category_object, _ = InhaltsKategorie.objects.get_or_create(
                             name="Studierende"
                         )
                     news_item.kategorien.add(category_object)

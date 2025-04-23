@@ -57,7 +57,7 @@ class Standort(models.Model):
         verbose_name_plural = "Standorte"
 
 
-class Kategorie(models.Model):
+class InhaltsKategorie(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
@@ -67,31 +67,25 @@ class Kategorie(models.Model):
         verbose_name_plural = "Kategorien"
 
 
-class User(AbstractUser):
-    rollen = [
-        ("Student", "Student"),
-        ("Angestellter", "Angestellter"),
-    ]
-
-    rolle = models.CharField(max_length=20, choices=rollen, blank=True)
-    standorte = models.ManyToManyField(Standort, blank=True)
-    fachschaften = models.ManyToManyField(Fachschaft, blank=True)
-    präferenzen = models.ManyToManyField(Kategorie, blank=True)
+class Zielgruppe(models.Model):
+    name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
-        return self.username
+        return self.name
 
     class Meta:
-        verbose_name_plural = "User"
+        verbose_name_plural = "Zielgruppen"
 
 
 class News(models.Model):
     link = models.URLField()
+    # Dieser titel wird nicht in der UI angezeigt, sondern ist nur für die Datenbank
     titel = models.CharField(max_length=255)
     erstellungsdatum = models.DateTimeField()
 
     standorte = models.ManyToManyField(Standort, blank=True)
-    kategorien = models.ManyToManyField(Kategorie, blank=True)
+    kategorien = models.ManyToManyField(InhaltsKategorie, blank=True)
+    zielgruppe = models.ManyToManyField(Zielgruppe, blank=True)
 
     quelle = models.ForeignKey(Quelle, on_delete=models.CASCADE)
     quelle_typ = models.CharField(
@@ -146,6 +140,19 @@ class Text(models.Model):
                 fields=["news", "sprache"], name="unique_news_sprache"
             )
         ]
+
+
+class User(AbstractUser):
+    standorte = models.ManyToManyField(Standort, blank=True)
+    fachschaften = models.ManyToManyField(Fachschaft, blank=True)
+    präferenzen = models.ManyToManyField(InhaltsKategorie, blank=True)
+    zielgruppe = models.ManyToManyField(Zielgruppe, blank=True)
+
+    def __str__(self):
+        return self.username
+
+    class Meta:
+        verbose_name_plural = "User"
 
 
 class CalendarEvent(models.Model):

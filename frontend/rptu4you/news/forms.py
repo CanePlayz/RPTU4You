@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import Fachschaft, Kategorie, Standort, User
+from .models import InhaltsKategorie, User
 
 
 class UserCreationForm2(UserCreationForm):
@@ -78,7 +78,7 @@ class PreferencesForm(forms.ModelForm):
         # Präferenzen aktualisieren
         for field_name, category_name in self.PREF_FELDER.items():
             selected = self.cleaned_data.get(field_name) is True
-            pref_obj, _ = Kategorie.objects.get_or_create(name=category_name)
+            pref_obj, _ = InhaltsKategorie.objects.get_or_create(name=category_name)
 
             if selected:
                 user.präferenzen.add(pref_obj)
