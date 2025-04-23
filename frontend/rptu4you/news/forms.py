@@ -38,14 +38,12 @@ class PreferencesForm(forms.ModelForm):
 
         # Felder aus dem Model, die im Formular angezeigt werden sollen
         fields = [
-            "rolle",
             "standorte",
             "fachschaften",
         ]
 
         # Darstellung der Felder überschreiben
         widgets = {
-            "rolle": forms.RadioSelect(attrs={"required": True}),
             "standorte": forms.CheckboxSelectMultiple,
             "fachschaften": forms.CheckboxSelectMultiple,
         }
