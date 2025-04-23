@@ -1,11 +1,12 @@
-import os
-import tempfile
+import json
 import time
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import bs4
 import requests
 import scraper.util.frontend_interaction as frontend_interaction
+from scraper.util.create_news_entry import create_news_entry
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -48,29 +49,6 @@ def unfold_news(driver: webdriver.Chrome) -> None:
             time.sleep(2)
 
 
-def create_news_entry(
-    link: str,
-    title: str,
-    date: datetime,
-    text: str,
-    locations: list,
-    categories: list[str],
-    source_type: str,
-    source_name: str,
-) -> dict:
-
-    return {
-        "link": link,
-        "titel": title,
-        "erstellungsdatum": date,
-        "text": text,
-        "standorte": locations,
-        "kategorien": categories,
-        "quelle_typ": source_type,
-        "quelle_name": source_name,
-    }
-
-
 def process_article(relative_link: str) -> dict:
     link = "https://rptu.de" + relative_link
     page = bs4.BeautifulSoup(requests.get(link).text, "html.parser")
@@ -85,7 +63,8 @@ def process_article(relative_link: str) -> dict:
     if isinstance(time_element, bs4.Tag):
         time_string = time_element.get("datetime")
         if isinstance(time_string, str):
-            date: datetime = datetime.strptime(time_string, "%Y-%m-%d")
+            date_object: datetime = datetime.strptime(time_string, "%Y-%m-%d")
+            date: datetime = date_object.replace(tzinfo=ZoneInfo("Europe/Berlin"))
 
     # Text extrahieren
     text: str = ""
@@ -153,8 +132,7 @@ def main():
     )
     json_data_encoded = json_data.encode("utf-8")
     with open("rundmail.json", "wb") as file:
-        file.write(json_data_encoded)
-    """
+        file.write(json_data_encoded) """
 
     # Einträge an Frontend senden
     frontend_interaction.send_data(news, "Newsroom-Scraper")

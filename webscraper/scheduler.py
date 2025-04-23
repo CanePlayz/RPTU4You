@@ -1,5 +1,6 @@
 import time
 
+import scraper.fachbereiche.wiwi as wiwi
 import scraper.newsroom.pressemitteilungen as pressemitteilungen
 import scraper.rundmail as rundmail
 from apscheduler.schedulers.blocking import BlockingScheduler
@@ -13,6 +14,7 @@ def main():
 
     rundmail.main()
     pressemitteilungen.main()
+    wiwi.main()
 
     scheduler.add_job(
         func=rundmail.main,
@@ -25,8 +27,16 @@ def main():
     scheduler.add_job(
         func=pressemitteilungen.main,
         trigger=IntervalTrigger(minutes=20),
-        id="newsroom_job",
-        name="Newsroom-Scraper",
+        id="newsroom_job_1",
+        name="Newsroom-Scraper (Pressmitteilungen)",
+        replace_existing=True,
+    )
+
+    scheduler.add_job(
+        func=wiwi.main,
+        trigger=IntervalTrigger(minutes=20),
+        id="fachbereiche_job_wiwo",
+        name="Fachbereiche-Scraper (Wiwi)",
         replace_existing=True,
     )
 

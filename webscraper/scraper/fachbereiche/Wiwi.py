@@ -1,133 +1,196 @@
+import json
 from datetime import datetime
+from typing import cast
+from zoneinfo import ZoneInfo
 
 import bs4
 import requests
 import scraper.util.frontend_interaction as frontend_interaction
-
-def clean_text(text: str) -> str:
-    # Unicode-Zeichen für Zeilenumbrüche entfernen
-    text_processed: str = text.replace("\\r\\n", "<br>")
-    # Escaping von Anführungszeichen entfernen
-    text_processed: str = text.replace('\\"', '"')
-    return text_processed
-
-def create_news_entry(
-    link: str,
-    title: str,
-    date: datetime,
-    text: str,
-    locations: list,
-    categories: list[str],
-    source_type: str,
-    source_name: str,
-) -> dict:
-
-    return {
-        "link": link,
-        "titel": title,
-        "erstellungsdatum": date,
-        "text": text,
-        "standorte": locations,
-        "kategorien": categories,
-        "quelle_typ": source_type,
-        "quelle_name": source_name,
-    }
-
-def fetch_oberseite() -> str:
-    # News Seite des Fachbereichs aufrufen
-    return requests.get("https://wiwi.rptu.de/aktuelles/aktuelles-und-mitteilungen").text
-
-def change_page(page:str) -> str:
-    soup: bs4.BeautifulSoup = bs4.BeautifulSoup(page, "html.parser")
-    #Navigationsleiste zum Seiten ändern bekommen
-    aktuelles_change = soup.find("ul",class_="f3-widget-paginator")
-    next_page = aktuelles_change.find("li",class_="rptu-page-item last next")
-    link = next_page.find("a")
-    href = link.get("href")
-    complete_link = f"https://wiwi.rptu.de{href}"
-    return requests.get(complete_link).text
+from numpy import isin
+from scraper.util.create_news_entry import create_news_entry
 
 
-def parse_aktuelles_articles(html: str) -> list[bs4.element.Tag]:
-    # News Seite in BeautifulSoup-Objekt umwandeln
-    soup: bs4.BeautifulSoup = bs4.BeautifulSoup(html, "html.parser")
-    aktuelles = soup.find("div", {"id" : "c16235"})
-    articles = aktuelles.find_all("article")
-    return articles  # type: ignore
+def fetch_news_page() -> bs4.BeautifulSoup:
+    # News-Seite des Fachbereichs aufrufen
+    html_code = requests.get(
+        "https://wiwi.rptu.de/aktuelles/aktuelles-und-mitteilungen"
+    ).text
+    return bs4.BeautifulSoup(html_code, "html.parser")
 
-def parse_science_articles(html:str, first_scraped: bool) -> list[bs4.element.Tag]:
-    soup: bs4.BeautifulSoup = bs4.BeautifulSoup(html, "html.parser")
-    if first_scraped:
-        science = soup.find("div", {"id" : "c26813"})
-        articles = science.find_all("articles")
+
+def get_aktuelles_articles(soup: bs4.BeautifulSoup) -> bs4.ResultSet[bs4.element.Tag]:
+    # Aktuelles-Bereich in BeautifulSoup-Objekt umwandeln
+    aktuelles = soup.find("div", {"id": "c16235"})
+
+    # Artikel-Objekte aus dem Aktuelles-Bereich extrahieren
+    if isinstance(aktuelles, bs4.element.Tag):
+        articles = aktuelles.find_all("article")
+        return cast(bs4.ResultSet[bs4.element.Tag], articles)
     else:
-        #Entferne Dekanatsnachrichten, stehen unter Aktuelles
-        remove_dekanat = soup.find("div", {"id" : "c19997"}).extract()
-        remove_aktuelles = soup.find("div", {"id" : "c16235"}).extract()
-        articles = soup.find_all("articles")
-    return articles
+        return cast(bs4.ResultSet[bs4.element.Tag], [])
 
-def process_entry(entry:bs4.element.Tag, science: bool) -> dict | list[dict]:
-    # Link zu News extrahieren
-    link = entry.find("a")
-    if isinstance(link, bs4.element.Tag):
-        href = link.get("href")
-    complete_link: str = f"https://wiwi.rptu.de{href}"
-    #Titel, Datum, location, Source, Sourcename und Kategorien  definieren
-    title: str = link.get("title")
-    time = entry.find("time")
-    if isinstance(time, bs4.Tag):
-        time_string = time.get("datetime")
+
+def get_science_articles(soup: bs4.BeautifulSoup) -> bs4.ResultSet[bs4.element.Tag]:
+    # Science-Bereich in BeautifulSoup-Objekt umwandeln
+    science = soup.find("div", {"id": "c26813"})
+
+    # Artikel-Objekte aus dem Science-Bereich extrahieren
+    if isinstance(science, bs4.element.Tag):
+        articles = science.find_all("article")
+        return cast(bs4.ResultSet[bs4.element.Tag], articles)
+    else:
+        return cast(bs4.ResultSet[bs4.element.Tag], [])
+
+
+def get_next_page_aktuelles(soup: bs4.BeautifulSoup) -> bs4.BeautifulSoup:
+    # Navigationsleiste mit Pagination-Links extrahieren
+    nav = soup.find_all("ul", class_="f3-widget-paginator")[0]
+    if isinstance(nav, bs4.element.Tag):
+        # Button für nächste Seite extrahieren
+        next_page_button = nav.find("li", class_="rptu-page-item last next")
+        if isinstance(next_page_button, bs4.element.Tag):
+            # Versuche, Link in dem Button zu finden
+            try:
+                link = next_page_button.find("a")
+            # Kann kein Link gefunden werden, ist das Ende erreicht
+            except:
+                raise Exception
+            else:
+                if isinstance(link, bs4.element.Tag):
+                    href = link.get("href")
+                    complete_link = f"https://wiwi.rptu.de{href}"
+                    html_code = requests.get(complete_link).text
+                    return bs4.BeautifulSoup(html_code, "html.parser")
+
+    # Falls kein valides Objekt gefunden wurde (nur für Type-Hints)
+    return bs4.BeautifulSoup("", "html.parser")
+
+
+def get_next_page_science(soup: bs4.BeautifulSoup) -> bs4.BeautifulSoup:
+    # Navigationsleiste mit Pagination-Links extrahieren
+    nav = soup.find_all("ul", class_="f3-widget-paginator")[1]
+    if isinstance(nav, bs4.element.Tag):
+        # Button für nächste Seite extrahieren
+        next_page_button = nav.find("li", class_="rptu-page-item last next")
+        if isinstance(next_page_button, bs4.element.Tag):
+            # Versuche, Link in dem Button zu finden
+            try:
+                link = next_page_button.find("a")
+            # Kann kein Link gefunden werden, ist das Ende erreicht
+            except:
+                raise Exception
+            else:
+                if isinstance(link, bs4.element.Tag):
+                    href = link.get("href")
+                    complete_link = f"https://wiwi.rptu.de{href}"
+                    html_code = requests.get(complete_link).text
+                    return bs4.BeautifulSoup(html_code, "html.parser")
+
+    # Falls kein valides Objekt gefunden wurde (nur für Type-Hints)
+    return bs4.BeautifulSoup("", "html.parser")
+
+
+def process_entry(entry: bs4.element.Tag, science: bool) -> dict | list[dict]:
+    # Link extrahieren
+    a_element = entry.find("a")
+    if isinstance(a_element, bs4.element.Tag):
+        href = a_element.get("href")
+        complete_link: str = f"https://wiwi.rptu.de{href}"
+
+    # Titel extrahieren
+    if isinstance(a_element, bs4.element.Tag):
+        title_attribute = a_element.get("title")
+        if isinstance(title_attribute, str):
+            title = title_attribute
+
+    # Datum extrahieren
+    time_element = entry.find("time")
+    if isinstance(time_element, bs4.element.Tag):
+        time_string = time_element.get("datetime")
         if isinstance(time_string, str):
-            date: datetime = datetime.strptime(time_string, "%Y-%m-%d")
+            date_object: datetime = datetime.strptime(time_string, "%Y-%m-%d")
+            date: datetime = date_object.replace(tzinfo=ZoneInfo("Europe/Berlin"))
+
+    # Kategorien festlegen
     if science:
         categories = ["Studierende", "Veranstaltungen"]
     else:
         categories = ["Studierende", "Mitarbeitende"]
-
 
     # Eintrag aufrufen und in BeautifulSoup-Objekt umwandeln
     news_entry_html: str = requests.get(complete_link).text
     news_entry_soup: bs4.BeautifulSoup = bs4.BeautifulSoup(
         news_entry_html, "html.parser"
     )
-    #Text scrapen
-    text_div = news_entry_soup.find("div", class_="col-12 col-lg-8 news-content")
-    unwanted = text_div.find("div")
-    unwanted.extract()
-    text = text_div.text
-    clean_text = clean_text(text)
 
-    return create_news_entry(complete_link,title,date,clean_text,"Kaiserslautern",categories,"Fachschaft", "Fachbereich Wirtschaftswissenschaften")
-    
+    # Text scrapen
+    text_div = news_entry_soup.find("div", class_="news-content")
+    if isinstance(text_div, bs4.element.Tag):
+        p_elements = text_div.find_all("p")
+        text = ""
+        if isinstance(p_elements, bs4.ResultSet):
+            for p in p_elements:
+                if isinstance(p, bs4.element.Tag):
+                    text += p.get_text() + "<br><br>"
+
+    return create_news_entry(
+        complete_link,
+        title,
+        date,
+        text,
+        ["Kaiserslautern"],
+        categories,
+        "Fachschaft",
+        "Fachbereich Wirtschaftswissenschaften",
+    )
+
+
 def main():
-    #Webseite aufrufen
-    wiwi = []
-    count = 0
-    fachbereich = fetch_oberseite()
-    aktuelles = parse_aktuelles_articles(fachbereich)
-    for artikel in aktuelles:
-        entry = process_entry(artikel,False)
-        wiwi.append(entry)
-    science = parse_science_articles(fachbereich,False)
-    for i in science:
-        entry = process_entry(i,True)
-        wiwi.append(entry)
-    for i in range(5):
-        new_page = change_page(fachbereich)
-        next_articles = parse_aktuelles_articles(new_page)
-        for article in next_articles:
-            wiwi.append(process_entry(article,False))
-        if count <= 4:
-            next_science = parse_science_articles(new_page,True)
-            for science in next_science:
-                wiwi.append(process_entry(science,True))
-            count += 1
-    frontend_interaction.send_data(wiwi, "WiwiScraper")
+    news = []
+
+    # News-Seite vom Fachbereich aufrufen
+    soup: bs4.BeautifulSoup = fetch_news_page()
+
+    # Aktuelles-Artikel scrapen
+    aktuelles_articles = []
+    while True:
+        aktuelles_articles += get_aktuelles_articles(soup)
+        try:
+            new_page = get_next_page_aktuelles(soup)
+        except:
+            break
+        else:
+            soup = new_page
+
+    for article in aktuelles_articles:
+        news.append(process_entry(article, False))
+
+    # News-Seite vom Fachbereich aufrufen
+    soup: bs4.BeautifulSoup = fetch_news_page()
+
+    # Science-Artikel scrapen
+    science_articles = []
+    while True:
+        science_articles += get_science_articles(soup)
+        try:
+            new_page = get_next_page_science(soup)
+        except:
+            break
+        else:
+            soup = new_page
+
+    for article in science_articles:
+        news.append(process_entry(article, True))
+
+    # Einträge in JSON-Datei speichern (zum Testen)
+    json_data = json.dumps(
+        news, ensure_ascii=False, default=frontend_interaction.datetime_serializer
+    )
+    json_data_encoded = json_data.encode("utf-8")
+    with open("wiwi.json", "wb") as file:
+        file.write(json_data_encoded)
+
+    """ frontend_interaction.send_data(wiwi, "WiwiScraper") """
 
 
-
-
-
-
-    
+main()
