@@ -79,6 +79,14 @@
     <input type="datetime-local" id="eventStart" required>
     <input type="datetime-local" id="eventEnd">
     <textarea id="eventDescription" placeholder="Beschreibung"></textarea>
+    <select id="eventRepeat">
+      <option value="none">Keine Wiederholung</option>
+      <option value="daily">Täglich</option>
+      <option value="weekly">Wöchentlich</option>
+      <option value="monthly">Monatlich</option>
+      <option value="yearly">Jährlich</option>
+    </select>
+    <input type="datetime-local" id="eventRepeatUntil" placeholder="Wiederholen bis">
     <button type="submit">Hinzufügen</button>
     <button type="button" id="closePopup">Schließen</button>
   </form>
@@ -163,6 +171,8 @@
       var start = document.getElementById("eventStart").value;
       var end = document.getElementById("eventEnd").value || null;
       var description = document.getElementById("eventDescription").value;
+      var repeat = document.getElementById("eventRepeat").value;
+      var repeatUntil = document.getElementById("eventRepeatUntil").value;
 
       fetch("/api/create-event/", {
         method: "POST",
@@ -174,7 +184,9 @@
           title: title,
           start: start,
           end: end,
-          description: description
+          description: description,
+          repeat: repeat,
+          repeat_until: repeatUntil
         })
       })
       .then(response => response.json())

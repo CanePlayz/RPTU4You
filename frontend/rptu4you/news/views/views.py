@@ -1,7 +1,7 @@
 import json
 import os
 import traceback
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
@@ -21,27 +21,10 @@ from icalendar import Calendar
 from ..forms import PreferencesForm, UserCreationForm2
 from ..models import CalendarEvent, News, User
 
-
-def news_view(request):
-    now = timezone.now()  # Aktuelle Zeit mit Zeitzone
-
-    if request.user.is_authenticated:
-        # Eigene und globale Termine abrufen
-        user_events = CalendarEvent.objects.filter(start__gte=now, user=request.user)
-        global_events = CalendarEvent.objects.filter(start__gte=now, is_global=True)
-        upcoming_events = (user_events | global_events).distinct().order_by("start")[:3]
-    else:
-        # Nur globale Termine für nicht angemeldete Benutzer
-        upcoming_events = CalendarEvent.objects.filter(
-            start__gte=now, is_global=True
-        ).order_by("start")[:3]
-
-    context = {
-        "upcoming_events": upcoming_events,
-    }
-    return render(request, "news/News.html", context)
-
-
+"""
+NEWS
+"""
+#Info: news_view unten, bis jetzt nur Kalender auf der rechten Seite eingebunden. Jacob fragen ob man daraus zwei Views machen kann oder nicht
 # Allgemine zentrale News-API, die News basierend auf verschiedenen Eingabe-Parametern zurückgibt:
 # - Gefiltert nach Benutzerpräferenzen in Bezug auf Inhalt, Standort usw.
 # - Mit einem Offset
@@ -89,6 +72,10 @@ def news_detail(request, news_id):
 def Links(request):
     return render(request, "news/Links.html")
 
+
+"""
+ANMELDUNG
+"""
 
 def login_view(request):
     # Hole next_url aus GET oder POST, je nach Kontext
@@ -209,6 +196,10 @@ def request_date(request):
 from django.contrib.auth.decorators import login_required
 
 
+"""
+KALENDER
+"""
+
 @login_required
 def calendar_page(request):
     return render(
@@ -217,6 +208,25 @@ def calendar_page(request):
         {"is_authenticated": request.user.is_authenticated},
     )
 
+# Kalenderanzeige auf Latest News Seite
+def news_view(request):
+    now = timezone.now()  # Aktuelle Zeit mit Zeitzone
+
+    if request.user.is_authenticated:
+        # Eigene und globale Termine abrufen
+        user_events = CalendarEvent.objects.filter(start__gte=now, user=request.user)
+        global_events = CalendarEvent.objects.filter(start__gte=now, is_global=True)
+        upcoming_events = (user_events | global_events).distinct().order_by("start")[:3]
+    else:
+        # Nur globale Termine für nicht angemeldete Benutzer
+        upcoming_events = CalendarEvent.objects.filter(
+            start__gte=now, is_global=True
+        ).order_by("start")[:3]
+
+    context = {
+        "upcoming_events": upcoming_events,
+    }
+    return render(request, "news/News.html", context)
 
 # API-Endpunkt für Kalender-Events
 def calendar_events(request):
@@ -298,13 +308,50 @@ def create_event(request):
                         status=400,
                     )
 
-            event = CalendarEvent.objects.create(
-                user=request.user,
-                title=title,
-                start=start_datetime,
-                end=end_datetime if end_datetime else None,
-                description=description,
-            )
+            repeat = data.get("repeat", "none")
+            repeat_until_str = data.get("repeat_until")
+
+            repeat_until = None
+            if repeat_until_str:
+                try:
+                    repeat_until = datetime.fromisoformat(repeat_until_str)
+                    repeat_until = timezone.make_aware(repeat_until, timezone.get_current_timezone())
+                except ValueError:
+                    return JsonResponse({"error": "Wiederholungsende hat ein ungültiges Format."}, status=400)
+
+            events = []
+            current_start = start_datetime
+            current_end = end_datetime if end_datetime else None
+
+            if repeat != "none" and repeat_until:
+                delta = timedelta(weeks=1) if repeat == "weekly" else timedelta(days=1)
+
+                while current_start <= repeat_until:
+                    event = CalendarEvent.objects.create(
+                        user=request.user,
+                        title=title,
+                        start=current_start,
+                        end=current_end,
+                        description=description,
+                        repeat=repeat,
+                        repeat_until=repeat_until,
+                    )
+                    events.append(event)
+                    current_start += delta
+                    if current_end:
+                        current_end += delta
+            else:
+                event = CalendarEvent.objects.create(
+                    user=request.user,
+                    title=title,
+                    start=start_datetime,
+                    end=end_datetime if end_datetime else None,
+                    description=description,
+                    repeat=repeat,
+                    repeat_until=repeat_until,
+                )
+                events.append(event)
+
 
             return JsonResponse(
                 {"message": "Event erfolgreich gespeichert."}, status=201
@@ -319,6 +366,42 @@ def create_event(request):
             return JsonResponse({"error": error_message}, status=500)
 
     return JsonResponse({"error": "Methode nicht erlaubt."}, status=405)
+
+@csrf_protect
+@login_required
+@require_POST
+def edit_event(request, event_id):
+    event = get_object_or_404(CalendarEvent, id=event_id, user=request.user)
+
+    try:
+        data = json.loads(request.body)
+
+        event.title = data.get("title", event.title)
+        event.description = data.get("description", event.description)
+        
+        if "start" in data:
+            start = datetime.fromisoformat(data["start"])
+            event.start = timezone.make_aware(start, timezone.get_current_timezone())
+
+        if "end" in data and data["end"]:
+            end = datetime.fromisoformat(data["end"])
+            event.end = timezone.make_aware(end, timezone.get_current_timezone())
+        else:
+            event.end = None
+
+        event.repeat = data.get("repeat", event.repeat)
+        repeat_until_str = data.get("repeat_until")
+        if repeat_until_str:
+            event.repeat_until = timezone.make_aware(datetime.fromisoformat(repeat_until_str), timezone.get_current_timezone())
+        else:
+            event.repeat_until = None
+
+        event.save()
+
+        return JsonResponse({"message": "Event erfolgreich aktualisiert."})
+
+    except Exception as e:
+        return JsonResponse({"error": f"Fehler: {str(e)}"}, status=500)
 
 
 @login_required
