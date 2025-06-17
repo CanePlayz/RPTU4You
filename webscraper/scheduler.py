@@ -1,4 +1,5 @@
 import time
+from datetime import date, datetime
 
 import scraper.fachbereiche.wiwi as wiwi
 import scraper.newsroom.pressemitteilungen as pressemitteilungen
@@ -10,11 +11,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 def main():
     scheduler = BlockingScheduler()
 
-    time.sleep(15)
-
-    rundmail.main()
-    pressemitteilungen.main()
-    wiwi.main()
+    time.sleep(15)  # Django benötigt etwas Zeit, um zu starten
 
     scheduler.add_job(
         func=rundmail.main,
@@ -22,6 +19,7 @@ def main():
         id="rundmail_job",
         name="Rundmail-Scraper",
         replace_existing=True,
+        next_run_time=datetime.now(),
     )
 
     scheduler.add_job(
@@ -30,14 +28,16 @@ def main():
         id="newsroom_job_1",
         name="Newsroom-Scraper (Pressmitteilungen)",
         replace_existing=True,
+        next_run_time=datetime.now(),
     )
 
     scheduler.add_job(
         func=wiwi.main,
         trigger=IntervalTrigger(minutes=20),
-        id="fachbereiche_job_wiwo",
+        id="fachbereiche_job_wiwi",
         name="Fachbereiche-Scraper (Wiwi)",
         replace_existing=True,
+        next_run_time=datetime.now(),
     )
 
     print("Scheduler läuft...")

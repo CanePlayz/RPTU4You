@@ -182,14 +182,11 @@ def main():
         news.append(process_entry(article, True))
 
     # Einträge in JSON-Datei speichern (zum Testen)
-    json_data = json.dumps(
+    """ json_data = json.dumps(
         news, ensure_ascii=False, default=frontend_interaction.datetime_serializer
     )
     json_data_encoded = json_data.encode("utf-8")
     with open("wiwi.json", "wb") as file:
-        file.write(json_data_encoded)
+        file.write(json_data_encoded) """
 
-    """ frontend_interaction.send_data(wiwi, "WiwiScraper") """
-
-
-main()
+    frontend_interaction.send_data(news, "WiwiScraper")
