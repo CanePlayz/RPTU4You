@@ -3,14 +3,13 @@ import json
 import os
 from datetime import datetime
 
-from bs4 import BeautifulSoup
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
+from django.utils.timezone import make_aware
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
 from ..models import *
-from .util import translate
 
 API_KEY = "0jdf3wfjq98w3jdf9w8"
 
@@ -74,13 +73,14 @@ class ReceiveNews(View):
                     },
                 )
 
-            # Erstellungsdatum parsen
-            erstellungsdatum: datetime = datetime.strptime(
-                news_entry["erstellungsdatum"], "%d.%m.%Y %H:%M:%S"
+            # Erstellungsdatum parsen und sicherstellen, dass eine Zeitzone gesetzt ist
+            erstellungsdatum: datetime = make_aware(
+                datetime.strptime(news_entry["erstellungsdatum"], "%d.%m.%Y %H:%M:%S")
             )
 
             # News-Objekt erstellen
             # Überprüfen, ob bereits ein News-Objekt mit diesem Titel existiert
+            print(f"Verarbeite News-Eintrag: {news_entry['titel']}")
             news_item, created = News.objects.get_or_create(
                 titel=news_entry["titel"],
                 defaults={
