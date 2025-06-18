@@ -78,9 +78,11 @@ class Zielgruppe(models.Model):
 
 
 class News(models.Model):
-    link = models.URLField()
-    # Dieser titel wird nicht in der UI angezeigt, sondern ist nur für die Datenbank
-    titel = models.CharField(max_length=255)
+    link = models.URLField(
+        max_length=1000
+    )  # max_length=1000 ist notwendig, da URLField standardmäßig auf 200 Zeichen begrenzt ist
+    # Dieser Titel wird nicht in der UI angezeigt, sondern ist nur für die Identifikation in der Datenbank gedacht
+    titel = models.CharField()
     erstellungsdatum = models.DateTimeField()
 
     standorte = models.ManyToManyField(Standort, blank=True)
@@ -127,7 +129,7 @@ class Sprache(models.Model):
 class Text(models.Model):
     news = models.ForeignKey(News, on_delete=models.CASCADE, related_name="texte")
     text = models.TextField()
-    titel = models.CharField(max_length=255)
+    titel = models.CharField()
     sprache = models.ForeignKey(Sprache, on_delete=models.PROTECT)
 
     def __str__(self):
@@ -156,7 +158,7 @@ class User(AbstractUser):
 
 
 class CalendarEvent(models.Model):
-    title = models.CharField(max_length=255)
+    title = models.CharField()
     description = models.TextField(blank=True, null=True)
     start = models.DateTimeField()
     end = models.DateTimeField(blank=True, null=True)
