@@ -28,7 +28,8 @@ def translate_news_articles():
                     print(f"Fehler bei der Übersetzung des Titels für {sprache}: {e}")
                     translated_title = None
                 else:
-                    print("Übersetzter Titel:", translated_title)
+                    pass
+                    # print("Übersetzter Titel:", translated_title)
 
                 # Übersetzung des Textes
                 try:
@@ -48,7 +49,8 @@ def translate_news_articles():
                 except Exception as e:
                     print(f"Fehler bei der Übersetzung für {sprache}: {e}")
                 else:
-                    print("Übersetzter Text:", str(soup))
+                    pass
+                    # print("Übersetzter Text:", str(soup))
                 print("Übersetzung erfolgreich.")
                 print()
 
