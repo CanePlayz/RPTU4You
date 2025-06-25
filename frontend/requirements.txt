@@ -5,6 +5,7 @@ deep-translator
 django
 django-celery-beat
 flower
+gunicorn
 icalendar
 openai
 psycopg2-binary
