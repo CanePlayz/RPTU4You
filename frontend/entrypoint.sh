@@ -12,8 +12,5 @@ python create_superuser.py
 
 echo ""
 
-# echo "Translator starten..."
-# python manage.py start_translator &
-
-echo "Server starten..."
-python manage.py runserver 0.0.0.0:8000
+echo "Webserver starten (Gunicorn)..."
+exec gunicorn rptu4you.wsgi:application --bind 0.0.0.0:8000 --workers 3
