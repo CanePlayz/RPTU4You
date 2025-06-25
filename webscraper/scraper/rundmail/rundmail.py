@@ -6,6 +6,7 @@ from zoneinfo import ZoneInfo
 import bs4
 import requests
 import scraper.util.frontend_interaction as frontend_interaction
+from scraper.util.save_as_json import save_as_json
 
 
 def fetch_rundmail_archive() -> str:
@@ -281,12 +282,7 @@ def main():
             news.extend(entry)
 
     # Einträge in JSON-Datei speichern (zum Testen)
-    """ json_data = json.dumps(
-        news, ensure_ascii=False, default=frontend_interaction.datetime_serializer
-    )
-    json_data_encoded = json_data.encode("utf-8")
-    with open("rundmail.json", "wb") as file:
-        file.write(json_data_encoded) """
+    # save_as_json(news, "rundmail")
 
     # Einträge an Frontend senden
     frontend_interaction.send_data(news, "Rundmail-Scraper")

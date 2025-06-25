@@ -1,10 +1,10 @@
 import time
-from datetime import date, datetime
+from datetime import datetime
 
 import requests
 import scraper.fachbereiche.wiwi as wiwi
 import scraper.newsroom.pressemitteilungen as pressemitteilungen
-import scraper.rundmail as rundmail
+import scraper.rundmail.rundmail as rundmail
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 
