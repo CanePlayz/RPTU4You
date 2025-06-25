@@ -64,7 +64,7 @@ class InhaltsKategorie(models.Model):
         return self.name
 
     class Meta:
-        verbose_name_plural = "Kategorien"
+        verbose_name_plural = "Inhaltskategorien"
 
 
 class Zielgruppe(models.Model):
@@ -176,3 +176,15 @@ class CalendarEvent(models.Model):
 
     class Meta:
         verbose_name_plural = "Kalendereinträge"
+
+
+class OpenAITokenUsage(models.Model):
+    date = models.DateField(unique=True)
+    used_tokens = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.date}: {self.used_tokens} tokens"
+
+    class Meta:
+        verbose_name_plural = "OpenAI Token Usage"
+        ordering = ["-date"]

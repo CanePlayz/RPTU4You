@@ -1,6 +1,11 @@
 apscheduler
 beautifulsoup4
+celery
 deep-translator
 django
-psycopg2-binary
+django-celery-beat
+flower
 icalendar
+openai
+psycopg2-binary
+redis
