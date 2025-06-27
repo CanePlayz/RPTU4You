@@ -3,16 +3,14 @@ import json
 import os
 from datetime import datetime
 
-from bs4 import BeautifulSoup
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
+from django.utils.timezone import make_aware
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
 from ..models import *
-from .util import translate
-
-API_KEY = "0jdf3wfjq98w3jdf9w8"
+from .util.categorization.categorization import get_categorization_from_openai
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -32,6 +30,15 @@ class ReceiveNews(View):
         else:
             # Fallback, wenn nicht komprimiert
             data = json.loads(request.body.decode("utf-8"))
+
+        # Environment überprüfen
+        environment = os.getenv("ENVIRONMENT", "")
+        openai_api_key = os.getenv("OPENAI_API_KEY", "")
+        if environment not in ["dev", "prod"]:
+            return JsonResponse(
+                {"error": "Invalid environment. Must be 'dev' or 'prod'."},
+                status=400,
+            )
 
         # News-Objekte erstellen
         for news_entry in data:
@@ -74,13 +81,14 @@ class ReceiveNews(View):
                     },
                 )
 
-            # Erstellungsdatum parsen
-            erstellungsdatum: datetime = datetime.strptime(
-                news_entry["erstellungsdatum"], "%d.%m.%Y %H:%M:%S"
+            # Erstellungsdatum parsen und sicherstellen, dass eine Zeitzone gesetzt ist
+            erstellungsdatum: datetime = make_aware(
+                datetime.strptime(news_entry["erstellungsdatum"], "%d.%m.%Y %H:%M:%S")
             )
 
             # News-Objekt erstellen
             # Überprüfen, ob bereits ein News-Objekt mit diesem Titel existiert
+            print(f"Verarbeite News-Eintrag: {news_entry['titel']}")
             news_item, created = News.objects.get_or_create(
                 titel=news_entry["titel"],
                 defaults={
@@ -104,25 +112,20 @@ class ReceiveNews(View):
                     standort_ld, _ = Standort.objects.get_or_create(name="Landau")
                     news_item.standorte.add(standort_ld)
 
-                # Kategorien hinzufügen
-                for category in news_entry["kategorien"]:
-                    if category == "Veranstaltung":
-                        category_object, _ = InhaltsKategorie.objects.get_or_create(
-                            name="Veranstaltung"
-                        )
-                    elif category == "Umfrage":
-                        category_object, _ = InhaltsKategorie.objects.get_or_create(
-                            name="Umfrage"
-                        )
-                    elif category == "Mitarbeitende":
-                        category_object, _ = InhaltsKategorie.objects.get_or_create(
-                            name="Mitarbeitende"
-                        )
-                    elif category == "Studierende":
-                        category_object, _ = InhaltsKategorie.objects.get_or_create(
-                            name="Studierende"
-                        )
+                # Inhaltskategorien und Zielgruppe(n) hinzufügen
+                categories, audiences = get_categorization_from_openai(
+                    news_entry["titel"], news_entry["text"], environment, openai_api_key
+                )
+
+                for category in categories:
+                    category_object, _ = InhaltsKategorie.objects.get_or_create(
+                        name=category
+                    )
                     news_item.kategorien.add(category_object)
+
+                for audience in audiences:
+                    audience_object, _ = Zielgruppe.objects.get_or_create(name=audience)
+                    news_item.zielgruppe.add(audience_object)
 
             # Deutschen Text speichern
             if Text.objects.filter(news=news_item, sprache__name="Deutsch").exists():
@@ -135,5 +138,7 @@ class ReceiveNews(View):
                     sprache=Sprache.objects.get(name="Deutsch"),
                 )
                 text.save()
+
+            # Übersetzungen hinzufügen
 
         return JsonResponse({"status": "success"})

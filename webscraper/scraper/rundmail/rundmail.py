@@ -1,4 +1,3 @@
-import json
 from datetime import datetime
 from typing import cast
 from zoneinfo import ZoneInfo
@@ -6,6 +5,7 @@ from zoneinfo import ZoneInfo
 import bs4
 import requests
 import scraper.util.frontend_interaction as frontend_interaction
+from scraper.util.save_as_json import save_as_json
 
 
 def fetch_rundmail_archive() -> str:
@@ -74,7 +74,7 @@ def create_news_entry(
 ) -> dict:
     # Name der Quelle ist bei Einzel-Rundmails der Titel und bei Sammel-Rundmails "Sammel-Rundmail vom <Datum>"
     if source_type == "Rundmail":
-        quelle_name = title
+        quelle_name = f"Rundmail: {title}"
     elif source_type == "Sammel-Rundmail":
         quelle_name = f"Sammel-Rundmail vom {date.strftime('%d.%m.%Y')}"
     elif source_type == "Stellenangebote Sammel-Rundmail":
@@ -281,12 +281,7 @@ def main():
             news.extend(entry)
 
     # Einträge in JSON-Datei speichern (zum Testen)
-    """ json_data = json.dumps(
-        news, ensure_ascii=False, default=frontend_interaction.datetime_serializer
-    )
-    json_data_encoded = json_data.encode("utf-8")
-    with open("rundmail.json", "wb") as file:
-        file.write(json_data_encoded) """
+    # save_as_json(news, "rundmail")
 
     # Einträge an Frontend senden
     frontend_interaction.send_data(news, "Rundmail-Scraper")

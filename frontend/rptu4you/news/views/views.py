@@ -19,7 +19,7 @@ from django.views.decorators.http import require_POST
 from icalendar import Calendar
 
 from ..forms import PreferencesForm, UserCreationForm2
-from ..models import CalendarEvent, News, User
+from ..models import *
 
 
 def news_view(request):
@@ -196,11 +196,17 @@ def request_date(request):
     if api_key != api_key_request:
         return JsonResponse({"error": "Unauthorized"}, status=401)
 
-    # Prüfen, ob News-Objekte vorhanden sind
-    if not News.objects.exists():
+    # Aktuelles Datum der neuesten News abrufen
+    try:
+        # Hole das neueste News-Objekt
+        latest_news = News.objects.filter(
+            quelle_typ__in=["Sammel-Rundmail", "Rundmail"]
+        ).latest("erstellungsdatum")
+    except News.DoesNotExist:
+        # Wenn keine News-Objekte vorhanden sind, gib eine Fehlermeldung zurück
         return JsonResponse({"error": "No news available"}, status=404)
 
-    date: datetime = News.objects.latest("erstellungsdatum").erstellungsdatum
+    date: datetime = latest_news.erstellungsdatum
 
     return JsonResponse({"date": date.strftime("%d.%m.%Y %H:%M:%S")})
 

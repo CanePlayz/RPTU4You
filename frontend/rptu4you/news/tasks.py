@@ -1,13 +1,16 @@
-from pydoc import text
+import os
 
 from bs4 import BeautifulSoup
+from celery import shared_task
 from deep_translator import GoogleTranslator
-from rptu4you.news.models import News, Sprache, Text
 
-from .util import translate_html
+from .models import *
+from .views.util.categorization.categorization import get_categorization_from_openai
+from .views.util.translate import translate_html
 
 
-def translate_news_articles():
+@shared_task
+def backfill_missing_translations():
     sprachen = Sprache.objects.exclude(name="Deutsch")
     news_items = News.objects.all()
 
@@ -37,9 +40,7 @@ def translate_news_articles():
                         news=news, sprache__name="Deutsch"
                     ).text
                     soup = BeautifulSoup(original_text_de, "html.parser")
-                    translate_html.translate_html(
-                        soup, from_lang="de", to_lang=sprache.code
-                    )
+                    translate_html(soup, from_lang="de", to_lang=sprache.code)
                     Text.objects.create(
                         news=news,
                         text=str(soup),
@@ -57,3 +58,31 @@ def translate_news_articles():
             else:
                 print("Übersetzung bereits vorhanden.")
                 print()
+
+
+@shared_task
+def backfill_missing_categorizations():
+    environment = os.getenv("ENVIRONMENT", "")
+    openai_api_key = os.getenv("OPENAI_API_KEY", "")
+    news_items = News.objects.all()
+    for news in news_items:
+        if not news.kategorien.exists():
+            print(f"News-Objekt {news.titel} benötigt Kategorisierung.")
+            text_object = Text.objects.filter(news=news, sprache__name="Deutsch")
+            try:
+                german_text = text_object.get().text
+            except Text.DoesNotExist:
+                print(f"Kein deutscher Text für {news.titel} gefunden.")
+                continue
+            categories, audiences = get_categorization_from_openai(
+                news.titel, german_text, environment, openai_api_key
+            )
+            for category in categories:
+                category_object, _ = InhaltsKategorie.objects.get_or_create(
+                    name=category
+                )
+                news.kategorien.add(category_object)
+
+            for audience in audiences:
+                audience_object, _ = Zielgruppe.objects.get_or_create(name=audience)
+                news.zielgruppe.add(audience_object)

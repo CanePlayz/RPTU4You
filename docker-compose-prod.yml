@@ -14,6 +14,8 @@ services:
     image: caneplayz/rptu4you-frontend:latest
     environment:
       - API_KEY=${API_KEY}
+      - ENVIRONMENT=prod
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     ports:
       - "8000:8000"
     networks:
