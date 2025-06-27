@@ -94,8 +94,7 @@ def get_categorization_from_openai(
                 return [], []
 
             # Ausgabe verarbeiten
-            print("OpenAI Response:")
-            print(response.output_text)
+            print("Kategorisierung von OpenAI erhalten.")
             split_response = response.output_text.split("----")
             categories_response = split_response[0].strip()
             audiences_response = split_response[1].strip()
@@ -110,9 +109,6 @@ def get_categorization_from_openai(
             )
             if response.usage:
                 usage.used_tokens += response.usage.total_tokens
-                print(
-                    f"OpenAI Token Usage for {datetime.date.today()}: {response.usage.total_tokens} tokens"
-                )
                 usage.save()
 
             return categories, audiences

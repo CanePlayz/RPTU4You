@@ -10,6 +10,13 @@ services:
     networks:
       - backend
 
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+
   django:
     build:
       context: ./frontend
@@ -19,13 +26,54 @@ services:
       - DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME}
       - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
       - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
+      - ENVIRONMENT=dev
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SERVER=django
     ports:
       - "8000:8000"
     networks:
       - backend
     depends_on:
       - db
-    command: /app/entrypoint.sh
+      - redis
+    command: ["python", "/app/entrypoint.py"]
+
+  celery_worker:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    depends_on:
+      - django
+      - redis
+    networks:
+      - backend
+    command: celery -A rptu4you worker --loglevel=info
+    user: "1001"
+
+  celery_beat:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    depends_on:
+      - django
+      - redis
+    networks:
+      - backend
+    command: celery -A rptu4you beat --loglevel=info
+    user: "1001"
+
+  flower:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    command: celery -A rptu4you flower --port=5555 --address=0.0.0.0
+    depends_on:
+      - redis
+    networks:
+      - backend
+    ports:
+      - "5555:5555"
+    user: "1001"
 
   scraper:
     build:
