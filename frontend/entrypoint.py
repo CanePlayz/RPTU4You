@@ -35,11 +35,8 @@ django.setup()
 
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
-from rptu4you.news.models import Sprache
-from rptu4you.news.tasks import (
-    backfill_missing_categorizations,
-    backfill_missing_translations,
-)
+from news.models import Sprache
+from news.tasks import backfill_missing_categorizations, backfill_missing_translations
 
 
 # Migrations durchführen

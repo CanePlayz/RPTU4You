@@ -2,7 +2,7 @@ from pydoc import text
 
 from bs4 import BeautifulSoup
 from deep_translator import GoogleTranslator
-from rptu4you.news.models import News, Sprache, Text
+from news.models import News, Sprache, Text
 
 from .util import translate_html
 

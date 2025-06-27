@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rptu4you.news",
+    "news",
 ]
 
 MIDDLEWARE = [
@@ -57,19 +57,14 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "rptu4you/news/static"),
-]
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 ROOT_URLCONF = "rptu4you.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [
-            os.path.join(BASE_DIR, "rptu4you/news/templates/news"),
-            os.path.join(BASE_DIR, "templates"),
-        ],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
