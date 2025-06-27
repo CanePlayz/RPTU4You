@@ -1,3 +1,7 @@
+x-common-env: &common-env
+  ENVIRONMENT: dev
+  OPENAI_API_KEY: ${OPENAI_API_KEY}
+
 services:
   db:
     image: postgres:latest
@@ -22,13 +26,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     environment:
-      - API_KEY=${API_KEY}
-      - DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME}
-      - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
-      - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
-      - ENVIRONMENT=dev
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - SERVER=django
+      <<: *common-env
+      API_KEY: ${API_KEY}
+      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME}
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
+      SERVER: django
     ports:
       - "8000:8000"
     networks:
@@ -38,10 +41,11 @@ services:
       - redis
     command: ["python", "/app/entrypoint.py"]
 
-  celery_worker:
+  celery-worker:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    environment: *common-env
     depends_on:
       - django
       - redis
@@ -50,7 +54,7 @@ services:
     command: celery -A rptu4you worker --loglevel=info
     user: "1001"
 
-  celery_beat:
+  celery-beat:
     build:
       context: ./frontend
       dockerfile: Dockerfile
