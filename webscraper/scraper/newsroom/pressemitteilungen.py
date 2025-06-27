@@ -1,4 +1,3 @@
-import json
 import time
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -20,8 +19,8 @@ def setup_driver() -> webdriver.Chrome:
     """ # options.add_argument("--headless=new")
     options.add_argument("--start-maximized") """
 
-    # options.add_argument("--headless=new")
-    options.add_argument("--start-maximized")
+    options.add_argument("--headless=new")
+    # options.add_argument("--start-maximized")
 
     options.add_argument("--log-level=3")
     options.add_experimental_option("excludeSwitches", ["enable-logging"])
