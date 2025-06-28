@@ -16,9 +16,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 def setup_driver() -> webdriver.Chrome:
     options = Options()
 
-    """ # options.add_argument("--headless=new")
-    options.add_argument("--start-maximized") """
-
     options.add_argument("--headless=new")
     # options.add_argument("--start-maximized")
 
