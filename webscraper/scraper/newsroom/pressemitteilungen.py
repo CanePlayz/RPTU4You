@@ -1,3 +1,4 @@
+import os
 import time
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -16,11 +17,15 @@ from selenium.webdriver.support.ui import WebDriverWait
 def setup_driver() -> webdriver.Chrome:
     options = Options()
 
+    # Optionen für lokale Tests des Skripts vs Einsatz in Docker-Container
     options.add_argument("--headless=new")
     # options.add_argument("--start-maximized")
 
+    # Logging deaktivieren
     options.add_argument("--log-level=3")
     options.add_experimental_option("excludeSwitches", ["enable-logging"])
+
+    # Probleme mit User-Directory in Docker-Container beheben
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
 
