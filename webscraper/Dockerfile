@@ -1,5 +1,7 @@
 FROM python:3.13-slim
 
+# Da Selenium Manager auf Linux arm64 (noch) nicht läuft, muss Chrome hier manuell installiert werden.
+
 # Installiere notwendige Pakete
 RUN apt-get update && apt-get install -y \
     wget \
