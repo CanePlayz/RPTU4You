@@ -1,12 +1,7 @@
 FROM python:3.13-slim
 
-# Installiere notwendige Pakete
+# Installiere notwendige Pakete für Chrome
 RUN apt-get update && apt-get install -y \
-    wget \
-    unzip \
-    curl \
-    gnupg \
-    fonts-liberation \
     libxss1 \
     libappindicator3-1 \
     libasound2 \
