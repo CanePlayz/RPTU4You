@@ -26,15 +26,15 @@ jobs:
       - name: Build and push rptu4you-frontend
         uses: docker/build-push-action@v6
         with:
-          context: ./frontend
-          file: ./frontend/Dockerfile
+          context: .
+          file: frontend/Dockerfile
           push: true
           tags: caneplayz/rptu4you-frontend:latest
 
       - name: Build and push rptu4you-scraper
         uses: docker/build-push-action@v6
         with:
-          context: ./webscraper
-          file: ./webscraper/Dockerfile
+          context: .
+          file: webscraper/Dockerfile
           push: true
           tags: caneplayz/rptu4you-scraper:latest
