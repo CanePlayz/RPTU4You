@@ -13,7 +13,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
-from webdriver_manager.firefox import GeckoDriverManager
 
 
 def setup_driver() -> webdriver.Firefox:
@@ -25,12 +24,13 @@ def setup_driver() -> webdriver.Firefox:
     # Logging deaktivieren
     os.environ["MOZ_LOG"] = "error"
 
-    """ # Setze den Pfad zum Firefox-Binary und zum Geckodriver
+    # Setze den Pfad zum Firefox-Binary und zum Geckodriver
     options.binary_location = "/usr/bin/firefox"
-    service = Service(executable_path="/usr/local/bin/geckodriver") """
+    service = Service(executable_path="/usr/local/bin/geckodriver")
 
     driver: webdriver.Firefox = webdriver.Firefox(
-        options=options, service=Service(GeckoDriverManager().install())
+        options=options,
+        service=service,
     )
 
     return driver
