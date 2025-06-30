@@ -9,34 +9,34 @@ import scraper.util.frontend_interaction as frontend_interaction
 from scraper.util.create_news_entry import create_news_entry
 from scraper.util.save_as_json import save_as_json
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
+from webdriver_manager.firefox import GeckoDriverManager
 
 
-def setup_driver() -> webdriver.Chrome:
+def setup_driver() -> webdriver.Firefox:
     options = Options()
 
-    # Optionen für lokale Tests des Skripts vs Einsatz in Docker-Container
-    options.add_argument("--headless=new")
-    # options.add_argument("--start-maximized")
+    # Headless-Modus aktivieren
+    options.add_argument("--headless")
 
     # Logging deaktivieren
-    options.add_argument("--log-level=3")
-    options.add_experimental_option("excludeSwitches", ["enable-logging"])
+    os.environ["MOZ_LOG"] = "error"
 
-    # Probleme mit User-Directory in Docker-Container beheben
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
+    """ # Setze den Pfad zum Firefox-Binary und zum Geckodriver
+    options.binary_location = "/usr/bin/firefox"
+    service = Service(executable_path="/usr/local/bin/geckodriver") """
 
-    driver: webdriver.Chrome = webdriver.Chrome(
-        options=options,
+    driver: webdriver.Firefox = webdriver.Firefox(
+        options=options, service=Service(GeckoDriverManager().install())
     )
 
     return driver
 
 
-def unfold_news(driver: webdriver.Chrome) -> None:
+def unfold_news(driver: webdriver.Firefox) -> None:
     while True:
         # Anzahl der News-Artikel vor dem Klicken des Buttons
         items = driver.find_elements(By.CSS_SELECTOR, ".news-item")

@@ -1,13 +1,12 @@
 FROM python:3.13-slim
 
-# Da Selenium Manager auf Linux arm64 (noch) nicht läuft, muss Chrome hier manuell installiert werden.
-
 # Installiere notwendige Pakete
 RUN apt-get update && apt-get install -y \
     wget \
     unzip \
     curl \
     gnupg \
+    xz-utils \
     fonts-liberation \
     libxss1 \
     libappindicator3-1 \
@@ -20,17 +19,20 @@ RUN apt-get update && apt-get install -y \
     xdg-utils \
     && apt-get clean
 
-# Chrome installieren
-RUN wget -q "https://storage.googleapis.com/chrome-for-testing-public/134.0.6998.35/linux64/chrome-linux64.zip" && \
-    unzip chrome-linux64.zip && \
-    mv chrome-linux64 /opt/chrome && \
-    ln -s /opt/chrome/chrome /usr/bin/google-chrome && \
-    rm chrome-linux64.zip
-
-# Installiere den passenden Chrome WebDriver
-RUN wget -q "https://storage.googleapis.com/chrome-for-testing-public/134.0.6998.35/linux64/chromedriver-linux64.zip" && \
-    unzip chromedriver-linux64.zip -d /usr/local/bin/ && \
-    rm chromedriver-linux64.zip
+# Firefox installieren (architekturabhängig)
+RUN ARCH=$(dpkg --print-architecture) && \
+    if [ "$ARCH" = "amd64" ]; then \
+    FIREFOX_URL="https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=de"; \
+    elif [ "$ARCH" = "arm64" ]; then \
+    FIREFOX_URL="https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64-aarch64&lang=de"; \
+    else \
+    echo "Nicht unterstützte Architektur: $ARCH" && exit 1; \
+    fi && \
+    wget -O firefox.tar.xz "$FIREFOX_URL" && \
+    tar -xJf firefox.tar.xz && \
+    mv firefox /opt/firefox && \
+    ln -s /opt/firefox/firefox /usr/bin/firefox && \
+    rm firefox.tar.xz
 
 WORKDIR /webscraper
 
