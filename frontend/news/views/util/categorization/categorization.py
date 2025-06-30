@@ -4,6 +4,8 @@ import random
 
 from openai import OpenAI
 
+from common.my_logging import get_logger
+
 from ....models import OpenAITokenUsage
 
 
@@ -26,6 +28,8 @@ def get_categorization_from_openai(
         BASE_DIR, "publikumskategorien.txt"
     )
     system_message_file_path = os.path.join(BASE_DIR, "system_message.txt")
+
+    logger = get_logger(__name__)
 
     # Kategorien aus der Datei lesen
     with open(
@@ -74,45 +78,47 @@ def get_categorization_from_openai(
             prompt = f"Titel: {arctile_heading}\n\nText: {article_text}"
 
             # OpenAI-API aufrufen, um Kategorien und Zielgruppen zu erhalten
-            response = openai.responses.create(
-                model="gpt-4.1-mini",
-                input=[
-                    {"role": "developer", "content": system_message},
-                    {
-                        "role": "user",
-                        "content": prompt,
-                    },
-                ],
-                tools=[],
-                temperature=1,
-                max_output_tokens=200,
-            )
-
-            # Überprüfen, ob die Antwort erfolgreich war
-            if not response:
-                print("Keine Antwort von OpenAI erhalten.")
+            try:
+                response = openai.responses.create(
+                    model="gpt-4.1-mini",
+                    input=[
+                        {"role": "developer", "content": system_message},
+                        {
+                            "role": "user",
+                            "content": prompt,
+                        },
+                    ],
+                    tools=[],
+                    temperature=1,
+                    max_output_tokens=200,
+                )
+            except Exception as e:
+                logger.error(f"Fehler bei der OpenAI-API: {e}")
                 return [], []
+            else:
+                # Ausgabe verarbeiten
+                split_response = response.output_text.split("----")
+                categories_response = split_response[0].strip()
+                audiences_response = split_response[1].strip()
+                categories = [
+                    category.strip() for category in categories_response.split(",")
+                ]
+                audiences = [
+                    audience.strip() for audience in audiences_response.split(",")
+                ]
 
-            # Ausgabe verarbeiten
-            print("Kategorisierung von OpenAI erhalten.")
-            split_response = response.output_text.split("----")
-            categories_response = split_response[0].strip()
-            audiences_response = split_response[1].strip()
-            categories = [
-                category.strip() for category in categories_response.split(",")
-            ]
-            audiences = [audience.strip() for audience in audiences_response.split(",")]
+                # Genutzte Token in der Datenbank speichern
+                usage, _ = OpenAITokenUsage.objects.get_or_create(
+                    date=datetime.date.today()
+                )
+                if response.usage:
+                    usage.used_tokens += response.usage.total_tokens
+                    usage.save()
 
-            # Genutzte Token in der Datenbank speichern
-            usage, _ = OpenAITokenUsage.objects.get_or_create(
-                date=datetime.date.today()
-            )
-            if response.usage:
-                usage.used_tokens += response.usage.total_tokens
-                usage.save()
-
-            return categories, audiences
+                return categories, audiences
 
         else:
-            print("Token-Limit erreicht. Keine Kategorien oder Zielgruppen generiert.")
+            logger.info(
+                "Token-Limit erreicht. Keine Kategorien oder Zielgruppen generiert."
+            )
             return [], []

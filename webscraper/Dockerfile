@@ -36,8 +36,9 @@ RUN ARCH=$(dpkg --print-architecture) && \
 
 WORKDIR /webscraper
 
-COPY requirements.txt .
+COPY webscraper/requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-COPY . .
+COPY common /app/common
+COPY webscraper /app

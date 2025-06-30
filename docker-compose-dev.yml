@@ -23,8 +23,8 @@ services:
 
   django:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: frontend/Dockerfile
     environment:
       <<: *common-env
       API_KEY: ${API_KEY}
@@ -42,8 +42,8 @@ services:
 
   celery-worker:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: frontend/Dockerfile
     environment: *common-env
     depends_on:
       - redis
@@ -54,8 +54,8 @@ services:
 
   celery-beat:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: frontend/Dockerfile
     depends_on:
       - redis
     networks:
@@ -65,8 +65,8 @@ services:
 
   flower:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: frontend/Dockerfile
     command: celery -A rptu4you flower --port=5555 --address=0.0.0.0
     depends_on:
       - redis
@@ -78,13 +78,13 @@ services:
 
   scraper:
     build:
-      context: ./webscraper
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: webscraper/Dockerfile
     environment:
       - API_KEY=${API_KEY}
     networks:
       - backend
-    command: python -u scheduler.py
+    command: [python, "webscraper/scheduler.py"]
 
 networks:
   backend:
