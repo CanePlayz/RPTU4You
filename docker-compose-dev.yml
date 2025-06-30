@@ -84,7 +84,7 @@ services:
       - API_KEY=${API_KEY}
     networks:
       - backend
-    command: [python, "webscraper/scheduler.py"]
+    command: [python, "/app/scheduler.py"]
 
 networks:
   backend:
