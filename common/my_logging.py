@@ -9,4 +9,10 @@ def get_logger(name: str) -> logging.Logger:
         handlers=[logging.StreamHandler(sys.stdout)],
         force=True,
     )
+
+    # Unerwünschte Logger deaktivieren
+    logging.getLogger("apscheduler").setLevel(logging.WARNING)
+    logging.getLogger("apscheduler.scheduler").setLevel(logging.WARNING)
+    logging.getLogger("apscheduler.executors.default").setLevel(logging.WARNING)
+
     return logging.getLogger(name)
