@@ -96,19 +96,11 @@ def process_article(relative_link: str) -> dict:
                     text += child.decode_contents() + "<br>"
 
     locations = []
-    categories = []
     source_type = "Interne Website"
     source_name = "RPTU Newsroom"
 
     return create_news_entry(
-        link,
-        title,
-        date,
-        text,
-        locations,
-        categories,
-        source_type,
-        source_name,
+        link, title, date, text, locations, source_type, source_name
     )
 
 

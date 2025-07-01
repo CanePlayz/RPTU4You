@@ -138,7 +138,6 @@ def process_entry(entry: bs4.element.Tag, science: bool) -> dict | list[dict]:
         date,
         text,
         ["Kaiserslautern"],
-        categories,
         "Fachschaft",
         "Fachbereich Wirtschaftswissenschaften",
     )

@@ -45,30 +45,12 @@ def extract_locations(subject: str) -> list:
         return ["Kaiserslautern", "Landau"]
 
 
-def extract_categories(subject: str, category_name: str) -> list[str]:
-    # Kategorien aus Subject und Kategoriename extrahieren
-    categories = []
-
-    if subject.startswith("[Mitarbeitende]"):
-        categories.append("Mitarbeitende")
-    if subject.startswith("[Studierende]"):
-        categories.append("Studierende")
-
-    if category_name == "Veranstaltungen":
-        categories.append("Veranstaltung")
-    elif category_name == "Umfragen":
-        categories.append("Umfrage")
-
-    return categories
-
-
 def create_news_entry(
     link: str,
     title: str,
     date: datetime,
     text: str,
     locations: list,
-    categories: list[str],
     source_type: str,
     rundmail_id: str,
 ) -> dict:
@@ -86,7 +68,6 @@ def create_news_entry(
         "erstellungsdatum": date,
         "text": text,
         "standorte": locations,
-        "kategorien": categories,
         "quelle_typ": source_type,
         "quelle_name": quelle_name,
         "rundmail_id": rundmail_id,
@@ -195,11 +176,8 @@ def process_sammel_rundmail(
                     if isinstance(news_text, bs4.element.Tag):
                         news_text_without_tag: str = news_text.decode_contents()
 
-            # Standorte und Kategorien extrahieren
+            # Standorte extrahieren
             locations: list[str] = extract_locations(news_entry_subject)
-            extracted_categories: list[str] = extract_categories(
-                news_entry_subject, category_name
-            )
 
             # Präfixe und Suffixe entfernen
             news_entry_subject_clean: str = remove_fixes(news_entry_subject)
@@ -212,7 +190,6 @@ def process_sammel_rundmail(
                     date,
                     news_text_without_tag,
                     locations,
-                    extracted_categories,
                     (
                         "Sammel-Rundmail"
                         if not stellenangebote
@@ -248,7 +225,7 @@ def process_rundmail(
 
     # Eintrag erstellen
     return create_news_entry(
-        link, subject_clean, date, text, locations, [], "Rundmail", quelle_id
+        link, subject_clean, date, text, locations, "Rundmail", quelle_id
     )
 
 
