@@ -82,6 +82,10 @@ services:
       dockerfile: webscraper/Dockerfile
     environment:
       - API_KEY=${API_KEY}
+      - IMAP_SERVER=${IMAP_SERVER}
+      - IMAP_PORT=${IMAP_PORT}
+      - IMAP_USERNAME=${IMAP_USERNAME}
+      - IMAP_PASSWORD=${IMAP_PASSWORD}
     networks:
       - backend
     command: [python, "/app/scheduler.py"]

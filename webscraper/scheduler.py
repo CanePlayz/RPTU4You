@@ -3,6 +3,7 @@ from datetime import datetime
 
 import requests
 import scraper.fachbereiche.wiwi as wiwi
+import scraper.mail.mail_scraper as mail_scraper
 import scraper.newsroom.pressemitteilungen as pressemitteilungen
 import scraper.rundmail.rundmail as rundmail
 from apscheduler.schedulers.blocking import BlockingScheduler
@@ -56,6 +57,15 @@ def main():
         trigger=IntervalTrigger(minutes=20),
         id="fachbereiche_job_wiwi",
         name="Fachbereiche-Scraper (Wiwi)",
+        replace_existing=True,
+        next_run_time=datetime.now(),
+    )
+
+    scheduler.add_job(
+        func=mail_scraper.main,
+        trigger=IntervalTrigger(minutes=20),
+        id="mail_job",
+        name="Mail-Scraper",
         replace_existing=True,
         next_run_time=datetime.now(),
     )
