@@ -112,7 +112,7 @@ def parse_message(msg: EmailMessage) -> dict:
         date,
         body,
         [],
-        "Email",
+        "Email-Verteiler",
         source_name,
     )
 
@@ -130,7 +130,7 @@ def main() -> None:
     # save_as_json(news, "mail_scraper")
 
     # Einträge an Frontend senden
-    frontend_interaction.send_data(news, "Newsroom-Scraper")
+    frontend_interaction.send_data(news, "Mail-Scraper")
 
 
 if __name__ == "__main__":
