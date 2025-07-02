@@ -49,7 +49,7 @@ RUN ARCH=$(dpkg --print-architecture) && \
     chmod +x /usr/local/bin/geckodriver && \
     rm geckodriver.tar.gz
 
-WORKDIR /webscraper
+WORKDIR /app
 
 COPY webscraper/requirements.txt .
 RUN pip install --upgrade pip
