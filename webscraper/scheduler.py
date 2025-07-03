@@ -3,10 +3,15 @@ from datetime import datetime
 
 import requests
 import scraper.fachbereiche.wiwi as wiwi
+import scraper.mail.mail_scraper as mail_scraper
 import scraper.newsroom.pressemitteilungen as pressemitteilungen
 import scraper.rundmail.rundmail as rundmail
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.interval import IntervalTrigger
+
+from common.my_logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def wait_for_django():
@@ -15,11 +20,11 @@ def wait_for_django():
         try:
             response = requests.get(django_url)
             if response.status_code == 200:
-                print("Django ist bereit.")
+                logger.info("Django ist bereit.")
                 return
         except requests.ConnectionError:
             pass
-        print("Warte auf Django...")
+        logger.info("Warte auf Django...")
         time.sleep(1)
     raise RuntimeError("Django konnte nicht gestartet werden.")
 
@@ -56,7 +61,16 @@ def main():
         next_run_time=datetime.now(),
     )
 
-    print("Scheduler läuft...")
+    scheduler.add_job(
+        func=mail_scraper.main,
+        trigger=IntervalTrigger(minutes=20),
+        id="mail_job",
+        name="Mail-Scraper",
+        replace_existing=True,
+        next_run_time=datetime.now(),
+    )
+
+    logger.info("Scheduler läuft...")
     scheduler.start()
 
 

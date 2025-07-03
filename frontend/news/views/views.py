@@ -18,6 +18,8 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 from icalendar import Calendar
 
+from common.my_logging import get_logger
+
 from ..forms import PreferencesForm, UserCreationForm2
 from ..models import *
 
@@ -251,6 +253,8 @@ def calendar_events(request):
 @csrf_protect  # CSRF-Schutz aktivieren
 @login_required
 def create_event(request):
+    logger = get_logger(__name__)
+
     if request.method == "POST":
         try:
             data = json.loads(request.body)
@@ -320,8 +324,7 @@ def create_event(request):
             return JsonResponse({"error": "Ungültige JSON-Daten."}, status=400)
         except Exception as e:
             error_message = f"Fehler bei der Event-Erstellung: {str(e)}"
-            print(error_message)
-            print(traceback.format_exc())
+            logger.error(error_message)
             return JsonResponse({"error": error_message}, status=500)
 
     return JsonResponse({"error": "Methode nicht erlaubt."}, status=405)

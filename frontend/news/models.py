@@ -47,6 +47,14 @@ class ExterneWebsite(Quelle):
         verbose_name_plural = "Externe Websites"
 
 
+class EmailVerteiler(Quelle):
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "Email-Verteiler"
+
+
 class Standort(models.Model):
     name = models.CharField(max_length=100, unique=True)
 

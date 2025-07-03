@@ -5,6 +5,8 @@ from datetime import datetime
 
 import requests
 
+from common.my_logging import get_logger
+
 
 def datetime_serializer(obj) -> str:
     if isinstance(obj, datetime):
@@ -30,11 +32,11 @@ def request_date():
 
         return date_object
     else:
-        print("Fehler beim Abrufen des Datums:", response.status_code, response.text)
         return None
 
 
 def send_data(data, type):
+    logger = get_logger(__name__)
     api_key = os.getenv("API_KEY")
     json_data = json.dumps(data, default=datetime_serializer)
     compressed_data = gzip.compress(json_data.encode("utf-8"))
@@ -47,4 +49,4 @@ def send_data(data, type):
             "API-Key": api_key,
         },
     )
-    print(f"{type} - Status Code: {response.status_code}")
+    logger.info(f"{type} - Status Code: {response.status_code}")

@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
+import logging
 import os
+
+# ganz am Anfang (z. B. in entrypoint.py)
 import sys
 import time
 
@@ -8,8 +11,9 @@ import django
 import psycopg2
 from psycopg2 import OperationalError
 
-# Sicherstellen, dass die Ausgaben sofort angezeigt werden
-sys.stdout.reconfigure(line_buffering=True)  # type: ignore
+from common.my_logging import get_logger
+
+logger = get_logger(__name__)
 
 
 # Warten auf Datenbank
@@ -20,10 +24,10 @@ def wait_for_db():
                 dbname="mydb", user="admin", password="password", host="db"
             )
             conn.close()
-            print("✓  Datenbank ist erreichbar")
+            logger.info("Datenbank ist erreichbar.")
             break
         except OperationalError:
-            print("Warte auf Datenbank...")
+            logger.warning("Datenbank ist noch nicht erreichbar, warte...")
             time.sleep(1)
 
 
@@ -41,36 +45,41 @@ from news.tasks import backfill_missing_categorizations, backfill_missing_transl
 
 # Migrations durchführen
 def migrate_db():
-    print("▶  Migrationen ausführen …")
+    logger.info("Führe Migrationen durch...")
     call_command("migrate", interactive=False)
+    logger.info("Migrationen abgeschlossen.")
 
 
 # Superuser anlegen
 def create_superuser():
+    logger.info("Überprüfe, ob Superuser existiert...")
     User = get_user_model()
     username = os.getenv("DJANGO_SUPERUSER_USERNAME", "admin")
     email = os.getenv("DJANGO_SUPERUSER_EMAIL", "admin@example.com")
     password = os.getenv("DJANGO_SUPERUSER_PASSWORD", "password")
 
     if not User.objects.filter(username=username).exists():
-        print(f"▶  Superuser '{username}' anlegen …")
+        logger.info("Erstelle Superuser...")
         User.objects.create_superuser(username, email, password)
+        logger.info("Superuser erfolgreich erstellt.")
     else:
-        print(f"✓  Superuser '{username}' existiert bereits")
+        logger.info("Superuser existiert bereits.")
 
 
 # Sprachobjekte anlegen
 def create_languages():
+    logger.info("Überprüfe, ob Sprachobjekte existieren...")
     Sprache.objects.get_or_create(name="Deutsch", code="de")
     Sprache.objects.get_or_create(name="Englisch", code="en")
-    print("✓  Sprachobjekte sind vorhanden")
+    logger.info("Sprachobjekte sind vorhanden.")
 
 
 # Backfill-Tasks starten
 def start_backfill_tasks():
-    print("▶  Starte Backfill-Tasks …")
+    logger.info("Starte Backfill-Tasks...")
     backfill_missing_translations.delay()
     backfill_missing_categorizations.delay()
+    logger.info("Backfill-Tasks gestartet.")
 
 
 def main():
@@ -79,9 +88,10 @@ def main():
     create_languages()
     start_backfill_tasks()
 
-    env = os.getenv("DJANGO_ENV", "development")
-    if env == "production":
+    server = os.getenv("SERVER", "development")
+    if server == "gunicorn":
         # Gunicorn als neuen Prozess starten
+        logger.info("Starte Gunicorn...")
         gunicorn_cmd = [
             "gunicorn",
             "rptu4you.wsgi:application",
@@ -91,7 +101,8 @@ def main():
             "3",
         ]
         os.execvp("gunicorn", gunicorn_cmd)  # ersetzt aktuellen Prozess
-    else:
+    elif server == "django":
+        logger.info("Starte Django Entwicklungsserver...")
         # Entwicklungsserver ohne automatischen Reload starten
         call_command("runserver", "0.0.0.0:8000", use_reloader=False)
 

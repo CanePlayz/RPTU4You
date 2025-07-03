@@ -34,10 +34,26 @@ RUN ARCH=$(dpkg --print-architecture) && \
     ln -s /opt/firefox/firefox /usr/bin/firefox && \
     rm firefox.tar.xz
 
-WORKDIR /webscraper
+# Geckodriver installieren (architekturabhängig)
+RUN ARCH=$(dpkg --print-architecture) && \
+    if [ "$ARCH" = "amd64" ]; then \
+    GECKODRIVER_URL="https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux64.tar.gz"; \
+    elif [ "$ARCH" = "arm64" ]; then \
+    GECKODRIVER_URL="https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux-aarch64.tar.gz"; \
+    else \
+    echo "Nicht unterstützte Architektur für Geckodriver: $ARCH" && exit 1; \
+    fi && \
+    wget -O geckodriver.tar.gz "$GECKODRIVER_URL" && \
+    tar -xzf geckodriver.tar.gz && \
+    mv geckodriver /usr/local/bin/geckodriver && \
+    chmod +x /usr/local/bin/geckodriver && \
+    rm geckodriver.tar.gz
 
-COPY requirements.txt .
+WORKDIR /app
+
+COPY webscraper/requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-COPY . .
+COPY common /app/common
+COPY webscraper /app

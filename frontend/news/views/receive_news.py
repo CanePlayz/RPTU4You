@@ -9,6 +9,8 @@ from django.utils.timezone import make_aware
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
+from common.my_logging import get_logger
+
 from ..models import *
 from .util.categorization.categorization import get_categorization_from_openai
 
@@ -16,6 +18,9 @@ from .util.categorization.categorization import get_categorization_from_openai
 @method_decorator(csrf_exempt, name="dispatch")
 class ReceiveNews(View):
     def post(self, request):
+        logger = get_logger(__name__)
+        logger.info("POST-Anfrage an /receive_news empfangen.")
+
         # API-Key prüfen
         api_key = os.getenv("API_KEY")
         api_key_request = request.headers.get("API-Key")
@@ -36,7 +41,7 @@ class ReceiveNews(View):
         openai_api_key = os.getenv("OPENAI_API_KEY", "")
         if environment not in ["dev", "prod"]:
             return JsonResponse(
-                {"error": "Invalid environment. Must be 'dev' or 'prod'."},
+                {"error": "Invalid environment"},
                 status=400,
             )
 
@@ -81,6 +86,11 @@ class ReceiveNews(View):
                     },
                 )
 
+            elif news_entry["quelle_typ"] == "Email-Verteiler":
+                quelle, _ = EmailVerteiler.objects.get_or_create(
+                    name=news_entry["quelle_name"]
+                )
+
             # Erstellungsdatum parsen und sicherstellen, dass eine Zeitzone gesetzt ist
             erstellungsdatum: datetime = make_aware(
                 datetime.strptime(news_entry["erstellungsdatum"], "%d.%m.%Y %H:%M:%S")
@@ -88,7 +98,7 @@ class ReceiveNews(View):
 
             # News-Objekt erstellen
             # Überprüfen, ob bereits ein News-Objekt mit diesem Titel existiert
-            print(f"Verarbeite News-Eintrag: {news_entry['titel']}")
+            logger.info(f"Verarbeite News-Eintrag: {news_entry['titel']}")
             news_item, created = News.objects.get_or_create(
                 titel=news_entry["titel"],
                 defaults={
@@ -99,7 +109,7 @@ class ReceiveNews(View):
                 },
             )
 
-            # Wenn das News-Objekt neu erstellt wurde, Attribute hinzufügen
+            # Wenn das News-Objekt neu erstellt wurde, Attribute und Übersetzungen hinzufügen
             if created:
 
                 # Standorte hinzufügen
@@ -113,32 +123,50 @@ class ReceiveNews(View):
                     news_item.standorte.add(standort_ld)
 
                 # Inhaltskategorien und Zielgruppe(n) hinzufügen
-                categories, audiences = get_categorization_from_openai(
-                    news_entry["titel"], news_entry["text"], environment, openai_api_key
-                )
-
-                for category in categories:
-                    category_object, _ = InhaltsKategorie.objects.get_or_create(
-                        name=category
+                try:
+                    categories, audiences = get_categorization_from_openai(
+                        news_entry["titel"],
+                        news_entry["text"],
+                        environment,
+                        openai_api_key,
                     )
-                    news_item.kategorien.add(category_object)
+                except Exception as e:
+                    logger.error(f"Fehler bei der Kategorisierung: {e}")
+                    categories, audiences = [], []
+                else:
+                    for category in categories:
+                        category_object, _ = InhaltsKategorie.objects.get_or_create(
+                            name=category
+                        )
+                        news_item.kategorien.add(category_object)
 
-                for audience in audiences:
-                    audience_object, _ = Zielgruppe.objects.get_or_create(name=audience)
-                    news_item.zielgruppe.add(audience_object)
+                    for audience in audiences:
+                        audience_object, _ = Zielgruppe.objects.get_or_create(
+                            name=audience
+                        )
+                        news_item.zielgruppe.add(audience_object)
 
-            # Deutschen Text speichern
-            if Text.objects.filter(news=news_item, sprache__name="Deutsch").exists():
-                continue
+                    logger.info("Kategorisierung erfolgreich hinzugefügt.")
+
+                # Deutschen Text speichern
+                if Text.objects.filter(
+                    news=news_item, sprache__name="Deutsch"
+                ).exists():
+                    continue
+                else:
+                    text = Text(
+                        news=news_item,
+                        text=news_entry["text"],
+                        titel=news_entry["titel"],
+                        sprache=Sprache.objects.get(name="Deutsch"),
+                    )
+                    text.save()
+
+                # Übersetzungen hinzufügen
+
+                logger.info("News-Objekt erfolgreich erstellt.")
+
             else:
-                text = Text(
-                    news=news_item,
-                    text=news_entry["text"],
-                    titel=news_entry["titel"],
-                    sprache=Sprache.objects.get(name="Deutsch"),
-                )
-                text.save()
-
-            # Übersetzungen hinzufügen
+                logger.info(f"News-Objekt existiert bereits.")
 
         return JsonResponse({"status": "success"})

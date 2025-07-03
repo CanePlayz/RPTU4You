@@ -7,7 +7,6 @@ def create_news_entry(
     date: datetime,
     text: str,
     locations: list[str],
-    categories: list[str],
     source_type: str,
     source_name: str,
 ) -> dict:
@@ -18,7 +17,6 @@ def create_news_entry(
         "erstellungsdatum": date,
         "text": text,
         "standorte": locations,
-        "kategorien": categories,
         "quelle_typ": source_type,
         "quelle_name": source_name,
     }
