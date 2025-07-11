@@ -35,21 +35,33 @@ document.addEventListener("DOMContentLoaded", function () {
   eventForm.appendChild(allInGroupCheckbox);
   eventForm.appendChild(allInGroupLabel);
 
+
+
   function openEventPopup(mode, eventData) {
     editMode = mode === "edit";
     editingEventId = eventData ? eventData.id : null;
     if (eventData) {
+      if (eventData.is_global) {
+        // Für globale Events kein Bearbeiten/Löschen/Verbergen, nur Info anzeigen
+        alert("Dies ist ein globaler Termin und kann nicht bearbeitet werden.");
+        return;
+      }
+      // ...wie bisher für normale Events...
       eventTitle.value = eventData.title || "";
       eventStart.value = eventData.start ? eventData.start.substring(0, 16) : "";
       eventEnd.value = eventData.end ? eventData.end.substring(0, 16) : "";
       eventDescription.value = eventData.description || "";
-      // Frequenz und Wiederholen-bis dürfen beim Bearbeiten nicht mehr geändert werden!
       eventRepeat.value = eventData.repeat || "none";
+      eventRepeatUntil.value = eventData.repeat_until ? eventData.repeat_until.substring(0, 16) : "";
+      eventTitle.disabled = false;
+      eventStart.disabled = false;
+      eventEnd.disabled = false;
+      eventDescription.disabled = false;
       eventRepeat.disabled = true;
       eventRepeat.style.display = "none";
-      eventRepeatUntil.value = eventData.repeat_until ? eventData.repeat_until.substring(0, 16) : "";
       eventRepeatUntil.disabled = true;
       eventRepeatUntil.style.display = "none";
+      submitBtn.style.display = "inline-block";
       submitBtn.textContent = "Speichern";
       if (eventData.group) {
         allInGroupCheckbox.style.display = "inline-block";
@@ -60,19 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
         allInGroupLabel.style.display = "none";
         allInGroupCheckbox.checked = false;
       }
-      // Show/hide hide/unhide buttons for global events
-      if (eventData.is_global) {
-        if (eventData.hidden) {
-          eventHideBtn.style.display = "none";
-          eventUnhideBtn.style.display = "inline-block";
-        } else {
-          eventHideBtn.style.display = "inline-block";
-          eventUnhideBtn.style.display = "none";
-        }
-      } else {
-        eventHideBtn.style.display = "none";
-        eventUnhideBtn.style.display = "none";
-      }
+      eventPopup.style.display = "block";
     } else {
       eventTitle.value = "";
       eventStart.value = "";
@@ -84,15 +84,16 @@ document.addEventListener("DOMContentLoaded", function () {
       eventRepeatUntil.value = "";
       eventRepeatUntil.disabled = false;
       eventRepeatUntil.style.display = "inline-block";
+      submitBtn.style.display = "inline-block";
       submitBtn.textContent = "Hinzufügen";
       allInGroupCheckbox.style.display = "none";
       allInGroupLabel.style.display = "none";
       allInGroupCheckbox.checked = false;
-      eventHideBtn.style.display = "none";
-      eventUnhideBtn.style.display = "none";
+      eventPopup.style.display = "block";
     }
-    eventPopup.style.display = "block";
   }
+
+
 
   function closeEventPopup() {
     eventPopup.style.display = "none";
@@ -119,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(response => response.json())
         .then(data => {
           openEventPopup("edit", data);
-          // Zeige auch einen Löschen-Button im Popup
+          // Löschen-Button nur für eigene Events
           document.getElementById("eventDeleteBtn").style.display =
             data.user_id == currentUserId ? "inline-block" : "none";
         });
@@ -129,6 +130,10 @@ document.addEventListener("DOMContentLoaded", function () {
       var titleEl = info.el.querySelector(".fc-event-title");
       if (titleEl) {
         titleEl.innerHTML = `${info.event.title}<br><span class=\"event-description\">${description}</span>`;
+      }
+      // Globale Events optisch hervorheben
+      if (info.event.extendedProps.is_global) {
+        info.el.classList.add("global-event");
       }
     },
   });

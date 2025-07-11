@@ -5,6 +5,7 @@ from datetime import timedelta
 from .models import *
 
 import uuid
+import hashlib
 
 admin.site.register(Quelle)
 admin.site.register(Fachschaft)
@@ -21,6 +22,7 @@ admin.site.register(User)
 
 # Brauchen wir um im Admin Table Serientermine zu erstellen
 class CalendarEventAdmin(admin.ModelAdmin):
+
     list_display = (
         "title",
         "start",
@@ -30,6 +32,7 @@ class CalendarEventAdmin(admin.ModelAdmin):
         "user",
         "is_global",
         "group",
+        "description",
     )
     exclude = ("group",)
 

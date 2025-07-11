@@ -1,3 +1,4 @@
+<!-- Kein Verbergen-Popup mehr für globale Events -->
 {% extends "base.html" %}
 
 {% block title %}
@@ -27,6 +28,14 @@ Dein Kalender
   .fc-daygrid-event {
     white-space: normal;
     padding: 4px;
+  }
+
+  /* Globale Events optisch hervorheben */
+  .fc-event.global-event {
+    background-color: #e0e0e0 !important;
+    color: #333 !important;
+    border-left: 5px solid #0074d9 !important;
+    font-style: italic;
   }
 
   #eventPopup {
@@ -94,10 +103,7 @@ Dein Kalender
     <button type="submit" id="eventSubmitBtn">Hinzufügen</button>
     <button type="button" id="eventDeleteBtn"
       style="display:none;background:#e74c3c;color:white;margin-left:10px;">Löschen</button>
-    <button type="button" id="eventHideBtn"
-      style="display:none;background:#f39c12;color:white;margin-left:10px;">Verbergen</button>
-    <button type="button" id="eventUnhideBtn"
-      style="display:none;background:#27ae60;color:white;margin-left:10px;">Einblenden</button>
+    <!-- Keine Verbergen/Einblenden-Buttons mehr für globale Events -->
     <button type="button" id="closePopup">Schließen</button>
   </form>
 </div>
