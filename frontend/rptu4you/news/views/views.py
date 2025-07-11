@@ -2,6 +2,7 @@ import json
 import os
 import traceback
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
@@ -24,7 +25,7 @@ from ..models import CalendarEvent, News, User
 """
 NEWS
 """
-#Info: news_view unten, bis jetzt nur Kalender auf der rechten Seite eingebunden. Jacob fragen ob man daraus zwei Views machen kann oder nicht
+# Info: news_view unten, bis jetzt nur Kalender auf der rechten Seite eingebunden. Jacob fragen ob man daraus zwei Views machen kann oder nicht
 # Allgemine zentrale News-API, die News basierend auf verschiedenen Eingabe-Parametern zurückgibt:
 # - Gefiltert nach Benutzerpräferenzen in Bezug auf Inhalt, Standort usw.
 # - Mit einem Offset
@@ -76,6 +77,7 @@ def Links(request):
 """
 ANMELDUNG
 """
+
 
 def login_view(request):
     # Hole next_url aus GET oder POST, je nach Kontext
@@ -200,6 +202,7 @@ from django.contrib.auth.decorators import login_required
 KALENDER
 """
 
+
 @login_required
 def calendar_page(request):
     return render(
@@ -207,6 +210,7 @@ def calendar_page(request):
         "news/calendar.html",
         {"is_authenticated": request.user.is_authenticated},
     )
+
 
 # Kalenderanzeige auf Latest News Seite
 def news_view(request):
@@ -227,6 +231,7 @@ def news_view(request):
         "upcoming_events": upcoming_events,
     }
     return render(request, "news/News.html", context)
+
 
 # API-Endpunkt für Kalender-Events
 def calendar_events(request):
@@ -315,16 +320,32 @@ def create_event(request):
             if repeat_until_str:
                 try:
                     repeat_until = datetime.fromisoformat(repeat_until_str)
-                    repeat_until = timezone.make_aware(repeat_until, timezone.get_current_timezone())
+                    repeat_until = timezone.make_aware(
+                        repeat_until, timezone.get_current_timezone()
+                    )
                 except ValueError:
-                    return JsonResponse({"error": "Wiederholungsende hat ein ungültiges Format."}, status=400)
+                    return JsonResponse(
+                        {"error": "Wiederholungsende hat ein ungültiges Format."},
+                        status=400,
+                    )
 
             events = []
             current_start = start_datetime
             current_end = end_datetime if end_datetime else None
+            group_value = title + str(now)
 
             if repeat != "none" and repeat_until:
-                delta = timedelta(weeks=1) if repeat == "weekly" else timedelta(days=1)
+                # delta = timedelta(weeks=1) if repeat == "weekly" else timedelta(days=1) if repeat == "daily" else timedelta(months=1) if repeat == "monthly" else timedelta(years=1)
+                if repeat == "weekly":
+                    delta = timedelta(weeks=1)
+                elif repeat == "daily":
+                    delta = timedelta(days=1)
+                elif repeat == "monthly":
+                    delta = relativedelta(months=1)
+                elif repeat == "yearly":
+                    delta = relativedelta(years=1)
+                else:
+                    delta = timedelta(days=0)
 
                 while current_start <= repeat_until:
                     event = CalendarEvent.objects.create(
@@ -335,6 +356,7 @@ def create_event(request):
                         description=description,
                         repeat=repeat,
                         repeat_until=repeat_until,
+                        group=group_value,
                     )
                     events.append(event)
                     current_start += delta
@@ -349,9 +371,9 @@ def create_event(request):
                     description=description,
                     repeat=repeat,
                     repeat_until=repeat_until,
+                    # group = None
                 )
                 events.append(event)
-
 
             return JsonResponse(
                 {"message": "Event erfolgreich gespeichert."}, status=201
@@ -367,6 +389,7 @@ def create_event(request):
 
     return JsonResponse({"error": "Methode nicht erlaubt."}, status=405)
 
+
 @csrf_protect
 @login_required
 @require_POST
@@ -378,7 +401,7 @@ def edit_event(request, event_id):
 
         event.title = data.get("title", event.title)
         event.description = data.get("description", event.description)
-        
+
         if "start" in data:
             start = datetime.fromisoformat(data["start"])
             event.start = timezone.make_aware(start, timezone.get_current_timezone())
@@ -392,7 +415,10 @@ def edit_event(request, event_id):
         event.repeat = data.get("repeat", event.repeat)
         repeat_until_str = data.get("repeat_until")
         if repeat_until_str:
-            event.repeat_until = timezone.make_aware(datetime.fromisoformat(repeat_until_str), timezone.get_current_timezone())
+            event.repeat_until = timezone.make_aware(
+                datetime.fromisoformat(repeat_until_str),
+                timezone.get_current_timezone(),
+            )
         else:
             event.repeat_until = None
 
@@ -443,6 +469,27 @@ def export_ics(request):
                 ics_event.add("description", event.description)
             ics_event.add("uid", f"{event.id}@example.com")
             ics_event.add("dtstamp", timezone.now())
+
+            # RRULE für Wiederholungen setzen
+            if getattr(event, "repeat", None) and event.repeat != "none":
+                freq_map = {
+                    "daily": "DAILY",
+                    "weekly": "WEEKLY",
+                    "monthly": "MONTHLY",
+                    "yearly": "YEARLY",
+                }
+                freq = freq_map.get(event.repeat)
+                if freq:
+                    rrule = {"FREQ": freq}
+                    if getattr(event, "repeat_until", None):
+                        # iCalendar UNTIL muss UTC sein und als datetime
+                        until = event.repeat_until
+                        if timezone.is_naive(until):
+                            until = timezone.make_aware(until, timezone.utc)
+                        until_utc = until.astimezone(timezone.utc)
+                        rrule["UNTIL"] = until_utc
+                    ics_event.add("rrule", rrule)
+
             cal.add_component(ics_event)
 
         ics_content = cal.to_ical()
@@ -479,13 +526,75 @@ def import_ics(request):
                     if end and isinstance(end, datetime) and not timezone.is_aware(end):
                         end = timezone.make_aware(end, timezone.get_current_timezone())
 
-                    CalendarEvent.objects.create(
-                        user=request.user,
-                        title=title,
-                        start=start,
-                        end=end,
-                        description=description,
+                    # Wiederholung auslesen
+                    repeat = (
+                        str(component.get("rrule", {}).get("FREQ", ["none"])[0]).lower()
+                        if component.get("rrule")
+                        else "none"
                     )
+                    repeat_until = None
+                    if component.get("rrule") and "UNTIL" in component.get("rrule"):
+                        until_val = component.get("rrule")["UNTIL"][0]
+                        if isinstance(until_val, datetime):
+                            repeat_until = until_val
+                            if not timezone.is_aware(repeat_until):
+                                repeat_until = timezone.make_aware(
+                                    repeat_until, timezone.get_current_timezone()
+                                )
+                        else:
+                            try:
+                                repeat_until = datetime.strptime(
+                                    str(until_val), "%Y%m%dT%H%M%SZ"
+                                )
+                                repeat_until = timezone.make_aware(
+                                    repeat_until, timezone.get_current_timezone()
+                                )
+                            except Exception:
+                                repeat_until = None
+
+                    now = timezone.now()
+                    group_value = title + str(now)
+
+                    # Mapping für FREQ zu delta
+                    if repeat == "weekly":
+                        delta = timedelta(weeks=1)
+                    elif repeat == "daily":
+                        delta = timedelta(days=1)
+                    elif repeat == "monthly":
+                        delta = relativedelta(months=1)
+                    elif repeat == "yearly":
+                        delta = relativedelta(years=1)
+                    else:
+                        delta = None
+
+                    if repeat != "none" and repeat_until and delta:
+                        current_start = start
+                        current_end = end
+                        while current_start <= repeat_until:
+                            CalendarEvent.objects.create(
+                                user=request.user,
+                                title=title,
+                                start=current_start,
+                                end=current_end,
+                                description=description,
+                                repeat=repeat,
+                                repeat_until=repeat_until,
+                                group=group_value,
+                            )
+                            current_start += delta
+                            if current_end:
+                                current_end += delta
+                    else:
+                        CalendarEvent.objects.create(
+                            user=request.user,
+                            title=title,
+                            start=start,
+                            end=end,
+                            description=description,
+                            repeat=repeat,
+                            repeat_until=repeat_until,
+                            group=group_value,
+                        )
 
             messages.success(request, "ICS-Datei erfolgreich importiert.")
         except Exception as e:

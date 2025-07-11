@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-  Dein Kalender
+Dein Kalender
 {% endblock %}
 
 {% block head-optional %}
@@ -62,11 +62,15 @@
 <div class="calendar-buttons">
   <button id="openPopup">Neuen Termin erstellen</button>
   <button onclick="document.getElementById('icsUpload').click();">ICS-Datei importieren</button>
-  <form id="icsForm" action="{% url 'import_ics' %}" method="post" enctype="multipart/form-data" style="display: inline;">
+  <form id="icsForm" action="{% url 'import_ics' %}" method="post" enctype="multipart/form-data"
+    style="display: inline;">
     {% csrf_token %}
-    <input type="file" id="icsUpload" name="ics_file" accept=".ics" class="hidden-upload" onchange="document.getElementById('icsForm').submit();">
+    <input type="file" id="icsUpload" name="ics_file" accept=".ics" class="hidden-upload"
+      onchange="document.getElementById('icsForm').submit();">
   </form>
-  <a href="{% url 'export_ics' %}"><button>ICS-Datei exportieren</button></a>
+  <form action="{% url 'export_ics' %}" method="get" style="display: inline;">
+    <button type="submit">ICS-Datei exportieren</button>
+  </form>
 </div>
 
 <div id="calendar"></div>
@@ -138,16 +142,16 @@
                   "Content-Type": "application/json",
                 },
               })
-              .then(response => response.json())
-              .then(data => {
-                if (data.success) {
-                  calendar.getEventById(info.event.id).remove();
-                  location.reload();
-                } else {
-                  alert("Löschen fehlgeschlagen: " + data.error);
-                }
-              })
-              .catch(error => console.error("Fehler:", error));
+                .then(response => response.json())
+                .then(data => {
+                  if (data.success) {
+                    calendar.getEventById(info.event.id).remove();
+                    location.reload();
+                  } else {
+                    alert("Löschen fehlgeschlagen: " + data.error);
+                  }
+                })
+                .catch(error => console.error("Fehler:", error));
             }
           };
           info.el.appendChild(deleteBtn);
@@ -165,7 +169,7 @@
       eventPopup.style.display = "none";
     });
 
-    document.getElementById("eventForm").addEventListener("submit", function(event) {
+    document.getElementById("eventForm").addEventListener("submit", function (event) {
       event.preventDefault();
       var title = document.getElementById("eventTitle").value;
       var start = document.getElementById("eventStart").value;
@@ -189,17 +193,17 @@
           repeat_until: repeatUntil
         })
       })
-      .then(response => response.json())
-      .then(data => {
-        if (data.message) {
-          alert("Event hinzugefügt!");
-          calendar.refetchEvents();
-          eventPopup.style.display = "none";
-        } else {
-          alert("Fehler: " + data.error);
-        }
-      })
-      .catch(error => console.error("Fehler beim Erstellen des Events:", error));
+        .then(response => response.json())
+        .then(data => {
+          if (data.message) {
+            alert("Event hinzugefügt!");
+            calendar.refetchEvents();
+            eventPopup.style.display = "none";
+          } else {
+            alert("Fehler: " + data.error);
+          }
+        })
+        .catch(error => console.error("Fehler beim Erstellen des Events:", error));
     });
   });
 </script>

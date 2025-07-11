@@ -178,6 +178,7 @@ class CalendarEvent(models.Model):
     is_global = models.BooleanField(default=False)
     repeat = models.CharField(max_length=10, choices=REPEAT_CHOICES, default='none')
     repeat_until = models.DateTimeField(null=True, blank=True)
+    group = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.title
