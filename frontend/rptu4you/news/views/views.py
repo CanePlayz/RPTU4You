@@ -463,9 +463,11 @@ def export_ics(request):
             ics_event = IcsEvent()
             ics_event.add("summary", event.title)
             ics_event.add("dtstart", event.start)
-            if event.end:
+            # dtend ist optional, nur setzen wenn vorhanden und nicht None
+            if getattr(event, "end", None):
                 ics_event.add("dtend", event.end)
-            if event.description:
+            # description ist optional
+            if getattr(event, "description", None):
                 ics_event.add("description", event.description)
             ics_event.add("uid", f"{event.id}@example.com")
             ics_event.add("dtstamp", timezone.now())
