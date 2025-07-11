@@ -19,7 +19,7 @@ admin.site.register(Sprache)
 admin.site.register(Text)
 admin.site.register(User)
 
-
+# Kalender
 # Brauchen wir um im Admin Table Serientermine zu erstellen
 class CalendarEventAdmin(admin.ModelAdmin):
 

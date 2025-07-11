@@ -164,6 +164,8 @@ REPEAT_CHOICES = [
 ]
 
 
+#Kalender
+
 class CalendarEvent(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
@@ -186,11 +188,3 @@ class CalendarEvent(models.Model):
 
     class Meta:
         verbose_name_plural = "Kalendereinträge"
-
-class HiddenCalendarEvent(models.Model):
-    user = models.ForeignKey("User", on_delete=models.CASCADE)
-    event = models.ForeignKey("CalendarEvent", on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ("user", "event")
-
