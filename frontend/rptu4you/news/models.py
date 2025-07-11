@@ -193,3 +193,4 @@ class HiddenCalendarEvent(models.Model):
 
     class Meta:
         unique_together = ("user", "event")
+
