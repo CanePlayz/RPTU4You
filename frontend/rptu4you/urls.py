@@ -33,11 +33,20 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     path("register/", views.register_view, name="register"),
     path("preferences/", views.update_preferences, name="preferences"),
+    path("account/", views.account_view, name="account"),
+    # Kalender URLs
     path("kalender/", views.calendar_page, name="calendar_page"),
     path("api/calendar-events/", views.calendar_events, name="calendar_events"),
-    path("api/create-event/", views.create_event, name="create_event"),
-    path("api/delete-event/<int:event_id>/", views.delete_event, name="delete_event"),
-    path("account/", views.account_view, name="account"),
+    path(
+        "api/calendar-events/<int:event_id>/",
+        views.calendar_event_detail,
+        name="calendar_event_detail",
+    ),
+    path(
+        "api/calendar-events/<int:event_id>/unhide/",
+        views.unhide_event,
+        name="unhide_event",
+    ),
     path("kalender/import/", views.import_ics, name="import_ics"),
     path("kalender/export/", views.export_ics, name="export_ics"),
 ]

@@ -77,134 +77,36 @@ Dein Kalender
 
 <!-- Event-Pop-up -->
 <div id="eventPopup">
-  <h3>Neuer Termin</h3>
+  <h3 id="eventPopupTitle">Termin</h3>
   <form id="eventForm">
     <input type="text" id="eventTitle" placeholder="Event Titel" required>
     <input type="datetime-local" id="eventStart" required>
     <input type="datetime-local" id="eventEnd">
     <textarea id="eventDescription" placeholder="Beschreibung"></textarea>
-    <select id="eventRepeat">
+    <select id="eventRepeat" style="display:none">
       <option value="none">Keine Wiederholung</option>
       <option value="daily">Täglich</option>
       <option value="weekly">Wöchentlich</option>
       <option value="monthly">Monatlich</option>
       <option value="yearly">Jährlich</option>
     </select>
-    <input type="datetime-local" id="eventRepeatUntil" placeholder="Wiederholen bis">
-    <button type="submit">Hinzufügen</button>
+    <input type="datetime-local" id="eventRepeatUntil" placeholder="Wiederholen bis" style="display:none">
+    <button type="submit" id="eventSubmitBtn">Hinzufügen</button>
+    <button type="button" id="eventDeleteBtn"
+      style="display:none;background:#e74c3c;color:white;margin-left:10px;">Löschen</button>
+    <button type="button" id="eventHideBtn"
+      style="display:none;background:#f39c12;color:white;margin-left:10px;">Verbergen</button>
+    <button type="button" id="eventUnhideBtn"
+      style="display:none;background:#27ae60;color:white;margin-left:10px;">Einblenden</button>
     <button type="button" id="closePopup">Schließen</button>
   </form>
 </div>
 
+
 <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
+<input type="hidden" id="currentUserId" value="{{ request.user.id }}">
 
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    var calendarEl = document.getElementById("calendar");
-    var csrfToken = document.getElementById("csrfToken").value;
-    var eventPopup = document.getElementById("eventPopup");
-    var openPopupBtn = document.getElementById("openPopup");
-    var closePopupBtn = document.getElementById("closePopup");
-    var currentUserId = "{{ request.user.id }}";
-
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: "dayGridMonth",
-      headerToolbar: {
-        left: "prev,next today",
-        center: "title",
-        right: "dayGridMonth,timeGridWeek,timeGridDay",
-      },
-      locale: "de",
-      editable: false,
-      events: "/api/calendar-events/",
-      eventDidMount: function (info) {
-        var description = info.event.extendedProps.description || "";
-        var titleEl = info.el.querySelector(".fc-event-title");
-        if (titleEl) {
-          titleEl.innerHTML = `${info.event.title}<br><span class="event-description">${description}</span>`;
-        }
-
-        if (info.event.extendedProps.user_id == currentUserId) {
-          var deleteBtn = document.createElement("span");
-          deleteBtn.innerHTML = "❌";
-          deleteBtn.style.cursor = "pointer";
-          deleteBtn.style.marginLeft = "5px";
-          deleteBtn.style.color = "red";
-
-          deleteBtn.onclick = function () {
-            if (confirm("Willst du dieses Event wirklich löschen?")) {
-              fetch(`/api/delete-event/${info.event.id}/`, {
-                method: "POST",
-                headers: {
-                  "X-CSRFToken": csrfToken,
-                  "Content-Type": "application/json",
-                },
-              })
-                .then(response => response.json())
-                .then(data => {
-                  if (data.success) {
-                    calendar.getEventById(info.event.id).remove();
-                    location.reload();
-                  } else {
-                    alert("Löschen fehlgeschlagen: " + data.error);
-                  }
-                })
-                .catch(error => console.error("Fehler:", error));
-            }
-          };
-          info.el.appendChild(deleteBtn);
-        }
-      },
-    });
-
-    calendar.render();
-
-    openPopupBtn.addEventListener("click", function () {
-      eventPopup.style.display = "block";
-    });
-
-    closePopupBtn.addEventListener("click", function () {
-      eventPopup.style.display = "none";
-    });
-
-    document.getElementById("eventForm").addEventListener("submit", function (event) {
-      event.preventDefault();
-      var title = document.getElementById("eventTitle").value;
-      var start = document.getElementById("eventStart").value;
-      var end = document.getElementById("eventEnd").value || null;
-      var description = document.getElementById("eventDescription").value;
-      var repeat = document.getElementById("eventRepeat").value;
-      var repeatUntil = document.getElementById("eventRepeatUntil").value;
-
-      fetch("/api/create-event/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": csrfToken
-        },
-        body: JSON.stringify({
-          title: title,
-          start: start,
-          end: end,
-          description: description,
-          repeat: repeat,
-          repeat_until: repeatUntil
-        })
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.message) {
-            alert("Event hinzugefügt!");
-            calendar.refetchEvents();
-            eventPopup.style.display = "none";
-          } else {
-            alert("Fehler: " + data.error);
-          }
-        })
-        .catch(error => console.error("Fehler beim Erstellen des Events:", error));
-    });
-  });
-</script>
+<script src="/static/js/calendar.js"></script>
 {% endblock %}

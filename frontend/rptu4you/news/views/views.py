@@ -20,7 +20,7 @@ from django.views.decorators.http import require_POST
 from icalendar import Calendar
 
 from ..forms import PreferencesForm, UserCreationForm2
-from ..models import CalendarEvent, News, User
+from ..models import CalendarEvent, News, User, HiddenCalendarEvent
 
 """
 NEWS
@@ -233,40 +233,61 @@ def news_view(request):
     return render(request, "news/News.html", context)
 
 
-# API-Endpunkt für Kalender-Events
+# REST-API für Kalender-Events
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+
+
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
 def calendar_events(request):
-    if request.user.is_authenticated:
-        events = CalendarEvent.objects.filter(
-            user=request.user
-        ) | CalendarEvent.objects.filter(is_global=True)
-    else:
-        events = CalendarEvent.objects.filter(is_global=True)
+    # GET: Alle Events auflisten
+    if request.method == "GET":
+        if request.user.is_authenticated:
+            # Exclude global events hidden by this user
+            hidden_ids = HiddenCalendarEvent.objects.filter(
+                user=request.user
+            ).values_list("event_id", flat=True)
+            events = CalendarEvent.objects.filter(user=request.user)
+            global_events = CalendarEvent.objects.filter(is_global=True).exclude(
+                id__in=hidden_ids
+            )
+            events = list(events) + list(global_events)
+        else:
+            events = CalendarEvent.objects.filter(is_global=True)
 
-    event_data = [
-        {
-            "id": event.id,  # Hier wird die id des Events hinzugefügt
-            "title": event.title,
-            "start": event.start.isoformat(),
-            "end": event.end.isoformat() if event.end else None,
-            "description": event.description,
-            "user_id": event.user.id if event.user else None,
-        }
-        for event in events
-    ]
+        event_data = [
+            {
+                "id": event.id,
+                "title": event.title,
+                "start": event.start.isoformat(),
+                "end": event.end.isoformat() if event.end else None,
+                "description": event.description,
+                "user_id": event.user.id if event.user else None,
+                "repeat": event.repeat,
+                "repeat_until": (
+                    event.repeat_until.isoformat() if event.repeat_until else None
+                ),
+                "group": event.group,
+                "is_global": event.is_global,
+                "hidden": False,  # Optionally, can be set True if needed
+            }
+            for event in events
+        ]
+        return JsonResponse(event_data, safe=False)
 
-    return JsonResponse(event_data, safe=False)
-
-
-@csrf_protect  # CSRF-Schutz aktivieren
-@login_required
-def create_event(request):
+    # POST: Neues Event anlegen
     if request.method == "POST":
+        if not request.user.is_authenticated:
+            return JsonResponse({"error": "Nicht authentifiziert."}, status=401)
         try:
             data = json.loads(request.body)
             title = data.get("title")
             start = data.get("start")
             end = data.get("end")
             description = data.get("description", "")
+            repeat = data.get("repeat", "none")
+            repeat_until_str = data.get("repeat_until")
 
             if not title or not start:
                 return JsonResponse(
@@ -304,7 +325,6 @@ def create_event(request):
                     return JsonResponse(
                         {"error": "Endzeit hat ein ungültiges Format."}, status=400
                     )
-
                 if end_datetime < start_datetime:
                     return JsonResponse(
                         {
@@ -312,9 +332,6 @@ def create_event(request):
                         },
                         status=400,
                     )
-
-            repeat = data.get("repeat", "none")
-            repeat_until_str = data.get("repeat_until")
 
             repeat_until = None
             if repeat_until_str:
@@ -335,7 +352,6 @@ def create_event(request):
             group_value = title + str(now)
 
             if repeat != "none" and repeat_until:
-                # delta = timedelta(weeks=1) if repeat == "weekly" else timedelta(days=1) if repeat == "daily" else timedelta(months=1) if repeat == "monthly" else timedelta(years=1)
                 if repeat == "weekly":
                     delta = timedelta(weeks=1)
                 elif repeat == "daily":
@@ -346,7 +362,6 @@ def create_event(request):
                     delta = relativedelta(years=1)
                 else:
                     delta = timedelta(days=0)
-
                 while current_start <= repeat_until:
                     event = CalendarEvent.objects.create(
                         user=request.user,
@@ -371,7 +386,7 @@ def create_event(request):
                     description=description,
                     repeat=repeat,
                     repeat_until=repeat_until,
-                    # group = None
+                    group=group_value,
                 )
                 events.append(event)
 
@@ -388,6 +403,9 @@ def create_event(request):
             return JsonResponse({"error": error_message}, status=500)
 
     return JsonResponse({"error": "Methode nicht erlaubt."}, status=405)
+
+
+## create_event entfernt, Logik ist jetzt in calendar_events (POST)
 
 
 @csrf_protect
@@ -430,19 +448,197 @@ def edit_event(request, event_id):
         return JsonResponse({"error": f"Fehler: {str(e)}"}, status=500)
 
 
-@login_required
-@require_POST  # Erlaubt nur POST-Anfragen
-@csrf_protect  # Stellt sicher, dass CSRF-Token geprüft wird
-def delete_event(request, event_id):
-    event = get_object_or_404(CalendarEvent, id=event_id)
+# Detail-API für einzelne Events (GET, PUT, DELETE)
+@csrf_exempt
+@require_http_methods(["GET", "PUT", "DELETE"])
+def calendar_event_detail(request, event_id):
+    try:
+        event = get_object_or_404(CalendarEvent, id=event_id)
+        # GET: Einzelnes Event anzeigen
+        if request.method == "GET":
+            # Check if this global event is hidden for the user
+            hidden = False
+            if event.is_global and request.user.is_authenticated:
+                from ..models import HiddenCalendarEvent
 
-    if event.user == request.user or request.user.is_staff:
-        event.delete()
-        return JsonResponse({"success": True})
-    else:
-        return JsonResponse(
-            {"success": False, "error": "Keine Berechtigung"}, status=403
-        )
+                hidden = HiddenCalendarEvent.objects.filter(
+                    user=request.user, event=event
+                ).exists()
+            data = {
+                "id": event.id,
+                "title": event.title,
+                "start": event.start.isoformat(),
+                "end": event.end.isoformat() if event.end else None,
+                "description": event.description,
+                "user_id": event.user.id if event.user else None,
+                "repeat": event.repeat,
+                "repeat_until": (
+                    event.repeat_until.isoformat() if event.repeat_until else None
+                ),
+                "group": event.group,
+                "is_global": event.is_global,
+                "hidden": hidden,
+            }
+            return JsonResponse(data)
+
+        # PUT: Event bearbeiten (nur Uhrzeiten, Tage, Titel, Beschreibung, aber keine Frequenz mehr)
+        if request.method == "PUT":
+            if not request.user.is_authenticated or (
+                event.user != request.user and not request.user.is_staff
+            ):
+                return JsonResponse({"error": "Keine Berechtigung."}, status=403)
+            # Globale Events dürfen von normalen Nutzern nicht bearbeitet werden
+            if event.user is None and not request.user.is_staff:
+                return JsonResponse(
+                    {"error": "Globale Termine können nicht bearbeitet werden."},
+                    status=403,
+                )
+            data = json.loads(request.body)
+            all_in_group = data.get("all_in_group", False)
+            if all_in_group and event.group:
+                events_to_update = list(
+                    CalendarEvent.objects.filter(
+                        group=event.group, user=event.user
+                    ).order_by("start")
+                )
+                if not events_to_update:
+                    return JsonResponse(
+                        {"error": "Keine Events in der Serie gefunden."}, status=404
+                    )
+                # Berechne die Abstände zum ersten Termin
+                old_starts = [ev.start for ev in events_to_update]
+                old_ends = [ev.end for ev in events_to_update]
+                # Neues Start/Ende vom User
+                new_start = None
+                new_end = None
+                if "start" in data:
+                    new_start_dt = datetime.fromisoformat(data["start"])
+                    if timezone.is_naive(new_start_dt):
+                        new_start = timezone.make_aware(
+                            new_start_dt,
+                            timezone.get_current_timezone(),
+                        )
+                    else:
+                        new_start = new_start_dt
+                if "end" in data and data["end"]:
+                    new_end_dt = datetime.fromisoformat(data["end"])
+                    if timezone.is_naive(new_end_dt):
+                        new_end = timezone.make_aware(
+                            new_end_dt,
+                            timezone.get_current_timezone(),
+                        )
+                    else:
+                        new_end = new_end_dt
+                # Zeitdifferenzen berechnen
+                time_deltas = [(s - old_starts[0]) for s in old_starts]
+                end_deltas = [
+                    (e - old_ends[0]) if e and old_ends[0] else None for e in old_ends
+                ]
+                # Für alle Events der Serie: Passe nur Wochentag und Uhrzeit an, das Jahr/Monat/Tag bleibt in der jeweiligen Woche erhalten
+                for ev in events_to_update:
+                    ev.title = data.get("title", ev.title)
+                    ev.description = data.get("description", ev.description)
+                    if new_start:
+                        # Setze den Wochentag und die Uhrzeit auf den neuen Wert, aber im jeweiligen Kalenderwoche/Jahr
+                        # Finde den gewünschten Wochentag (0=Montag, 6=Sonntag) aus new_start
+                        target_weekday = new_start.weekday()
+                        # Aktuelles Datum
+                        current_date = ev.start.date()
+                        # Finde das Datum in derselben Woche wie current_date, das den gewünschten Wochentag hat
+                        # (Montag ist 0, Sonntag ist 6)
+                        days_delta = target_weekday - ev.start.weekday()
+                        new_date = current_date + timedelta(days=days_delta)
+                        ev_start_new = datetime.combine(new_date, new_start.timetz())
+                        if timezone.is_naive(ev_start_new):
+                            ev.start = timezone.make_aware(
+                                ev_start_new, timezone.get_current_timezone()
+                            )
+                        else:
+                            ev.start = ev_start_new
+                    if new_end is not None:
+                        if ev.end:
+                            # Gleiches Prinzip für Endzeit
+                            target_weekday = new_end.weekday()
+                            current_date = ev.end.date()
+                            days_delta = target_weekday - ev.end.weekday()
+                            new_date = current_date + timedelta(days=days_delta)
+                            ev_end_new = datetime.combine(new_date, new_end.timetz())
+                            if timezone.is_naive(ev_end_new):
+                                ev.end = timezone.make_aware(
+                                    ev_end_new, timezone.get_current_timezone()
+                                )
+                            else:
+                                ev.end = ev_end_new
+                        else:
+                            ev.end = None
+                    # Frequenz und repeat_until dürfen NICHT mehr geändert werden!
+                    ev.save()
+                return JsonResponse(
+                    {"message": "Event-Serie erfolgreich aktualisiert."}
+                )
+            else:
+                # Einzeltermin wie gehabt
+                event.title = data.get("title", event.title)
+                event.description = data.get("description", event.description)
+                if "start" in data:
+                    start_dt = datetime.fromisoformat(data["start"])
+                    if timezone.is_naive(start_dt):
+                        event.start = timezone.make_aware(
+                            start_dt, timezone.get_current_timezone()
+                        )
+                    else:
+                        event.start = start_dt
+                if "end" in data and data["end"]:
+                    end_dt = datetime.fromisoformat(data["end"])
+                    if timezone.is_naive(end_dt):
+                        event.end = timezone.make_aware(
+                            end_dt, timezone.get_current_timezone()
+                        )
+                    else:
+                        event.end = end_dt
+                else:
+                    event.end = None
+                event.save()
+                return JsonResponse({"message": "Event erfolgreich aktualisiert."})
+
+        # DELETE: Event löschen oder globales Event für Nutzer verstecken
+        if request.method == "DELETE":
+            if not request.user.is_authenticated or (
+                event.user != request.user and not request.user.is_staff
+            ):
+                return JsonResponse({"error": "Keine Berechtigung."}, status=403)
+            all_in_group = request.GET.get("all_in_group") == "true"
+            # Globale Events: Nutzer kann sie nicht löschen, sondern nur für sich ausblenden
+            if event.user is None and not request.user.is_staff:
+                # Hide for this user (and optionally all in group)
+                from ..models import HiddenCalendarEvent
+
+                if all_in_group and event.group:
+                    global_events = CalendarEvent.objects.filter(
+                        group=event.group, user=None
+                    )
+                    for ge in global_events:
+                        HiddenCalendarEvent.objects.get_or_create(
+                            user=request.user, event=ge
+                        )
+                    return JsonResponse({"success": True, "hidden_group": True})
+                else:
+                    HiddenCalendarEvent.objects.get_or_create(
+                        user=request.user, event=event
+                    )
+                    return JsonResponse({"success": True, "hidden_group": False})
+            # Normale Events löschen
+            if all_in_group and event.group:
+                CalendarEvent.objects.filter(
+                    group=event.group, user=event.user
+                ).delete()
+                return JsonResponse({"success": True, "deleted_group": True})
+            else:
+                event.delete()
+                return JsonResponse({"success": True, "deleted_group": False})
+
+    except Exception as e:
+        return JsonResponse({"error": f"Fehler: {str(e)}"}, status=500)
 
 
 @csrf_protect
@@ -603,3 +799,24 @@ def import_ics(request):
             messages.error(request, f"Fehler beim Importieren: {str(e)}")
 
     return redirect("calendar_page")
+
+
+@csrf_protect
+@login_required
+@require_POST
+def unhide_event(request, event_id):
+    """Unhide a global event for the current user."""
+    from ..models import HiddenCalendarEvent, CalendarEvent
+
+    try:
+        event = get_object_or_404(CalendarEvent, id=event_id, is_global=True)
+        hidden = HiddenCalendarEvent.objects.filter(user=request.user, event=event)
+        if hidden.exists():
+            hidden.delete()
+            return JsonResponse({"success": True, "unhidden": True})
+        else:
+            return JsonResponse(
+                {"success": False, "unhidden": False, "error": "Event was not hidden."}
+            )
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)})

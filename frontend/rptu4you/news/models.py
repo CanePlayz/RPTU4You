@@ -1,5 +1,5 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 
 class Quelle(models.Model):
@@ -156,12 +156,13 @@ class User(AbstractUser):
 
 
 REPEAT_CHOICES = [
-    ('none', 'Keine'),
-    ('daily', 'Täglich'),
-    ('weekly', 'Wöchentlich'),
-    ('monthly', 'Monatlich'),
-    ('yearly', 'Jährlich'),
+    ("none", "Keine"),
+    ("daily", "Täglich"),
+    ("weekly", "Wöchentlich"),
+    ("monthly", "Monatlich"),
+    ("yearly", "Jährlich"),
 ]
+
 
 class CalendarEvent(models.Model):
     title = models.CharField(max_length=255)
@@ -176,7 +177,7 @@ class CalendarEvent(models.Model):
         blank=True,
     )
     is_global = models.BooleanField(default=False)
-    repeat = models.CharField(max_length=10, choices=REPEAT_CHOICES, default='none')
+    repeat = models.CharField(max_length=10, choices=REPEAT_CHOICES, default="none")
     repeat_until = models.DateTimeField(null=True, blank=True)
     group = models.CharField(max_length=255, blank=True, null=True)
 
@@ -185,3 +186,10 @@ class CalendarEvent(models.Model):
 
     class Meta:
         verbose_name_plural = "Kalendereinträge"
+
+class HiddenCalendarEvent(models.Model):
+    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    event = models.ForeignKey("CalendarEvent", on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ("user", "event")
