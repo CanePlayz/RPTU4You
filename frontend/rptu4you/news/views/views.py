@@ -16,7 +16,7 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
-from django.views.decorators.http import require_POST, require_http_methods
+from django.views.decorators.http import require_POST, require_http_methods, require_GET
 from icalendar import Calendar
 
 from ..forms import PreferencesForm, UserCreationForm2
@@ -34,35 +34,54 @@ from ..models import CalendarEvent, News, User
 
 
 # JS lädt auch aus dieser API die News, wenn die Seite geladen wird
-def paginated_news(request):
-    # Hole die Seite aus den GET-Parametern
-    page = request.GET.get("page", 1)
+@csrf_exempt
+@require_GET
+def news_api(request):
+    """
+    Zentrale News-API:
+    - Filtert News nach GET-Parametern (kategorie, standort, zielgruppe, offset, limit)
+    - Berücksichtigt bei eingeloggten Nutzern automatisch deren Präferenzen, falls keine Filter gesetzt sind
+    - Gibt News als JSON zurück
+    """
+    kategorie_ids = request.GET.getlist("kategorie")
+    standort_ids = request.GET.getlist("standort")
+    zielgruppe_ids = request.GET.getlist("zielgruppe")
+    offset = int(request.GET.get("offset", 0))
+    limit = int(request.GET.get("limit", 10))
 
-    # Lade alle News und paginiere sie
-    news_list = News.objects.all().order_by("-erstellungsdatum")
-    paginator = Paginator(news_list, 10)  # 10 News pro Seite
+    news_qs = News.objects.all().order_by("-erstellungsdatum")
 
-    try:
-        news_page = paginator.page(page)
-    except:
-        return JsonResponse({"error": "Invalid page number"}, status=400)
+    # Wenn keine Filter gesetzt und User eingeloggt: User-Präferenzen verwenden
+    if request.user.is_authenticated and not (kategorie_ids or standort_ids or zielgruppe_ids):
+        if hasattr(request.user, "präferenzen") and request.user.präferenzen.exists():
+            kategorie_ids = [str(k.id) for k in request.user.präferenzen.all()]
+        if hasattr(request.user, "standorte") and request.user.standorte.exists():
+            standort_ids = [str(s.id) for s in request.user.standorte.all()]
+        if hasattr(request.user, "zielgruppe") and request.user.zielgruppe.exists():
+            zielgruppe_ids = [str(z.id) for z in request.user.zielgruppe.all()]
+
+    if kategorie_ids:
+        news_qs = news_qs.filter(kategorien__id__in=kategorie_ids)
+    if standort_ids:
+        news_qs = news_qs.filter(standorte__id__in=standort_ids)
+    if zielgruppe_ids:
+        news_qs = news_qs.filter(zielgruppe__id__in=zielgruppe_ids)
+
+    news_qs = news_qs.distinct()[offset:offset+limit]
 
     news_data = [
         {
-            "id": news.id,
-            "titel": news.titel,
-            "text": news.text,
-            "erstellungsdatum": news.erstellungsdatum.strftime("%d.%m.%Y %H:%M:%S"),
-            "link": news.link,
-            "quelle_typ": news.quelle_typ,  # Annahme, dass Quelle als Typ gespeichert ist
+            "id": n.id,
+            "titel": n.titel,
+            "text": n.text,
+            "erstellungsdatum": n.erstellungsdatum.strftime("%d.%m.%Y %H:%M:%S"),
+            "link": n.link,
+            "quelle_typ": n.quelle_typ,
         }
-        for news in news_page
+        for n in news_qs
     ]
 
-    # JSON-Objekte in fertigen, auslieferbaren HTML-Code umwandeln
-
-    return JsonResponse({"news": news_data, "next_page": news_page.has_next()})
-
+    return JsonResponse({"news": news_data, "count": news_qs.count()})
 
 def news_detail(request, news_id):
     news_item = get_object_or_404(News, id=news_id)
@@ -240,14 +259,8 @@ def calendar_events(request):
     # GET: Alle Events auflisten
     if request.method == "GET":
         if request.user.is_authenticated:
-            # Exclude global events hidden by this user
-            hidden_ids = HiddenCalendarEvent.objects.filter(
-                user=request.user
-            ).values_list("event_id", flat=True)
             events = CalendarEvent.objects.filter(user=request.user)
-            global_events = CalendarEvent.objects.filter(is_global=True).exclude(
-                id__in=hidden_ids
-            )
+            global_events = CalendarEvent.objects.filter(is_global=True)
             events = list(events) + list(global_events)
         else:
             events = CalendarEvent.objects.filter(is_global=True)
