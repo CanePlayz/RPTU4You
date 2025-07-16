@@ -1,23 +1,21 @@
 import json
 import os
-import traceback
 from datetime import datetime, timedelta
+from typing import Any
 
 from dateutil.relativedelta import relativedelta
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
-from django.core.paginator import Paginator
-from django.db import models
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 from icalendar import Calendar
+from icalendar import Event as IcsEvent
+from icalendar import vRecur
 
 from common.my_logging import get_logger
 
@@ -76,7 +74,6 @@ def news_api(request):
         {
             "id": n.id,
             "titel": n.titel,
-            "text": n.text,
             "erstellungsdatum": n.erstellungsdatum.strftime("%d.%m.%Y %H:%M:%S"),
             "link": n.link,
             "quelle_typ": n.quelle_typ,
@@ -257,6 +254,7 @@ def news_view(request):
     context = {
         "upcoming_events": upcoming_events,
     }
+
     return render(request, "news/News.html", context)
 
 
@@ -594,8 +592,6 @@ def export_ics(request):
         cal.add("version", "2.0")
 
         for event in events:
-            from icalendar import Event as IcsEvent
-
             ics_event = IcsEvent()
             ics_event.add("summary", event.title)
             ics_event.add("dtstart", event.start)
@@ -609,24 +605,31 @@ def export_ics(request):
             ics_event.add("dtstamp", timezone.now())
 
             # RRULE für Wiederholungen setzen
-            if getattr(event, "repeat", None) and event.repeat != "none":
+            # Add RRULE for recurring events
+            if event.repeat and event.repeat != "none":
                 freq_map = {
                     "daily": "DAILY",
                     "weekly": "WEEKLY",
                     "monthly": "MONTHLY",
                     "yearly": "YEARLY",
                 }
-                freq = freq_map.get(event.repeat)
-                if freq:
-                    rrule = {"FREQ": freq}
-                    if getattr(event, "repeat_until", None):
-                        # iCalendar UNTIL muss UTC sein und als datetime
+
+                freq_value = freq_map.get(event.repeat)
+                if freq_value:
+                    rrule_dict: dict[str, Any] = {"FREQ": freq_value}
+
+                    if event.repeat_until:
+                        # Ensure repeat_until is a timezone-aware UTC datetime
                         until = event.repeat_until
                         if timezone.is_naive(until):
                             until = timezone.make_aware(until, timezone.utc)
-                        until_utc = until.astimezone(timezone.utc)
-                        rrule["UNTIL"] = until_utc
-                    ics_event.add("rrule", rrule)
+                        else:
+                            until = until.astimezone(timezone.utc)
+                        # iCalendar expects UTC without tzinfo for UNTIL
+                        rrule_dict["UNTIL"] = until.replace(tzinfo=None)
+
+                    # Add the RRULE as vRecur
+                    ics_event.add("rrule", vRecur(rrule_dict))
 
             cal.add_component(ics_event)
 

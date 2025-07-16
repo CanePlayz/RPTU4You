@@ -1,5 +1,7 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db import models
+
+# News
 
 
 class Quelle(models.Model):
@@ -17,7 +19,7 @@ class Fachschaft(Quelle):
     def __str__(self):
         return self.name
 
-    class Meta:
+    class Meta:  # type: ignore[no-redef]
         verbose_name_plural = "Fachschaften"
 
 
@@ -27,7 +29,7 @@ class Rundmail(Quelle):
     def __str__(self):
         return self.name
 
-    class Meta:
+    class Meta:  # type: ignore[no-redef]
         verbose_name_plural = "Rundmails"
 
 
@@ -35,7 +37,7 @@ class InterneWebsite(Quelle):
     def __str__(self):
         return self.name
 
-    class Meta:
+    class Meta:  # type: ignore[no-redef]
         verbose_name_plural = "Interne Websites"
 
 
@@ -43,7 +45,7 @@ class ExterneWebsite(Quelle):
     def __str__(self):
         return self.name
 
-    class Meta:
+    class Meta:  # type: ignore[no-redef]
         verbose_name_plural = "Externe Websites"
 
 
@@ -51,7 +53,7 @@ class EmailVerteiler(Quelle):
     def __str__(self):
         return self.name
 
-    class Meta:
+    class Meta:  # type: ignore[no-redef]
         verbose_name_plural = "Email-Verteiler"
 
 
@@ -86,6 +88,8 @@ class Zielgruppe(models.Model):
 
 
 class News(models.Model):
+    id = models.AutoField(primary_key=True)
+
     link = models.URLField(
         max_length=1000
     )  # max_length=1000 ist notwendig, da URLField standardmäßig auf 200 Zeichen begrenzt ist
@@ -152,7 +156,12 @@ class Text(models.Model):
         ]
 
 
+# User
+
+
 class User(AbstractUser):
+    id = models.AutoField(primary_key=True)
+
     standorte = models.ManyToManyField(Standort, blank=True)
     fachschaften = models.ManyToManyField(Fachschaft, blank=True)
     präferenzen = models.ManyToManyField(InhaltsKategorie, blank=True)
@@ -165,6 +174,8 @@ class User(AbstractUser):
         verbose_name_plural = "User"
 
 
+# Kalender
+
 REPEAT_CHOICES = [
     ("none", "Keine"),
     ("daily", "Täglich"),
@@ -174,9 +185,8 @@ REPEAT_CHOICES = [
 ]
 
 
-#Kalender
-
 class CalendarEvent(models.Model):
+    id = models.AutoField(primary_key=True)
     title = models.CharField()
     description = models.TextField(blank=True, null=True)
     start = models.DateTimeField()

@@ -91,6 +91,9 @@ class ReceiveNews(View):
                     name=news_entry["quelle_name"]
                 )
 
+            else:
+                break
+
             # Erstellungsdatum parsen und sicherstellen, dass eine Zeitzone gesetzt ist
             erstellungsdatum: datetime = make_aware(
                 datetime.strptime(news_entry["erstellungsdatum"], "%d.%m.%Y %H:%M:%S")

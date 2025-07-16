@@ -17,7 +17,8 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from news.views import receive_news, views
+
+from ..news.views import receive_news, views
 
 urlpatterns = [
     # Admin URLs
@@ -38,7 +39,11 @@ urlpatterns = [
     # Kalender URLs
     path("kalender/", views.calendar_page, name="calendar_page"),
     path("api/calendar-events/", views.calendar_events, name="calendar_events"),
-    path("api/calendar-events/<int:event_id>/", views.calendar_event_detail, name="calendar_event_detail"),
+    path(
+        "api/calendar-events/<int:event_id>/",
+        views.calendar_event_detail,
+        name="calendar_event_detail",
+    ),
     path("kalender/import/", views.import_ics, name="import_ics"),
     path("kalender/export/", views.export_ics, name="export_ics"),
 ]
