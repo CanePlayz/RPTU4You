@@ -19,7 +19,6 @@ admin.site.register(Zielgruppe)
 admin.site.register(Sprache)
 admin.site.register(Text)
 admin.site.register(User)
-admin.site.register(CalendarEvent)
 admin.site.register(OpenAITokenUsage)
 
 
