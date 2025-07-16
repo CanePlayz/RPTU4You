@@ -8,11 +8,41 @@
 <h2>Latest News</h2>
 
 <div style="display: flex;">
-  <!-- Linke Seite: News -->
+  <!-- Linke Seite: Filterblock -->
+  <div style="flex: 1; max-width: 250px; margin-right: 30px;">
+    <form id="news-filter-form">
+      <h4>Standorte</h4>
+      {% for standort in standorte %}
+        <label>
+          <input type="checkbox" name="standorte" value="{{ standort.id }}">
+          {{ standort.name }}
+        </label><br>
+      {% endfor %}
+      <h4>Kategorien</h4>
+      {% for kategorie in kategorien %}
+        <label>
+          <input type="checkbox" name="kategorien" value="{{ kategorie.id }}">
+          {{ kategorie.name }}
+        </label><br>
+      {% endfor %}
+      <h4>Zielgruppen</h4>
+      {% for ziel in zielgruppen %}
+        <label>
+          <input type="checkbox" name="zielgruppen" value="{{ ziel.id }}">
+          {{ ziel.name }}
+        </label><br>
+      {% endfor %}
+      <button type="button" id="apply-filter-btn" style="margin-top:10px;">Filtern</button>
+    </form>
+  </div>
+
+  <!-- Mitte: News -->
   <div style="flex: 3;">
     <ul id="news-container">
       <!-- News werden hier dynamisch eingefügt -->
     </ul>
+    <div id="news-loading" style="display:none;">Lade News...</div>
+    <div id="news-empty" style="display:none;">Keine News gefunden.</div>
   </div>
 
   <!-- Rechte Seite: Kleiner Kalender -->
@@ -33,91 +63,6 @@
   </div>
 </div>
 
-<!-- JS für Infinite Scroll und Kalender -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.2.0/dist/fullcalendar.min.js"></script>
-<script>
-$(document).ready(function() {
-  // FullCalendar Initialisierung für den kleinen Kalender
-  $('#small-calendar').fullCalendar({
-    header: {
-      left: 'prev,next today',
-      center: 'title',
-      right: 'month'
-    },
-    events: '/api/calendar-events/',
-    dateClick: function(info) {
-      window.location.href = "{% url 'calendar_page' %}";
-    },
-    locale: 'de',
-    height: 250,
-    contentHeight: 250,
-    eventLimit: true
-  });
-
-  // Infinite Scroll für News
-  let currentPage = 0;
-  let loading = false;
-  let hasMore = true;
-
-  function loadMoreNews() {
-    if (loading || !hasMore) return;
-    loading = true;
-
-    const nextPage = currentPage + 1;
-    console.log(`Lade Nachrichten für Seite ${nextPage}`);
-
-    fetch(`/api/news/paginated?page=${nextPage}`)
-      .then(response => {
-        console.log("Response Status:", response.status);
-        if (!response.ok) throw new Error(`HTTP Fehler: ${response.status}`);
-        return response.json();
-      })
-      .then(data => {
-        console.log("Daten von API:", data);
-        const newsContainer = document.getElementById("news-container");
-
-        if (data.news && data.news.length > 0) {
-          data.news.forEach(article => {
-            console.log("Verarbeite Artikel:", article.titel);
-            const newsItem = document.createElement("li");
-            newsItem.classList.add("news-item");
-            newsItem.innerHTML = `
-              <h3>${article.titel}</h3>
-              <p>Erstellt am: ${article.erstellungsdatum}</p>
-              <p>Quelle: ${article.quelle_typ || 'Keine Quelle'}</p>
-              <p><a href="${article.link}">Link zur Webseite</a></p>
-              <a href="/news/${article.id}">Weiterlesen</a>
-              <hr>
-            `;
-            newsContainer.appendChild(newsItem);
-          });
-
-          currentPage++;
-          hasMore = data.next_page;
-          console.log(`Neue Seite: ${currentPage}, Noch mehr? ${hasMore}`);
-        } else {
-          console.log("Keine weiteren Nachrichten vorhanden.");
-          hasMore = false;
-        }
-
-        loading = false;
-      })
-      .catch(err => {
-        console.error("Fehler beim Laden von News:", err);
-        loading = false;
-      });
-  }
-
-  $(window).scroll(function() {
-    if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
-      loadMoreNews();
-    }
-  });
-
-  loadMoreNews();  // Initiales Laden
-});
-</script>
-
+<!-- Einbindung des neuen JS -->
+<script src="{% static 'js/news.js' %}"></script>
 {% endblock %}

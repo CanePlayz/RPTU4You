@@ -1,8 +1,9 @@
 import json
 import os
 import traceback
-from datetime import datetime
+from datetime import datetime, timedelta
 
+from dateutil.relativedelta import relativedelta
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -14,8 +15,8 @@ from django.db import models
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from django.views.decorators.csrf import csrf_protect
-from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
 from icalendar import Calendar
 
 from common.my_logging import get_logger
@@ -23,27 +24,8 @@ from common.my_logging import get_logger
 from ..forms import PreferencesForm, UserCreationForm2
 from ..models import *
 
-
-def news_view(request):
-    now = timezone.now()  # Aktuelle Zeit mit Zeitzone
-
-    if request.user.is_authenticated:
-        # Eigene und globale Termine abrufen
-        user_events = CalendarEvent.objects.filter(start__gte=now, user=request.user)
-        global_events = CalendarEvent.objects.filter(start__gte=now, is_global=True)
-        upcoming_events = (user_events | global_events).distinct().order_by("start")[:3]
-    else:
-        # Nur globale Termine für nicht angemeldete Benutzer
-        upcoming_events = CalendarEvent.objects.filter(
-            start__gte=now, is_global=True
-        ).order_by("start")[:3]
-
-    context = {
-        "upcoming_events": upcoming_events,
-    }
-    return render(request, "news/News.html", context)
-
-
+# News
+# Info: news_view unten, bis jetzt nur Kalender auf der rechten Seite eingebunden. Jacob fragen ob man daraus zwei Views machen kann oder nicht
 # Allgemine zentrale News-API, die News basierend auf verschiedenen Eingabe-Parametern zurückgibt:
 # - Gefiltert nach Benutzerpräferenzen in Bezug auf Inhalt, Standort usw.
 # - Mit einem Offset
@@ -53,34 +35,56 @@ def news_view(request):
 
 
 # JS lädt auch aus dieser API die News, wenn die Seite geladen wird
-def paginated_news(request):
-    # Hole die Seite aus den GET-Parametern
-    page = request.GET.get("page", 1)
+@csrf_exempt
+@require_GET
+def news_api(request):
+    """
+    Zentrale News-API:
+    - Filtert News nach GET-Parametern (kategorie, standort, zielgruppe, offset, limit)
+    - Berücksichtigt bei eingeloggten Nutzern automatisch deren Präferenzen, falls keine Filter gesetzt sind
+    - Gibt News als JSON zurück
+    """
+    kategorie_ids = request.GET.getlist("kategorie")
+    standort_ids = request.GET.getlist("standort")
+    zielgruppe_ids = request.GET.getlist("zielgruppe")
+    offset = int(request.GET.get("offset", 0))
+    limit = int(request.GET.get("limit", 10))
 
-    # Lade alle News und paginiere sie
-    news_list = News.objects.all().order_by("-erstellungsdatum")
-    paginator = Paginator(news_list, 10)  # 10 News pro Seite
+    news_qs = News.objects.all().order_by("-erstellungsdatum")
 
-    try:
-        news_page = paginator.page(page)
-    except:
-        return JsonResponse({"error": "Invalid page number"}, status=400)
+    # Wenn keine Filter gesetzt und User eingeloggt: User-Präferenzen verwenden
+    if request.user.is_authenticated and not (
+        kategorie_ids or standort_ids or zielgruppe_ids
+    ):
+        if hasattr(request.user, "präferenzen") and request.user.präferenzen.exists():
+            kategorie_ids = [str(k.id) for k in request.user.präferenzen.all()]
+        if hasattr(request.user, "standorte") and request.user.standorte.exists():
+            standort_ids = [str(s.id) for s in request.user.standorte.all()]
+        if hasattr(request.user, "zielgruppe") and request.user.zielgruppe.exists():
+            zielgruppe_ids = [str(z.id) for z in request.user.zielgruppe.all()]
+
+    if kategorie_ids:
+        news_qs = news_qs.filter(kategorien__id__in=kategorie_ids)
+    if standort_ids:
+        news_qs = news_qs.filter(standorte__id__in=standort_ids)
+    if zielgruppe_ids:
+        news_qs = news_qs.filter(zielgruppe__id__in=zielgruppe_ids)
+
+    news_qs = news_qs.distinct()[offset : offset + limit]
 
     news_data = [
         {
-            "id": news.id,
-            "titel": news.titel,
-            "text": news.text,
-            "erstellungsdatum": news.erstellungsdatum.strftime("%d.%m.%Y %H:%M:%S"),
-            "link": news.link,
-            "quelle_typ": news.quelle_typ,  # Annahme, dass Quelle als Typ gespeichert ist
+            "id": n.id,
+            "titel": n.titel,
+            "text": n.text,
+            "erstellungsdatum": n.erstellungsdatum.strftime("%d.%m.%Y %H:%M:%S"),
+            "link": n.link,
+            "quelle_typ": n.quelle_typ,
         }
-        for news in news_page
+        for n in news_qs
     ]
 
-    # JSON-Objekte in fertigen, auslieferbaren HTML-Code umwandeln
-
-    return JsonResponse({"news": news_data, "next_page": news_page.has_next()})
+    return JsonResponse({"news": news_data, "count": news_qs.count()})
 
 
 def news_detail(request, news_id):
@@ -90,6 +94,11 @@ def news_detail(request, news_id):
 
 def Links(request):
     return render(request, "news/Links.html")
+
+
+"""
+ANMELDUNG
+"""
 
 
 def login_view(request):
@@ -214,7 +223,11 @@ def request_date(request):
 
 
 # Alternative mit Nachricht für nicht angemeldete Benutzer
-from django.contrib.auth.decorators import login_required
+
+
+"""
+KALENDER
+"""
 
 
 @login_required
@@ -226,42 +239,76 @@ def calendar_page(request):
     )
 
 
-# API-Endpunkt für Kalender-Events
-def calendar_events(request):
+# Kalenderanzeige auf Latest News Seite
+def news_view(request):
+    now = timezone.now()  # Aktuelle Zeit mit Zeitzone
+
     if request.user.is_authenticated:
-        events = CalendarEvent.objects.filter(
-            user=request.user
-        ) | CalendarEvent.objects.filter(is_global=True)
+        # Eigene und globale Termine abrufen
+        user_events = CalendarEvent.objects.filter(start__gte=now, user=request.user)
+        global_events = CalendarEvent.objects.filter(start__gte=now, is_global=True)
+        upcoming_events = (user_events | global_events).distinct().order_by("start")[:3]
     else:
-        events = CalendarEvent.objects.filter(is_global=True)
+        # Nur globale Termine für nicht angemeldete Benutzer
+        upcoming_events = CalendarEvent.objects.filter(
+            start__gte=now, is_global=True
+        ).order_by("start")[:3]
 
-    event_data = [
-        {
-            "id": event.id,  # Hier wird die id des Events hinzugefügt
-            "title": event.title,
-            "start": event.start.isoformat(),
-            "end": event.end.isoformat() if event.end else None,
-            "description": event.description,
-            "user_id": event.user.id if event.user else None,
-        }
-        for event in events
-    ]
-
-    return JsonResponse(event_data, safe=False)
+    context = {
+        "upcoming_events": upcoming_events,
+    }
+    return render(request, "news/News.html", context)
 
 
-@csrf_protect  # CSRF-Schutz aktivieren
-@login_required
-def create_event(request):
+# REST-API für Kalender-Events
+
+
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def calendar_events(request):
+    # GET: Alle Events auflisten
+    if request.method == "GET":
+        if request.user.is_authenticated:
+            events = CalendarEvent.objects.filter(user=request.user)
+            global_events = CalendarEvent.objects.filter(is_global=True)
+            events = list(events) + list(global_events)
+        else:
+            events = CalendarEvent.objects.filter(is_global=True)
+
+        event_data = [
+            {
+                "id": event.id,
+                "title": event.title,
+                "start": event.start.isoformat(),
+                "end": event.end.isoformat() if event.end else None,
+                "description": event.description,
+                "user_id": event.user.id if event.user else None,
+                "repeat": event.repeat,
+                "repeat_until": (
+                    event.repeat_until.isoformat() if event.repeat_until else None
+                ),
+                "group": event.group,
+                "is_global": event.is_global,
+                "hidden": False,  # Optionally, can be set True if needed
+            }
+            for event in events
+        ]
+        return JsonResponse(event_data, safe=False)
+
+    # POST: Neues Event anlegen
     logger = get_logger(__name__)
 
     if request.method == "POST":
+        if not request.user.is_authenticated:
+            return JsonResponse({"error": "Nicht authentifiziert."}, status=401)
         try:
             data = json.loads(request.body)
             title = data.get("title")
             start = data.get("start")
             end = data.get("end")
             description = data.get("description", "")
+            repeat = data.get("repeat", "none")
+            repeat_until_str = data.get("repeat_until")
 
             if not title or not start:
                 return JsonResponse(
@@ -299,7 +346,6 @@ def create_event(request):
                     return JsonResponse(
                         {"error": "Endzeit hat ein ungültiges Format."}, status=400
                     )
-
                 if end_datetime < start_datetime:
                     return JsonResponse(
                         {
@@ -308,13 +354,62 @@ def create_event(request):
                         status=400,
                     )
 
-            event = CalendarEvent.objects.create(
-                user=request.user,
-                title=title,
-                start=start_datetime,
-                end=end_datetime if end_datetime else None,
-                description=description,
-            )
+            repeat_until = None
+            if repeat_until_str:
+                try:
+                    repeat_until = datetime.fromisoformat(repeat_until_str)
+                    repeat_until = timezone.make_aware(
+                        repeat_until, timezone.get_current_timezone()
+                    )
+                except ValueError:
+                    return JsonResponse(
+                        {"error": "Wiederholungsende hat ein ungültiges Format."},
+                        status=400,
+                    )
+
+            events = []
+            current_start = start_datetime
+            current_end = end_datetime if end_datetime else None
+            group_value = title + str(now)
+
+            if repeat != "none" and repeat_until:
+                if repeat == "weekly":
+                    delta = timedelta(weeks=1)
+                elif repeat == "daily":
+                    delta = timedelta(days=1)
+                elif repeat == "monthly":
+                    delta = relativedelta(months=1)
+                elif repeat == "yearly":
+                    delta = relativedelta(years=1)
+                else:
+                    delta = timedelta(days=0)
+                while current_start <= repeat_until:
+                    event = CalendarEvent.objects.create(
+                        user=request.user,
+                        title=title,
+                        start=current_start,
+                        end=current_end,
+                        description=description,
+                        repeat=repeat,
+                        repeat_until=repeat_until,
+                        group=group_value,
+                    )
+                    events.append(event)
+                    current_start += delta
+                    if current_end:
+                        current_end += delta
+            else:
+                event = CalendarEvent.objects.create(
+                    user=request.user,
+                    title=title,
+                    start=start_datetime,
+                    end=end_datetime if end_datetime else None,
+                    description=description,
+                    repeat=repeat,
+                    repeat_until=repeat_until,
+                    group=group_value,
+                )
+                events.append(event)
 
             return JsonResponse(
                 {"message": "Event erfolgreich gespeichert."}, status=201
@@ -330,19 +425,160 @@ def create_event(request):
     return JsonResponse({"error": "Methode nicht erlaubt."}, status=405)
 
 
-@login_required
-@require_POST  # Erlaubt nur POST-Anfragen
-@csrf_protect  # Stellt sicher, dass CSRF-Token geprüft wird
-def delete_event(request, event_id):
-    event = get_object_or_404(CalendarEvent, id=event_id)
+# Detail-API für einzelne Events
+@csrf_exempt
+@require_http_methods(["GET", "PUT", "DELETE"])
+def calendar_event_detail(request, event_id):
+    try:
+        event = get_object_or_404(CalendarEvent, id=event_id)
+        # GET: Einzelnes Event anzeigen
+        if request.method == "GET":
+            data = {
+                "id": event.id,
+                "title": event.title,
+                "start": event.start.isoformat(),
+                "end": event.end.isoformat() if event.end else None,
+                "description": event.description,
+                "user_id": event.user.id if event.user else None,
+                "repeat": event.repeat,
+                "repeat_until": (
+                    event.repeat_until.isoformat() if event.repeat_until else None
+                ),
+                "group": event.group,
+                "is_global": event.is_global,
+            }
+            return JsonResponse(data)
 
-    if event.user == request.user or request.user.is_staff:
-        event.delete()
-        return JsonResponse({"success": True})
-    else:
-        return JsonResponse(
-            {"success": False, "error": "Keine Berechtigung"}, status=403
-        )
+        # PUT: Event bearbeiten
+        if request.method == "PUT":
+            if not request.user.is_authenticated or (
+                event.user != request.user and not request.user.is_staff
+            ):
+                return JsonResponse({"error": "Keine Berechtigung."}, status=403)
+            # Globale Events dürfen von normalen Nutzern nicht bearbeitet werden
+            if event.user is None and not request.user.is_staff:
+                return JsonResponse(
+                    {"error": "Globale Termine können nicht bearbeitet werden."},
+                    status=403,
+                )
+            data = json.loads(request.body)
+            all_in_group = data.get("all_in_group", False)
+            if all_in_group and event.group:
+                events_to_update = list(
+                    CalendarEvent.objects.filter(
+                        group=event.group, user=event.user
+                    ).order_by("start")
+                )
+                if not events_to_update:
+                    return JsonResponse(
+                        {"error": "Keine Events in der Serie gefunden."}, status=404
+                    )
+                # Neues Start/Ende vom User
+                new_start = None
+                new_end = None
+                if "start" in data:
+                    new_start_dt = datetime.fromisoformat(data["start"])
+                    if timezone.is_naive(new_start_dt):
+                        new_start = timezone.make_aware(
+                            new_start_dt,
+                            timezone.get_current_timezone(),
+                        )
+                    else:
+                        new_start = new_start_dt
+                if "end" in data and data["end"]:
+                    new_end_dt = datetime.fromisoformat(data["end"])
+                    if timezone.is_naive(new_end_dt):
+                        new_end = timezone.make_aware(
+                            new_end_dt,
+                            timezone.get_current_timezone(),
+                        )
+                    else:
+                        new_end = new_end_dt
+                # Für alle Events der Serie: Passe nur Wochentag und Uhrzeit an, das Jahr/Monat/Tag bleibt in der jeweiligen Woche erhalten
+                for ev in events_to_update:
+                    ev.title = data.get("title", ev.title)
+                    ev.description = data.get("description", ev.description)
+                    if new_start:
+                        target_weekday = new_start.weekday()
+                        current_date = ev.start.date()
+                        days_delta = target_weekday - ev.start.weekday()
+                        new_date = current_date + timedelta(days=days_delta)
+                        ev_start_new = datetime.combine(new_date, new_start.timetz())
+                        if timezone.is_naive(ev_start_new):
+                            ev.start = timezone.make_aware(
+                                ev_start_new, timezone.get_current_timezone()
+                            )
+                        else:
+                            ev.start = ev_start_new
+                    if new_end is not None:
+                        if ev.end:
+                            target_weekday = new_end.weekday()
+                            current_date = ev.end.date()
+                            days_delta = target_weekday - ev.end.weekday()
+                            new_date = current_date + timedelta(days=days_delta)
+                            ev_end_new = datetime.combine(new_date, new_end.timetz())
+                            if timezone.is_naive(ev_end_new):
+                                ev.end = timezone.make_aware(
+                                    ev_end_new, timezone.get_current_timezone()
+                                )
+                            else:
+                                ev.end = ev_end_new
+                        else:
+                            ev.end = None
+                    ev.save()
+                return JsonResponse(
+                    {"message": "Event-Serie erfolgreich aktualisiert."}
+                )
+            else:
+                # Einzeltermin
+                event.title = data.get("title", event.title)
+                event.description = data.get("description", event.description)
+                if "start" in data:
+                    start_dt = datetime.fromisoformat(data["start"])
+                    if timezone.is_naive(start_dt):
+                        event.start = timezone.make_aware(
+                            start_dt, timezone.get_current_timezone()
+                        )
+                    else:
+                        event.start = start_dt
+                if "end" in data and data["end"]:
+                    end_dt = datetime.fromisoformat(data["end"])
+                    if timezone.is_naive(end_dt):
+                        event.end = timezone.make_aware(
+                            end_dt, timezone.get_current_timezone()
+                        )
+                    else:
+                        event.end = end_dt
+                else:
+                    event.end = None
+                event.save()
+                return JsonResponse({"message": "Event erfolgreich aktualisiert."})
+
+        # DELETE: Event löschen
+        if request.method == "DELETE":
+            if not request.user.is_authenticated or (
+                event.user != request.user and not request.user.is_staff
+            ):
+                return JsonResponse({"error": "Keine Berechtigung."}, status=403)
+            all_in_group = request.GET.get("all_in_group") == "true"
+            # Globale Events: Nutzer können sie nicht löschen
+            if event.user is None and not request.user.is_staff:
+                return JsonResponse(
+                    {"error": "Globale Termine können nicht gelöscht werden."},
+                    status=403,
+                )
+            # Normale Events löschen
+            if all_in_group and event.group:
+                CalendarEvent.objects.filter(
+                    group=event.group, user=event.user
+                ).delete()
+                return JsonResponse({"success": True, "deleted_group": True})
+            else:
+                event.delete()
+                return JsonResponse({"success": True, "deleted_group": False})
+
+    except Exception as e:
+        return JsonResponse({"error": f"Fehler: {str(e)}"}, status=500)
 
 
 @csrf_protect
@@ -363,12 +599,35 @@ def export_ics(request):
             ics_event = IcsEvent()
             ics_event.add("summary", event.title)
             ics_event.add("dtstart", event.start)
-            if event.end:
+            # dtend ist optional, nur setzen wenn vorhanden und nicht None
+            if getattr(event, "end", None):
                 ics_event.add("dtend", event.end)
-            if event.description:
+            # description ist optional
+            if getattr(event, "description", None):
                 ics_event.add("description", event.description)
             ics_event.add("uid", f"{event.id}@example.com")
             ics_event.add("dtstamp", timezone.now())
+
+            # RRULE für Wiederholungen setzen
+            if getattr(event, "repeat", None) and event.repeat != "none":
+                freq_map = {
+                    "daily": "DAILY",
+                    "weekly": "WEEKLY",
+                    "monthly": "MONTHLY",
+                    "yearly": "YEARLY",
+                }
+                freq = freq_map.get(event.repeat)
+                if freq:
+                    rrule = {"FREQ": freq}
+                    if getattr(event, "repeat_until", None):
+                        # iCalendar UNTIL muss UTC sein und als datetime
+                        until = event.repeat_until
+                        if timezone.is_naive(until):
+                            until = timezone.make_aware(until, timezone.utc)
+                        until_utc = until.astimezone(timezone.utc)
+                        rrule["UNTIL"] = until_utc
+                    ics_event.add("rrule", rrule)
+
             cal.add_component(ics_event)
 
         ics_content = cal.to_ical()
@@ -405,13 +664,75 @@ def import_ics(request):
                     if end and isinstance(end, datetime) and not timezone.is_aware(end):
                         end = timezone.make_aware(end, timezone.get_current_timezone())
 
-                    CalendarEvent.objects.create(
-                        user=request.user,
-                        title=title,
-                        start=start,
-                        end=end,
-                        description=description,
+                    # Wiederholung auslesen
+                    repeat = (
+                        str(component.get("rrule", {}).get("FREQ", ["none"])[0]).lower()
+                        if component.get("rrule")
+                        else "none"
                     )
+                    repeat_until = None
+                    if component.get("rrule") and "UNTIL" in component.get("rrule"):
+                        until_val = component.get("rrule")["UNTIL"][0]
+                        if isinstance(until_val, datetime):
+                            repeat_until = until_val
+                            if not timezone.is_aware(repeat_until):
+                                repeat_until = timezone.make_aware(
+                                    repeat_until, timezone.get_current_timezone()
+                                )
+                        else:
+                            try:
+                                repeat_until = datetime.strptime(
+                                    str(until_val), "%Y%m%dT%H%M%SZ"
+                                )
+                                repeat_until = timezone.make_aware(
+                                    repeat_until, timezone.get_current_timezone()
+                                )
+                            except Exception:
+                                repeat_until = None
+
+                    now = timezone.now()
+                    group_value = title + str(now)
+
+                    # Mapping für FREQ zu delta
+                    if repeat == "weekly":
+                        delta = timedelta(weeks=1)
+                    elif repeat == "daily":
+                        delta = timedelta(days=1)
+                    elif repeat == "monthly":
+                        delta = relativedelta(months=1)
+                    elif repeat == "yearly":
+                        delta = relativedelta(years=1)
+                    else:
+                        delta = None
+
+                    if repeat != "none" and repeat_until and delta:
+                        current_start = start
+                        current_end = end
+                        while current_start <= repeat_until:
+                            CalendarEvent.objects.create(
+                                user=request.user,
+                                title=title,
+                                start=current_start,
+                                end=current_end,
+                                description=description,
+                                repeat=repeat,
+                                repeat_until=repeat_until,
+                                group=group_value,
+                            )
+                            current_start += delta
+                            if current_end:
+                                current_end += delta
+                    else:
+                        CalendarEvent.objects.create(
+                            user=request.user,
+                            title=title,
+                            start=start,
+                            end=end,
+                            description=description,
+                            repeat=repeat,
+                            repeat_until=repeat_until,
+                            group=group_value,
+                        )
 
             messages.success(request, "ICS-Datei erfolgreich importiert.")
         except Exception as e:

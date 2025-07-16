@@ -1,5 +1,5 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 
 class Quelle(models.Model):
@@ -165,6 +165,17 @@ class User(AbstractUser):
         verbose_name_plural = "User"
 
 
+REPEAT_CHOICES = [
+    ("none", "Keine"),
+    ("daily", "Täglich"),
+    ("weekly", "Wöchentlich"),
+    ("monthly", "Monatlich"),
+    ("yearly", "Jährlich"),
+]
+
+
+#Kalender
+
 class CalendarEvent(models.Model):
     title = models.CharField()
     description = models.TextField(blank=True, null=True)
@@ -178,6 +189,9 @@ class CalendarEvent(models.Model):
         blank=True,
     )
     is_global = models.BooleanField(default=False)
+    repeat = models.CharField(max_length=10, choices=REPEAT_CHOICES, default="none")
+    repeat_until = models.DateTimeField(null=True, blank=True)
+    group = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.title
