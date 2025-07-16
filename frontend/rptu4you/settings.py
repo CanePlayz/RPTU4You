@@ -14,9 +14,6 @@ import os
 import sys
 from pathlib import Path
 
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -196,11 +193,3 @@ LOGGING = {
         },
     },
 }
-
-# Sentry-Konfiguration
-sentry_sdk.init(
-    dsn="https://1a0903960e1cf88109c1ba6ab6bba676@o4509601568784384.ingest.de.sentry.io/4509601574092880",
-    integrations=[DjangoIntegration()],
-    traces_sample_rate=1.0,  # Optional: Für Performance-Monitoring
-    send_default_pii=True,  # Optional: Benutzerinformationen senden
-)
