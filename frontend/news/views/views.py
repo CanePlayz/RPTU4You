@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import datetime, timedelta
+from multiprocessing.managers import BaseManager
 from typing import Any
 
 from dateutil.relativedelta import relativedelta
@@ -8,6 +9,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
+from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -22,66 +24,132 @@ from common.my_logging import get_logger
 from ..forms import PreferencesForm, UserCreationForm2
 from ..models import *
 
-# News
-# Info: news_view unten, bis jetzt nur Kalender auf der rechten Seite eingebunden. Jacob fragen ob man daraus zwei Views machen kann oder nicht
-# Allgemine zentrale News-API, die News basierend auf verschiedenen Eingabe-Parametern zurückgibt:
-# - Gefiltert nach Benutzerpräferenzen in Bezug auf Inhalt, Standort usw.
-# - Mit einem Offset
-
-
 # Präferenzen werden sowohl bei direktem Aufruf der Website mit Filtern als auch bei JS-Anfragen immer in URL encoded und damit immer gleich verarbeitet
 
 
-# JS lädt auch aus dieser API die News, wenn die Seite geladen wird
+# News
+
+
+def get_filtered_queryset(request: HttpRequest) -> QuerySet[News]:
+    """
+    Hilfsfunktion, die News basierend auf GET-Parametern filtert,
+    absteigend sortiert.
+    """
+    categories = request.GET.getlist("category")
+    audiences = request.GET.getlist("audience")
+    sources = request.GET.getlist("source")
+
+    queryset = News.objects.all()
+    if categories:
+        queryset = queryset.filter(category__in=categories)
+    if audiences:
+        queryset = queryset.filter(audience__in=audiences)
+    if sources:
+        queryset = queryset.filter(source__in=sources)
+
+    return queryset.order_by("-erstellungsdatum")
+
+
+def paginate_queryset(queryset: QuerySet, offset: int = 0, limit: int = 20) -> QuerySet:
+    """
+    Schneidet ein QuerySet entsprechend Offset und Limit.
+    Standard-Werte für offset und limit kommen zum Zug, wenn die
+    News-Seite neu geladen wird. Standardmäßig werden also 20
+    News-Objekte an den Client gesendet, bevor JS auf dem Client
+    weitere News anfordert.
+    """
+    return queryset[offset : offset + limit]
+
+
 @csrf_exempt
 @require_GET
 def news_api(request):
     """
-    Zentrale News-API:
-    - Filtert News nach GET-Parametern (kategorie, standort, zielgruppe, offset, limit)
-    - Berücksichtigt bei eingeloggten Nutzern automatisch deren Präferenzen, falls keine Filter gesetzt sind
-    - Gibt News als JSON zurück
+    News-API mit Filterung, Pagination und 'has_more'-Angabe.
     """
-    kategorie_ids = request.GET.getlist("kategorie")
-    standort_ids = request.GET.getlist("standort")
-    zielgruppe_ids = request.GET.getlist("zielgruppe")
-    offset = int(request.GET.get("offset", 0))
-    limit = int(request.GET.get("limit", 10))
+    try:
+        offset = int(request.GET.get("offset", 0))
+        limit = int(request.GET.get("limit", 20))
+    except ValueError:
+        offset = 0
+        limit = 20
 
-    news_qs = News.objects.all().order_by("-erstellungsdatum")
+    # Gefilterte Menge
+    filtered_queryset = get_filtered_queryset(request)
+    total_filtered_count = filtered_queryset.count()
 
-    # Wenn keine Filter gesetzt und User eingeloggt: User-Präferenzen verwenden
-    if request.user.is_authenticated and not (
-        kategorie_ids or standort_ids or zielgruppe_ids
-    ):
-        if hasattr(request.user, "präferenzen") and request.user.präferenzen.exists():
-            kategorie_ids = [str(k.id) for k in request.user.präferenzen.all()]
-        if hasattr(request.user, "standorte") and request.user.standorte.exists():
-            standort_ids = [str(s.id) for s in request.user.standorte.all()]
-        if hasattr(request.user, "zielgruppe") and request.user.zielgruppe.exists():
-            zielgruppe_ids = [str(z.id) for z in request.user.zielgruppe.all()]
-
-    if kategorie_ids:
-        news_qs = news_qs.filter(kategorien__id__in=kategorie_ids)
-    if standort_ids:
-        news_qs = news_qs.filter(standorte__id__in=standort_ids)
-    if zielgruppe_ids:
-        news_qs = news_qs.filter(zielgruppe__id__in=zielgruppe_ids)
-
-    news_qs = news_qs.distinct()[offset : offset + limit]
+    # Paginierte Menge
+    paginated_queryset = paginate_queryset(filtered_queryset, offset, limit)
 
     news_data = [
         {
-            "id": n.id,
-            "titel": n.titel,
-            "erstellungsdatum": n.erstellungsdatum.strftime("%d.%m.%Y %H:%M:%S"),
-            "link": n.link,
-            "quelle_typ": n.quelle_typ,
+            "id": news_object.id,
+            "titel": news_object.titel,
+            "erstellungsdatum": news_object.erstellungsdatum.strftime(
+                "%d.%m.%Y %H:%M:%S"
+            ),
+            "link": news_object.link,
+            "quelle_typ": news_object.quelle_typ,
         }
-        for n in news_qs
+        for news_object in paginated_queryset
     ]
 
-    return JsonResponse({"news": news_data, "count": news_qs.count()})
+    # Berechnung, ob es weitere News gibt
+    total_count = filtered_queryset.count()
+    has_more = offset + limit < total_count
+
+    return JsonResponse(
+        {
+            "news": news_data,
+            "has_more": has_more,
+        },
+        safe=True,
+    )
+
+
+def news_view(request):
+    """
+    Ansicht für die News-Seite, die alle News anzeigt.
+    """
+    # Kalender
+    now = timezone.now()  # Aktuelle Zeit mit Zeitzone
+
+    if request.user.is_authenticated:
+        # Eigene und globale Termine abrufen
+        user_events = CalendarEvent.objects.filter(start__gte=now, user=request.user)
+        global_events = CalendarEvent.objects.filter(start__gte=now, is_global=True)
+        upcoming_events = (user_events | global_events).distinct().order_by("start")[:3]
+    else:
+        # Nur globale Termine für nicht angemeldete Benutzer
+        upcoming_events = CalendarEvent.objects.filter(
+            start__gte=now, is_global=True
+        ).order_by("start")[:3]
+
+    # News
+    news_items = get_filtered_queryset(request)
+    news_items = paginate_queryset(news_items)
+
+    context = {"upcoming_events": upcoming_events, "initial_news": news_items}
+
+    return render(request, "news/News.html", context)
+
+
+def foryoupage(request):
+    """
+    Ansicht für die For You-Seite, die personalisierte News anzeigt.
+    """
+    if not request.user.is_authenticated:
+        messages.warning(request, "Die For You-Seite ist nur mit Anmeldung einsehbar.")
+        return redirect("login")
+
+    # Hole Präferenzen des Benutzers und simuliere ein Request-Objekt, das daraus resultieren würde (NICHT FERTIG)
+    preferences_as_request = HttpRequest()
+
+    # Hole gefilterte News basierend auf den Präferenzen des Benutzers
+    news_items = get_filtered_queryset(preferences_as_request)
+    news_items = paginate_queryset(news_items)
+
+    return render(request, "news/ForYouPage.html", {"news_items": news_items})
 
 
 def news_detail(request, news_id):
@@ -234,28 +302,6 @@ def calendar_page(request):
         "news/calendar.html",
         {"is_authenticated": request.user.is_authenticated},
     )
-
-
-# Kalenderanzeige auf Latest News Seite
-def news_view(request):
-    now = timezone.now()  # Aktuelle Zeit mit Zeitzone
-
-    if request.user.is_authenticated:
-        # Eigene und globale Termine abrufen
-        user_events = CalendarEvent.objects.filter(start__gte=now, user=request.user)
-        global_events = CalendarEvent.objects.filter(start__gte=now, is_global=True)
-        upcoming_events = (user_events | global_events).distinct().order_by("start")[:3]
-    else:
-        # Nur globale Termine für nicht angemeldete Benutzer
-        upcoming_events = CalendarEvent.objects.filter(
-            start__gte=now, is_global=True
-        ).order_by("start")[:3]
-
-    context = {
-        "upcoming_events": upcoming_events,
-    }
-
-    return render(request, "news/News.html", context)
 
 
 # REST-API für Kalender-Events
