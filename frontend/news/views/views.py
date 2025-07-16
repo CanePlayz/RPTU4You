@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
+from django.core.serializers import serialize
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -24,8 +25,7 @@ from common.my_logging import get_logger
 from ..forms import PreferencesForm, UserCreationForm2
 from ..models import *
 
-# Präferenzen werden sowohl bei direktem Aufruf der Website mit Filtern als auch bei JS-Anfragen immer in URL encoded und damit immer gleich verarbeitet
-
+# Präferenzen/Filter werden sowohl bei direktem Aufruf der Website mit Filtern als auch bei JS-Anfragen immer als URL-Parameter übergeben.
 
 # News
 
@@ -81,22 +81,15 @@ def news_api(request):
     # Paginierte Menge
     paginated_queryset = paginate_queryset(filtered_queryset, offset, limit)
 
-    news_data = [
-        {
-            "id": news_object.id,
-            "titel": news_object.titel,
-            "erstellungsdatum": news_object.erstellungsdatum.strftime(
-                "%d.%m.%Y %H:%M:%S"
-            ),
-            "link": news_object.link,
-            "quelle_typ": news_object.quelle_typ,
-        }
-        for news_object in paginated_queryset
-    ]
+    # Serialisierung der News-Daten
+    news_data = serialize(
+        "json",
+        paginated_queryset,
+        fields=["id", "titel", "erstellungsdatum", "link", "quelle_typ"],
+    )
 
     # Berechnung, ob es weitere News gibt
-    total_count = filtered_queryset.count()
-    has_more = offset + limit < total_count
+    has_more = offset + limit < total_filtered_count
 
     return JsonResponse(
         {
@@ -128,6 +121,11 @@ def news_view(request):
     # News
     news_items = get_filtered_queryset(request)
     news_items = paginate_queryset(news_items)
+    news_items = serialize(
+        "json",
+        news_items,
+        fields=["id", "titel", "erstellungsdatum", "link", "quelle_typ"],
+    )
 
     context = {"upcoming_events": upcoming_events, "initial_news": news_items}
 
