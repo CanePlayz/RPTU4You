@@ -1,0 +1,30 @@
+<body>
+    <div id="news-list"></div>
+
+    <script>
+        // JSON-Objekt einbetten (wird durch Django ersetzt)
+        const initialNews = JSON.parse("{{ initial_news|escapejs }}");
+
+        // Initial mitgelieferte News (bei direktem Seitenaufruf) rendern
+        renderNews(initialNews);
+
+        // Aus JSON-Objekten HTML-Elemente generieren
+        function renderNews(newsItems) {
+            const container = document.getElementById("news-list");
+            container.innerHTML = "";
+            newsItems.forEach(item => {
+                const div = document.createElement("div");
+                div.innerHTML = `<h2>${item.title}</h2><p>${item.body}</p>`;
+                container.appendChild(div);
+            });
+        }
+
+        // Filter-Funktion
+        document.getElementById("apply-filters").addEventListener("click", () => {
+            const filters = getFilters();
+            fetch("/api/news?" + new URLSearchParams(filters))
+                .then(res => res.json())
+                .then(data => renderNews(data.news));
+        });
+    </script>
+</body>
