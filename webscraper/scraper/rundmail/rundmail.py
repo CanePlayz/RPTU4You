@@ -147,7 +147,6 @@ def process_sammel_rundmail(
     # Einträge in allen Kategorien verarbeiten
     for category in categories_in_archive_entry:
         # Kategorienamen und Einträge extrahieren
-        category_name: str = category.text
         category_list_with_news_entries = category.find_next_sibling(name="ul")
         if isinstance(category_list_with_news_entries, bs4.element.Tag):
             news_entries_in_category: bs4.ResultSet[bs4.element.Tag] = cast(
@@ -241,7 +240,7 @@ def main():
     news: list[dict] = []
 
     # Einträge im Archiv verarbeiten
-    for archive_entry in archive_entries:
+    for archive_entry in archive_entries[:20]:
         entry: dict | list[dict] = process_archive_entry(archive_entry)
 
         if isinstance(entry, dict):
