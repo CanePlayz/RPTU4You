@@ -7,19 +7,11 @@ from openai import OpenAI
 from common.my_logging import get_logger
 
 from ....models import OpenAITokenUsage
-
-
-def token_limit_reached() -> bool:
-    usage_today = OpenAITokenUsage.objects.filter(date=datetime.date.today()).first()
-    if usage_today is None:
-        return False
-    if usage_today.used_tokens > 2400000:
-        return True
-    return False
+from ..common import token_limit_reached
 
 
 def get_cleaned_text_from_openai(
-    article_title: str, article_text: str, openai_api_key: str
+    article_title: str, article_text: str, openai_api_key: str, token_limit: int
 ) -> str:
     # Dateipfade relativ zum aktuellen Verzeichnis konstruieren
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -28,7 +20,7 @@ def get_cleaned_text_from_openai(
 
     logger = get_logger(__name__)
 
-    if not token_limit_reached():
+    if not token_limit_reached(token_limit):
         openai = OpenAI(api_key=openai_api_key)
 
         # Systemnachricht aus der Datei lesen und Kategorien ersetzen

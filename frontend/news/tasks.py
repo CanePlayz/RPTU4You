@@ -103,8 +103,8 @@ def backfill_missing_categorizations():
                 continue
             try:
                 categories, audiences = get_categorization_from_openai(
-                    news.titel, german_text, environment, openai_api_key
-                )
+                    news.titel, german_text, environment, openai_api_key, 2000000
+                )  # Token-Limit von 2.000.000, da Backfill-Tasks alter News keine höhere Priorität haben
             except Exception as e:
                 logger.error(f"Fehler bei der Kategorisierung: {e}")
                 continue

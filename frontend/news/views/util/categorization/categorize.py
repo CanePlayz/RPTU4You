@@ -7,19 +7,15 @@ from openai import OpenAI
 from common.my_logging import get_logger
 
 from ....models import OpenAITokenUsage
-
-
-def token_limit_reached() -> bool:
-    usage_today = OpenAITokenUsage.objects.filter(date=datetime.date.today()).first()
-    if usage_today is None:
-        return False
-    if usage_today.used_tokens > 2400000:
-        return True
-    return False
+from ..common import token_limit_reached
 
 
 def get_categorization_from_openai(
-    arctile_heading: str, article_text: str, environment: str, openai_api_key: str
+    arctile_heading: str,
+    article_text: str,
+    environment: str,
+    openai_api_key: str,
+    token_limit: int,
 ) -> tuple[list[str], list[str]]:
     # Dateipfade relativ zum aktuellen Verzeichnis konstruieren
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -59,7 +55,7 @@ def get_categorization_from_openai(
 
     # Im Produktionsumfeld OpenAI-API verwenden
     else:
-        if not token_limit_reached():
+        if not token_limit_reached(token_limit):
             openai = OpenAI(api_key=openai_api_key)
 
             # Systemnachricht aus der Datei lesen und Kategorien ersetzen

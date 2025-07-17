@@ -123,7 +123,8 @@ class ReceiveNews(View):
                     clean_response = get_cleaned_text_from_openai(
                         news_entry["titel"],
                         news_entry["text"],
-                        openai_api_key=openai_api_key,
+                        openai_api_key,
+                        24000000,  # Token-Limit für die Verarbeitung neuer News (diese sollen schnell erscheinen)
                     )
                 # Wenn ein Fehler auftritt, loggen und weitermachen mit dem nächsten Eintrag
                 except Exception as e:
@@ -218,6 +219,7 @@ class ReceiveNews(View):
                         news_entry["text"],
                         environment,
                         openai_api_key,
+                        2400000,  # Token-Limit für die Verarbeitung neuer News (diese sollen schnell erscheinen)
                     )
                 except Exception as e:
                     logger.error(f"Fehler bei der Kategorisierung: {e}")
