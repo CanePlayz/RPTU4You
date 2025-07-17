@@ -89,32 +89,36 @@ def get_next_page_science(soup: bs4.BeautifulSoup) -> bs4.BeautifulSoup:
     return bs4.BeautifulSoup("", "html.parser")
 
 
-def process_entry(entry: bs4.element.Tag, science: bool) -> dict | list[dict]:
+def process_entry(entry: bs4.element.Tag, science: bool) -> dict:
     # Link extrahieren
     a_element = entry.find("a")
-    if isinstance(a_element, bs4.element.Tag):
-        href = a_element.get("href")
-        complete_link: str = f"https://wiwi.rptu.de{href}"
+    if not isinstance(a_element, bs4.element.Tag):
+        return {}
+
+    href = a_element.get("href")
+    if not isinstance(href, str):
+        return {}
+
+    complete_link: str = f"https://wiwi.rptu.de{href}"
 
     # Titel extrahieren
-    if isinstance(a_element, bs4.element.Tag):
-        title_attribute = a_element.get("title")
-        if isinstance(title_attribute, str):
-            title = title_attribute
+    title_attribute = a_element.get("title")
+    if not isinstance(title_attribute, str):
+        return {}
+
+    title = title_attribute
 
     # Datum extrahieren
     time_element = entry.find("time")
-    if isinstance(time_element, bs4.element.Tag):
-        time_string = time_element.get("datetime")
-        if isinstance(time_string, str):
-            date_object: datetime = datetime.strptime(time_string, "%Y-%m-%d")
-            date: datetime = date_object.replace(tzinfo=ZoneInfo("Europe/Berlin"))
+    if not isinstance(time_element, bs4.element.Tag):
+        return {}
 
-    # Kategorien festlegen
-    if science:
-        categories = ["Studierende", "Veranstaltungen"]
-    else:
-        categories = ["Studierende", "Mitarbeitende"]
+    time_string = time_element.get("datetime")
+    if not isinstance(time_string, str):
+        return {}
+
+    date_object: datetime = datetime.strptime(time_string, "%Y-%m-%d")
+    date: datetime = date_object.replace(tzinfo=ZoneInfo("Europe/Berlin"))
 
     # Eintrag aufrufen und in BeautifulSoup-Objekt umwandeln
     news_entry_html: str = requests.get(complete_link).text
@@ -124,13 +128,14 @@ def process_entry(entry: bs4.element.Tag, science: bool) -> dict | list[dict]:
 
     # Text scrapen
     text_div = news_entry_soup.find("div", class_="news-content")
-    if isinstance(text_div, bs4.element.Tag):
-        p_elements = text_div.find_all("p")
-        text = ""
-        if isinstance(p_elements, bs4.ResultSet):
-            for p in p_elements:
-                if isinstance(p, bs4.element.Tag):
-                    text += p.get_text() + "<br><br>"
+    if not isinstance(text_div, bs4.element.Tag):
+        return {}
+
+    p_elements = text_div.find_all("p")
+    text = ""
+    for p in p_elements:
+        if isinstance(p, bs4.element.Tag):
+            text += p.get_text() + "<br><br>"
 
     return create_news_entry(
         complete_link,

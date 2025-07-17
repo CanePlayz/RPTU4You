@@ -1,6 +1,7 @@
 import os
 import time
 from datetime import datetime
+from pickletools import read_unicodestring1
 from zoneinfo import ZoneInfo
 
 import bs4
@@ -65,16 +66,22 @@ def process_article(relative_link: str) -> dict:
 
     # Titel extrahieren
     title_element = page.find("h1")
-    if isinstance(title_element, bs4.Tag):
-        title: str = title_element.text
+    if not isinstance(title_element, bs4.Tag):
+        return {}
+
+    title: str = title_element.text
 
     # Datum extrahieren
     time_element = page.find("time")
-    if isinstance(time_element, bs4.Tag):
-        time_string = time_element.get("datetime")
-        if isinstance(time_string, str):
-            date_object: datetime = datetime.strptime(time_string, "%Y-%m-%d")
-            date: datetime = date_object.replace(tzinfo=ZoneInfo("Europe/Berlin"))
+    if not isinstance(time_element, bs4.Tag):
+        return {}
+
+    time_string = time_element.get("datetime")
+    if not isinstance(time_string, str):
+        return {}
+
+    date_object: datetime = datetime.strptime(time_string, "%Y-%m-%d")
+    date: datetime = date_object.replace(tzinfo=ZoneInfo("Europe/Berlin"))
 
     # Text extrahieren
     text: str = ""

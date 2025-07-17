@@ -61,6 +61,8 @@ def create_news_entry(
         quelle_name = f"Sammel-Rundmail vom {date.strftime('%d.%m.%Y')}"
     elif source_type == "Stellenangebote Sammel-Rundmail":
         quelle_name = f"Stellenangebote Sammel-Rundmail vom {date.strftime('%d.%m.%Y')}"
+    else:
+        quelle_name = "Unbekannte Quelle"
 
     return {
         "link": link,
@@ -77,8 +79,10 @@ def create_news_entry(
 def process_archive_entry(archive_entry: bs4.element.Tag) -> dict | list[dict]:
     # Link zu Archiv-Eintrag extrahieren
     link = archive_entry.find(name="a")
-    if isinstance(link, bs4.element.Tag):
-        href = link.get("href")
+    if not isinstance(link, bs4.element.Tag):
+        return []
+
+    href = link.get("href")
     complete_link: str = f"https://rundmail.rptu.de{href}"
 
     # Archiv-Eintrag aufrufen und in BeautifulSoup-Objekt umwandeln
@@ -87,18 +91,24 @@ def process_archive_entry(archive_entry: bs4.element.Tag) -> dict | list[dict]:
         archive_entry_html, "html.parser"
     )
 
-    if isinstance(archive_entry_soup, bs4.element.Tag):
-        # Datum extrahieren
-        date_element = archive_entry.find(name="td", class_="created_at")
-        if isinstance(date_element, bs4.element.Tag):
-            date_text: str = date_element.text.strip()
-            date_object: datetime = datetime.strptime(date_text, "%d.%m.%Y %H:%M:%S")
-            date: datetime = date_object.replace(tzinfo=ZoneInfo("Europe/Berlin"))
+    if not isinstance(archive_entry_soup, bs4.element.Tag):
+        return []
 
-        # Subject extrahieren
-        subject = archive_entry.find(name="td", class_="subject")
-        if isinstance(subject, bs4.element.Tag):
-            subject_clean: str = subject.text.strip()
+    # Datum extrahieren
+    date_element = archive_entry.find(name="td", class_="created_at")
+    if not isinstance(date_element, bs4.element.Tag):
+        return []
+
+    date_text: str = date_element.text.strip()
+    date_object: datetime = datetime.strptime(date_text, "%d.%m.%Y %H:%M:%S")
+    date: datetime = date_object.replace(tzinfo=ZoneInfo("Europe/Berlin"))
+
+    # Subject extrahieren
+    subject = archive_entry.find(name="td", class_="subject")
+    if not isinstance(subject, bs4.element.Tag):  #
+        return []
+
+    subject_clean: str = subject.text.strip()
 
     # Archiv-Eintrag verarbeiten
     if subject_clean.startswith("Sammel-Rundmail"):
@@ -138,42 +148,57 @@ def process_sammel_rundmail(
     rundmail_id = link.split("/")[-1]
 
     # Kategorien extrahieren
-    if isinstance(messages_overview, bs4.element.Tag):
-        categories_in_archive_entry: bs4.ResultSet[bs4.element.Tag] = cast(
-            bs4.ResultSet[bs4.element.Tag],
-            messages_overview.find_all(name="h5", class_="mt-4"),
-        )
+    if not isinstance(messages_overview, bs4.element.Tag):
+        return []
+
+    categories_in_archive_entry: bs4.ResultSet[bs4.element.Tag] = cast(
+        bs4.ResultSet[bs4.element.Tag],
+        messages_overview.find_all(name="h5", class_="mt-4"),
+    )
 
     # Einträge in allen Kategorien verarbeiten
     for category in categories_in_archive_entry:
         # Kategorienamen und Einträge extrahieren
         category_list_with_news_entries = category.find_next_sibling(name="ul")
-        if isinstance(category_list_with_news_entries, bs4.element.Tag):
-            news_entries_in_category: bs4.ResultSet[bs4.element.Tag] = cast(
-                bs4.ResultSet[bs4.element.Tag],
-                category_list_with_news_entries.find_all(name="li"),
-            )
+        if not isinstance(category_list_with_news_entries, bs4.element.Tag):
+            continue
+
+        news_entries_in_category: bs4.ResultSet[bs4.element.Tag] = cast(
+            bs4.ResultSet[bs4.element.Tag],
+            category_list_with_news_entries.find_all(name="li"),
+        )
 
         # Einträge in Kategorie verarbeiten
         for news_entry in news_entries_in_category:
             # Subject und Eintrag-ID extrahieren
             a_element = news_entry.find(name="a")
-            if isinstance(a_element, bs4.element.Tag):
-                news_entry_subject: str = a_element.text
-                news_entry_id = a_element.get("href")
-                if isinstance(news_entry_id, str):
-                    news_entry_id_clean: str = news_entry_id.replace("#", "")
+            if not isinstance(a_element, bs4.element.Tag):
+                continue
+
+            news_entry_subject: str = a_element.text
+            news_entry_id = a_element.get("href")
+            if not isinstance(news_entry_id, str):
+                continue
+
+            news_entry_id_clean: str = news_entry_id.replace("#", "")
 
             # Eintrag aufrufen und daraus Text extrahieren
             news_entry_heading = archive_entry_soup.find(
                 name="h2", id=news_entry_id_clean
             )
-            if isinstance(news_entry_heading, bs4.element.Tag):
-                news_entry_body = news_entry_heading.find_next_sibling(name="div")
-                if isinstance(news_entry_body, bs4.element.Tag):
-                    news_text = news_entry_body.find(name="p", class_="whitespaces")
-                    if isinstance(news_text, bs4.element.Tag):
-                        news_text_without_tag: str = news_text.decode_contents()
+            if not isinstance(news_entry_heading, bs4.element.Tag):
+                continue
+
+            news_entry_body = news_entry_heading.find_next_sibling(name="div")
+
+            if not isinstance(news_entry_body, bs4.element.Tag):
+                continue
+
+            news_text = news_entry_body.find(name="p", class_="whitespaces")
+            if not isinstance(news_text, bs4.element.Tag):
+                continue
+
+            news_text_without_tag: str = news_text.decode_contents()
 
             # Standorte extrahieren
             locations: list[str] = extract_locations(news_entry_subject)

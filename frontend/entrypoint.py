@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 
-import logging
-import os
 
-# ganz am Anfang (z. B. in entrypoint.py)
-import sys
+import os
 import time
+from typing import cast
 
 import django
 import psycopg2
+from celery.app.task import Task
 from psycopg2 import OperationalError
 
 from common.my_logging import get_logger
@@ -77,8 +76,9 @@ def create_languages():
 # Backfill-Tasks starten
 def start_backfill_tasks():
     logger.info("Starte Backfill-Tasks...")
-    backfill_missing_translations.delay()
-    backfill_missing_categorizations.delay()
+    # Cast für den Type-Checker, da der ansonsten nicht checkt, dass die Funktionen Tasks sind
+    cast(Task, backfill_missing_translations).delay()
+    cast(Task, backfill_missing_categorizations).delay()
     logger.info("Backfill-Tasks gestartet.")
 
 
