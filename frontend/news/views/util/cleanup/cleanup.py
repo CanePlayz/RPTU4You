@@ -1,6 +1,7 @@
 import datetime
 import os
 import random
+import re
 
 from openai import OpenAI
 
@@ -54,9 +55,43 @@ def get_cleaned_text_from_openai(
         else:
             return response.output_text.strip()
     else:
-        logger.info(
-            "Token-Limit erreicht. Keine Kategorien oder Zielgruppen generiert."
-        )
         raise Exception(
             "Token-Limit erreicht. Keine gecleante Version des Textes generiert."
         )
+
+
+def extract_parts(response_text: str) -> dict[str, str]:
+    match_de = re.search(
+        r"\[LANGUAGE:de\]\s*\[Titel\]\s*(.*?)\s*\[Text\]\s*(.*?)\s*(?=\[LANGUAGE:|$)",
+        response_text,
+        re.DOTALL,
+    )
+
+    match_en = re.search(
+        r"\[LANGUAGE:en\]\s*\[Titel\]\s*(.*?)\s*\[Text\]\s*(.*?)\s*(?=\[LANGUAGE:|$)",
+        response_text,
+        re.DOTALL,
+    )
+
+    # Prüfe, ob beide Teile vorhanden sind
+    has_de = match_de is not None
+    has_en = match_en is not None
+
+    if not has_de or not has_en:
+        raise Exception(
+            "Fehler beim Cleanen des Textes: "
+            "Es wurde nicht für beide Sprachen ein Text gefunden."
+        )
+
+    # Extrahierte Inhalte
+    cleaned_title_de = match_de.group(1).strip() if match_de else ""
+    cleaned_text_de = match_de.group(2).strip() if match_de else ""
+    cleaned_title_en = match_en.group(1).strip() if match_en else ""
+    cleaned_text_en = match_en.group(2).strip() if match_en else ""
+
+    return {
+        "cleaned_title_de": cleaned_title_de,
+        "cleaned_text_de": cleaned_text_de,
+        "cleaned_title_en": cleaned_title_en,
+        "cleaned_text_en": cleaned_text_en,
+    }

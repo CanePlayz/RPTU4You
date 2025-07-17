@@ -15,7 +15,7 @@ from common.my_logging import get_logger
 from ..models import *
 from ..tasks import add_missing_translations
 from .util.categorization.categorize import get_categorization_from_openai
-from .util.cleanup.cleanup import get_cleaned_text_from_openai
+from .util.cleanup.cleanup import extract_parts, get_cleaned_text_from_openai
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -119,6 +119,7 @@ class ReceiveNews(View):
             if created:
 
                 # Text cleanen
+                # Antwort von OpenAI erhalten
                 try:
                     clean_response = get_cleaned_text_from_openai(
                         news_entry["titel"],
@@ -139,30 +140,13 @@ class ReceiveNews(View):
                     )
                     text.save()
                 else:
-                    logger.info("Text erfolgreich gecleant.")
-                    logger.info(clean_response)
-
-                    match_de = re.search(
-                        r"\[LANGUAGE:de\]\s*\[Titel\]\s*(.*?)\s*\[Text\]\s*(.*?)\s*(?=\[LANGUAGE:|$)",
-                        clean_response,
-                        re.DOTALL,
-                    )
-
-                    match_en = re.search(
-                        r"\[LANGUAGE:en\]\s*\[Titel\]\s*(.*?)\s*\[Text\]\s*(.*?)\s*(?=\[LANGUAGE:|$)",
-                        clean_response,
-                        re.DOTALL,
-                    )
-
-                    # Prüfe, ob beide Teile vorhanden sind
-                    has_de = match_de is not None
-                    has_en = match_en is not None
-
-                    if not has_de or not has_en:
-                        logger.error(
-                            "Fehler beim Cleanen des Textes: "
-                            "Es wurde nicht für beide Sprachen ein Text gefunden."
-                        )
+                    # Wenn eine Antwort von OpenAI erhalten wurde, die Teile extrahieren
+                    try:
+                        parts = extract_parts(clean_response)
+                    # Der Fehler tritt auf, wenn die Antwort nicht das erwartete Format hat
+                    # In diesem Fall loggen wir den Fehler und speichern den Originaltext
+                    except Exception as e:
+                        logger.error(f"Fehler beim Extrahieren der Teile: {e}")
                         # Fallback: Originaltext speichern
                         text = Text(
                             news=news_item,
@@ -171,25 +155,21 @@ class ReceiveNews(View):
                             sprache=Sprache.objects.get(name="Deutsch"),
                         )
                         text.save()
-
-                    # Extrahierte Inhalte
-                    cleaned_title_de = match_de.group(1).strip() if match_de else ""
-                    cleaned_text_de = match_de.group(2).strip() if match_de else ""
-                    cleaned_title_en = match_en.group(1).strip() if match_en else ""
-                    cleaned_text_en = match_en.group(2).strip() if match_en else ""
+                        continue
+                    logger.info(clean_response)
 
                     # Gecleante Texte speichern
                     text = Text(
                         news=news_item,
-                        text=cleaned_text_de,
-                        titel=cleaned_title_de,
+                        text=parts["cleaned_text_de"],
+                        titel=parts["cleaned_title_de"],
                         sprache=Sprache.objects.get(name="Deutsch"),
                     )
                     text.save()
                     text = Text(
                         news=news_item,
-                        text=cleaned_text_en,
-                        titel=cleaned_title_en,
+                        text=parts["cleaned_text_en"],
+                        titel=parts["cleaned_title_en"],
                         sprache=Sprache.objects.get(name="Englisch"),
                     )
                     text.save()
@@ -197,6 +177,7 @@ class ReceiveNews(View):
                     # Wenn alles erfolgreich gecleant wurde, das Flag is_cleaned_up auf True setzen
                     news_item.is_cleaned_up = True
                     news_item.save()
+                    logger.info("Text erfolgreich gecleant.")
 
                     # Fehlende Übersetzungen hinzufügen
                     sprachen = Sprache.objects.all()
