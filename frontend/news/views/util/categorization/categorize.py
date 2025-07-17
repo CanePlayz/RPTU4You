@@ -94,7 +94,7 @@ def get_categorization_from_openai(
                 )
             except Exception as e:
                 logger.error(f"Fehler bei der OpenAI-API: {e}")
-                return [], []
+                raise e
             else:
                 # Ausgabe verarbeiten
                 split_response = response.output_text.split("----")

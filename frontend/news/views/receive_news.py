@@ -1,6 +1,7 @@
 import gzip
 import json
 import os
+import re
 from datetime import datetime
 
 from django.http import JsonResponse
@@ -12,7 +13,9 @@ from django.views.decorators.csrf import csrf_exempt
 from common.my_logging import get_logger
 
 from ..models import *
-from .util.categorization.categorization import get_categorization_from_openai
+from ..tasks import add_missing_translations
+from .util.categorization.categorize import get_categorization_from_openai
+from .util.cleanup.cleanup import get_cleaned_text_from_openai
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -112,8 +115,91 @@ class ReceiveNews(View):
                 },
             )
 
-            # Wenn das News-Objekt neu erstellt wurde, Attribute und Übersetzungen hinzufügen
+            # Wenn das News-Objekt neu erstellt wurde, Text cleanen, Übersetzungen hinzufügen und Kategorisierung durchführen
             if created:
+
+                # Text cleanen
+                try:
+                    clean_response = get_cleaned_text_from_openai(
+                        news_entry["titel"],
+                        news_entry["text"],
+                        openai_api_key=openai_api_key,
+                    )
+                # Wenn ein Fehler auftritt, loggen und weitermachen mit dem nächsten Eintrag
+                except Exception as e:
+                    logger.error(f"Fehler beim Cleanen des Textes: {e}")
+
+                    # Wenn der Text nicht gecleant wurde, den Originaltext speichern
+                    text = Text(
+                        news=news_item,
+                        text=news_entry["text"],
+                        titel=news_entry["titel"],
+                        sprache=Sprache.objects.get(name="Deutsch"),
+                    )
+                    text.save()
+                else:
+                    logger.info("Text erfolgreich gecleant.")
+                    logger.info(clean_response)
+
+                    match_de = re.search(
+                        r"\[LANGUAGE:de\]\s*\[Titel\]\s*(.*?)\s*\[Text\]\s*(.*?)\s*(?=\[LANGUAGE:|$)",
+                        clean_response,
+                        re.DOTALL,
+                    )
+
+                    match_en = re.search(
+                        r"\[LANGUAGE:en\]\s*\[Titel\]\s*(.*?)\s*\[Text\]\s*(.*?)\s*(?=\[LANGUAGE:|$)",
+                        clean_response,
+                        re.DOTALL,
+                    )
+
+                    # Prüfe, ob beide Teile vorhanden sind
+                    has_de = match_de is not None
+                    has_en = match_en is not None
+
+                    if not has_de or not has_en:
+                        logger.error(
+                            "Fehler beim Cleanen des Textes: "
+                            "Es wurde nicht für beide Sprachen ein Text gefunden."
+                        )
+                        # Fallback: Originaltext speichern
+                        text = Text(
+                            news=news_item,
+                            text=news_entry["text"],
+                            titel=news_entry["titel"],
+                            sprache=Sprache.objects.get(name="Deutsch"),
+                        )
+                        text.save()
+
+                    # Extrahierte Inhalte
+                    cleaned_title_de = match_de.group(1).strip() if match_de else ""
+                    cleaned_text_de = match_de.group(2).strip() if match_de else ""
+                    cleaned_title_en = match_en.group(1).strip() if match_en else ""
+                    cleaned_text_en = match_en.group(2).strip() if match_en else ""
+
+                    # Gecleante Texte speichern
+                    text = Text(
+                        news=news_item,
+                        text=cleaned_text_de,
+                        titel=cleaned_title_de,
+                        sprache=Sprache.objects.get(name="Deutsch"),
+                    )
+                    text.save()
+                    text = Text(
+                        news=news_item,
+                        text=cleaned_text_en,
+                        titel=cleaned_title_en,
+                        sprache=Sprache.objects.get(name="Englisch"),
+                    )
+                    text.save()
+
+                    # Wenn alles erfolgreich gecleant wurde, das Flag is_cleaned_up auf True setzen
+                    news_item.is_cleaned_up = True
+                    news_item.save()
+
+                    # Fehlende Übersetzungen hinzufügen
+                    sprachen = Sprache.objects.all()
+                    add_missing_translations(sprachen, news_item)
 
                 # Standorte hinzufügen
                 if "Kaiserslautern" in news_entry["standorte"]:
@@ -150,22 +236,6 @@ class ReceiveNews(View):
                         news_item.zielgruppe.add(audience_object)
 
                     logger.info("Kategorisierung erfolgreich hinzugefügt.")
-
-                # Deutschen Text speichern
-                if Text.objects.filter(
-                    news=news_item, sprache__name="Deutsch"
-                ).exists():
-                    continue
-                else:
-                    text = Text(
-                        news=news_item,
-                        text=news_entry["text"],
-                        titel=news_entry["titel"],
-                        sprache=Sprache.objects.get(name="Deutsch"),
-                    )
-                    text.save()
-
-                # Übersetzungen hinzufügen
 
                 logger.info("News-Objekt erfolgreich erstellt.")
 

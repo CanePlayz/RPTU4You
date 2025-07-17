@@ -41,7 +41,7 @@ def send_data(data, type):
     json_data = json.dumps(data, default=datetime_serializer)
     compressed_data = gzip.compress(json_data.encode("utf-8"))
     response = requests.post(
-        "http://django:8000/api/news",
+        "http://django:8000/api/news/",
         data=compressed_data,
         headers={
             "Content-Encoding": "gzip",

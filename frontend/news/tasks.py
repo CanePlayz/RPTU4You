@@ -3,38 +3,47 @@ import os
 from bs4 import BeautifulSoup
 from celery import shared_task
 from deep_translator import GoogleTranslator
+from django.db.models import QuerySet
 
 from common.my_logging import get_logger
 
 from .models import *
-from .views.util.categorization.categorization import get_categorization_from_openai
-from .views.util.translate import translate_html
+from .views.util.categorization.categorize import get_categorization_from_openai
+from .views.util.translation.translate import translate_html
 
 
-@shared_task
-def backfill_missing_translations():
+def add_missing_translations(sprachen: QuerySet[Sprache], news: News):
     logger = get_logger(__name__)
 
-    sprachen = Sprache.objects.exclude(name="Deutsch")
-    news_items = News.objects.all()
+    for sprache in sprachen:
+        if not Text.objects.filter(news=news, sprache=sprache).exists():
+            logger.info(
+                f"Übersetze News-Objekt '{news.titel}' in {sprache.name} ({sprache.code})..."
+            )
 
-    for news in news_items:
-        for sprache in sprachen:
-            if not Text.objects.filter(news=news, sprache=sprache).exists():
-                logger.info(
-                    f"Übersetze News-Objekt '{news.titel}' in {sprache.name} ({sprache.code})..."
-                )
-
-                # Übersetzung des Titels
+            # Übersetzung des Titels (immer vom Originaltitel aus)
+            try:
+                translated_title = GoogleTranslator(
+                    source="de", target=sprache.code
+                ).translate(news.titel)
+            except Exception as e:
+                logger.error(f"Fehler bei der Übersetzung: {e}.")
+                continue
+            else:
+                # Übersetzung des Textes (präfiert von Englisch, falls nicht vorhanden von Deutsch)
                 try:
-                    translated_title = GoogleTranslator(
-                        source="de", target=sprache.code
-                    ).translate(news.titel)
+                    original_text_en = Text.objects.get(
+                        news=news, sprache__name="Englisch"
+                    ).text
+                    soup = BeautifulSoup(original_text_en, "html.parser")
+                    translate_html(soup, from_lang="en", to_lang=sprache.code)
+                    Text.objects.create(
+                        news=news,
+                        text=str(soup),
+                        titel=translated_title,
+                        sprache=sprache,
+                    )
                 except Exception as e:
-                    logger.error(f"Fehler bei der Übersetzung: {e}.")
-                    continue
-                else:
-                    # Übersetzung des Textes
                     try:
                         original_text_de = Text.objects.get(
                             news=news, sprache__name="Deutsch"
@@ -50,8 +59,27 @@ def backfill_missing_translations():
                     except Exception as e:
                         logger.error(f"Fehler bei der Übersetzung: {e}.")
                         continue
-                    else:
-                        logger.info("Übersetzung erfolgreich erstellt.")
+                else:
+                    logger.info("Übersetzung erfolgreich erstellt.")
+
+
+@shared_task
+def backfill_missing_translations():
+    logger = get_logger(__name__)
+
+    sprachen = Sprache.objects.all()
+    news_items = News.objects.all()
+
+    for news in news_items:
+        if news.is_cleaned_up:
+            logger.info(
+                f"Füge fehlende Übersetzungen für News-Objekt '{news.titel}' hinzu..."
+            )
+            add_missing_translations(sprachen, news)
+        else:
+            logger.info(
+                f"News-Objekt '{news.titel}' ist noch nicht gecleant. Überspringe Übersetzungen."
+            )
 
 
 @shared_task

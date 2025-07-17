@@ -114,6 +114,8 @@ class News(models.Model):
         ],
     )
 
+    is_cleaned_up = models.BooleanField(default=False)
+
     def __str__(self):
         return self.titel
 
