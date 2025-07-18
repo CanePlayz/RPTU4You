@@ -1,6 +1,5 @@
 import datetime
 import os
-import random
 import re
 
 from openai import OpenAI
@@ -24,7 +23,7 @@ def get_cleaned_text_from_openai(
     if not token_limit_reached(token_limit):
         openai = OpenAI(api_key=openai_api_key)
 
-        # Systemnachricht aus der Datei lesen und Kategorien ersetzen
+        # Systemnachricht aus der Datei lesen
         with open(
             system_message_file_path,
             "r",
@@ -47,12 +46,20 @@ def get_cleaned_text_from_openai(
                     },
                 ],
                 tools=[],
-                temperature=1,
+                temperature=0.2,
             )
         except Exception as e:
             logger.error(f"Fehler bei der OpenAI-API: {e}")
             raise e
         else:
+            # Genutzte Token in der Datenbank speichern
+            usage, _ = OpenAITokenUsage.objects.get_or_create(
+                date=datetime.date.today()
+            )
+            if response.usage:
+                usage.used_tokens += response.usage.total_tokens
+                usage.save()
+
             return response.output_text.strip()
     else:
         raise Exception(

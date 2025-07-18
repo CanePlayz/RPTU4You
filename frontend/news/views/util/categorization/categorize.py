@@ -85,8 +85,7 @@ def get_categorization_from_openai(
                         },
                     ],
                     tools=[],
-                    temperature=1,
-                    max_output_tokens=200,
+                    temperature=0.2,
                 )
             except Exception as e:
                 logger.error(f"Fehler bei der OpenAI-API: {e}")
