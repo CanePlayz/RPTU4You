@@ -88,7 +88,7 @@ def main():
     migrate_db()
     create_superuser()
     create_languages()
-    start_backfill_tasks()
+    # start_backfill_tasks()
 
     server = os.getenv("SERVER", "development")
     if server == "gunicorn":
