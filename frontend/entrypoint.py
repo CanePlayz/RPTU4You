@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 
+import logging
 import os
 import time
 from typing import cast
@@ -84,11 +85,20 @@ def start_backfill_tasks():
     logger.info("Backfill-Tasks gestartet.")
 
 
+# Unerwünschte Logger deaktivieren
+def disable_unwanted_loggers():
+    logging.getLogger("apscheduler").setLevel(logging.WARNING)
+    logging.getLogger("apscheduler.scheduler").setLevel(logging.WARNING)
+    logging.getLogger("apscheduler.executors.default").setLevel(logging.WARNING)
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+
+
 def main():
     migrate_db()
     create_superuser()
     create_languages()
     # start_backfill_tasks()
+    disable_unwanted_loggers()
 
     server = os.getenv("SERVER", "development")
     if server == "gunicorn":
