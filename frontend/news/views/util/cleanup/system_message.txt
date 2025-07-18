@@ -53,7 +53,7 @@ Natürlich! Hier ist der Text, den du direkt kopieren kannst:
 - Entferne auch den darauf folgenden Abschnitt mit Namen, Telefonnummer, Firmenangaben, E-Mail-Adresse, etc.
 
 5. Ausgabeformat:
-- Gib keine zusätzlichen Erklärungen, Kommentare oder Metainformationen aus.
+- Gib KEINE zusätzlichen Erklärungen, Kommentare oder Metainformationen aus.
 - Gib ausschließlich den strukturierten, bereinigten HTML-Text in folgendem Format aus:
 
 [LANGUAGE:de]

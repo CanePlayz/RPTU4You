@@ -1,20 +1,86 @@
-from bs4.element import NavigableString
-from deep_translator import GoogleTranslator
+import datetime
+import os
+import re
+
+from openai import OpenAI
+
+from common.my_logging import get_logger
+
+from ....models import OpenAITokenUsage, Sprache
+from ..common import token_limit_reached
 
 
-def translate_html(soup, from_lang, to_lang):
-    for elem in soup.contents:
-        if isinstance(elem, NavigableString):
-            # NavigableString-Elemente sind nur Text, also übersetzen
-            try:
-                translated_text = GoogleTranslator(
-                    source=from_lang, target=to_lang
-                ).translate(str(elem))
-            except Exception as e:
-                raise e
-            else:
-                # Übersetzten Text ersetzen
-                elem.replace_with(NavigableString(translated_text))
-        elif elem.name is not None:
-            # Rekursiv Elemente nach Text durchsuchen
-            translate_html(elem, from_lang, to_lang)
+def translate_html(
+    article_title: str,
+    article_text: str,
+    sprache: Sprache,
+    openai_api_key: str,
+    token_limit: int,
+) -> tuple[str, str]:
+    # Dateipfade relativ zum aktuellen Verzeichnis konstruieren
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+    system_message_file_path = os.path.join(BASE_DIR, "system_message.txt")
+
+    logger = get_logger(__name__)
+
+    if not token_limit_reached(token_limit):
+        openai = OpenAI(api_key=openai_api_key)
+
+        # Systemnachricht aus der Datei lesen
+        with open(
+            system_message_file_path,
+            "r",
+            encoding="utf-8",
+        ) as file:
+            system_message = file.read()
+
+        system_message = system_message.replace("%Sprache%", sprache.name_englisch)
+
+        # Prompt für OpenAI-API erstellen
+        prompt = f"Titel: {article_title} \n\nText: {article_text}"
+
+        # OpenAI-API aufrufen, um Übersetzung des Textes zu erhalten
+        try:
+            response = openai.responses.create(
+                model="gpt-4.1-mini",
+                input=[
+                    {"role": "developer", "content": system_message},
+                    {
+                        "role": "user",
+                        "content": prompt,
+                    },
+                ],
+                tools=[],
+                temperature=0.2,
+            )
+            logger.info(f"OpenAI response: {response.output_text}")
+        except Exception as e:
+            logger.error(f"Fehler bei der OpenAI-API: {e}")
+            raise e
+        else:
+            # Genutzte Token in der Datenbank speichern
+            usage, _ = OpenAITokenUsage.objects.get_or_create(
+                date=datetime.date.today()
+            )
+            if response.usage:
+                usage.used_tokens += response.usage.total_tokens
+                usage.save()
+
+            # Übersetzten Titel und Text zurückgeben
+            match = re.search(
+                r"\[Titel\]\s*(.*?)\s*\[Text\]\s*(.*)",
+                response.output_text,
+                re.DOTALL,
+            )
+
+            if not match:
+                raise Exception("Titel oder Text fehlt.")
+
+            translated_title = match.group(1).strip()
+            translated_text = match.group(2).strip()
+
+            return translated_title, translated_text
+
+    else:
+        raise Exception("Token-Limit erreicht. Keine Übersetzung des Textes generiert.")

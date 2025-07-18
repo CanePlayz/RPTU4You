@@ -68,8 +68,10 @@ def create_superuser():
 # Sprachobjekte anlegen
 def create_languages():
     logger.info("Überprüfe, ob Sprachobjekte existieren...")
-    Sprache.objects.get_or_create(name="Deutsch", code="de")
-    Sprache.objects.get_or_create(name="Englisch", code="en")
+    Sprache.objects.get_or_create(name="Deutsch", name_englisch="German", code="de")
+    Sprache.objects.get_or_create(name="Englisch", name_englisch="English", code="en")
+    Sprache.objects.get_or_create(name="Französisch", name_englisch="French", code="fr")
+    Sprache.objects.get_or_create(name="Spanisch", name_englisch="Spanish", code="es")
     logger.info("Sprachobjekte sind vorhanden.")
 
 

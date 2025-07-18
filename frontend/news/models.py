@@ -130,7 +130,8 @@ class News(models.Model):
 
 
 class Sprache(models.Model):
-    name = models.CharField(max_length=10, unique=True)
+    name = models.CharField(max_length=30, unique=True)
+    name_englisch = models.CharField(max_length=30, unique=True)
     code = models.CharField(max_length=5, unique=True)
 
     def __str__(self):
@@ -177,6 +178,7 @@ class User(AbstractUser):
 
 
 # Kalender
+
 
 REPEAT_CHOICES = [
     ("none", "Keine"),

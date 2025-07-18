@@ -156,7 +156,6 @@ class ReceiveNews(View):
                         )
                         text.save()
                         continue
-                    logger.info(clean_response)
 
                     # Gecleante Texte speichern
                     text = Text(
@@ -181,7 +180,9 @@ class ReceiveNews(View):
 
                     # Fehlende Übersetzungen hinzufügen
                     sprachen = Sprache.objects.all()
-                    add_missing_translations(sprachen, news_item)
+                    add_missing_translations(
+                        sprachen, news_item, openai_api_key, 2400000
+                    )
 
                 # Standorte hinzufügen
                 if "Kaiserslautern" in news_entry["standorte"]:
