@@ -14,5 +14,6 @@ def get_logger(name: str) -> logging.Logger:
     logging.getLogger("apscheduler").setLevel(logging.WARNING)
     logging.getLogger("apscheduler.scheduler").setLevel(logging.WARNING)
     logging.getLogger("apscheduler.executors.default").setLevel(logging.WARNING)
+    logging.getLogger("httpx").setLevel(logging.WARNING)
 
     return logging.getLogger(name)
