@@ -54,7 +54,6 @@ def translate_html(
                 tools=[],
                 temperature=0.2,
             )
-            logger.info(f"OpenAI response: {response.output_text}")
         except Exception as e:
             logger.error(f"Fehler bei der OpenAI-API: {e}")
             raise e
