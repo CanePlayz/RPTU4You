@@ -38,11 +38,13 @@ def add_missing_translations(
                 )
             else:
                 # Neues Text-Objekt für die übersetzte Sprache erstellen
-                Text.objects.create(
+                Text.objects.get_or_create(
                     news=news,
-                    text=translated_text,
-                    titel=translated_title,
                     sprache=sprache,
+                    defaults={
+                        "titel": translated_title,
+                        "text": translated_text,
+                    },
                 )
                 logger.info(
                     f"Übersetzung von '{news.titel}' in {sprache.name} erfolgreich hinzugefügt."
