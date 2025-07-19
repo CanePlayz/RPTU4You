@@ -19,28 +19,17 @@ app.autodiscover_tasks()
 logging.config.dictConfig(settings.LOGGING)
 
 
-""" app.conf.beat_schedule = {
-    "backfill_translations": {
-        "task": "news.tasks.backfill_missing_translations",
-        "schedule": timedelta(hours=1),
-    },
-    "backfill_categorizations": {
-        "task": "news.tasks.backfill_missing_categorizations",
-        "schedule": timedelta(hours=1),
-    },
-} """
-
 app.conf.beat_schedule = {
     "backfill_translations": {
         "task": "news.tasks.backfill_missing_translations",
-        "schedule": timedelta(minutes=1),
+        "schedule": timedelta(minutes=5),
     },
     "backfill_categorizations": {
         "task": "news.tasks.backfill_missing_categorizations",
-        "schedule": timedelta(minutes=1),
+        "schedule": timedelta(minutes=5),
     },
     "backfill_cleanup": {
         "task": "news.tasks.backfill_cleanup",
-        "schedule": timedelta(minutes=1),
+        "schedule": timedelta(minutes=5),
     },
 }
