@@ -39,4 +39,8 @@ app.conf.beat_schedule = {
         "task": "news.tasks.backfill_missing_categorizations",
         "schedule": timedelta(minutes=1),
     },
+    "backfill_cleanup": {
+        "task": "news.tasks.backfill_cleanup",
+        "schedule": timedelta(minutes=1),
+    },
 }

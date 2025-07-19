@@ -1,8 +1,9 @@
 import os
-import token
+from datetime import timedelta
 
 from celery import shared_task
 from django.db.models import QuerySet
+from django.utils.timezone import now
 
 from common.my_logging import get_logger
 
@@ -59,7 +60,10 @@ def backfill_missing_translations():
     token_limit = 2000000  # Token-Limit von 2.000.000, da Backfill-Tasks alter News keine höhere Priorität haben
 
     sprachen = Sprache.objects.all()
-    news_items = News.objects.all()
+
+    # Nur News-Objekte, die älter als 5 Minuten sind, werden berücksichtigt
+    cutoff_time = now() - timedelta(minutes=5)
+    news_items = News.objects.filter(created_at__lte=cutoff_time)
 
     for news in news_items:
         if news.is_cleaned_up:
@@ -81,7 +85,9 @@ def backfill_missing_categorizations():
     openai_api_key = os.getenv("OPENAI_API_KEY", "")
     token_limit = 2000000  # Token-Limit von 2.000.000, da Backfill-Tasks alter News keine höhere Priorität haben
 
-    news_items = News.objects.all()
+    # Nur News-Objekte, die älter als 5 Minuten sind, werden berücksichtigt
+    cutoff_time = now() - timedelta(minutes=5)
+    news_items = News.objects.filter(created_at__lte=cutoff_time)
     for news in news_items:
         if not news.kategorien.exists():
             logger.info(
@@ -122,7 +128,10 @@ def backfill_cleanup():
     openai_api_key = os.getenv("OPENAI_API_KEY", "")
     token_limit = 2000000  # Token-Limit von 2.000.000, da Backfill-Tasks alter News keine höhere Priorität haben
 
-    news_items = News.objects.all()
+    # Nur News-Objekte, die älter als 5 Minuten sind, werden berücksichtigt
+    cutoff_time = now() - timedelta(minutes=5)
+    news_items = News.objects.filter(created_at__lte=cutoff_time)
+
     for news in news_items:
         if not news.is_cleaned_up:
             logger.info(f"Führe Cleanup für News-Objekt '{news.titel}' durch...")

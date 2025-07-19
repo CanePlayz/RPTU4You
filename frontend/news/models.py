@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils.timezone import now
 
 # News
 
@@ -115,6 +116,7 @@ class News(models.Model):
     )
 
     is_cleaned_up = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=now, editable=False)
 
     def __str__(self):
         return self.titel
