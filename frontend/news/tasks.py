@@ -53,6 +53,20 @@ def add_missing_translations(
                 )
 
 
+def add_audiences_and_categories(
+    news: News,
+    categories: list[str],
+    audiences: list[str],
+):
+    for category in categories:
+        category_object, _ = InhaltsKategorie.objects.get_or_create(name=category)
+        news.kategorien.add(category_object)
+
+    for audience in audiences:
+        audience_object, _ = Zielgruppe.objects.get_or_create(name=audience)
+        news.zielgruppe.add(audience_object)
+
+
 # Einzelne Verarbeitungsschritte für News-Objekte zur Parallelisierung
 
 
@@ -79,15 +93,7 @@ def process_categorization(news, environment, openai_api_key, token_limit, logge
         except Exception as e:
             logger.error(f"Fehler bei Kategorisierung: {e} | {news.titel[:80]}")
         else:
-            for category in categories:
-                category_object, _ = InhaltsKategorie.objects.get_or_create(
-                    name=category
-                )
-                news.kategorien.add(category_object)
-
-            for audience in audiences:
-                audience_object, _ = Zielgruppe.objects.get_or_create(name=audience)
-                news.zielgruppe.add(audience_object)
+            add_audiences_and_categories(news, categories, audiences)
 
             logger.info(f"Kategorisierung erfolgreich hinzugefügt | {news.titel[:80]}")
 

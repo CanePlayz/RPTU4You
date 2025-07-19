@@ -1,7 +1,7 @@
 import json
 import os
+from ast import In
 from datetime import datetime, timedelta
-from multiprocessing.managers import BaseManager
 from typing import Any
 
 from dateutil.relativedelta import relativedelta
@@ -15,7 +15,7 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from django.views.decorators.http import require_GET, require_http_methods, require_POST
+from django.views.decorators.http import require_GET, require_http_methods
 from icalendar import Calendar
 from icalendar import Event as IcsEvent
 from icalendar import vRecur
@@ -24,6 +24,11 @@ from common.my_logging import get_logger
 
 from ..forms import PreferencesForm, UserCreationForm2
 from ..models import *
+from .util.categorization.kategorien_emojis import (
+    AUDIENCE_EMOJIS,
+    CATEGORY_EMOJIS,
+    LOCATION_EMOJIS,
+)
 
 # Präferenzen/Filter werden sowohl bei direktem Aufruf der Website mit Filtern als auch bei JS-Anfragen immer als URL-Parameter übergeben.
 
@@ -127,7 +132,36 @@ def news_view(request):
         fields=["id", "titel", "erstellungsdatum", "link", "quelle_typ"],
     )
 
-    context = {"upcoming_events": upcoming_events, "initial_news": news_items}
+    # News
+
+    # Objekte, nach denen gefiltert werden kann
+    locations = Standort.objects.all()
+    categories = InhaltsKategorie.objects.all()
+    audiences = Zielgruppe.objects.all()
+    sources = Quelle.objects.all()
+
+    # Listen mit Namen und Emojis für HTML-Rendering
+    locations_with_emojis = [
+        {"name": location.name, "emoji": LOCATION_EMOJIS.get(location.name, "")}
+        for location in locations
+    ]
+    categories_with_emojis = [
+        {"name": category.name, "emoji": CATEGORY_EMOJIS.get(category.name, "")}
+        for category in categories
+    ]
+    audiences_with_emojis = [
+        {"name": audience.name, "emoji": AUDIENCE_EMOJIS.get(audience.name, "")}
+        for audience in audiences
+    ]
+
+    context = {
+        "upcoming_events": upcoming_events,
+        "initial_news": news_items,
+        "locations": locations_with_emojis,
+        "categories": categories_with_emojis,
+        "audiences": audiences_with_emojis,
+        "sources": sources,
+    }
 
     return render(request, "news/News.html", context)
 

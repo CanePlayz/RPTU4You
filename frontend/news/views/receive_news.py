@@ -5,6 +5,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 
+from cv2 import add
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.timezone import make_aware
@@ -14,7 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from common.my_logging import get_logger
 
 from ..models import *
-from ..tasks import add_missing_translations
+from ..tasks import add_audiences_and_categories, add_missing_translations
 from .util.categorization.categorize import get_categorization_from_openai
 from .util.cleanup.cleanup import extract_parts, get_cleaned_text_from_openai
 
@@ -154,13 +155,7 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
         logger.error(f"Fehler bei Kategorisierung: {e} | {news_entry["titel"][:80]}")
         categories, audiences = [], []
 
-    for category in categories:
-        category_object, _ = InhaltsKategorie.objects.get_or_create(name=category)
-        news_item.kategorien.add(category_object)
-
-    for audience in audiences:
-        audience_object, _ = Zielgruppe.objects.get_or_create(name=audience)
-        news_item.zielgruppe.add(audience_object)
+    add_audiences_and_categories(news_item, categories, audiences)
 
     logger.info(f"Kategorisierung erfolgreich hinzugefügt | {news_entry["titel"][:80]}")
 
