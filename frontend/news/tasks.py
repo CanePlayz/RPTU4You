@@ -1,4 +1,5 @@
 import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import timedelta
 
 from celery import shared_task
@@ -52,10 +53,87 @@ def add_missing_translations(
                 )
 
 
+# Einzelne Verarbeitungsschritte für News-Objekte zur Parallelisierung
+
+
+def process_translation(news, sprachen, openai_api_key, token_limit, logger):
+    if news.is_cleaned_up:
+        add_missing_translations(sprachen, news, openai_api_key, token_limit)
+    else:
+        logger.info(
+            f"Überspringe Übersetzungen, Objekt noch nicht gecleant | {news.titel[:80]}"
+        )
+
+
+def process_categorization(news, environment, openai_api_key, token_limit, logger):
+    if not news.kategorien.exists():
+        logger.info(f"Füge Kategorisierungen hinzu | {news.titel[:80]}")
+        try:
+            german_text = Text.objects.get(news=news, sprache__name="Deutsch").text
+        except Text.DoesNotExist:
+            return
+        try:
+            categories, audiences = get_categorization_from_openai(
+                news.titel, german_text, environment, openai_api_key, token_limit
+            )
+        except Exception as e:
+            logger.error(f"Fehler bei Kategorisierung: {e} | {news.titel[:80]}")
+        else:
+            for category in categories:
+                category_object, _ = InhaltsKategorie.objects.get_or_create(
+                    name=category
+                )
+                news.kategorien.add(category_object)
+
+            for audience in audiences:
+                audience_object, _ = Zielgruppe.objects.get_or_create(name=audience)
+                news.zielgruppe.add(audience_object)
+
+            logger.info(f"Kategorisierung erfolgreich hinzugefügt | {news.titel[:80]}")
+
+
+def process_cleanup(news, openai_api_key, token_limit, logger):
+    if not news.is_cleaned_up:
+        logger.info(f"Führe Cleanup durch | {news.titel[:80]}")
+        try:
+            german_text = Text.objects.get(news=news, sprache__name="Deutsch").text
+        except Text.DoesNotExist:
+            return
+        try:
+            clean_response = get_cleaned_text_from_openai(
+                news.titel, german_text, openai_api_key, token_limit
+            )
+            parts = extract_parts(clean_response)
+        except Exception as e:
+            logger.error(f"Fehler beim Cleanup: {e} | {news.titel[:80]}")
+            return
+        else:
+            # Bisheriges deutsches Text-Objekt aktualisieren
+            text_object = Text.objects.get(news=news, sprache__name="Deutsch")
+            text_object.text = parts["cleaned_text_de"]
+            text_object.titel = parts["cleaned_title_de"]
+            text_object.save()
+
+            # Neues Text-Objekt für Englisch erstellen
+            Text.objects.create(
+                news=news,
+                text=parts["cleaned_text_en"],
+                titel=parts["cleaned_title_en"],
+                sprache=Sprache.objects.get(name="Englisch"),
+            )
+
+            # Flag is_cleaned_up auf True setzen
+            news.is_cleaned_up = True
+            news.save()
+            logger.info("Cleanup erfolgreich durchgeführt | {news.titel[:80]}")
+
+
+# Backfill-Tasks mit Parallelisierung
+
+
 @shared_task
 def backfill_missing_translations():
     logger = get_logger(__name__)
-
     openai_api_key = os.getenv("OPENAI_API_KEY", "")
     token_limit = 2000000  # Token-Limit von 2.000.000, da Backfill-Tasks alter News keine höhere Priorität haben
 
@@ -65,13 +143,15 @@ def backfill_missing_translations():
     cutoff_time = now() - timedelta(minutes=5)
     news_items = News.objects.filter(created_at__lte=cutoff_time)
 
-    for news in news_items:
-        if news.is_cleaned_up:
-            add_missing_translations(sprachen, news, openai_api_key, token_limit)
-        else:
-            logger.info(
-                f"Überspringe Übersetzungen, Objekt noch nicht gecleant | {news.titel[:80]}"
+    with ThreadPoolExecutor(max_workers=20) as executor:
+        futures = [
+            executor.submit(
+                process_translation, news, sprachen, openai_api_key, token_limit, logger
             )
+            for news in news_items
+        ]
+        for future in as_completed(futures):
+            future.result()
 
 
 @shared_task
@@ -85,33 +165,21 @@ def backfill_missing_categorizations():
     # Nur News-Objekte, die älter als 5 Minuten sind, werden berücksichtigt
     cutoff_time = now() - timedelta(minutes=5)
     news_items = News.objects.filter(created_at__lte=cutoff_time)
-    for news in news_items:
-        if not news.kategorien.exists():
-            logger.info(f"Füge Kategorisierungen hinzu | {news.titel[:80]}")
-            try:
-                german_text = Text.objects.get(news=news, sprache__name="Deutsch").text
-            except Text.DoesNotExist:
-                continue
-            try:
-                categories, audiences = get_categorization_from_openai(
-                    news.titel, german_text, environment, openai_api_key, token_limit
-                )
-            except Exception as e:
-                logger.error(f"Fehler bei Kategorisierung: {e} | {news.titel[:80]}")
-            else:
-                for category in categories:
-                    category_object, _ = InhaltsKategorie.objects.get_or_create(
-                        name=category
-                    )
-                    news.kategorien.add(category_object)
 
-                for audience in audiences:
-                    audience_object, _ = Zielgruppe.objects.get_or_create(name=audience)
-                    news.zielgruppe.add(audience_object)
-
-                logger.info(
-                    f"Kategorisierung erfolgreich hinzugefügt | {news.titel[:80]}"
-                )
+    with ThreadPoolExecutor(max_workers=20) as executor:
+        futures = [
+            executor.submit(
+                process_categorization,
+                news,
+                environment,
+                openai_api_key,
+                token_limit,
+                logger,
+            )
+            for news in news_items
+        ]
+        for future in as_completed(futures):
+            future.result()
 
 
 @shared_task
@@ -125,37 +193,10 @@ def backfill_cleanup():
     cutoff_time = now() - timedelta(minutes=5)
     news_items = News.objects.filter(created_at__lte=cutoff_time)
 
-    for news in news_items:
-        if not news.is_cleaned_up:
-            logger.info(f"Führe Cleanup durch | {news.titel[:80]}")
-            try:
-                german_text = Text.objects.get(news=news, sprache__name="Deutsch").text
-            except Text.DoesNotExist:
-                continue
-            try:
-                clean_response = get_cleaned_text_from_openai(
-                    news.titel, german_text, openai_api_key, token_limit
-                )
-                parts = extract_parts(clean_response)
-            except Exception as e:
-                logger.error(f"Fehler beim Cleanup: {e} | {news.titel[:80]}")
-                continue
-            else:
-                # Bisheriges deutsches Text-Objekt aktualisieren
-                text_object = Text.objects.get(news=news, sprache__name="Deutsch")
-                text_object.text = parts["cleaned_text_de"]
-                text_object.titel = parts["cleaned_title_de"]
-                text_object.save()
-
-                # Neues Text-Objekt für Englisch erstellen
-                Text.objects.create(
-                    news=news,
-                    text=parts["cleaned_text_en"],
-                    titel=parts["cleaned_title_en"],
-                    sprache=Sprache.objects.get(name="Englisch"),
-                )
-
-                # Flag is_cleaned_up auf True setzen
-                news.is_cleaned_up = True
-                news.save()
-                logger.info("Cleanup erfolgreich durchgeführt | {news.titel[:80]}")
+    with ThreadPoolExecutor(max_workers=20) as executor:
+        futures = [
+            executor.submit(process_cleanup, news, openai_api_key, token_limit, logger)
+            for news in news_items
+        ]
+        for future in as_completed(futures):
+            future.result()
