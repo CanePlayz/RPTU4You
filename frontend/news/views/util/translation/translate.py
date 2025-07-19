@@ -82,4 +82,4 @@ def translate_html(
             return translated_title, translated_text
 
     else:
-        raise Exception("Token-Limit erreicht. Keine Übersetzung des Textes generiert.")
+        raise Exception("Token-Limit erreicht.")

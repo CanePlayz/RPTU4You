@@ -21,7 +21,7 @@ def add_missing_translations(
     for sprache in sprachen:
         if not Text.objects.filter(news=news, sprache=sprache).exists():
             logger.info(
-                f"Übersetze News-Objekt '{news.titel}' in {sprache.name} ({sprache.code})..."
+                f"Übersetzung für {sprache.name} ({sprache.code}) hinzufügen | {news.titel[:80]}"
             )
 
             try:
@@ -35,7 +35,7 @@ def add_missing_translations(
                 )
             except Exception as e:
                 logger.error(
-                    f"Fehler beim Übersetzen von '{news.titel}' in {sprache.name}: {e}"
+                    f"Fehler beim Übersetzen des Textes: {e} | {news.titel[:80]}"
                 )
             else:
                 # Neues Text-Objekt für die übersetzte Sprache erstellen
@@ -48,7 +48,7 @@ def add_missing_translations(
                     },
                 )
                 logger.info(
-                    f"Übersetzung von '{news.titel}' in {sprache.name} erfolgreich hinzugefügt."
+                    f"Übersetzung für {sprache.name} erfolgreich hinzugefügt | {news.titel[:80]}"
                 )
 
 
@@ -67,13 +67,10 @@ def backfill_missing_translations():
 
     for news in news_items:
         if news.is_cleaned_up:
-            logger.info(
-                f"Füge fehlende Übersetzungen für News-Objekt '{news.titel}' hinzu..."
-            )
             add_missing_translations(sprachen, news, openai_api_key, token_limit)
         else:
             logger.info(
-                f"News-Objekt '{news.titel}' ist noch nicht gecleant. Überspringe Übersetzungen."
+                f"Überspringe Übersetzungen, Objekt noch nicht gecleant | {news.titel[:80]}"
             )
 
 
@@ -90,23 +87,17 @@ def backfill_missing_categorizations():
     news_items = News.objects.filter(created_at__lte=cutoff_time)
     for news in news_items:
         if not news.kategorien.exists():
-            logger.info(
-                f"Füge Kategorisierungen für News-Objekt '{news.titel}' hinzu..."
-            )
+            logger.info(f"Füge Kategorisierungen hinzu | {news.titel[:80]}")
             try:
                 german_text = Text.objects.get(news=news, sprache__name="Deutsch").text
             except Text.DoesNotExist:
-                logger.warning(
-                    f"Kein deutscher Text gefunden. Überspringe Kategorisierung."
-                )
                 continue
             try:
                 categories, audiences = get_categorization_from_openai(
                     news.titel, german_text, environment, openai_api_key, token_limit
                 )
             except Exception as e:
-                logger.error(f"Fehler bei der Kategorisierung: {e}")
-                continue
+                logger.error(f"Fehler bei Kategorisierung: {e} | {news.titel[:80]}")
             else:
                 for category in categories:
                     category_object, _ = InhaltsKategorie.objects.get_or_create(
@@ -118,7 +109,9 @@ def backfill_missing_categorizations():
                     audience_object, _ = Zielgruppe.objects.get_or_create(name=audience)
                     news.zielgruppe.add(audience_object)
 
-                logger.info("Kategorisierungen erfolgreich hinzugefügt.")
+                logger.info(
+                    f"Kategorisierung erfolgreich hinzugefügt | {news.titel[:80]}"
+                )
 
 
 @shared_task
@@ -134,18 +127,17 @@ def backfill_cleanup():
 
     for news in news_items:
         if not news.is_cleaned_up:
-            logger.info(f"Führe Cleanup für News-Objekt '{news.titel}' durch...")
+            logger.info(f"Führe Cleanup durch | {news.titel[:80]}")
             try:
                 german_text = Text.objects.get(news=news, sprache__name="Deutsch").text
             except Text.DoesNotExist:
-                logger.warning(f"Kein deutscher Text gefunden. Überspringe Cleanup.")
                 continue
             try:
                 clean_response = get_cleaned_text_from_openai(
                     news.titel, german_text, openai_api_key, token_limit
                 )
             except Exception as e:
-                logger.error(f"Fehler beim Cleanup: {e}")
+                logger.error(f"Fehler beim Cleanup: {e} | {news.titel[:80]}")
                 continue
             else:
                 # Wenn eine Antwort von OpenAI erhalten wurde, die Teile extrahieren
@@ -174,4 +166,4 @@ def backfill_cleanup():
                 news.is_cleaned_up = True
                 news.save()
 
-                logger.info("Cleanup erfolgreich durchgeführt.")
+                logger.info("Cleanup erfolgreich durchgeführt | {news.titel[:80]}")

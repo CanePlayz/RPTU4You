@@ -1,5 +1,6 @@
 import gzip
 import json
+import logging
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
@@ -18,8 +19,8 @@ from .util.categorization.categorize import get_categorization_from_openai
 from .util.cleanup.cleanup import extract_parts, get_cleaned_text_from_openai
 
 
-def process_news_entry(news_entry, openai_api_key, environment, logger):
-    logger.info(f"Verarbeite News-Eintrag: {news_entry["titel"]}")
+def process_news_entry(news_entry, openai_api_key, environment, logger: logging.Logger):
+    logger.info(f"Verarbeite News-Eintrag | {news_entry["titel"][:80]}")
 
     # Quellen-Objekt erstellen
     if news_entry["quelle_typ"] in ["Rundmail", "Sammel-Rundmail"]:
@@ -60,7 +61,7 @@ def process_news_entry(news_entry, openai_api_key, environment, logger):
         quelle, _ = EmailVerteiler.objects.get_or_create(name=news_entry["quelle_name"])
 
     else:
-        logger.warning("Unbekannter Quellentyp, Eintrag wird übersprungen.")
+        logger.warning("Unbekannter Quellentyp, Eintrag wird übersprungen")
         return
 
     # Erstellungsdatum parsen und sicherstellen, dass eine Zeitzone gesetzt ist
@@ -82,7 +83,7 @@ def process_news_entry(news_entry, openai_api_key, environment, logger):
 
     # Wenn das News-Objekt neu erstellt wurde, Text cleanen, Übersetzungen hinzufügen und Kategorisierung durchführen
     if not created:
-        logger.info(f"News-Objekt existiert bereits.")
+        logger.info(f"News-Objekt existiert bereits | {news_entry["titel"][:80]}")
         return
 
     # Text cleanen
@@ -97,7 +98,9 @@ def process_news_entry(news_entry, openai_api_key, environment, logger):
 
     # Wenn ein Fehler auftritt, loggen und weitermachen mit dem nächsten Eintrag
     except Exception as e:
-        logger.error(f"Fehler beim Cleanen des Textes: {e}")
+        logger.error(
+            f"Fehler beim Cleanen des Textes: {e} | {news_entry["titel"][:80]}"
+        )
 
         # Fallback: Originaltext speichern
         text = Text(
@@ -128,7 +131,7 @@ def process_news_entry(news_entry, openai_api_key, environment, logger):
         # Wenn alles erfolgreich gecleant wurde, das Flag is_cleaned_up auf True setzen
         news_item.is_cleaned_up = True
         news_item.save()
-        logger.info("Text erfolgreich gecleant.")
+        logger.info(f"Text erfolgreich gecleant | {news_entry["titel"][:80]}")
 
         # Fehlende Übersetzungen hinzufügen
         sprachen = Sprache.objects.all()
@@ -149,7 +152,7 @@ def process_news_entry(news_entry, openai_api_key, environment, logger):
             2400000,  # Token-Limit für die Verarbeitung neuer News (diese sollen schnell erscheinen)
         )
     except Exception as e:
-        logger.error(f"Fehler bei der Kategorisierung: {e}")
+        logger.error(f"Fehler bei Kategorisierung: {e} | {news_entry["titel"][:80]}")
         categories, audiences = [], []
 
     for category in categories:
@@ -160,9 +163,9 @@ def process_news_entry(news_entry, openai_api_key, environment, logger):
         audience_object, _ = Zielgruppe.objects.get_or_create(name=audience)
         news_item.zielgruppe.add(audience_object)
 
-    logger.info("Kategorisierung erfolgreich hinzugefügt.")
+    logger.info(f"Kategorisierung erfolgreich hinzugefügt | {news_entry["titel"][:80]}")
 
-    logger.info("News-Objekt erfolgreich erstellt.")
+    logger.info(f"News-Objekt erfolgreich erstellt | {news_entry["titel"][:80]}")
 
 
 @method_decorator(csrf_exempt, name="dispatch")

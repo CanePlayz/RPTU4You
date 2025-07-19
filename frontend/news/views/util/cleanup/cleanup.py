@@ -62,9 +62,7 @@ def get_cleaned_text_from_openai(
 
             return response.output_text.strip()
     else:
-        raise Exception(
-            "Token-Limit erreicht. Keine gecleante Version des Textes generiert."
-        )
+        raise Exception("Token-Limit erreicht.")
 
 
 def extract_parts(response_text: str) -> dict[str, str]:
@@ -85,10 +83,7 @@ def extract_parts(response_text: str) -> dict[str, str]:
     has_en = match_en is not None
 
     if not has_de or not has_en:
-        raise Exception(
-            "Fehler beim Cleanen des Textes: "
-            "Es wurde nicht für beide Sprachen ein Text gefunden."
-        )
+        raise Exception("Es wurde nicht für beide Sprachen ein Text gefunden.")
 
     # Extrahierte Inhalte
     cleaned_title_de = match_de.group(1).strip() if match_de else ""
