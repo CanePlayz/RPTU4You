@@ -136,18 +136,11 @@ def backfill_cleanup():
                 clean_response = get_cleaned_text_from_openai(
                     news.titel, german_text, openai_api_key, token_limit
                 )
+                parts = extract_parts(clean_response)
             except Exception as e:
                 logger.error(f"Fehler beim Cleanup: {e} | {news.titel[:80]}")
                 continue
             else:
-                # Wenn eine Antwort von OpenAI erhalten wurde, die Teile extrahieren
-                try:
-                    parts = extract_parts(clean_response)
-                # Der Fehler tritt auf, wenn die Antwort nicht das erwartete Format hat
-                except Exception as e:
-                    logger.error(f"Fehler beim Extrahieren der Teile: {e}")
-                    continue
-
                 # Bisheriges deutsches Text-Objekt aktualisieren
                 text_object = Text.objects.get(news=news, sprache__name="Deutsch")
                 text_object.text = parts["cleaned_text_de"]
@@ -165,5 +158,4 @@ def backfill_cleanup():
                 # Flag is_cleaned_up auf True setzen
                 news.is_cleaned_up = True
                 news.save()
-
                 logger.info("Cleanup erfolgreich durchgeführt | {news.titel[:80]}")

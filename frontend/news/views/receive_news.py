@@ -98,37 +98,36 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
 
     # Wenn ein Fehler auftritt, loggen und weitermachen mit dem nächsten Eintrag
     except Exception as e:
-        logger.error(
-            f"Fehler beim Cleanen des Textes: {e} | {news_entry["titel"][:80]}"
-        )
+        logger.error(f"Fehler beim Cleanup: {e} | {news_entry["titel"][:80]}")
 
         # Fallback: Originaltext speichern
-        text = Text(
+        text_object = Text(
             news=news_item,
             text=news_entry["text"],
             titel=news_entry["titel"],
             sprache=Sprache.objects.get(name="Deutsch"),
         )
-        text.save()
+        text_object.save()
 
     else:
         # Gecleante Texte speichern
-        text = Text(
+        text_object = Text(
             news=news_item,
             text=parts["cleaned_text_de"],
             titel=parts["cleaned_title_de"],
             sprache=Sprache.objects.get(name="Deutsch"),
         )
-        text.save()
-        text = Text(
+        text_object.save()
+
+        text_object = Text(
             news=news_item,
             text=parts["cleaned_text_en"],
             titel=parts["cleaned_title_en"],
             sprache=Sprache.objects.get(name="Englisch"),
         )
-        text.save()
+        text_object.save()
 
-        # Wenn alles erfolgreich gecleant wurde, das Flag is_cleaned_up auf True setzen
+        # Flag is_cleaned_up auf True setzen
         news_item.is_cleaned_up = True
         news_item.save()
         logger.info(f"Text erfolgreich gecleant | {news_entry["titel"][:80]}")
