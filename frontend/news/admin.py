@@ -31,15 +31,14 @@ class NewsAdmin(admin.ModelAdmin):
         "titel",
         "erstellungsdatum",
         "quelle",
-        "is_cleaned_up",
+        "bereinigt",
         "hat_kategorien",
         "vollständig_übersetzt",
     ]
 
     @admin.display(boolean=True, description="Bereinigt?")
-    def is_cleaned_up(self, obj):
-        # Replace the following logic with the actual condition for "cleaned up"
-        return obj.cleaned_up if hasattr(obj, "cleaned_up") else False
+    def bereinigt(self, obj):
+        return obj.is_cleaned_up
 
     @admin.display(boolean=True, description="Kategorien vorhanden?")
     def hat_kategorien(self, obj):
