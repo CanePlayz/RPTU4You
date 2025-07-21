@@ -2,12 +2,7 @@ import logging
 import sys
 
 
-def get_logger_django(name: str) -> logging.Logger:
-    """Im Django-Container übernimmt Django die Logging-Konfiguration."""
-    return logging.getLogger(name)
-
-
-def get_logger_scraper(name: str) -> logging.Logger:
+def get_logger(name: str) -> logging.Logger:
     """Im Scraper-Container wird das Logging manuell konfiguriert."""
     logging.basicConfig(
         level=logging.INFO,

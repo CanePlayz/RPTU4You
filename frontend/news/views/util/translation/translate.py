@@ -4,9 +4,8 @@ import re
 
 from openai import OpenAI
 
-from common.my_logging import get_logger_django
-
 from ....models import OpenAITokenUsage, Sprache
+from ....my_logging import get_logger
 from ..common import token_limit_reached
 
 
@@ -22,7 +21,7 @@ def translate_html(
 
     system_message_file_path = os.path.join(BASE_DIR, "system_message.txt")
 
-    logger = get_logger_django(__name__)
+    logger = get_logger(__name__)
 
     if not token_limit_reached(token_limit):
         openai = OpenAI(api_key=openai_api_key)

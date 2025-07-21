@@ -6,7 +6,6 @@ COPY frontend/requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-COPY common /app/common
 COPY frontend /app
 
 # Erstelle einen unprivilegierten Benutzer für Celery

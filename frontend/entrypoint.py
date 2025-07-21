@@ -9,11 +9,10 @@ from typing import cast
 import django
 import psycopg2
 from celery.app.task import Task
+from news.my_logging import get_logger
 from psycopg2 import OperationalError
 
-from common.my_logging import get_logger_django
-
-logger = get_logger_django(__name__)
+logger = get_logger(__name__)
 
 
 # Warten auf Datenbank
