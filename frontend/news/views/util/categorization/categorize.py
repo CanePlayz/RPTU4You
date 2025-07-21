@@ -96,7 +96,6 @@ def get_categorization_from_openai(
                     temperature=0.2,
                 )
             except Exception as e:
-                logger.error(f"Fehler bei der OpenAI-API: {e}")
                 raise e
             else:
                 # Tatsächlich genutzte Token in der Datenbank speichern

@@ -47,6 +47,9 @@ def translate_html(
                 date=datetime.date.today()
             )
 
+            usage.used_tokens += 1500
+            usage.save()
+
             response = openai.responses.create(
                 model="gpt-4.1-mini",
                 input=[
@@ -60,7 +63,6 @@ def translate_html(
                 temperature=0.2,
             )
         except Exception as e:
-            logger.error(f"Fehler bei der OpenAI-API: {e}")
             raise e
         else:
             # Tatsächlich genutzte Token in der Datenbank speichern
