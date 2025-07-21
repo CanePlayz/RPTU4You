@@ -75,6 +75,14 @@ def get_categorization_from_openai(
 
             # OpenAI-API aufrufen, um Kategorien und Zielgruppen zu erhalten
             try:
+                # Vorsorglich eine durchschnittliche Token-Nutzung speichern
+                usage, _ = OpenAITokenUsage.objects.get_or_create(
+                    date=datetime.date.today()
+                )
+
+                usage.used_tokens += 1500
+                usage.save()
+
                 response = openai.responses.create(
                     model="gpt-4.1-mini",
                     input=[
@@ -91,6 +99,13 @@ def get_categorization_from_openai(
                 logger.error(f"Fehler bei der OpenAI-API: {e}")
                 raise e
             else:
+                # Tatsächlich genutzte Token in der Datenbank speichern
+                usage.used_tokens -= 1500
+
+                if response.usage:
+                    usage.used_tokens += response.usage.total_tokens
+                    usage.save()
+
                 # Ausgabe verarbeiten
                 split_response = response.output_text.split("----")
                 categories_response = split_response[0].strip()
@@ -101,14 +116,6 @@ def get_categorization_from_openai(
                 audiences = [
                     audience.strip() for audience in audiences_response.split(",")
                 ]
-
-                # Genutzte Token in der Datenbank speichern
-                usage, _ = OpenAITokenUsage.objects.get_or_create(
-                    date=datetime.date.today()
-                )
-                if response.usage:
-                    usage.used_tokens += response.usage.total_tokens
-                    usage.save()
 
                 return categories, audiences
 

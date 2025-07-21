@@ -42,6 +42,11 @@ def translate_html(
 
         # OpenAI-API aufrufen, um Übersetzung des Textes zu erhalten
         try:
+            # Vorsorglich eine durchschnittliche Token-Nutzung speichern
+            usage, _ = OpenAITokenUsage.objects.get_or_create(
+                date=datetime.date.today()
+            )
+
             response = openai.responses.create(
                 model="gpt-4.1-mini",
                 input=[
@@ -58,10 +63,9 @@ def translate_html(
             logger.error(f"Fehler bei der OpenAI-API: {e}")
             raise e
         else:
-            # Genutzte Token in der Datenbank speichern
-            usage, _ = OpenAITokenUsage.objects.get_or_create(
-                date=datetime.date.today()
-            )
+            # Tatsächlich genutzte Token in der Datenbank speichern
+            usage.used_tokens -= 1500
+
             if response.usage:
                 usage.used_tokens += response.usage.total_tokens
                 usage.save()

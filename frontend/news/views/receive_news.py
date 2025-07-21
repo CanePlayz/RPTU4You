@@ -5,7 +5,6 @@ import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 
-from cv2 import add
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.timezone import make_aware
@@ -168,7 +167,7 @@ class ReceiveNews(View):
         logger = get_logger(__name__)
         logger.info("POST-Anfrage an /receive_news empfangen.")
 
-        # API-Key-Überprüfung
+        # API-Key überprüfen
         api_key = os.getenv("API_KEY")
         api_key_request = request.headers.get("API-Key")
         if api_key != api_key_request:

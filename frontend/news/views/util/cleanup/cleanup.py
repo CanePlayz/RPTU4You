@@ -36,6 +36,11 @@ def get_cleaned_text_from_openai(
 
         # OpenAI-API aufrufen, um gecleante Version des Textes zu erhalten
         try:
+            # Vorsorglich eine durchschnittliche Token-Nutzung speichern
+            usage, _ = OpenAITokenUsage.objects.get_or_create(
+                date=datetime.date.today()
+            )
+
             response = openai.responses.create(
                 model="gpt-4.1-mini",
                 input=[
@@ -52,10 +57,9 @@ def get_cleaned_text_from_openai(
             logger.error(f"Fehler bei der OpenAI-API: {e}")
             raise e
         else:
-            # Genutzte Token in der Datenbank speichern
-            usage, _ = OpenAITokenUsage.objects.get_or_create(
-                date=datetime.date.today()
-            )
+            # Tatsächlich genutzte Token in der Datenbank speichern
+            usage.used_tokens -= 1500
+
             if response.usage:
                 usage.used_tokens += response.usage.total_tokens
                 usage.save()
