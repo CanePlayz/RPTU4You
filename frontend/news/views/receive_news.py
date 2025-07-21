@@ -22,7 +22,11 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
     logger.info(f"Verarbeite News-Eintrag | {news_entry["titel"][:80]}")
 
     # Quellen-Objekt erstellen
-    if news_entry["quelle_typ"] in ["Rundmail", "Sammel-Rundmail"]:
+    if news_entry["quelle_typ"] in [
+        "Rundmail",
+        "Sammel-Rundmail",
+        "Stellenangebote Sammel-Rundmail",
+    ]:
         rundmail_id = news_entry["rundmail_id"]
         # Nachschauen, ob bereits ein Quelle-Objekt mit dieser ID existiert, falls nicht, dann erstellen
         quelle, created = Rundmail.objects.get_or_create(
@@ -37,6 +41,8 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
             if news_entry["quelle_typ"] == "Rundmail":
                 quelle.url = news_entry["link"]
             elif news_entry["quelle_typ"] == "Sammel-Rundmail":
+                quelle.url = news_entry["link"].split("#")[0]
+            elif news_entry["quelle_typ"] == "Stellenangebote Sammel-Rundmail":
                 quelle.url = news_entry["link"].split("#")[0]
             quelle.save()
 
