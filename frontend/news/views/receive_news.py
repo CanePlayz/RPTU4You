@@ -14,10 +14,12 @@ from django.views.decorators.csrf import csrf_exempt
 from ..models import *
 from ..my_logging import get_logger
 from ..tasks import add_audiences_and_categories, add_missing_translations
+from ..util.close_db_connection import close_db_connection
 from .util.categorization.categorize import get_categorization_from_openai
 from .util.cleanup.cleanup import extract_parts, get_cleaned_text_from_openai
 
 
+@close_db_connection
 def process_news_entry(news_entry, openai_api_key, environment, logger: logging.Logger):
     logger.info(f"Verarbeite News-Eintrag | {news_entry["titel"][:80]}")
 
@@ -192,7 +194,7 @@ class ReceiveNews(View):
             return JsonResponse({"error": "Invalid environment"}, status=400)
 
         # News parallel verarbeiten
-        with ThreadPoolExecutor(max_workers=10) as executor:
+        with ThreadPoolExecutor(max_workers=60) as executor:
             futures = [
                 executor.submit(
                     process_news_entry, entry, openai_api_key, environment, logger

@@ -8,6 +8,7 @@ from django.utils.timezone import now
 
 from .models import *
 from .my_logging import get_logger
+from .util.close_db_connection import close_db_connection
 from .views.util.categorization.categorize import get_categorization_from_openai
 from .views.util.cleanup.cleanup import extract_parts, get_cleaned_text_from_openai
 from .views.util.translation.translate import translate_html
@@ -69,7 +70,8 @@ def add_audiences_and_categories(
 # Einzelne Verarbeitungsschritte für News-Objekte zur Parallelisierung
 
 
-def process_translation(news, sprachen, openai_api_key, token_limit, logger):
+@close_db_connection
+def process_translation(news: News, sprachen, openai_api_key, token_limit, logger):
     if news.is_cleaned_up:
         add_missing_translations(sprachen, news, openai_api_key, token_limit)
     else:
@@ -78,7 +80,10 @@ def process_translation(news, sprachen, openai_api_key, token_limit, logger):
         )
 
 
-def process_categorization(news, environment, openai_api_key, token_limit, logger):
+@close_db_connection
+def process_categorization(
+    news: News, environment, openai_api_key, token_limit, logger
+):
     if not news.kategorien.exists():
         logger.info(f"Füge Kategorisierungen hinzu | {news.titel[:80]}")
         try:
@@ -97,7 +102,8 @@ def process_categorization(news, environment, openai_api_key, token_limit, logge
             logger.info(f"Kategorisierung erfolgreich hinzugefügt | {news.titel[:80]}")
 
 
-def process_cleanup(news, openai_api_key, token_limit, logger):
+@close_db_connection
+def process_cleanup(news: News, openai_api_key, token_limit, logger):
     if not news.is_cleaned_up:
         logger.info(f"Führe Cleanup durch | {news.titel[:80]}")
         try:
@@ -148,7 +154,7 @@ def backfill_missing_translations():
     cutoff_time = now() - timedelta(minutes=5)
     news_items = News.objects.filter(created_at__lte=cutoff_time)
 
-    with ThreadPoolExecutor(max_workers=10) as executor:
+    with ThreadPoolExecutor(max_workers=20) as executor:
         futures = [
             executor.submit(
                 process_translation, news, sprachen, openai_api_key, token_limit, logger
@@ -171,7 +177,7 @@ def backfill_missing_categorizations():
     cutoff_time = now() - timedelta(minutes=5)
     news_items = News.objects.filter(created_at__lte=cutoff_time)
 
-    with ThreadPoolExecutor(max_workers=10) as executor:
+    with ThreadPoolExecutor(max_workers=20) as executor:
         futures = [
             executor.submit(
                 process_categorization,
@@ -198,7 +204,7 @@ def backfill_cleanup():
     cutoff_time = now() - timedelta(minutes=5)
     news_items = News.objects.filter(created_at__lte=cutoff_time)
 
-    with ThreadPoolExecutor(max_workers=10) as executor:
+    with ThreadPoolExecutor(max_workers=20) as executor:
         futures = [
             executor.submit(process_cleanup, news, openai_api_key, token_limit, logger)
             for news in news_items
