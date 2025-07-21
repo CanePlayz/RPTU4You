@@ -149,7 +149,7 @@ def backfill_missing_translations():
     cutoff_time = now() - timedelta(minutes=5)
     news_items = News.objects.filter(created_at__lte=cutoff_time)
 
-    with ThreadPoolExecutor(max_workers=20) as executor:
+    with ThreadPoolExecutor(max_workers=10) as executor:
         futures = [
             executor.submit(
                 process_translation, news, sprachen, openai_api_key, token_limit, logger
@@ -172,7 +172,7 @@ def backfill_missing_categorizations():
     cutoff_time = now() - timedelta(minutes=5)
     news_items = News.objects.filter(created_at__lte=cutoff_time)
 
-    with ThreadPoolExecutor(max_workers=20) as executor:
+    with ThreadPoolExecutor(max_workers=10) as executor:
         futures = [
             executor.submit(
                 process_categorization,
@@ -199,7 +199,7 @@ def backfill_cleanup():
     cutoff_time = now() - timedelta(minutes=5)
     news_items = News.objects.filter(created_at__lte=cutoff_time)
 
-    with ThreadPoolExecutor(max_workers=20) as executor:
+    with ThreadPoolExecutor(max_workers=10) as executor:
         futures = [
             executor.submit(process_cleanup, news, openai_api_key, token_limit, logger)
             for news in news_items

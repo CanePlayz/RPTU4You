@@ -187,7 +187,7 @@ class ReceiveNews(View):
             return JsonResponse({"error": "Invalid environment"}, status=400)
 
         # News parallel verarbeiten
-        with ThreadPoolExecutor(max_workers=60) as executor:
+        with ThreadPoolExecutor(max_workers=20) as executor:
             futures = [
                 executor.submit(
                     process_news_entry, entry, openai_api_key, environment, logger
