@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate, login, logout, update_session_auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.core.serializers import serialize
+from django.db import connection
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -819,3 +820,13 @@ def import_ics(request):
             messages.error(request, f"Fehler beim Importieren: {str(e)}")
 
     return redirect("calendar_page")
+
+
+def db_connection_status(request):
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT COUNT(*) FROM pg_stat_activity WHERE datname = current_database();"
+        )
+        result = cursor.fetchone()
+        count = result[0] if result is not None else 0
+    return JsonResponse({"active_db_connections": count})

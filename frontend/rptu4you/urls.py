@@ -45,4 +45,5 @@ urlpatterns = [
     ),
     path("kalender/import/", views.import_ics, name="import_ics"),
     path("kalender/export/", views.export_ics, name="export_ics"),
+    path("db-connections/", views.db_connection_status),
 ]
