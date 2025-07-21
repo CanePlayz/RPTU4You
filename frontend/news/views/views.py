@@ -20,7 +20,7 @@ from icalendar import Calendar
 from icalendar import Event as IcsEvent
 from icalendar import vRecur
 
-from common.my_logging import get_logger
+from common.my_logging import get_logger_django
 
 from ..forms import PreferencesForm, UserCreationForm2
 from ..models import *
@@ -372,7 +372,7 @@ def calendar_events(request):
         return JsonResponse(event_data, safe=False)
 
     # POST: Neues Event anlegen
-    logger = get_logger(__name__)
+    logger = get_logger_django(__name__)
 
     if request.method == "POST":
         if not request.user.is_authenticated:

@@ -5,7 +5,7 @@ from datetime import datetime
 
 import requests
 
-from common.my_logging import get_logger
+from common.my_logging import get_logger_django
 
 
 def datetime_serializer(obj) -> str:
@@ -36,7 +36,7 @@ def request_date():
 
 
 def send_data(data, type):
-    logger = get_logger(__name__)
+    logger = get_logger_django(__name__)
     api_key = os.getenv("API_KEY")
     json_data = json.dumps(data, default=datetime_serializer)
     compressed_data = gzip.compress(json_data.encode("utf-8"))

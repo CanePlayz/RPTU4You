@@ -9,9 +9,9 @@ import scraper.rundmail.rundmail as rundmail
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 
-from common.my_logging import get_logger
+from common.my_logging import get_logger_scraper
 
-logger = get_logger(__name__)
+logger = get_logger_scraper(__name__)
 
 
 def wait_for_django():

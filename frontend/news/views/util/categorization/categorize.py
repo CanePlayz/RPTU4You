@@ -4,7 +4,7 @@ import random
 
 from openai import OpenAI
 
-from common.my_logging import get_logger
+from common.my_logging import get_logger_django
 
 from ....models import OpenAITokenUsage
 from ..common import token_limit_reached
@@ -25,7 +25,7 @@ def get_categorization_from_openai(
     )
     system_message_file_path = os.path.join(BASE_DIR, "system_message.txt")
 
-    logger = get_logger(__name__)
+    logger = get_logger_django(__name__)
 
     # Kategorien aus der Datei lesen
     with open(

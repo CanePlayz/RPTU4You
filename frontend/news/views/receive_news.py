@@ -11,7 +11,7 @@ from django.utils.timezone import make_aware
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
-from common.my_logging import get_logger
+from common.my_logging import get_logger_django
 
 from ..models import *
 from ..tasks import add_audiences_and_categories, add_missing_translations
@@ -164,7 +164,7 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
 @method_decorator(csrf_exempt, name="dispatch")
 class ReceiveNews(View):
     def post(self, request):
-        logger = get_logger(__name__)
+        logger = get_logger_django(__name__)
         logger.info("POST-Anfrage an /receive_news empfangen.")
 
         # API-Key überprüfen

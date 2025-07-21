@@ -6,7 +6,7 @@ from celery import shared_task
 from django.db.models import QuerySet
 from django.utils.timezone import now
 
-from common.my_logging import get_logger
+from common.my_logging import get_logger_django
 
 from .models import *
 from .views.util.categorization.categorize import get_categorization_from_openai
@@ -17,7 +17,7 @@ from .views.util.translation.translate import translate_html
 def add_missing_translations(
     sprachen: QuerySet[Sprache], news: News, openai_api_key: str, token_limit: int
 ):
-    logger = get_logger(__name__)
+    logger = get_logger_django(__name__)
 
     for sprache in sprachen:
         if not Text.objects.filter(news=news, sprache=sprache).exists():
@@ -139,7 +139,7 @@ def process_cleanup(news, openai_api_key, token_limit, logger):
 
 @shared_task
 def backfill_missing_translations():
-    logger = get_logger(__name__)
+    logger = get_logger_django(__name__)
     openai_api_key = os.getenv("OPENAI_API_KEY", "")
     token_limit = 2000000  # Token-Limit von 2.000.000, da Backfill-Tasks alter News keine höhere Priorität haben
 
@@ -162,7 +162,7 @@ def backfill_missing_translations():
 
 @shared_task
 def backfill_missing_categorizations():
-    logger = get_logger(__name__)
+    logger = get_logger_django(__name__)
 
     environment = os.getenv("ENVIRONMENT", "")
     openai_api_key = os.getenv("OPENAI_API_KEY", "")
@@ -190,7 +190,7 @@ def backfill_missing_categorizations():
 
 @shared_task
 def backfill_cleanup():
-    logger = get_logger(__name__)
+    logger = get_logger_django(__name__)
 
     openai_api_key = os.getenv("OPENAI_API_KEY", "")
     token_limit = 2000000  # Token-Limit von 2.000.000, da Backfill-Tasks alter News keine höhere Priorität haben
