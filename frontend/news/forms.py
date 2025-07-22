@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import InhaltsKategorie, User
+from .models import *
 
 
 class UserCreationForm2(UserCreationForm):
@@ -11,76 +11,46 @@ class UserCreationForm2(UserCreationForm):
 
 
 class PreferencesForm(forms.ModelForm):
-    # Manuelle Felder, die nicht im Model sind
-    YES_NO_CHOICES = [
-        (True, "Ja"),
-        (False, "Nein"),
-    ]
-
-    stellenangebote = forms.BooleanField(
-        widget=forms.RadioSelect(choices=YES_NO_CHOICES), required=False
-    )
-    uni_infos = forms.BooleanField(
-        widget=forms.RadioSelect(choices=YES_NO_CHOICES), required=False
-    )
-    events = forms.BooleanField(
-        widget=forms.RadioSelect(choices=YES_NO_CHOICES), required=False
-    )
-    externe_news = forms.BooleanField(
-        widget=forms.RadioSelect(choices=YES_NO_CHOICES), required=False
-    )
-    umfragen = forms.BooleanField(
-        widget=forms.RadioSelect(choices=YES_NO_CHOICES), required=False
-    )
-
     class Meta:
         model = User
-
-        # Felder aus dem Model, die im Formular angezeigt werden sollen
         fields = [
             "standorte",
-            "fachschaften",
+            "inhaltskategorien",
+            "quellen",
+            "zielgruppen",
         ]
-
-        # Darstellung der Felder überschreiben
         widgets = {
-            "standorte": forms.CheckboxSelectMultiple,
-            "fachschaften": forms.CheckboxSelectMultiple,
+            "standorte": forms.CheckboxSelectMultiple(),
+            "inhaltskategorien": forms.CheckboxSelectMultiple(),
+            "quellen": forms.CheckboxSelectMultiple(),
+            "zielgruppen": forms.CheckboxSelectMultiple(),
         }
-
-    # Mapping: Formularfeld -> Kategorie-Name
-    PREF_FELDER = {
-        "stellenangebote": "Stellenangebot",
-        "uni_infos": "Uni-Info",
-        "events": "Event",
-        "externe_news": "Externe News",
-        "umfragen": "Umfrage",
-    }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Stanardwerte der Präferenzen setzen
-        user_pref_names = set(self.instance.präferenzen.values_list("name", flat=True))
-        for field_name, category_name in self.PREF_FELDER.items():
-            self.initial[field_name] = category_name in user_pref_names
+        # Label setzen
+        self.fields["standorte"].label = "Standorte"
+        self.fields["inhaltskategorien"].label = "Inhaltskategorien"
+        self.fields["quellen"].label = "Quellen"
+        self.fields["zielgruppen"].label = "Zielgruppen"
 
-    def save(self, commit=True) -> User:
-        user = super().save(commit=False)
+        # Standardwerte auf Präferenzen des Benutzers setzen
+        user: User = self.instance
 
-        # Nutzerdaten und M2M-Felder speichern
+        if user and user.pk:
+            self.fields["standorte"].initial = user.standorte.all()
+            self.fields["inhaltskategorien"].initial = user.inhaltskategorien.all()
+            self.fields["quellen"].initial = user.quellen.all()
+            self.fields["zielgruppen"].initial = user.zielgruppen.all()
+
+    def save(self, commit=True):
+        user: User = super().save(commit=False)
         if commit:
             user.save()
-            self.save_m2m()
-
-        # Präferenzen aktualisieren
-        for field_name, category_name in self.PREF_FELDER.items():
-            selected = self.cleaned_data.get(field_name) is True
-            pref_obj, _ = InhaltsKategorie.objects.get_or_create(name=category_name)
-
-            if selected:
-                user.präferenzen.add(pref_obj)
-            else:
-                user.präferenzen.remove(pref_obj)
+            user.standorte.set(self.cleaned_data["standorte"])
+            user.inhaltskategorien.set(self.cleaned_data["inhaltskategorien"])
+            user.quellen.set(self.cleaned_data["quellen"])
+            user.zielgruppen.set(self.cleaned_data["zielgruppen"])
 
         return user

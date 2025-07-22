@@ -173,9 +173,9 @@ class User(AbstractUser):
     id = models.AutoField(primary_key=True)
 
     standorte = models.ManyToManyField(Standort, blank=True)
-    fachschaften = models.ManyToManyField(Fachschaft, blank=True)
-    präferenzen = models.ManyToManyField(InhaltsKategorie, blank=True)
-    zielgruppe = models.ManyToManyField(Zielgruppe, blank=True)
+    quellen = models.ManyToManyField(Fachschaft, blank=True)
+    inhaltskategorien = models.ManyToManyField(InhaltsKategorie, blank=True)
+    zielgruppen = models.ManyToManyField(Zielgruppe, blank=True)
 
     def __str__(self):
         return self.username

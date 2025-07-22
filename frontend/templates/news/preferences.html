@@ -9,7 +9,27 @@
 
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+
+        <div>
+            <label for="{{ form.standorte.id_for_label }}">{{ form.standorte.label }}</label>
+            {{ form.standorte }}
+            {{ form.standorte.errors }}
+        </div>
+        <div>
+            <label for="{{ form.inhaltskategorien.id_for_label }}">{{ form.inhaltskategorien.label }}</label>
+            {{ form.inhaltskategorien }}
+            {{ form.inhaltskategorien.errors }}
+        </div>
+        <div>
+            <label for="{{ form.quellen.id_for_label }}">{{ form.quellen.label }}</label>
+            {{ form.quellen }}
+            {{ form.quellen.errors }}
+        </div>
+        <div>
+            <label for="{{ form.zielgruppen.id_for_label }}">{{ form.zielgruppen.label }}</label>
+            {{ form.zielgruppen }}
+            {{ form.zielgruppen.errors }}
+        </div>
 
         <button type="submit">Speichern</button>
     </form>

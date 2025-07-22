@@ -44,7 +44,7 @@ class NewsAdmin(admin.ModelAdmin):
 
     @admin.display(boolean=True, description="Kategorien vorhanden?")
     def hat_kategorien(self, obj):
-        return obj.kategorien.exists()
+        return obj.inhaltskategorien.exists()
 
     @admin.display(boolean=True, description="Alle Übersetzungen vorhanden?")
     def vollständig_übersetzt(self, obj) -> bool:

@@ -48,6 +48,32 @@ def get_objects_to_filter() -> dict[str, QuerySet[Any]]:
     }
 
 
+def get_objects_with_emojis() -> dict[str, list[dict[str, str]]]:
+    """
+    Gibt Objekte mit Emojis für HTML-Rendering zurück.
+    """
+    objects = get_objects_to_filter()
+    locations_with_emojis = [
+        {"name": loc.name, "emoji": LOCATION_EMOJIS.get(loc.name, "")}
+        for loc in objects["locations"]
+    ]
+    categories_with_emojis = [
+        {"name": cat.name, "emoji": CATEGORY_EMOJIS.get(cat.name, "")}
+        for cat in objects["categories"]
+    ]
+    audiences_with_emojis = [
+        {"name": aud.name, "emoji": AUDIENCE_EMOJIS.get(aud.name, "")}
+        for aud in objects["audiences"]
+    ]
+
+    return {
+        "locations": locations_with_emojis,
+        "categories": categories_with_emojis,
+        "audiences": audiences_with_emojis,
+        "sources": list(objects["sources"].values("name")),
+    }
+
+
 def get_filtered_queryset(request: HttpRequest) -> QuerySet[News]:
     """
     Hilfsfunktion, die News basierend auf GET-Parametern filtert,
@@ -151,32 +177,18 @@ def news_view(request: HttpRequest) -> HttpResponse:
     )
 
     # Objekte, nach denen gefiltert werden kann
-    objects_to_filter = get_objects_to_filter()
+    objects_to_filter = get_objects_with_emojis()
     locations = objects_to_filter["locations"]
     categories = objects_to_filter["categories"]
     audiences = objects_to_filter["audiences"]
     sources = objects_to_filter["sources"]
 
-    # Listen mit Namen und Emojis für HTML-Rendering
-    locations_with_emojis = [
-        {"name": location.name, "emoji": LOCATION_EMOJIS.get(location.name, "")}
-        for location in locations
-    ]
-    categories_with_emojis = [
-        {"name": category.name, "emoji": CATEGORY_EMOJIS.get(category.name, "")}
-        for category in categories
-    ]
-    audiences_with_emojis = [
-        {"name": audience.name, "emoji": AUDIENCE_EMOJIS.get(audience.name, "")}
-        for audience in audiences
-    ]
-
     context = {
         "upcoming_events": upcoming_events,
         "initial_news": news_items,
-        "locations": locations_with_emojis,
-        "categories": categories_with_emojis,
-        "audiences": audiences_with_emojis,
+        "locations": locations,
+        "categories": categories,
+        "audiences": audiences,
         "sources": sources,
     }
 
