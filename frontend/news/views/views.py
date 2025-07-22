@@ -43,14 +43,17 @@ def get_filtered_queryset(request: HttpRequest) -> QuerySet[News]:
     categories = request.GET.getlist("category")
     audiences = request.GET.getlist("audience")
     sources = request.GET.getlist("source")
+    locations = request.GET.getlist("location")
 
     queryset = News.objects.all()
     if categories:
-        queryset = queryset.filter(category__in=categories)
+        queryset = queryset.filter(inhaltskategorie__name__in=categories)
     if audiences:
-        queryset = queryset.filter(audience__in=audiences)
+        queryset = queryset.filter(zielgruppe__naam__in=audiences)
     if sources:
-        queryset = queryset.filter(source__in=sources)
+        queryset = queryset.filter(quelle__name__in=sources)
+    if locations:
+        queryset = queryset.filter(standorte__name__in=locations)
 
     return queryset.order_by("-erstellungsdatum")
 
@@ -124,6 +127,8 @@ def news_view(request):
         ).order_by("start")[:3]
 
     # News
+
+    # Hole gefilterte News basierend auf den GET-Parametern für initiale Anzeige
     news_items = get_filtered_queryset(request)
     news_items = paginate_queryset(news_items)
     news_items = serialize(
@@ -131,8 +136,6 @@ def news_view(request):
         news_items,
         fields=["id", "titel", "erstellungsdatum", "link", "quelle_typ"],
     )
-
-    # News
 
     # Objekte, nach denen gefiltert werden kann
     locations = Standort.objects.all()

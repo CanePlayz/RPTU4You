@@ -104,7 +104,7 @@ class News(models.Model):
     erstellungsdatum = models.DateTimeField()
 
     standorte = models.ManyToManyField(Standort, blank=True)
-    kategorien = models.ManyToManyField(InhaltsKategorie, blank=True)
+    inhaltskategorien = models.ManyToManyField(InhaltsKategorie, blank=True)
     zielgruppe = models.ManyToManyField(Zielgruppe, blank=True)
 
     quelle = models.ForeignKey(Quelle, on_delete=models.CASCADE)
