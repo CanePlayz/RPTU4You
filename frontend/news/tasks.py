@@ -1,3 +1,4 @@
+import logging
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import timedelta
@@ -60,7 +61,7 @@ def add_audiences_and_categories(
 ):
     for category in categories:
         category_object, _ = InhaltsKategorie.objects.get_or_create(name=category)
-        news.kategorien.add(category_object)
+        news.inhaltskategorien.add(category_object)
 
     for audience in audiences:
         audience_object, _ = Zielgruppe.objects.get_or_create(name=audience)
@@ -71,7 +72,9 @@ def add_audiences_and_categories(
 
 
 @close_db_connection
-def process_translation(news: News, sprachen, openai_api_key, token_limit, logger):
+def process_translation(
+    news: News, sprachen, openai_api_key, token_limit, logger: logging.Logger
+):
     if news.is_cleaned_up:
         add_missing_translations(sprachen, news, openai_api_key, token_limit)
     else:
@@ -82,9 +85,9 @@ def process_translation(news: News, sprachen, openai_api_key, token_limit, logge
 
 @close_db_connection
 def process_categorization(
-    news: News, environment, openai_api_key, token_limit, logger
+    news: News, environment, openai_api_key, token_limit, logger: logging.Logger
 ):
-    if not news.kategorien.exists():
+    if not news.inhaltskategorien.exists():
         logger.info(f"Füge Kategorisierungen hinzu | {news.titel[:80]}")
         try:
             german_text = Text.objects.get(news=news, sprache__name="Deutsch").text
@@ -103,7 +106,7 @@ def process_categorization(
 
 
 @close_db_connection
-def process_cleanup(news: News, openai_api_key, token_limit, logger):
+def process_cleanup(news: News, openai_api_key, token_limit, logger: logging.Logger):
     if not news.is_cleaned_up:
         logger.info(f"Führe Cleanup durch | {news.titel[:80]}")
         try:
