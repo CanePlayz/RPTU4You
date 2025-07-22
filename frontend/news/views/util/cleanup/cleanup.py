@@ -35,7 +35,7 @@ def get_cleaned_text_from_openai(
         try:
             # Vorsorglich eine durchschnittliche Token-Nutzung speichern
             usage, _ = OpenAITokenUsage.objects.get_or_create(
-                date=datetime.date.today()
+                date=datetime.datetime.now(datetime.timezone.utc).date()
             )
 
             usage.used_tokens += 1500
