@@ -2,6 +2,7 @@ import datetime
 import os
 import random
 
+from django.db.models import F
 from openai import OpenAI
 
 from ....models import OpenAITokenUsage
@@ -54,7 +55,7 @@ def get_categorization_from_openai(
 
     # Im Produktionsumfeld OpenAI-API verwenden
     else:
-        if not token_limit_reached(token_limit):
+        if not token_limit_reached(token_limit + 1500):
             openai = OpenAI(api_key=openai_api_key)
 
             # Systemnachricht aus der Datei lesen und Kategorien ersetzen
@@ -98,11 +99,16 @@ def get_categorization_from_openai(
                 raise e
             else:
                 # Tatsächlich genutzte Token in der Datenbank speichern
-                usage.used_tokens -= 1500
+                OpenAITokenUsage.objects.filter(pk=usage.pk).update(
+                    used_tokens=F("used_tokens") - 1500
+                )
+                usage.refresh_from_db()
 
                 if response.usage:
-                    usage.used_tokens += response.usage.total_tokens
-                    usage.save()
+                    OpenAITokenUsage.objects.filter(pk=usage.pk).update(
+                        used_tokens=F("used_tokens") + response.usage.total_tokens
+                    )
+                    usage.refresh_from_db()
 
                 # Ausgabe verarbeiten
                 split_response = response.output_text.split("----")

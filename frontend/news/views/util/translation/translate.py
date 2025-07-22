@@ -2,10 +2,10 @@ import datetime
 import os
 import re
 
+from django.db.models import F
 from openai import OpenAI
 
 from ....models import OpenAITokenUsage, Sprache
-from ....my_logging import get_logger
 from ..common import token_limit_reached
 
 
@@ -21,9 +21,7 @@ def translate_html(
 
     system_message_file_path = os.path.join(BASE_DIR, "system_message.txt")
 
-    logger = get_logger(__name__)
-
-    if not token_limit_reached(token_limit):
+    if not token_limit_reached(token_limit + 1500):
         openai = OpenAI(api_key=openai_api_key)
 
         # Systemnachricht aus der Datei lesen
@@ -46,8 +44,10 @@ def translate_html(
                 date=datetime.date.today()
             )
 
-            usage.used_tokens += 1500
-            usage.save()
+            OpenAITokenUsage.objects.filter(pk=usage.pk).update(
+                used_tokens=F("used_tokens") + 1500
+            )
+            usage.refresh_from_db()
 
             response = openai.responses.create(
                 model="gpt-4.1-mini",
@@ -65,11 +65,16 @@ def translate_html(
             raise e
         else:
             # Tatsächlich genutzte Token in der Datenbank speichern
-            usage.used_tokens -= 1500
+            OpenAITokenUsage.objects.filter(pk=usage.pk).update(
+                used_tokens=F("used_tokens") - 1500
+            )
+            usage.refresh_from_db()
 
             if response.usage:
-                usage.used_tokens += response.usage.total_tokens
-                usage.save()
+                OpenAITokenUsage.objects.filter(pk=usage.pk).update(
+                    used_tokens=F("used_tokens") + response.usage.total_tokens
+                )
+                usage.refresh_from_db()
 
             # Übersetzten Titel und Text zurückgeben
             match = re.search(

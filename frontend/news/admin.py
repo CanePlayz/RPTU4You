@@ -36,6 +36,8 @@ class NewsAdmin(admin.ModelAdmin):
         "vollständig_übersetzt",
     ]
 
+    list_max_show_all = 1000
+
     @admin.display(boolean=True, description="Bereinigt?")
     def bereinigt(self, obj):
         return obj.is_cleaned_up
