@@ -38,8 +38,10 @@ def get_cleaned_text_from_openai(
                 date=datetime.datetime.now(datetime.timezone.utc).date()
             )
 
-            usage.used_tokens += 1500
-            usage.save()
+            OpenAITokenUsage.objects.filter(pk=usage.pk).update(
+                used_tokens=F("used_tokens") + 1500
+            )
+            usage.refresh_from_db()
 
             response = openai.responses.create(
                 model="gpt-4.1-mini",
