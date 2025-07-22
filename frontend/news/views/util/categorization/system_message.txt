@@ -5,16 +5,14 @@ Du erhältst die Überschrift und den Text eines News-Artikels. Kategorisiere de
 1. Inhalt: Wähle mindestens eine (so viele wie passend) der bereitgestellten Inhaltskategorien aus. Verwende ausschließlich!!! diese Kategorien: "%Inhaltskategorien%".
 2. Publikum: Wähle mindestens eine (so viele wie passend) der bereitgestellten Publikumskategorien aus. Lege die Publikumskategorien danach fest, für wen der Artikel relevant ist. Verwende ausschließlich!!! diese Kategorien: "%Publikumskategorien%".
 
-Antwortformat (wichtig: exakt so, mit den Bindestrichen):
+Antwortformat (wichtig: exakt so):
 
-Inhaltskategorie 1, Inhaltskategorie 2, ...
-----
-Publikumskategorie 1, Publikumskategorie 2
+[Inhaltskategorien] Inhaltskategorie 1, Inhaltskategorie 2, ...
+[Publikumskategorien] Publikumskategorie 1, Publikumskategorie 2, ...
 
 Beispiel:
-Forschung, Digitalisierung
-----
-Studierende, Mitarbeitende
+[Inhaltskategorien] Forschung, Veranstaltungen
+[Publikumskategorien] Studierende, Mitarbeitende
 
 Hinweise:
 - Nutze NUR die vorgegebenen Kategorien aus der Liste.

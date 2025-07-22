@@ -1,6 +1,7 @@
 import datetime
 import os
 import random
+import re
 
 from django.db.models import F
 from openai import OpenAI
@@ -113,15 +114,21 @@ def get_categorization_from_openai(
                     usage.refresh_from_db()
 
                 # Ausgabe verarbeiten
-                split_response = response.output_text.split("----")
-                categories_response = split_response[0].strip()
-                audiences_response = split_response[1].strip()
-                categories = [
-                    category.strip() for category in categories_response.split(",")
-                ]
-                audiences = [
-                    audience.strip() for audience in audiences_response.split(",")
-                ]
+                match = re.search(
+                    r"\[Inhaltskategorien\]\s*(.*?)\s*\[Publikumskategorien\]\s*(.*)",
+                    response.output_text,
+                    re.DOTALL,
+                )
+
+                # Prüfe, ob beide Teile vorhanden sind
+                if not match:
+                    raise Exception("Inhaltskategorien oder Zielgruppen fehlen.")
+
+                # Extrahierte Inhalte
+                categories_response = match.group(1).strip().split(",")
+                audiences_response = match.group(2).strip().split(",")
+                categories = [category.strip() for category in categories_response]
+                audiences = [audience.strip() for audience in audiences_response]
 
                 return categories, audiences
 
