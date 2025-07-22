@@ -55,5 +55,4 @@ COPY webscraper/requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-COPY common /app/common
 COPY webscraper /app

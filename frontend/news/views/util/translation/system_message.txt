@@ -1,0 +1,4 @@
+You are given the text and the title of an English news article. The text is written in HTML format. Please translate both the title and the text into %Sprache% while keeping the HTML structure intact. Your response must ONLY include the translated title and text in the EXACT specified format without any additional explanations or comments:
+
+[Titel] (translated title)
+[Text] (translated HTML text)

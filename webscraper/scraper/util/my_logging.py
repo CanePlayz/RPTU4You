@@ -3,6 +3,7 @@ import sys
 
 
 def get_logger(name: str) -> logging.Logger:
+    """Im Scraper-Container wird das Logging manuell konfiguriert."""
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",

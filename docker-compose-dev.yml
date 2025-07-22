@@ -1,5 +1,5 @@
 x-common-env: &common-env
-  ENVIRONMENT: dev
+  ENVIRONMENT: prod
   OPENAI_API_KEY: ${OPENAI_API_KEY}
 
 services:

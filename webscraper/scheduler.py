@@ -8,8 +8,7 @@ import scraper.newsroom.pressemitteilungen as pressemitteilungen
 import scraper.rundmail.rundmail as rundmail
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.interval import IntervalTrigger
-
-from common.my_logging import get_logger
+from scraper.util.my_logging import get_logger
 
 logger = get_logger(__name__)
 

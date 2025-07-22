@@ -1,25 +1,22 @@
 import datetime
 import os
 import random
+import re
 
+from django.db.models import F
 from openai import OpenAI
 
-from common.my_logging import get_logger
-
 from ....models import OpenAITokenUsage
-
-
-def token_limit_reached() -> bool:
-    usage_today = OpenAITokenUsage.objects.filter(date=datetime.date.today()).first()
-    if usage_today is None:
-        return False
-    if usage_today.used_tokens > 2400000:
-        return True
-    return False
+from ....my_logging import get_logger
+from ..common import token_limit_reached
 
 
 def get_categorization_from_openai(
-    arctile_heading: str, article_text: str, environment: str, openai_api_key: str
+    arctile_heading: str,
+    article_text: str,
+    environment: str,
+    openai_api_key: str,
+    token_limit: int,
 ) -> tuple[list[str], list[str]]:
     # Dateipfade relativ zum aktuellen Verzeichnis konstruieren
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -59,7 +56,7 @@ def get_categorization_from_openai(
 
     # Im Produktionsumfeld OpenAI-API verwenden
     else:
-        if not token_limit_reached():
+        if not token_limit_reached(token_limit + 1500):
             openai = OpenAI(api_key=openai_api_key)
 
             # Systemnachricht aus der Datei lesen und Kategorien ersetzen
@@ -79,6 +76,16 @@ def get_categorization_from_openai(
 
             # OpenAI-API aufrufen, um Kategorien und Zielgruppen zu erhalten
             try:
+                # Vorsorglich eine durchschnittliche Token-Nutzung speichern
+                usage, _ = OpenAITokenUsage.objects.get_or_create(
+                    date=datetime.datetime.now(datetime.timezone.utc).date()
+                )
+
+                OpenAITokenUsage.objects.filter(pk=usage.pk).update(
+                    used_tokens=F("used_tokens") + 1500
+                )
+                usage.refresh_from_db()
+
                 response = openai.responses.create(
                     model="gpt-4.1-mini",
                     input=[
@@ -89,31 +96,39 @@ def get_categorization_from_openai(
                         },
                     ],
                     tools=[],
-                    temperature=1,
-                    max_output_tokens=200,
+                    temperature=0.2,
                 )
             except Exception as e:
-                logger.error(f"Fehler bei der OpenAI-API: {e}")
-                return [], []
+                raise e
             else:
-                # Ausgabe verarbeiten
-                split_response = response.output_text.split("----")
-                categories_response = split_response[0].strip()
-                audiences_response = split_response[1].strip()
-                categories = [
-                    category.strip() for category in categories_response.split(",")
-                ]
-                audiences = [
-                    audience.strip() for audience in audiences_response.split(",")
-                ]
-
-                # Genutzte Token in der Datenbank speichern
-                usage, _ = OpenAITokenUsage.objects.get_or_create(
-                    date=datetime.date.today()
+                # Tatsächlich genutzte Token in der Datenbank speichern
+                OpenAITokenUsage.objects.filter(pk=usage.pk).update(
+                    used_tokens=F("used_tokens") - 1500
                 )
+                usage.refresh_from_db()
+
                 if response.usage:
-                    usage.used_tokens += response.usage.total_tokens
-                    usage.save()
+                    OpenAITokenUsage.objects.filter(pk=usage.pk).update(
+                        used_tokens=F("used_tokens") + response.usage.total_tokens
+                    )
+                    usage.refresh_from_db()
+
+                # Ausgabe verarbeiten
+                match = re.search(
+                    r"\[Inhaltskategorien\]\s*(.*?)\s*\[Publikumskategorien\]\s*(.*)",
+                    response.output_text,
+                    re.DOTALL,
+                )
+
+                # Prüfe, ob beide Teile vorhanden sind
+                if not match:
+                    raise Exception("Inhaltskategorien oder Zielgruppen fehlen.")
+
+                # Extrahierte Inhalte
+                categories_response = match.group(1).strip().split(",")
+                audiences_response = match.group(2).strip().split(",")
+                categories = [category.strip() for category in categories_response]
+                audiences = [audience.strip() for audience in audiences_response]
 
                 return categories, audiences
 

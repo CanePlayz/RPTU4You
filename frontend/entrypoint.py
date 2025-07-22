@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 
+import logging
 import os
 import time
 from typing import cast
@@ -8,9 +9,8 @@ from typing import cast
 import django
 import psycopg2
 from celery.app.task import Task
+from news.my_logging import get_logger
 from psycopg2 import OperationalError
-
-from common.my_logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -68,8 +68,10 @@ def create_superuser():
 # Sprachobjekte anlegen
 def create_languages():
     logger.info("Überprüfe, ob Sprachobjekte existieren...")
-    Sprache.objects.get_or_create(name="Deutsch", code="de")
-    Sprache.objects.get_or_create(name="Englisch", code="en")
+    Sprache.objects.get_or_create(name="Deutsch", name_englisch="German", code="de")
+    Sprache.objects.get_or_create(name="Englisch", name_englisch="English", code="en")
+    Sprache.objects.get_or_create(name="Französisch", name_englisch="French", code="fr")
+    Sprache.objects.get_or_create(name="Spanisch", name_englisch="Spanish", code="es")
     logger.info("Sprachobjekte sind vorhanden.")
 
 
@@ -82,11 +84,20 @@ def start_backfill_tasks():
     logger.info("Backfill-Tasks gestartet.")
 
 
+# Unerwünschte Logger deaktivieren
+def disable_unwanted_loggers():
+    logging.getLogger("apscheduler").setLevel(logging.WARNING)
+    logging.getLogger("apscheduler.scheduler").setLevel(logging.WARNING)
+    logging.getLogger("apscheduler.executors.default").setLevel(logging.WARNING)
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+
+
 def main():
     migrate_db()
     create_superuser()
     create_languages()
-    start_backfill_tasks()
+    # start_backfill_tasks()
+    disable_unwanted_loggers()
 
     server = os.getenv("SERVER", "development")
     if server == "gunicorn":

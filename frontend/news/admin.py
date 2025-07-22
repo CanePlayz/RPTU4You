@@ -24,14 +24,34 @@ admin.site.register(OpenAITokenUsage)
 
 @admin.register(News)
 class NewsAdmin(admin.ModelAdmin):
-    # Standard-Sortierung im Admin-Interface
+    # Standard-Sortierung
     ordering = ["-erstellungsdatum"]  # Absteigend sortiert (neuste zuerst)
 
-    # Optional: Zeige das Datum in der Liste
-    list_display = ["titel", "erstellungsdatum", "quelle"]
+    list_display = [
+        "titel",
+        "erstellungsdatum",
+        "quelle",
+        "bereinigt",
+        "hat_kategorien",
+        "vollständig_übersetzt",
+    ]
 
-    # Optional: Ermögliche Sortierung in der Admin-Tabelle durch Spalten-Klick
-    # list_display_links = ["titel"]
+    list_max_show_all = 1000
+
+    @admin.display(boolean=True, description="Bereinigt?")
+    def bereinigt(self, obj):
+        return obj.is_cleaned_up
+
+    @admin.display(boolean=True, description="Kategorien vorhanden?")
+    def hat_kategorien(self, obj):
+        return obj.kategorien.exists()
+
+    @admin.display(boolean=True, description="Alle Übersetzungen vorhanden?")
+    def vollständig_übersetzt(self, obj) -> bool:
+        required_lang_codes = set(Sprache.objects.values_list("code", flat=True))
+        existing_langs = set(obj.texte.values_list("sprache__code", flat=True))
+        missing = required_lang_codes - existing_langs
+        return not missing
 
 
 # Kalender

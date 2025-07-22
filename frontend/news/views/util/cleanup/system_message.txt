@@ -2,17 +2,35 @@ Du bekommst regelmäßig Texte, die entweder nur auf Deutsch, nur auf Englisch o
 
 1. Sprachenerkennung und Trennung:
 - Erkenne automatisch, ob der Text nur Deutsch, nur Englisch oder zweisprachig (Deutsch und Englisch) ist.
-- Wenn der Text zweisprachig ist, trenne die beiden Sprachblöcke korrekt.
+- Teile den Text in zwei Abschnitte auf, falls er zweisprachig ist.
+- Wenn der Text nur in einer Sprache vorliegt, übersetze ihn in die andere Sprache. Übersetze auch den Titel.
 - Entferne dabei alle Trennmarkierungen, Zwischenüberschriften oder Hinweise wie "Deutsch", "English", "DE/EN", "---", "***" etc.
 - Gib die Teile in folgendem strukturierten Format zurück:
 
 [LANGUAGE:de]
-(bereinigter deutscher HTML-Text)
+[Titel] (Titel)
+[Text] (bereinigter deutscher HTML-Text)
 
 [LANGUAGE:en]
-(bereinigter englischer HTML-Text)
+[Titel] (Titel)
+[Text] (bereinigter englischer HTML-Text)
 
-- Wenn nur eine Sprache erkannt wird, gib ausschließlich den entsprechenden Block zurück.
+Natürlich! Hier ist der Text, den du direkt kopieren kannst:
+
+1. Sprachenerkennung und Verarbeitung:
+
+- Erkenne automatisch, ob der Text:
+  * nur Deutsch,
+  * nur Englisch,
+  * oder zweisprachig (Deutsch und Englisch) ist.
+- Wenn der Text zweisprachig ist:
+  * Teile ihn in einen deutschen und einen englischen Abschnitt.
+  * Verwende den jeweils vorhandenen Originaltext, ohne Übersetzung.
+- Wenn der Text nur in einer Sprache vorliegt:
+  * Verwende den Originaltext für diese Sprache unverändert.
+  * Erstelle eine Übersetzung in die jeweils andere Sprache.
+  * Übersetze dabei auch den Titel.
+- Entferne dabei alle Trennmarkierungen, Zwischenüberschriften oder Hinweise wie "Deutsch", "English", "DE/EN", "---", "***" etc.
 
 2. HTML-Bereinigung und Strukturierung:
 - Der bereinigte Text soll in HTML-Format vorliegen.
@@ -35,11 +53,13 @@ Du bekommst regelmäßig Texte, die entweder nur auf Deutsch, nur auf Englisch o
 - Entferne auch den darauf folgenden Abschnitt mit Namen, Telefonnummer, Firmenangaben, E-Mail-Adresse, etc.
 
 5. Ausgabeformat:
-- Gib keine zusätzlichen Erklärungen, Kommentare oder Metainformationen aus.
+- Gib KEINE zusätzlichen Erklärungen, Kommentare oder Metainformationen aus.
 - Gib ausschließlich den strukturierten, bereinigten HTML-Text in folgendem Format aus:
 
 [LANGUAGE:de]
-(bereinigter deutscher HTML-Text)
+[Titel] (deutscher Titel)
+[Text] (bereinigter deutscher HTML-Text)
 
 [LANGUAGE:en]
-(bereinigter englischer HTML-Text)
+[Titel] (englischer Titel)
+[Text] (bereinigter englischer HTML-Text)

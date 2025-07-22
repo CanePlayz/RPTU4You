@@ -1,7 +1,6 @@
 import json
 import os
 from datetime import datetime, timedelta
-from multiprocessing.managers import BaseManager
 from typing import Any
 
 from dateutil.relativedelta import relativedelta
@@ -10,24 +9,43 @@ from django.contrib.auth import authenticate, login, logout, update_session_auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.core.serializers import serialize
+from django.db import connection
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from django.views.decorators.http import require_GET, require_http_methods, require_POST
+from django.views.decorators.http import require_GET, require_http_methods
 from icalendar import Calendar
 from icalendar import Event as IcsEvent
 from icalendar import vRecur
 
-from common.my_logging import get_logger
-
 from ..forms import PreferencesForm, UserCreationForm2
 from ..models import *
+from ..my_logging import get_logger
+from .util.categorization.kategorien_emojis import (
+    AUDIENCE_EMOJIS,
+    CATEGORY_EMOJIS,
+    LOCATION_EMOJIS,
+)
 
 # Präferenzen/Filter werden sowohl bei direktem Aufruf der Website mit Filtern als auch bei JS-Anfragen immer als URL-Parameter übergeben.
 
 # News
+
+
+def get_objects_to_filter() -> dict[str, QuerySet[Any]]:
+    locations = Standort.objects.all()
+    categories = InhaltsKategorie.objects.all()
+    audiences = Zielgruppe.objects.all()
+    sources = Quelle.objects.all()
+
+    return {
+        "locations": locations,
+        "categories": categories,
+        "audiences": audiences,
+        "sources": sources,
+    }
 
 
 def get_filtered_queryset(request: HttpRequest) -> QuerySet[News]:
@@ -38,14 +56,17 @@ def get_filtered_queryset(request: HttpRequest) -> QuerySet[News]:
     categories = request.GET.getlist("category")
     audiences = request.GET.getlist("audience")
     sources = request.GET.getlist("source")
+    locations = request.GET.getlist("location")
 
     queryset = News.objects.all()
     if categories:
-        queryset = queryset.filter(category__in=categories)
+        queryset = queryset.filter(inhaltskategorie__name__in=categories)
     if audiences:
-        queryset = queryset.filter(audience__in=audiences)
+        queryset = queryset.filter(zielgruppe__naam__in=audiences)
     if sources:
-        queryset = queryset.filter(source__in=sources)
+        queryset = queryset.filter(quelle__name__in=sources)
+    if locations:
+        queryset = queryset.filter(standorte__name__in=locations)
 
     return queryset.order_by("-erstellungsdatum")
 
@@ -63,7 +84,7 @@ def paginate_queryset(queryset: QuerySet, offset: int = 0, limit: int = 20) -> Q
 
 @csrf_exempt
 @require_GET
-def news_api(request):
+def news_api(request: HttpRequest) -> HttpResponse:
     """
     News-API mit Filterung, Pagination und 'has_more'-Angabe.
     """
@@ -100,7 +121,7 @@ def news_api(request):
     )
 
 
-def news_view(request):
+def news_view(request: HttpRequest) -> HttpResponse:
     """
     Ansicht für die News-Seite, die alle News anzeigt.
     """
@@ -119,6 +140,8 @@ def news_view(request):
         ).order_by("start")[:3]
 
     # News
+
+    # Hole gefilterte News basierend auf den GET-Parametern für initiale Anzeige
     news_items = get_filtered_queryset(request)
     news_items = paginate_queryset(news_items)
     news_items = serialize(
@@ -127,12 +150,40 @@ def news_view(request):
         fields=["id", "titel", "erstellungsdatum", "link", "quelle_typ"],
     )
 
-    context = {"upcoming_events": upcoming_events, "initial_news": news_items}
+    # Objekte, nach denen gefiltert werden kann
+    objects_to_filter = get_objects_to_filter()
+    locations = objects_to_filter["locations"]
+    categories = objects_to_filter["categories"]
+    audiences = objects_to_filter["audiences"]
+    sources = objects_to_filter["sources"]
+
+    # Listen mit Namen und Emojis für HTML-Rendering
+    locations_with_emojis = [
+        {"name": location.name, "emoji": LOCATION_EMOJIS.get(location.name, "")}
+        for location in locations
+    ]
+    categories_with_emojis = [
+        {"name": category.name, "emoji": CATEGORY_EMOJIS.get(category.name, "")}
+        for category in categories
+    ]
+    audiences_with_emojis = [
+        {"name": audience.name, "emoji": AUDIENCE_EMOJIS.get(audience.name, "")}
+        for audience in audiences
+    ]
+
+    context = {
+        "upcoming_events": upcoming_events,
+        "initial_news": news_items,
+        "locations": locations_with_emojis,
+        "categories": categories_with_emojis,
+        "audiences": audiences_with_emojis,
+        "sources": sources,
+    }
 
     return render(request, "news/News.html", context)
 
 
-def foryoupage(request):
+def foryoupage(request: HttpRequest) -> HttpResponse:
     """
     Ansicht für die For You-Seite, die personalisierte News anzeigt.
     """
@@ -150,12 +201,12 @@ def foryoupage(request):
     return render(request, "news/ForYouPage.html", {"news_items": news_items})
 
 
-def news_detail(request, news_id):
+def news_detail(request: HttpRequest, news_id) -> HttpResponse:
     news_item = get_object_or_404(News, id=news_id)
     return render(request, "news/detail.html", {"news": news_item})
 
 
-def Links(request):
+def Links(request: HttpRequest) -> HttpResponse:
     return render(request, "news/Links.html")
 
 
@@ -164,7 +215,7 @@ ANMELDUNG
 """
 
 
-def login_view(request):
+def login_view(request: HttpRequest) -> HttpResponse:
     # Hole next_url aus GET oder POST, je nach Kontext
     if request.method == "POST":
         next_url = request.POST.get(
@@ -187,12 +238,12 @@ def login_view(request):
     return render(request, "news/login.html", {"next": next_url})
 
 
-def logout_view(request):
+def logout_view(request: HttpRequest) -> HttpResponse:
     logout(request)
     return redirect("News")
 
 
-def register_view(request):
+def register_view(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = UserCreationForm2(request.POST)
         if form.is_valid():
@@ -204,7 +255,7 @@ def register_view(request):
     return render(request, "news/register.html", {"form": form})
 
 
-def ForYouPage(request):
+def ForYouPage(request: HttpRequest) -> HttpResponse:
     if not request.user.is_authenticated:
         messages.warning(request, "Die For You-Seite ist nur mit Anmeldung einsehbar.")
         return redirect("login")
@@ -213,11 +264,14 @@ def ForYouPage(request):
 
 
 @login_required
-def account_view(request):
+def account_view(request: HttpRequest) -> HttpResponse:
     """
     Ansicht für den Account-Bereich, wo Benutzer ihr Passwort und ihren Benutzernamen ändern können.
     """
-    form = PasswordChangeForm(request.user)  # Formular initialisieren
+    if request.user is AbstractUser:
+        form = PasswordChangeForm(request.user)  # Formular initialisieren
+    else:
+        return redirect("login")
 
     if request.method == "POST":
         if "change_password" in request.POST:
@@ -263,7 +317,7 @@ def update_preferences(request: HttpRequest) -> HttpResponse:
     return render(request, "news/preferences.html", {"form": form})
 
 
-def request_date(request):
+def request_date(request: HttpRequest) -> HttpResponse:
     # API-Key prüfen
     api_key = os.getenv("API_KEY")
     api_key_request = request.headers.get("API-Key")
@@ -294,7 +348,7 @@ KALENDER
 
 
 @login_required
-def calendar_page(request):
+def calendar_page(request: HttpRequest) -> HttpResponse:
     return render(
         request,
         "news/calendar.html",
@@ -307,7 +361,7 @@ def calendar_page(request):
 
 @csrf_exempt
 @require_http_methods(["GET", "POST"])
-def calendar_events(request):
+def calendar_events(request: HttpRequest) -> HttpResponse:
     # GET: Alle Events auflisten
     if request.method == "GET":
         if request.user.is_authenticated:
@@ -470,7 +524,7 @@ def calendar_events(request):
 # Detail-API für einzelne Events
 @csrf_exempt
 @require_http_methods(["GET", "PUT", "DELETE"])
-def calendar_event_detail(request, event_id):
+def calendar_event_detail(request: HttpRequest, event_id) -> HttpResponse:
     try:
         event = get_object_or_404(CalendarEvent, id=event_id)
         # GET: Einzelnes Event anzeigen
@@ -619,13 +673,16 @@ def calendar_event_detail(request, event_id):
                 event.delete()
                 return JsonResponse({"success": True, "deleted_group": False})
 
+        else:
+            return JsonResponse({"error": "Methode nicht erlaubt."}, status=405)
+
     except Exception as e:
         return JsonResponse({"error": f"Fehler: {str(e)}"}, status=500)
 
 
 @csrf_protect
 @login_required
-def export_ics(request):
+def export_ics(request: HttpRequest) -> HttpResponse:
     try:
         events = CalendarEvent.objects.filter(
             user=request.user
@@ -689,7 +746,7 @@ def export_ics(request):
 
 @csrf_protect
 @login_required
-def import_ics(request):
+def import_ics(request: HttpRequest) -> HttpResponse:
     if request.method == "POST" and request.FILES.get("ics_file"):
         ics_file = request.FILES["ics_file"]
         file_content = ics_file.read()
@@ -786,3 +843,13 @@ def import_ics(request):
             messages.error(request, f"Fehler beim Importieren: {str(e)}")
 
     return redirect("calendar_page")
+
+
+def db_connection_status(request: HttpRequest) -> HttpResponse:
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT COUNT(*) FROM pg_stat_activity WHERE datname = current_database();"
+        )
+        result = cursor.fetchone()
+        count = result[0] if result is not None else 0
+    return JsonResponse({"active_db_connections": count})

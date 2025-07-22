@@ -1,11 +1,12 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils.timezone import now
 
 # News
 
 
 class Quelle(models.Model):
-    name = models.CharField(unique=True)
+    name = models.CharField()
     url = models.URLField()
 
     def __str__(self):
@@ -13,6 +14,11 @@ class Quelle(models.Model):
 
     class Meta:
         verbose_name_plural = "Quellen"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "url"], name="unique_quelle_name_url"
+            )
+        ]
 
 
 class Fachschaft(Quelle):
@@ -98,7 +104,7 @@ class News(models.Model):
     erstellungsdatum = models.DateTimeField()
 
     standorte = models.ManyToManyField(Standort, blank=True)
-    kategorien = models.ManyToManyField(InhaltsKategorie, blank=True)
+    inhaltskategorien = models.ManyToManyField(InhaltsKategorie, blank=True)
     zielgruppe = models.ManyToManyField(Zielgruppe, blank=True)
 
     quelle = models.ForeignKey(Quelle, on_delete=models.CASCADE)
@@ -114,6 +120,9 @@ class News(models.Model):
         ],
     )
 
+    is_cleaned_up = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=now, editable=False)
+
     def __str__(self):
         return self.titel
 
@@ -128,7 +137,8 @@ class News(models.Model):
 
 
 class Sprache(models.Model):
-    name = models.CharField(max_length=10, unique=True)
+    name = models.CharField(max_length=30, unique=True)
+    name_englisch = models.CharField(max_length=30, unique=True)
     code = models.CharField(max_length=5, unique=True)
 
     def __str__(self):
@@ -175,6 +185,7 @@ class User(AbstractUser):
 
 
 # Kalender
+
 
 REPEAT_CHOICES = [
     ("none", "Keine"),
