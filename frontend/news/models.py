@@ -6,7 +6,7 @@ from django.utils.timezone import now
 
 
 class Quelle(models.Model):
-    name = models.CharField(unique=True)
+    name = models.CharField()
     url = models.URLField()
 
     def __str__(self):
@@ -14,6 +14,11 @@ class Quelle(models.Model):
 
     class Meta:
         verbose_name_plural = "Quellen"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "url"], name="unique_quelle_name_url"
+            )
+        ]
 
 
 class Fachschaft(Quelle):

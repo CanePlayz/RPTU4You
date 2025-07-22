@@ -56,7 +56,7 @@ def create_news_entry(
 ) -> dict:
     # Name der Quelle ist bei Einzel-Rundmails der Titel und bei Sammel-Rundmails "Sammel-Rundmail vom <Datum>"
     if source_type == "Rundmail":
-        quelle_name = f"Rundmail: {title}"
+        quelle_name = "Rundmail"
     elif source_type == "Sammel-Rundmail":
         quelle_name = f"Sammel-Rundmail vom {date.strftime('%d.%m.%Y')}"
     elif source_type == "Stellenangebote Sammel-Rundmail":
