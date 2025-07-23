@@ -23,55 +23,11 @@ from icalendar import vRecur
 from ..forms import PreferencesForm, UserCreationForm2
 from ..models import *
 from ..my_logging import get_logger
-from .util.categorization.kategorien_emojis import (
-    AUDIENCE_EMOJIS,
-    CATEGORY_EMOJIS,
-    LOCATION_EMOJIS,
-)
+from ..util.filter_objects import get_objects_with_emojis
 
 # Präferenzen/Filter werden sowohl bei direktem Aufruf der Website mit Filtern als auch bei JS-Anfragen immer als URL-Parameter übergeben.
 
 # News
-
-
-def get_objects_to_filter() -> dict[str, QuerySet[Any]]:
-    locations = Standort.objects.all()
-    categories = InhaltsKategorie.objects.all()
-    audiences = Zielgruppe.objects.all()
-    sources = Quelle.objects.all()
-
-    return {
-        "locations": locations,
-        "categories": categories,
-        "audiences": audiences,
-        "sources": sources,
-    }
-
-
-def get_objects_with_emojis() -> dict[str, list[dict[str, str]]]:
-    """
-    Gibt Objekte mit Emojis für HTML-Rendering zurück.
-    """
-    objects = get_objects_to_filter()
-    locations_with_emojis = [
-        {"name": loc.name, "emoji": LOCATION_EMOJIS.get(loc.name, "")}
-        for loc in objects["locations"]
-    ]
-    categories_with_emojis = [
-        {"name": cat.name, "emoji": CATEGORY_EMOJIS.get(cat.name, "")}
-        for cat in objects["categories"]
-    ]
-    audiences_with_emojis = [
-        {"name": aud.name, "emoji": AUDIENCE_EMOJIS.get(aud.name, "")}
-        for aud in objects["audiences"]
-    ]
-
-    return {
-        "locations": locations_with_emojis,
-        "categories": categories_with_emojis,
-        "audiences": audiences_with_emojis,
-        "sources": list(objects["sources"].values("name")),
-    }
 
 
 def get_filtered_queryset(request: HttpRequest) -> QuerySet[News]:

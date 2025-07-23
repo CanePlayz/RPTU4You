@@ -173,7 +173,7 @@ class User(AbstractUser):
     id = models.AutoField(primary_key=True)
 
     standorte = models.ManyToManyField(Standort, blank=True)
-    quellen = models.ManyToManyField(Fachschaft, blank=True)
+    quellen = models.ManyToManyField(Quelle, blank=True)
     inhaltskategorien = models.ManyToManyField(InhaltsKategorie, blank=True)
     zielgruppen = models.ManyToManyField(Zielgruppe, blank=True)
 
