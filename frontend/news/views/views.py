@@ -44,7 +44,7 @@ def get_filtered_queryset(request: HttpRequest) -> QuerySet[News]:
     if categories:
         queryset = queryset.filter(inhaltskategorie__name__in=categories)
     if audiences:
-        queryset = queryset.filter(zielgruppe__naam__in=audiences)
+        queryset = queryset.filter(zielgruppe__name__in=audiences)
     if sources:
         queryset = queryset.filter(quelle__name__in=sources)
     if locations:

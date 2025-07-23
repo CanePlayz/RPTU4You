@@ -31,25 +31,23 @@ def get_categorization_from_openai(
         "r",
         encoding="utf-8",
     ) as file:
-        categories_chatgpt = file.read().strip().split("\n")
+        categories = file.read().strip().split("\n")
     with open(
         target_group_categories_file_path,
         "r",
         encoding="utf-8",
     ) as file:
-        audiences_chatgpt = file.read().strip().split("\n")
+        audiences = file.read().strip().split("\n")
 
     # Im Testumfeld zufällige Kategorien und Zielgruppen auswählen
     if environment == "dev":
-        number_of_categories = len(categories_chatgpt)
+        number_of_categories = len(categories)
         number_of_chosen_categories = random.randint(1, number_of_categories)
-        chosen_categories = random.sample(
-            categories_chatgpt, number_of_chosen_categories
-        )
+        chosen_categories = random.sample(categories, number_of_chosen_categories)
 
-        number_of_audiences = len(audiences_chatgpt)
+        number_of_audiences = len(audiences)
         number_of_chosen_audiences = random.randint(1, number_of_audiences)
-        chosen_audiences = random.sample(audiences_chatgpt, number_of_chosen_audiences)
+        chosen_audiences = random.sample(audiences, number_of_chosen_audiences)
 
         return chosen_categories, chosen_audiences
 
@@ -66,8 +64,8 @@ def get_categorization_from_openai(
             ) as file:
                 system_message = file.read()
             system_message = system_message.replace(
-                "%Inhaltskategorien%", ", ".join(categories_chatgpt)
-            ).replace("%Publikumskategorien%", ", ".join(audiences_chatgpt))
+                "%Inhaltskategorien%", ", ".join(categories)
+            ).replace("%Publikumskategorien%", ", ".join(audiences))
 
             # Prompt für OpenAI-API erstellen
             prompt = f"Titel: {arctile_heading}\n\nText: {article_text}"
@@ -134,10 +132,10 @@ def get_categorization_from_openai(
 
                 # Überprüfen, ob die Kategorien und Zielgruppen erlaubt sind
                 for category in categories_chatgpt:
-                    if category not in categories_chatgpt:
+                    if category not in categories:
                         raise Exception(f"Unbekannte Inhaltskategorie: {category}")
                 for audience in audiences_chatgpt:
-                    if audience not in audiences_chatgpt:
+                    if audience not in audiences:
                         raise Exception(f"Unbekannte Zielgruppe: {audience}")
 
                 return categories_chatgpt, audiences_chatgpt
