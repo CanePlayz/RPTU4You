@@ -10,7 +10,7 @@
 <div style="display: flex;">
   <!-- Linke Seite: Filterblock -->
   <div style="flex: 1; max-width: 250px; margin-right: 30px;">
-    <form id="news-filter-form">
+    {% comment %} <form id="news-filter-form">
       <h4>Standorte</h4>
       {% for standort in standorte %}
         <label>
@@ -33,16 +33,21 @@
         </label><br>
       {% endfor %}
       <button type="button" id="apply-filter-btn" style="margin-top:10px;">Filtern</button>
-    </form>
+    </form> {% endcomment %}
   </div>
 
   <!-- Mitte: News -->
   <div style="flex: 3;">
-    <ul id="news-container">
-      <!-- News werden hier dynamisch eingefügt -->
-    </ul>
-    <div id="news-loading" style="display:none;">Lade News...</div>
-    <div id="news-empty" style="display:none;">Keine News gefunden.</div>
+    <main id="main">
+        <div id="news-container">
+            {% if detail_news %}
+                {% include "news/partials/_news_detail.html" with news=detail_news %}
+            {% else %}
+                {% include "news/partials/_news_list.html" with news_list=news_list %}
+            {% endif %}
+        </div>
+        <button id="load-more">Mehr laden</button>
+    </main>
   </div>
 
   <!-- Rechte Seite: Kleiner Kalender -->

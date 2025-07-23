@@ -1,0 +1,5 @@
+{% for news in news_list %}
+    {% include "news/partials/_news_card.html" with news=news %}
+{% empty %}
+    <p>Keine News gefunden.</p>
+{% endfor %}

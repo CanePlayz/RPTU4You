@@ -1,85 +1,84 @@
-document.addEventListener("DOMContentLoaded", function() {
-  let offset = 0;
-  let limit = 10;
-  let loading = false;
-  let hasMore = true;
+// Aktuell geladener Offset (wir starten mit 20, weil 20 beim ersten Rendern schon vorhanden sind)
+let offset = 20;
+const limit = 20;
 
-  function getSelectedFilters() {
-    const standorte = [];
-    const kategorien = [];
-    const zielgruppen = [];
-    document.querySelectorAll('#news-filter-form input[name="standorte"]:checked').forEach(el => standorte.push(el.value));
-    document.querySelectorAll('#news-filter-form input[name="kategorien"]:checked').forEach(el => kategorien.push(el.value));
-    document.querySelectorAll('#news-filter-form input[name="zielgruppen"]:checked').forEach(el => zielgruppen.push(el.value));
-    return { standorte, kategorien, zielgruppen };
-  }
+// In diesem Objekt speichern wir den Zustand des News-Feeds,
+// damit wir ihn bei einem "Zurück" (popstate) wiederherstellen können
+let newsFeedState = {
+  htmlCache: '',   // hier speichern wir den gerenderten HTML-Inhalt der News-Liste
+  scrollY: 0       // Scrollposition vor dem Klick auf ein Detailobjekt
+};
 
-  function buildApiUrl(offset, limit) {
-    const filters = getSelectedFilters();
-    let url = `/api/news/?offset=${offset}&limit=${limit}`;
-    filters.standorte.forEach(id => url += `&standort=${id}`);
-    filters.kategorien.forEach(id => url += `&kategorie=${id}`);
-    filters.zielgruppen.forEach(id => url += `&zielgruppe=${id}`);
-    return url;
-  }
+// Starte nach dem Laden der Seite
+document.addEventListener('DOMContentLoaded', () => {
 
-  function loadNews(reset=false) {
-    if (loading || !hasMore) return;
-    loading = true;
-    document.getElementById("news-loading").style.display = "block";
-    if (reset) {
-      document.getElementById("news-container").innerHTML = "";
-      offset = 0;
-      hasMore = true;
-      document.getElementById("news-empty").style.display = "none";
+  // ---------------------------------------------
+  // 1. Klick auf News-Karte -> lade Detailansicht
+  // ---------------------------------------------
+  document.body.addEventListener('click', (e) => {
+    const card = e.target.closest('.news-card');
+    if (card) {
+      e.preventDefault();
+      const newsId = card.dataset.id;
+
+      // Vor dem Wechsel Zustand der Liste sichern
+      newsFeedState.htmlCache = document.querySelector('#news-container').innerHTML;
+      newsFeedState.scrollY = window.scrollY;
+
+      // URL aktualisieren, ohne neu zu laden
+      history.pushState({ type: 'detail', id: newsId }, '', `/news/${newsId}/`);
+
+      // Lade nur den HTML-Partial-Inhalt der Detailansicht
+      fetch(`/news/${newsId}/?partial=true`)
+        .then(resp => resp.text())
+        .then(html => {
+          document.querySelector('#news-container').innerHTML = html;
+          window.scrollTo(0, 0);
+        });
+
+      return; // Detailklick wurde behandelt
     }
-    const url = buildApiUrl(offset, limit);
-    fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById("news-loading").style.display = "none";
-        if (data.news && data.news.length > 0) {
-          data.news.forEach(article => {
-            const newsItem = document.createElement("li");
-            newsItem.classList.add("news-item");
-            newsItem.innerHTML = `
-              <h3>${article.titel}</h3>
-              <p>Erstellt am: ${article.erstellungsdatum}</p>
-              <p>Quelle: ${article.quelle_typ || 'Keine Quelle'}</p>
-              <p><a href="${article.link}">Link zur Webseite</a></p>
-              <a href="/news/${article.id}">Weiterlesen</a>
-              <hr>
-            `;
-            document.getElementById("news-container").appendChild(newsItem);
-          });
-          offset += data.news.length;
-          hasMore = data.news.length === limit;
-        } else {
-          if (reset) {
-            document.getElementById("news-empty").style.display = "block";
-          }
-          hasMore = false;
-        }
-        loading = false;
-      })
-      .catch(err => {
-        document.getElementById("news-loading").style.display = "none";
-        loading = false;
+
+    // ---------------------------------------------
+    // 2. Klick auf "Zurück zur Übersicht" im Detail
+    // ---------------------------------------------
+    if (e.target.id === 'back-to-list') {
+      e.preventDefault();
+      history.back();  // löst popstate aus
+      return;
+    }
+  });
+
+  // ----------------------------------------------
+  // 3. Klick auf "Mehr laden" → lade weitere News
+  // ----------------------------------------------
+  document.getElementById('load-more')?.addEventListener('click', () => {
+    fetch(`/news/partial/?offset=${offset}&limit=${limit}`)
+      .then(resp => resp.text())
+      .then(html => {
+        document.querySelector('#news-container').insertAdjacentHTML('beforeend', html);
+        offset += limit;
       });
-  }
-
-  // Filter anwenden
-  document.getElementById("apply-filter-btn").addEventListener("click", function() {
-    loadNews(true);
   });
 
-  // Infinite Scroll
-  window.addEventListener("scroll", function() {
-    if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 100)) {
-      loadNews();
+  // ----------------------------------------------
+  // 4. Zurück-Button (Browser oder manuell) → popstate
+  // ----------------------------------------------
+  window.addEventListener('popstate', (event) => {
+    const state = event.state;
+
+    if (state && state.type === 'detail') {
+      // Benutzer springt zurück zu einer Detail-Ansicht
+      fetch(`/news/${state.id}/?partial=true`)
+        .then(resp => resp.text())
+        .then(html => {
+          document.querySelector('#news-container').innerHTML = html;
+          window.scrollTo(0, 0);
+        });
+    } else {
+      // Benutzer springt zurück zur News-Übersicht
+      document.querySelector('#news-container').innerHTML = newsFeedState.htmlCache;
+      window.scrollTo(0, newsFeedState.scrollY);
     }
   });
-
-  // Initiales Laden
-  loadNews(true);
 });

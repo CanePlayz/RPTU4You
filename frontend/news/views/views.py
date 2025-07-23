@@ -103,6 +103,7 @@ def news_api(request: HttpRequest) -> HttpResponse:
     )
 
 
+@require_GET
 def news_view(request: HttpRequest) -> HttpResponse:
     """
     Ansicht für die News-Seite, die alle News anzeigt.
@@ -126,11 +127,6 @@ def news_view(request: HttpRequest) -> HttpResponse:
     # Hole gefilterte News basierend auf den GET-Parametern für initiale Anzeige
     news_items = get_filtered_queryset(request)
     news_items = paginate_queryset(news_items)
-    news_items = serialize(
-        "json",
-        news_items,
-        fields=["id", "titel", "erstellungsdatum", "link", "quelle_typ"],
-    )
 
     # Objekte, nach denen gefiltert werden kann
     objects_to_filter = get_objects_with_emojis()
@@ -141,14 +137,57 @@ def news_view(request: HttpRequest) -> HttpResponse:
 
     context = {
         "upcoming_events": upcoming_events,
-        "initial_news": news_items,
+        "news_list": news_items,
         "locations": locations,
         "categories": categories,
         "audiences": audiences,
         "sources": sources,
     }
 
-    return render(request, "news/News.html", context)
+    return render(request, "news/news.html", context)
+
+
+@require_GET
+def news_partial(request: HttpRequest) -> HttpResponse:
+    offset = int(request.GET.get("offset", 0))
+    limit = int(request.GET.get("limit", 20))
+
+    news_items = get_filtered_queryset(request)
+    paginated_items = paginate_queryset(news_items, offset, limit)
+
+    return render(
+        request, "news/partials/_news_list.html", {"news_list": paginated_items}
+    )
+
+
+@require_GET
+def news_detail(request: HttpRequest, pk: int) -> HttpResponse:
+    news = get_object_or_404(
+        News.objects.prefetch_related("texte__sprache", "quelle"), pk=pk
+    )
+
+    # Sprache aus GET-Parameter (Standard: "de")
+    lang = request.GET.get("lang", "de")
+
+    # Hole den Text für die gewählte Sprache, falls vorhanden
+    text = news.texte.filter(sprache__code=lang).first()  # type: ignore[attr-defined]
+
+    context = {
+        "news": news,
+        "text": text,
+    }
+
+    if request.GET.get("partial") == "true":
+        return render(request, "news/partials/_news_detail.html", context)
+
+    return render(
+        request,
+        "news/news.html",
+        {
+            "detail_news": news,
+            "text": text,
+        },
+    )
 
 
 def foryoupage(request: HttpRequest) -> HttpResponse:
@@ -167,11 +206,6 @@ def foryoupage(request: HttpRequest) -> HttpResponse:
     news_items = paginate_queryset(news_items)
 
     return render(request, "news/ForYouPage.html", {"news_items": news_items})
-
-
-def news_detail(request: HttpRequest, news_id) -> HttpResponse:
-    news_item = get_object_or_404(News, id=news_id)
-    return render(request, "news/detail.html", {"news": news_item})
 
 
 def Links(request: HttpRequest) -> HttpResponse:
