@@ -7,7 +7,6 @@ from django.db.models import F
 from openai import OpenAI
 
 from ....models import OpenAITokenUsage
-from ....my_logging import get_logger
 from ..common import token_limit_reached
 
 
@@ -26,9 +25,7 @@ def get_categorization_from_openai(
     )
     system_message_file_path = os.path.join(BASE_DIR, "system_message.txt")
 
-    logger = get_logger(__name__)
-
-    # Kategorien aus der Datei lesen
+    # Inhaltskategorien und Zielgruppen aus der Datei lesen
     with open(
         content_categories_file_path,
         "r",
@@ -66,9 +63,8 @@ def get_categorization_from_openai(
                 encoding="utf-8",
             ) as file:
                 system_message = file.read()
-            categories_str = ", ".join(categories)
             system_message = system_message.replace(
-                "%Inhaltskategorien%", categories_str
+                "%Inhaltskategorien%", ", ".join(categories)
             ).replace("%Publikumskategorien%", ", ".join(audiences))
 
             # Prompt für OpenAI-API erstellen
@@ -127,13 +123,22 @@ def get_categorization_from_openai(
                 # Extrahierte Inhalte
                 categories_response = match.group(1).strip().split(",")
                 audiences_response = match.group(2).strip().split(",")
-                categories = [category.strip() for category in categories_response]
-                audiences = [audience.strip() for audience in audiences_response]
+                categories_chatgpt = [
+                    category.strip() for category in categories_response
+                ]
+                audiences_chatgpt = [
+                    audience.strip() for audience in audiences_response
+                ]
 
-                return categories, audiences
+                # Überprüfen, ob die Kategorien und Zielgruppen erlaubt sind
+                for category in categories_chatgpt:
+                    if category not in categories:
+                        raise Exception(f"Unbekannte Inhaltskategorie: {category}")
+                for audience in audiences_chatgpt:
+                    if audience not in audiences:
+                        raise Exception(f"Unbekannte Zielgruppe: {audience}")
+
+                return categories_chatgpt, audiences_chatgpt
 
         else:
-            logger.info(
-                "Token-Limit erreicht. Keine Kategorien oder Zielgruppen generiert."
-            )
-            return [], []
+            raise Exception("Token-Limit erreicht.")

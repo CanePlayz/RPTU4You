@@ -21,7 +21,7 @@ from .util.cleanup.cleanup import extract_parts, get_cleaned_text_from_openai
 
 @close_db_connection
 def process_news_entry(news_entry, openai_api_key, environment, logger: logging.Logger):
-    logger.info(f"Verarbeite News-Eintrag | {news_entry["titel"][:80]}")
+    logger.info(f"Verarbeite News-Eintrag | {news_entry['titel'][:80]}")
 
     # Quellen-Objekt erstellen
     if news_entry["quelle_typ"] in [
@@ -90,7 +90,7 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
 
     # Wenn das News-Objekt neu erstellt wurde, Text cleanen, Übersetzungen hinzufügen und Kategorisierung durchführen
     if not created:
-        logger.info(f"News-Objekt existiert bereits | {news_entry["titel"][:80]}")
+        logger.info(f"News-Objekt existiert bereits | {news_entry['titel'][:80]}")
         return
 
     # Text cleanen
@@ -105,7 +105,7 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
 
     # Wenn ein Fehler auftritt, loggen und weitermachen mit dem nächsten Eintrag
     except Exception as e:
-        logger.error(f"Fehler beim Cleanup: {e} | {news_entry["titel"][:80]}")
+        logger.error(f"Fehler beim Cleanup: {e} | {news_entry['titel'][:80]}")
 
         # Fallback: Originaltext speichern
         text_object = Text(
@@ -137,7 +137,7 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
         # Flag is_cleaned_up auf True setzen
         news_item.is_cleaned_up = True
         news_item.save()
-        logger.info(f"Text erfolgreich gecleant | {news_entry["titel"][:80]}")
+        logger.info(f"Text erfolgreich gecleant | {news_entry['titel'][:80]}")
 
         # Fehlende Übersetzungen hinzufügen
         sprachen = Sprache.objects.all()
@@ -158,14 +158,14 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
             2400000,  # Token-Limit für die Verarbeitung neuer News (diese sollen schnell erscheinen)
         )
     except Exception as e:
-        logger.error(f"Fehler bei Kategorisierung: {e} | {news_entry["titel"][:80]}")
+        logger.error(f"Fehler bei Kategorisierung: {e} | {news_entry['titel'][:80]}")
         categories, audiences = [], []
 
     add_audiences_and_categories(news_item, categories, audiences)
 
-    logger.info(f"Kategorisierung erfolgreich hinzugefügt | {news_entry["titel"][:80]}")
+    logger.info(f"Kategorisierung erfolgreich hinzugefügt | {news_entry['titel'][:80]}")
 
-    logger.info(f"News-Objekt erfolgreich erstellt | {news_entry["titel"][:80]}")
+    logger.info(f"News-Objekt erfolgreich erstellt | {news_entry['titel'][:80]}")
 
 
 @method_decorator(csrf_exempt, name="dispatch")
