@@ -46,7 +46,9 @@
                 {% include "news/partials/_news_list.html" with news_list=news_list %}
             {% endif %}
         </div>
-        <button id="load-more">Mehr laden</button>
+        {% if not detail_news %}
+          <button id="load-more">Mehr laden</button>
+        {% endif %}
     </main>
   </div>
 

@@ -11,6 +11,7 @@ let newsFeedState = {
 
 // Starte nach dem Laden der Seite
 document.addEventListener('DOMContentLoaded', () => {
+  const loadMoreBtn = document.getElementById('load-more');
 
   // ---------------------------------------------
   // 1. Klick auf News-Karte -> lade Detailansicht
@@ -74,11 +75,15 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(html => {
           document.querySelector('#news-container').innerHTML = html;
           window.scrollTo(0, 0);
+          // Button ausblenden
+          loadMoreBtn?.classList.add('hidden');
         });
     } else {
       // Benutzer springt zurück zur News-Übersicht
       document.querySelector('#news-container').innerHTML = newsFeedState.htmlCache;
       window.scrollTo(0, newsFeedState.scrollY);
+      // Button wieder anzeigen
+      loadMoreBtn?.classList.remove('hidden');
     }
   });
 });

@@ -1,6 +1,6 @@
-<div class="news-card" data-id="{{ news.id }}">
-    <h3>{{ news.titel }}</h3>
-    <p>{{ news.erstellungsdatum|date:"d.m.Y H:i" }}</p>
-    <a href="{{ news.link }}">Zur Quelle</a>
-    <span>{{ news.quelle_typ }}</span>
+<div class="news-card" data-id="{{ news.id }}" style="border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem; cursor: pointer;">
+  <h3>{{ news.titel }}</h3>
+  <p>{{ news.erstellungsdatum|date:"d.m.Y H:i" }}</p>
+  <p><strong>Quelle:</strong> {{ news.quelle.name }}</p>
+  <p><strong>Typ:</strong> {{ news.quelle_typ }}</p>
 </div>
