@@ -241,7 +241,9 @@ def foryoupage(request: HttpRequest) -> HttpResponse:
         messages.error(request, "Ungültiger Benutzer.")
         return redirect("login")
 
-    return render(request, "news/ForYouPage.html", {"news_items": news_items})
+    return render(
+        request, "news/news.html", {"news_items": news_items, "has_more": True}
+    )
 
 
 def Links(request: HttpRequest) -> HttpResponse:
@@ -291,14 +293,6 @@ def register_view(request: HttpRequest) -> HttpResponse:
     else:
         form = UserCreationForm2()
     return render(request, "news/register.html", {"form": form})
-
-
-def ForYouPage(request: HttpRequest) -> HttpResponse:
-    if not request.user.is_authenticated:
-        messages.warning(request, "Die For You-Seite ist nur mit Anmeldung einsehbar.")
-        return redirect("login")
-    else:
-        return render(request, "news/ForYouPage.html")
 
 
 @login_required
