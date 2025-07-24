@@ -65,7 +65,7 @@ def add_audiences_and_categories(
 
     for audience in audiences:
         audience_object, _ = Zielgruppe.objects.get_or_create(name=audience)
-        news.zielgruppe.add(audience_object)
+        news.zielgruppen.add(audience_object)
 
 
 # Einzelne Verarbeitungsschritte für News-Objekte zur Parallelisierung

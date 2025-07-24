@@ -75,15 +75,54 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(html => {
           document.querySelector('#news-container').innerHTML = html;
           window.scrollTo(0, 0);
-          // Button ausblenden
           loadMoreBtn?.classList.add('hidden');
         });
     } else {
-      // Benutzer springt zurück zur News-Übersicht
-      document.querySelector('#news-container').innerHTML = newsFeedState.htmlCache;
-      window.scrollTo(0, newsFeedState.scrollY);
-      // Button wieder anzeigen
-      loadMoreBtn?.classList.remove('hidden');
+      // Benutzer springt zurück zur News-Übersicht (mit Filter berücksichtigen)
+      const urlParams = window.location.search;
+      fetch(`/news/partial${urlParams}`)
+        .then(resp => resp.text())
+        .then(html => {
+          document.querySelector('#news-container').innerHTML = html;
+          window.scrollTo(0, 0);
+          loadMoreBtn?.classList.remove('hidden');
+        });
     }
   });
+
+  // ----------------------------------------------
+  // 5. Filter anwenden per Button
+  // ----------------------------------------------
+  const filterForm = document.getElementById('news-filter-form');
+  const filterButton = document.getElementById('apply-filter-btn');
+  const newsContainer = document.getElementById('news-container');
+
+  if (filterForm && filterButton) {
+    filterButton.addEventListener('click', () => {
+      const formData = new FormData(filterForm);
+      const params = new URLSearchParams();
+      for (const [key, value] of formData.entries()) {
+        params.append(key, value);
+      }
+
+      const query = params.toString();
+      const newUrl = `/news/?${query}`;
+      const fetchUrl = `/news/partial?${query}`;
+
+      // Browser-URL aktualisieren
+      history.pushState({}, '', newUrl);
+
+      // AJAX-Inhalt laden
+      fetch(fetchUrl)
+        .then(resp => resp.text())
+        .then(html => {
+          newsContainer.innerHTML = html;
+          offset = 20; // Reset Offset
+          window.scrollTo(0, 0);
+        })
+        .catch(err => {
+          console.error('Fehler beim Laden der gefilterten News:', err);
+        });
+    });
+  }
 });

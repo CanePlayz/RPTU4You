@@ -10,31 +10,47 @@
 <div style="display: flex;">
   <!-- Linke Seite: Filterblock -->
   <div style="flex: 1; max-width: 250px; margin-right: 30px;">
-    {% comment %} <form id="news-filter-form">
+    <form id="news-filter-form" method="get">
+
       <h4>Standorte</h4>
-      {% for standort in standorte %}
+      {% for loc in locations %}
         <label>
-          <input type="checkbox" name="standorte" value="{{ standort.id }}">
-          {{ standort.name }}
+          <input type="checkbox" name="location" value="{{ loc.name }}"
+            {% if loc.name in active_filters.locations %}checked{% endif %}>
+          {{ loc.emoji }} {{ loc.name }}
         </label><br>
       {% endfor %}
+
       <h4>Kategorien</h4>
-      {% for kategorie in kategorien %}
+      {% for cat in categories %}
         <label>
-          <input type="checkbox" name="kategorien" value="{{ kategorie.id }}">
-          {{ kategorie.name }}
+          <input type="checkbox" name="category" value="{{ cat.name }}"
+            {% if cat.name in active_filters.categories %}checked{% endif %}>
+          {{ cat.emoji }} {{ cat.name }}
         </label><br>
       {% endfor %}
+
       <h4>Zielgruppen</h4>
-      {% for ziel in zielgruppen %}
+      {% for aud in audiences %}
         <label>
-          <input type="checkbox" name="zielgruppen" value="{{ ziel.id }}">
-          {{ ziel.name }}
+          <input type="checkbox" name="audience" value="{{ aud.name }}"
+            {% if aud.name in active_filters.audiences %}checked{% endif %}>
+          {{ aud.emoji }} {{ aud.name }}
         </label><br>
       {% endfor %}
-      <button type="button" id="apply-filter-btn" style="margin-top:10px;">Filtern</button>
-    </form> {% endcomment %}
-  </div>
+
+      <h4>Quellen</h4>
+      {% for src in sources %}
+        <label>
+          <input type="checkbox" name="source" value="{{ src.name }}"
+            {% if src.name in active_filters.sources %}checked{% endif %}>
+          {{ src.emoji }} {{ src.name }}
+        </label><br>
+      {% endfor %}
+
+    <button type="button" id="apply-filter-btn" style="margin-top: 10px;">Filter anwenden</button>
+  </form>
+</div>
 
   <!-- Mitte: News -->
   <div style="flex: 3;">
