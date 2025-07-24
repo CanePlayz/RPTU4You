@@ -259,10 +259,10 @@ def login_view(request: HttpRequest) -> HttpResponse:
     # Hole next_url aus GET oder POST, je nach Kontext
     if request.method == "POST":
         next_url = request.POST.get(
-            "next", "ForYouPage"
+            "next", "foryoupage"
         )  # Priorisiere POST nach Formularabsendung
     else:
-        next_url = request.GET.get("next", "ForYouPage")  # Initialer GET-Request
+        next_url = request.GET.get("next", "foryoupage")  # Initialer GET-Request
 
     if request.method == "POST":
         username = request.POST["username"]
@@ -343,7 +343,7 @@ def update_preferences(request: HttpRequest) -> HttpResponse:
         form = PreferencesForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect("ForYouPage")
+            return redirect("foryoupage")
     else:
         form = PreferencesForm(instance=request.user)
     return render(request, "news/preferences.html", {"form": form})
