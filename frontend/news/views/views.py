@@ -30,21 +30,21 @@ from ..util.filter_objects import get_objects_with_emojis
 # News
 
 
-def get_filtered_queryset(request: HttpRequest) -> QuerySet[News]:
+def get_filtered_queryset(active_filters: dict[str, Any]) -> QuerySet[News]:
     """
     Hilfsfunktion, die News basierend auf GET-Parametern filtert,
     absteigend sortiert.
     """
-    categories = request.GET.getlist("category")
-    audiences = request.GET.getlist("audience")
-    sources = request.GET.getlist("source")
-    locations = request.GET.getlist("location")
+    categories = active_filters.get("categories", [])
+    audiences = active_filters.get("audiences", [])
+    sources = active_filters.get("sources", [])
+    locations = active_filters.get("locations", [])
 
     queryset = News.objects.all()
     if categories:
-        queryset = queryset.filter(inhaltskategorie__name__in=categories)
+        queryset = queryset.filter(inhaltskategorien__name__in=categories)
     if audiences:
-        queryset = queryset.filter(zielgruppe__name__in=audiences)
+        queryset = queryset.filter(zielgruppen__name__in=audiences)
     if sources:
         queryset = queryset.filter(quelle__name__in=sources)
     if locations:
@@ -64,12 +64,9 @@ def paginate_queryset(queryset: QuerySet, offset: int = 0, limit: int = 20) -> Q
     return queryset[offset : offset + limit]
 
 
-@csrf_exempt
+""" @csrf_exempt
 @require_GET
 def news_api(request: HttpRequest) -> HttpResponse:
-    """
-    News-API mit Filterung, Pagination und 'has_more'-Angabe.
-    """
     try:
         offset = int(request.GET.get("offset", 0))
         limit = int(request.GET.get("limit", 20))
@@ -100,9 +97,10 @@ def news_api(request: HttpRequest) -> HttpResponse:
             "has_more": has_more,
         },
         safe=True,
-    )
+    ) """
 
 
+@require_GET
 def news_view(request: HttpRequest) -> HttpResponse:
     """
     Ansicht für die News-Seite, die alle News anzeigt.
@@ -123,14 +121,17 @@ def news_view(request: HttpRequest) -> HttpResponse:
 
     # News
 
+    # GET-Parameter holen
+    active_filters = {
+        "locations": request.GET.getlist("location"),
+        "categories": request.GET.getlist("category"),
+        "audiences": request.GET.getlist("audience"),
+        "sources": request.GET.getlist("source"),
+    }
+
     # Hole gefilterte News basierend auf den GET-Parametern für initiale Anzeige
-    news_items = get_filtered_queryset(request)
+    news_items = get_filtered_queryset(active_filters)
     news_items = paginate_queryset(news_items)
-    news_items = serialize(
-        "json",
-        news_items,
-        fields=["id", "titel", "erstellungsdatum", "link", "quelle_typ"],
-    )
 
     # Objekte, nach denen gefiltert werden kann
     objects_to_filter = get_objects_with_emojis()
@@ -141,14 +142,65 @@ def news_view(request: HttpRequest) -> HttpResponse:
 
     context = {
         "upcoming_events": upcoming_events,
-        "initial_news": news_items,
+        "news_list": news_items,
         "locations": locations,
         "categories": categories,
         "audiences": audiences,
         "sources": sources,
+        "active_filters": active_filters,
     }
 
-    return render(request, "news/News.html", context)
+    return render(request, "news/news.html", context)
+
+
+@require_GET
+def news_partial(request: HttpRequest) -> HttpResponse:
+    offset = int(request.GET.get("offset", 0))
+    limit = int(request.GET.get("limit", 20))
+
+    active_filters = {
+        "locations": request.GET.getlist("location"),
+        "categories": request.GET.getlist("category"),
+        "audiences": request.GET.getlist("audience"),
+        "sources": request.GET.getlist("source"),
+    }
+
+    news_items = get_filtered_queryset(active_filters)
+    paginated_items = paginate_queryset(news_items, offset, limit)
+
+    return render(
+        request, "news/partials/_news_list.html", {"news_list": paginated_items}
+    )
+
+
+@require_GET
+def news_detail(request: HttpRequest, pk: int) -> HttpResponse:
+    news = get_object_or_404(
+        News.objects.prefetch_related("texte__sprache", "quelle"), pk=pk
+    )
+
+    # Sprache aus GET-Parameter (Standard: "de")
+    lang = request.GET.get("lang", "de")
+
+    # Hole den Text für die gewählte Sprache, falls vorhanden
+    text = news.texte.filter(sprache__code=lang).first()  # type: ignore[attr-defined]
+
+    context = {
+        "news": news,
+        "text": text,
+    }
+
+    if request.GET.get("partial") == "true":
+        return render(request, "news/partials/_news_detail.html", context)
+
+    return render(
+        request,
+        "news/news.html",
+        {
+            "detail_news": news,
+            "text": text,
+        },
+    )
 
 
 def foryoupage(request: HttpRequest) -> HttpResponse:
@@ -159,19 +211,37 @@ def foryoupage(request: HttpRequest) -> HttpResponse:
         messages.warning(request, "Die For You-Seite ist nur mit Anmeldung einsehbar.")
         return redirect("login")
 
-    # Hole Präferenzen des Benutzers und simuliere ein Request-Objekt, das daraus resultieren würde (NICHT FERTIG)
-    preferences_as_request = HttpRequest()
+    if isinstance(request.user, User):
+        preferences = {
+            "locations": (
+                request.user.standorte.all()
+                if hasattr(request.user, "standorte")
+                else []
+            ),
+            "categories": (
+                request.user.inhaltskategorien.all()
+                if hasattr(request.user, "preferences")
+                else []
+            ),
+            "audiences": (
+                request.user.zielgruppen.all()
+                if hasattr(request.user, "preferences")
+                else []
+            ),
+            "sources": (
+                request.user.quellen.all()
+                if hasattr(request.user, "preferences")
+                else []
+            ),
+        }
 
-    # Hole gefilterte News basierend auf den Präferenzen des Benutzers
-    news_items = get_filtered_queryset(preferences_as_request)
-    news_items = paginate_queryset(news_items)
+        news_items = get_filtered_queryset(preferences)
+        news_items = paginate_queryset(news_items)
+    else:
+        messages.error(request, "Ungültiger Benutzer.")
+        return redirect("login")
 
     return render(request, "news/ForYouPage.html", {"news_items": news_items})
-
-
-def news_detail(request: HttpRequest, news_id) -> HttpResponse:
-    news_item = get_object_or_404(News, id=news_id)
-    return render(request, "news/detail.html", {"news": news_item})
 
 
 def Links(request: HttpRequest) -> HttpResponse:

@@ -105,7 +105,7 @@ class News(models.Model):
 
     standorte = models.ManyToManyField(Standort, blank=True)
     inhaltskategorien = models.ManyToManyField(InhaltsKategorie, blank=True)
-    zielgruppe = models.ManyToManyField(Zielgruppe, blank=True)
+    zielgruppen = models.ManyToManyField(Zielgruppe, blank=True)
 
     quelle = models.ForeignKey(Quelle, on_delete=models.CASCADE)
     quelle_typ = models.CharField(
