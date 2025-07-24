@@ -54,7 +54,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // 3. Klick auf "Mehr laden" → lade weitere News
   // ----------------------------------------------
   document.getElementById('load-more')?.addEventListener('click', () => {
-    fetch(`/news/partial/?offset=${offset}&limit=${limit}`)
+    const formData = new FormData(filterForm);
+    const params = new URLSearchParams();
+    for (const [key, value] of formData.entries()) {
+      params.append(key, value);
+    }
+    const query = params.toString();
+
+    fetch(`/news/partial/?offset=${offset}&limit=${limit}&${query}`)
       .then(resp => resp.text())
       .then(html => {
         document.querySelector('#news-container').insertAdjacentHTML('beforeend', html);
