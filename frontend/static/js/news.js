@@ -9,6 +9,9 @@ let newsFeedState = {
   scrollY: 0       // Scrollposition vor dem Klick auf ein Detailobjekt
 };
 
+// Neuer: Zustände pro URL speichern
+let pageState = {}; // key = URL (z.B. /news/?location=A), value = { htmlCache, scrollY }
+
 // Starte nach dem Laden der Seite
 document.addEventListener('DOMContentLoaded', () => {
   const filterForm = document.getElementById('news-filter-form');
@@ -59,6 +62,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function applyFiltersFromURL(urlParams, form) {
+    // Alle Checkboxen erstmal zurücksetzen
+    const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(cb => cb.checked = false);
+
+    // Für jedes Parametervorkommen die passenden Checkboxen aktivieren
+    for (const [key, value] of urlParams.entries()) {
+      const selector = `input[name="${key}"][value="${value}"]`;
+      const checkbox = form.querySelector(selector);
+      if (checkbox) checkbox.checked = true;
+    }
+  }
+
   bindLoadMoreButton(); // initiales Binden beim Seitenladen
 
   // ---------------------------------------------
@@ -71,8 +87,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const newsId = card.dataset.id;
 
       // Vor dem Wechsel Zustand der Liste sichern
-      newsFeedState.htmlCache = document.querySelector('#news-container').innerHTML;
-      newsFeedState.scrollY = window.scrollY;
+      const currentKey = window.location.pathname + window.location.search;
+      const stateObj = {
+        htmlCache: document.querySelector('#news-container').innerHTML,
+        scrollY: window.scrollY
+      };
+      pageState[currentKey] = stateObj;
+      sessionStorage.setItem(currentKey, JSON.stringify(stateObj));
 
       // URL aktualisieren, ohne neu zu laden
       history.pushState({ type: 'detail', id: newsId }, '', `/news/${newsId}/`);
@@ -110,6 +131,9 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('popstate', (event) => {
     const state = event.state;
 
+    const urlParams = new URLSearchParams(window.location.search);
+    applyFiltersFromURL(urlParams, filterForm);
+
     if (state && state.type === 'detail') {
       // Benutzer springt zurück zu einer Detail-Ansicht
       fetch(`/news/${state.id}/?partial=true`)
@@ -120,14 +144,17 @@ document.addEventListener('DOMContentLoaded', () => {
           loadMoreBtn?.classList.add('hidden');
         });
     } else {
-      if (newsFeedState.htmlCache) {
-        // Normale Wiederherstellung
-        document.querySelector('#news-container').innerHTML = newsFeedState.htmlCache;
-        window.scrollTo(0, newsFeedState.scrollY);
+      const currentKey = window.location.pathname + window.location.search;
+      const cached =
+        pageState[currentKey] ||
+        JSON.parse(sessionStorage.getItem(currentKey) || 'null');
+
+      if (cached) {
+        document.querySelector('#news-container').innerHTML = cached.htmlCache;
+        window.scrollTo(0, cached.scrollY);
         bindLoadMoreButton();
       } else {
-        // Kein gespeicherter Zustand (-> Direktaufruf von Detailseite und dann zurück)
-        fetch('/news/partial')
+        fetch(`/news/partial?${urlParams.toString()}`)
           .then(resp => resp.text())
           .then(html => {
             document.querySelector('#news-container').innerHTML = html;
@@ -151,8 +178,11 @@ document.addEventListener('DOMContentLoaded', () => {
     filterButton.addEventListener('click', () => {
       console.log('Filter angewendet');
       const urls = buildFilterUrls(filterForm);
+      const currentKey = urls.newUrl;
+
       // Browser-URL aktualisieren
-      history.pushState({}, '', urls.newUrl);
+      history.pushState({ type: 'list', key: currentKey }, '', urls.newUrl);
+
       // AJAX-Inhalt laden
       fetch(urls.fetchUrl)
         .then(resp => resp.text())
@@ -161,6 +191,14 @@ document.addEventListener('DOMContentLoaded', () => {
           offset = 20; // Reset Offset
           window.scrollTo(0, 0);
           bindLoadMoreButton(); // Button neu binden nach Filter
+
+          // Jetzt Zustand speichern
+          const stateObj = {
+            htmlCache: newsContainer.innerHTML,
+            scrollY: 0
+          };
+          pageState[currentKey] = stateObj;
+          sessionStorage.setItem(currentKey, JSON.stringify(stateObj));
         })
         .catch(err => {
           console.error('Fehler beim Laden der gefilterten News:', err);
