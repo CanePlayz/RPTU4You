@@ -860,3 +860,7 @@ def db_connection_status(request: HttpRequest) -> HttpResponse:
         result = cursor.fetchone()
         count = result[0] if result is not None else 0
     return JsonResponse({"active_db_connections": count})
+
+
+def health_check(request: HttpRequest) -> HttpResponse:
+    return JsonResponse({"status": "ok"}, status=200)
