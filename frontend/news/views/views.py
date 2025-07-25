@@ -8,13 +8,12 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
-from django.core.serializers import serialize
 from django.db import connection
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_http_methods
 from icalendar import Calendar
 from icalendar import Event as IcsEvent
@@ -25,8 +24,6 @@ from ..models import *
 from ..my_logging import get_logger
 from ..util.filter_objects import get_objects_with_emojis
 
-# Präferenzen/Filter werden sowohl bei direktem Aufruf der Website mit Filtern als auch bei JS-Anfragen immer als URL-Parameter übergeben.
-
 # News
 
 
@@ -35,20 +32,20 @@ def get_filtered_queryset(active_filters: dict[str, Any]) -> QuerySet[News]:
     Hilfsfunktion, die News basierend auf GET-Parametern filtert,
     absteigend sortiert.
     """
+    locations = active_filters.get("locations", [])
     categories = active_filters.get("categories", [])
     audiences = active_filters.get("audiences", [])
     sources = active_filters.get("sources", [])
-    locations = active_filters.get("locations", [])
 
     queryset = News.objects.all()
+    if locations:
+        queryset = queryset.filter(standorte__name__in=locations)
     if categories:
         queryset = queryset.filter(inhaltskategorien__name__in=categories)
     if audiences:
         queryset = queryset.filter(zielgruppen__name__in=audiences)
     if sources:
         queryset = queryset.filter(quelle__name__in=sources)
-    if locations:
-        queryset = queryset.filter(standorte__name__in=locations)
 
     return queryset.order_by("-erstellungsdatum")
 
@@ -62,42 +59,6 @@ def paginate_queryset(queryset: QuerySet, offset: int = 0, limit: int = 20) -> Q
     weitere News anfordert.
     """
     return queryset[offset : offset + limit]
-
-
-""" @csrf_exempt
-@require_GET
-def news_api(request: HttpRequest) -> HttpResponse:
-    try:
-        offset = int(request.GET.get("offset", 0))
-        limit = int(request.GET.get("limit", 20))
-    except ValueError:
-        offset = 0
-        limit = 20
-
-    # Gefilterte Menge
-    filtered_queryset = get_filtered_queryset(request)
-    total_filtered_count = filtered_queryset.count()
-
-    # Paginierte Menge
-    paginated_queryset = paginate_queryset(filtered_queryset, offset, limit)
-
-    # Serialisierung der News-Daten
-    news_data = serialize(
-        "json",
-        paginated_queryset,
-        fields=["id", "titel", "erstellungsdatum", "link", "quelle_typ"],
-    )
-
-    # Berechnung, ob es weitere News gibt
-    has_more = offset + limit < total_filtered_count
-
-    return JsonResponse(
-        {
-            "news": news_data,
-            "has_more": has_more,
-        },
-        safe=True,
-    ) """
 
 
 @require_GET
@@ -183,7 +144,7 @@ def news_partial(request: HttpRequest) -> HttpResponse:
 
 @require_GET
 def news_detail(request: HttpRequest, pk: int) -> HttpResponse:
-    news = get_object_or_404(
+    news: News = get_object_or_404(
         News.objects.prefetch_related("texte__sprache", "quelle"), pk=pk
     )
 
@@ -221,6 +182,8 @@ def news_detail(request: HttpRequest, pk: int) -> HttpResponse:
     )
 
 
+@require_GET
+@login_required
 def foryoupage(request: HttpRequest) -> HttpResponse:
     """
     Ansicht für die For You-Seite, die personalisierte News anzeigt.
@@ -264,12 +227,12 @@ def foryoupage(request: HttpRequest) -> HttpResponse:
     )
 
 
-def Links(request: HttpRequest) -> HttpResponse:
+def links(request: HttpRequest) -> HttpResponse:
     return render(request, "news/Links.html")
 
 
 """
-ANMELDUNG
+User
 """
 
 
@@ -296,6 +259,7 @@ def login_view(request: HttpRequest) -> HttpResponse:
     return render(request, "news/login.html", {"next": next_url})
 
 
+@login_required
 def logout_view(request: HttpRequest) -> HttpResponse:
     logout(request)
     return redirect("News")
@@ -389,12 +353,7 @@ def request_date(request: HttpRequest) -> HttpResponse:
     return JsonResponse({"date": date.strftime("%d.%m.%Y %H:%M:%S")})
 
 
-# Alternative mit Nachricht für nicht angemeldete Benutzer
-
-
-"""
-KALENDER
-"""
+# Kalender
 
 
 @login_required
@@ -730,7 +689,6 @@ def calendar_event_detail(request: HttpRequest, event_id) -> HttpResponse:
         return JsonResponse({"error": f"Fehler: {str(e)}"}, status=500)
 
 
-@csrf_protect
 @login_required
 def export_ics(request: HttpRequest) -> HttpResponse:
     try:
@@ -794,7 +752,6 @@ def export_ics(request: HttpRequest) -> HttpResponse:
         return redirect("calendar_page")
 
 
-@csrf_protect
 @login_required
 def import_ics(request: HttpRequest) -> HttpResponse:
     if request.method == "POST" and request.FILES.get("ics_file"):
