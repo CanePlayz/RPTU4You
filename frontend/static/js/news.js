@@ -178,5 +178,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
     }
+
+    // Select-All-Button Logik: Alle Checkboxen auswählen, aber kein Reload
+    const selectAllButton = document.getElementById('select-all-btn');
+    if (selectAllButton) {
+      selectAllButton.addEventListener('click', () => {
+        // Alle Checkboxen im Filter-Formular auswählen
+        const checkboxes = filterForm.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(cb => {
+          cb.checked = true;
+        });
+      });
+    }
   }
 });
