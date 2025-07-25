@@ -130,8 +130,10 @@ def news_view(request: HttpRequest) -> HttpResponse:
     }
 
     # Hole gefilterte News basierend auf den GET-Parametern für initiale Anzeige
-    news_items = get_filtered_queryset(active_filters)
-    news_items = paginate_queryset(news_items)
+    news_items_queryset = get_filtered_queryset(active_filters)
+    total_filtered_count = news_items_queryset.count()
+    paginated_items = paginate_queryset(news_items_queryset)
+    has_more = total_filtered_count > len(paginated_items)
 
     # Objekte, nach denen gefiltert werden kann
     objects_to_filter = get_objects_with_emojis()
@@ -142,12 +144,13 @@ def news_view(request: HttpRequest) -> HttpResponse:
 
     context = {
         "upcoming_events": upcoming_events,
-        "news_list": news_items,
+        "news_list": paginated_items,
         "locations": locations,
         "categories": categories,
         "audiences": audiences,
         "sources": sources,
         "active_filters": active_filters,
+        "has_more": has_more,
     }
 
     return render(request, "news/news.html", context)
@@ -165,11 +168,16 @@ def news_partial(request: HttpRequest) -> HttpResponse:
         "sources": request.GET.getlist("source"),
     }
 
-    news_items = get_filtered_queryset(active_filters)
-    paginated_items = paginate_queryset(news_items, offset, limit)
+    # Hole gefilterte News basierend auf den GET-Parametern
+    news_items_queryset = get_filtered_queryset(active_filters)
+    total_filtered_count = news_items_queryset.count()
+    paginated_items = paginate_queryset(news_items_queryset, offset, limit)
+    has_more = total_filtered_count > (offset + limit)
 
     return render(
-        request, "news/partials/_news_list.html", {"news_list": paginated_items}
+        request,
+        "news/partials/_news_list.html",
+        {"news_list": paginated_items, "has_more": has_more},
     )
 
 

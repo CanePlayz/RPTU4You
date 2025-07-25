@@ -1,6 +1,7 @@
-html{
+html {
   overflow-y: scroll;
 }
+
 body {
   margin: 0;
   background-color: #5793d3;
@@ -60,8 +61,9 @@ body {
 
 /* Menü rechts und links*/
 
-.menu-left, .menu-right {
-  flex: 0 0 200px; 
+.menu-left,
+.menu-right {
+  flex: 0 0 200px;
   height: 60px;
   display: flex;
   justify-content: center;
@@ -154,4 +156,8 @@ input {
 button {
   padding: 0.5rem 1rem;
   margin: 0.5rem 0;
+}
+
+.hidden {
+  display: none;
 }

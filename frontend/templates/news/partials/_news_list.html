@@ -3,3 +3,7 @@
 {% empty %}
     <p>Keine News gefunden.</p>
 {% endfor %}
+
+{% if has_more %}
+  <button id="load-more">Mehr laden</button>
+{% endif %}

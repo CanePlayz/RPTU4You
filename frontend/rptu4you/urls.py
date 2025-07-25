@@ -25,10 +25,9 @@ urlpatterns = [
     # News Urls
     path("api/news/", receive_news.ReceiveNews.as_view(), name="receive_news"),
     path("api/news/rundmail/date", views.request_date, name="request_date"),
-    path("news/", views.news_view, name="news_view"),
+    path("news/", views.news_view, name="news"),
     path("news/partial/", views.news_partial, name="news_partial"),
     path("news/<int:pk>/", views.news_detail, name="news_detail"),
-    path("", views.news_view, name="News"),
     path("Links/", views.Links, name="Links"),
     path("foryoupage/", views.foryoupage, name="foryoupage"),
     path("login/", views.login_view, name="login"),

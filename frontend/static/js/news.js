@@ -11,7 +11,55 @@ let newsFeedState = {
 
 // Starte nach dem Laden der Seite
 document.addEventListener('DOMContentLoaded', () => {
-  const loadMoreBtn = document.getElementById('load-more');
+  const filterForm = document.getElementById('news-filter-form');
+  const newsContainer = document.getElementById('news-container');
+
+  // Hilfsfunktion zum Erstellen der Filter-URLs
+  function buildFilterUrls(form) {
+    const formData = new FormData(form);
+    const params = new URLSearchParams();
+    for (const [key, value] of formData.entries()) {
+      params.append(key, value);
+    }
+    const query = params.toString();
+    return {
+      newUrl: `/news/?${query}`,
+      fetchUrl: `/news/partial?${query}`
+    };
+  }
+
+  function bindLoadMoreButton() {
+    const loadMoreBtn = document.getElementById('load-more');
+    if (loadMoreBtn) {
+      loadMoreBtn.addEventListener('click', () => {
+        const urls = buildFilterUrls(filterForm);
+
+        // deaktivieren, um mehrfaches Klicken zu verhindern
+        loadMoreBtn.disabled = true;
+
+        fetch(`${urls.fetchUrl}&offset=${offset}&limit=${limit}`)
+          .then(resp => resp.text())
+          .then(html => {
+            // Temporäres Container-Element zum Parsen des HTMLs
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+
+            // Entferne alten Button
+            loadMoreBtn.remove();
+            // Füge nur News (und evtl. neuen Button) ein
+            const newContent = tempDiv.children;
+            for (const el of newContent) {
+              newsContainer.appendChild(el);
+            }
+
+            offset += limit;
+            bindLoadMoreButton(); // neu binden falls Button nochmal drin
+          });
+      });
+    }
+  }
+
+  bindLoadMoreButton(); // initiales Binden beim Seitenladen
 
   // ---------------------------------------------
   // 1. Klick auf News-Karte -> lade Detailansicht
@@ -37,6 +85,12 @@ document.addEventListener('DOMContentLoaded', () => {
           window.scrollTo(0, 0);
         });
 
+      // Button "Mehr laden" ausblenden
+      const loadMoreBtn = document.getElementById('load-more');
+      if (loadMoreBtn) {
+        loadMoreBtn.classList.add('hidden');
+      }
+
       return; // Detailklick wurde behandelt
     }
 
@@ -48,25 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
       history.back();  // löst popstate aus
       return;
     }
-  });
-
-  // ----------------------------------------------
-  // 3. Klick auf "Mehr laden" → lade weitere News
-  // ----------------------------------------------
-  document.getElementById('load-more')?.addEventListener('click', () => {
-    const formData = new FormData(filterForm);
-    const params = new URLSearchParams();
-    for (const [key, value] of formData.entries()) {
-      params.append(key, value);
-    }
-    const query = params.toString();
-
-    fetch(`/news/partial/?offset=${offset}&limit=${limit}&${query}`)
-      .then(resp => resp.text())
-      .then(html => {
-        document.querySelector('#news-container').insertAdjacentHTML('beforeend', html);
-        offset += limit;
-      });
   });
 
   // ----------------------------------------------
@@ -85,51 +120,48 @@ document.addEventListener('DOMContentLoaded', () => {
           loadMoreBtn?.classList.add('hidden');
         });
     } else {
-      // Benutzer springt zurück zur News-Übersicht (mit Filter berücksichtigen)
-      const urlParams = window.location.search;
-      fetch(`/news/partial${urlParams}`)
-        .then(resp => resp.text())
-        .then(html => {
-          document.querySelector('#news-container').innerHTML = html;
-          window.scrollTo(0, 0);
-          loadMoreBtn?.classList.remove('hidden');
-        });
+      // Benutzer springt zurück zur News-Übersicht
+      document.querySelector('#news-container').innerHTML = newsFeedState.htmlCache;
+      window.scrollTo(0, newsFeedState.scrollY);
+      bindLoadMoreButton(); // Button neu anbinden
     }
   });
 
   // ----------------------------------------------
   // 5. Filter anwenden per Button
   // ----------------------------------------------
-  const filterForm = document.getElementById('news-filter-form');
   const filterButton = document.getElementById('apply-filter-btn');
-  const newsContainer = document.getElementById('news-container');
 
   if (filterForm && filterButton) {
     filterButton.addEventListener('click', () => {
-      const formData = new FormData(filterForm);
-      const params = new URLSearchParams();
-      for (const [key, value] of formData.entries()) {
-        params.append(key, value);
-      }
-
-      const query = params.toString();
-      const newUrl = `/news/?${query}`;
-      const fetchUrl = `/news/partial?${query}`;
-
+      console.log('Filter angewendet');
+      const urls = buildFilterUrls(filterForm);
       // Browser-URL aktualisieren
-      history.pushState({}, '', newUrl);
-
+      history.pushState({}, '', urls.newUrl);
       // AJAX-Inhalt laden
-      fetch(fetchUrl)
+      fetch(urls.fetchUrl)
         .then(resp => resp.text())
         .then(html => {
           newsContainer.innerHTML = html;
           offset = 20; // Reset Offset
           window.scrollTo(0, 0);
+          bindLoadMoreButton(); // Button neu binden nach Filter
         })
         .catch(err => {
           console.error('Fehler beim Laden der gefilterten News:', err);
         });
     });
+
+    // Reset-Button Logik: Alle Checkboxen abwählen, aber kein Reload
+    const resetButton = document.getElementById('reset-filter-btn');
+    if (resetButton) {
+      resetButton.addEventListener('click', () => {
+        // Alle Checkboxen im Filter-Formular abwählen
+        const checkboxes = filterForm.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(cb => {
+          cb.checked = false;
+        });
+      });
+    }
   }
 });
