@@ -120,10 +120,25 @@ document.addEventListener('DOMContentLoaded', () => {
           loadMoreBtn?.classList.add('hidden');
         });
     } else {
-      // Benutzer springt zurück zur News-Übersicht
-      document.querySelector('#news-container').innerHTML = newsFeedState.htmlCache;
-      window.scrollTo(0, newsFeedState.scrollY);
-      bindLoadMoreButton(); // Button neu anbinden
+      if (newsFeedState.htmlCache) {
+        // Normale Wiederherstellung
+        document.querySelector('#news-container').innerHTML = newsFeedState.htmlCache;
+        window.scrollTo(0, newsFeedState.scrollY);
+        bindLoadMoreButton();
+      } else {
+        // Kein gespeicherter Zustand (-> Direktaufruf von Detailseite und dann zurück)
+        fetch('/news/partial')
+          .then(resp => resp.text())
+          .then(html => {
+            document.querySelector('#news-container').innerHTML = html;
+            window.scrollTo(0, 0);
+            offset = 20;
+            bindLoadMoreButton();
+          })
+          .catch(err => {
+            console.error('Fehler beim Laden der News-Übersicht:', err);
+          });
+      }
     }
   });
 
