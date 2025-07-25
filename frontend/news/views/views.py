@@ -193,18 +193,28 @@ def news_detail(request: HttpRequest, pk: int) -> HttpResponse:
     # Hole den Text für die gewählte Sprache, falls vorhanden
     text = news.texte.filter(sprache__code=lang).first()  # type: ignore[attr-defined]
 
-    context = {
-        "news": news,
-        "text": text,
-    }
+    #  Objekte, nach denen gefiltert werden kann
+    objects_to_filter = get_objects_with_emojis()
+    locations = objects_to_filter["locations"]
+    categories = objects_to_filter["categories"]
+    audiences = objects_to_filter["audiences"]
+    sources = objects_to_filter["sources"]
 
     if request.GET.get("partial") == "true":
-        return render(request, "news/partials/_news_detail.html", context)
+        return render(
+            request,
+            "news/partials/_news_detail.html",
+            {"detail_news": news, "text": text},
+        )
 
     return render(
         request,
         "news/news.html",
         {
+            "locations": locations,
+            "categories": categories,
+            "audiences": audiences,
+            "sources": sources,
             "detail_news": news,
             "text": text,
         },
