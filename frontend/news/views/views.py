@@ -11,15 +11,16 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.core.serializers import serialize
 from django.db import connection
 from django.db.models.query import QuerySet
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.translation import activate, get_language_from_path, gettext_lazy as _
+from django.urls import reverse
+from urllib.parse import urlparse, urlunparse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_GET, require_http_methods
-from icalendar import Calendar
-from icalendar import Event as IcsEvent
-from icalendar import vRecur
 
+from icalendar import Calendar, vRecur, Event as IcsEvent
 from ..forms import PreferencesForm, UserCreationForm2
 from ..models import *
 from ..my_logging import get_logger
@@ -885,3 +886,36 @@ def db_connection_status(request: HttpRequest) -> HttpResponse:
         result = cursor.fetchone()
         count = result[0] if result is not None else 0
     return JsonResponse({"active_db_connections": count})
+
+
+# Sprache setzen
+def set_language(request):
+    language = request.GET.get("language", "de")  # Default: German
+    activate(language)
+    request.session["django_language"] = language
+
+    # Parse the current URL
+    current_url = request.META.get("HTTP_REFERER", "/")
+    parsed_url = urlparse(current_url)
+
+    # Replace the language prefix in the path
+    path = parsed_url.path
+    current_language = get_language_from_path(path)
+    if current_language:
+        path = path.replace(f"/{current_language}/", f"/{language}/", 1)
+    else:
+        path = f"/{language}{path}" if not path.startswith(f"/{language}") else path
+
+    # Rebuild the URL with the updated path
+    updated_url = urlunparse(
+        (
+            parsed_url.scheme,
+            parsed_url.netloc,
+            path,
+            parsed_url.params,
+            parsed_url.query,
+            parsed_url.fragment,
+        )
+    )
+
+    return HttpResponseRedirect(updated_url)
