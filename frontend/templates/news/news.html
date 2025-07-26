@@ -6,7 +6,7 @@
 
 {% block content %}
 
-<div class="flex mt-6">
+<div class="flex mt-6 bg-gray-100 min-h-screen">
   <!-- Linke Seite: Filterblock -->
   <div class="flex-grow basis-1/5 pr-5 max-w-xs">
     <form id="news-filter-form" method="get" class="space-y-4">
@@ -69,18 +69,22 @@
 
   <!-- Rechte Seite: Kleiner Kalender -->
   <div class="flex-grow basis-1/5 pl-5 max-w-xs">
-    <h3 class="text-lg font-semibold">Nächste Termine</h3>
-    {% if upcoming_events %}
-      <ul class="list-disc pl-5">
-        {% for event in upcoming_events %}
-          <li>{{ event.start|date:"d.m.Y H:i" }} - {{ event.title }}</li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p class="text-gray-500">Keine anstehenden Termine.</p>
-    {% endif %}
-    <a href="{% url 'calendar_page' %}" class="mt-4 inline-block text-blue-500 hover:underline">
-      Mein Kalender
+    <a href="{% url 'calendar_page' %}" class="block text-center text-blue-500 mt-4">
+      <div class="mt-10 mx-auto bg-white p-4 rounded-lg shadow-md w-9/10">
+          <h3 class="text-lg font-semibold text-center mb-4">Nächste Termine</h3>
+          {% if upcoming_events %}
+              <ul class="space-y-4">
+                  {% for event in upcoming_events %}
+                      <li class="bg-gray-50 p-4 rounded-lg shadow">
+                          <p class="text-sm text-gray-500">{{ event.start|date:"d.m.Y H:i" }} - {{ event.end|date:"H:i" }}</p>
+                          <p class="font-bold text-gray-800">{{ event.title }}</p>
+                      </li>
+                  {% endfor %}
+              </ul>
+          {% else %}
+              <p class="text-gray-500 text-center">Keine anstehenden Termine.</p>
+          {% endif %}
+      </div>
     </a>
   </div>
 </div>
