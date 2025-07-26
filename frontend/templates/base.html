@@ -100,9 +100,7 @@
           {% else %}
           <ul class="py-2" aria-labelledby="user-menu-button"> <!-- py-2: vertical padding -->
             <li>
-              <a href="{% url 'login' %}?next={{ request.path }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"> 
-                Anmelden
-              </a>
+              <a href="{% url 'login' %}?next={{ request.path }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Anmelden</a>
             </li>
             <li>
               <a href="{% url 'register' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Registrieren</a>
