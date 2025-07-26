@@ -301,15 +301,16 @@ def account_view(request: HttpRequest) -> HttpResponse:
     """
     Ansicht für den Account-Bereich, wo Benutzer ihr Passwort und ihren Benutzernamen ändern können.
     """
-    if request.user is AbstractUser:
-        form = PasswordChangeForm(request.user)  # Formular initialisieren
-    else:
+    if not request.user.is_authenticated:
         return redirect("login")
+    if isinstance(request.user, User):
+        form = PasswordChangeForm(request.user)  # Formular initialisieren
 
     if request.method == "POST":
         if "change_password" in request.POST:
             # Neues Passwort-Formular mit POST-Daten erstellen
-            form = PasswordChangeForm(request.user, request.POST)
+            if isinstance(request.user, User):
+                form = PasswordChangeForm(request.user, request.POST)
             if form.is_valid():
                 # Formular speichern und Benutzer aktualisieren
                 user = form.save()
