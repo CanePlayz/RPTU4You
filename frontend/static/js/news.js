@@ -120,7 +120,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // ---------------------------------------------
     if (e.target.id === 'back-to-list') {
       e.preventDefault();
-      history.back();  // löst popstate aus
+      // Prüfe, ob ein Verlaufseintrag für die Übersicht existiert
+      const overviewUrl = '/news/';
+      const currentKey = overviewUrl + window.location.search;
+      const hasOverviewState =
+        pageState[currentKey] ||
+        sessionStorage.getItem(currentKey);
+
+      if (hasOverviewState) {
+        history.back();  // löst popstate aus
+      } else {
+        // Kein Verlaufseintrag: explizit zur Übersicht navigieren
+        window.location.href = overviewUrl + window.location.search;
+      }
       return;
     }
   });
