@@ -83,7 +83,7 @@ def get_categorization_from_openai(
                 usage.refresh_from_db()
 
                 response = openai.responses.create(
-                    model="gpt-4.1-mini",
+                    model="gpt-5-mini",
                     input=[
                         {"role": "developer", "content": system_message},
                         {
