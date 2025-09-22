@@ -513,6 +513,16 @@ def calendar_events(request: HttpRequest) -> HttpResponse:
                     delta = relativedelta(years=1)
                 else:
                     delta = timedelta(days=0)
+
+                # Verhindert, dass mehr als 50 Termine pro Serie erstellt werden
+                count = 0
+                temp_start = current_start
+                while temp_start <= repeat_until:
+                    count += 1
+                    temp_start += delta
+                if count > 50:
+                    return JsonResponse({"error": "Maximal 50 Termine pro Serie erlaubt."}, status=400)
+
                 while current_start <= repeat_until:
                     event = CalendarEvent.objects.create(
                         user=request.user,
@@ -829,7 +839,9 @@ def import_ics(request: HttpRequest) -> HttpResponse:
                                 repeat_until = None
 
                     now = timezone.now()
-                    group_value = title + str(now)
+                    # Format 'now' to exclude seconds and microseconds
+                    now_formatted = now.strftime('%Y-%m-%d %H:%M')
+                    group_value = title + now_formatted
 
                     # Mapping für FREQ zu delta
                     if repeat == "weekly":
