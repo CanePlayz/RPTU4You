@@ -8,7 +8,7 @@
 
 <div class="flex bg-gray-100 min-h-screen">
   <!-- Linke Seite: Filterblock -->
-  <div class="w-80 pl-5 sticky top-24 h-[calc(100vh-72px)]">
+  <div class="w-80 pl-5 sticky top-[72px] h-[calc(100vh-72px)]">
     <form id="news-filter-form" method="get" class="bg-white p-4 rounded-lg shadow-md h-full overflow-y-auto">
 
       <h4 class="text-lg font-semibold">Standorte</h4>
@@ -68,9 +68,9 @@
   </div>
 
   <!-- Rechte Seite: Kleiner Kalender -->
-  <div class="w-80 pl-5 sticky top-24 self-start h-[calc(100vh-2rem)]">
-  <a href="{% url 'calendar_page' %}" class="block text-center text-blue-500 mt-4 transform transition-transform hover:scale-105">
-    <div class="mt-10 mx-auto bg-white p-4 rounded-lg shadow-md w-9/10">
+  <div class="w-80 pr-5 sticky top-[72px] h-[calc(100vh-72px)]">
+  <a href="{% url 'calendar_page' %}" class="block text-center text-blue-500 transform transition-transform hover:scale-105">
+    <div class=" mx-auto bg-white p-4 rounded-lg shadow-md w-9/10">
       <h3 class="text-lg font-semibold text-center mb-4">Nächste Termine</h3>
       {% if upcoming_events %}
         <ul class="space-y-4">
