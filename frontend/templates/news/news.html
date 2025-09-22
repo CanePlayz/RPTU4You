@@ -6,10 +6,10 @@
 
 {% block content %}
 
-<div class="flex mt-6 bg-gray-100 min-h-screen">
+<div class="flex bg-gray-100 min-h-screen">
   <!-- Linke Seite: Filterblock -->
-  <div class="flex-grow basis-1/5 pr-5 max-w-xs mt-10 mb-10 mx-auto">
-    <form id="news-filter-form" method="get" class="bg-white p-4 rounded-lg sticky top-25 shadow-md overflow-y-auto h-[calc(100vh-20px)]">
+  <div class="w-80 pl-5 sticky top-24 h-[calc(100vh-72px)]">
+    <form id="news-filter-form" method="get" class="bg-white p-4 rounded-lg shadow-md h-full overflow-y-auto">
 
       <h4 class="text-lg font-semibold">Standorte</h4>
       {% for loc in locations %}
@@ -52,7 +52,7 @@
   </div>
 
   <!-- Mitte: News -->
-  <div class="flex-grow basis-3/5">
+  <div class="flex-1 px-8 overflow-y-auto">
     <main id="main">
         <div id="news-container">
             {% if detail_news %}
@@ -68,24 +68,24 @@
   </div>
 
   <!-- Rechte Seite: Kleiner Kalender -->
-  <div class="flex-grow basis-1/5 pl-5 max-w-xs">
-    <a href="{% url 'calendar_page' %}" class="block text-center text-blue-500 mt-4 transform transition-transform hover:scale-105">
-      <div class="mt-10 mx-auto bg-white p-4 rounded-lg sticky top-0 shadow-md w-9/10">
-          <h3 class="text-lg font-semibold text-center mb-4">Nächste Termine</h3>
-          {% if upcoming_events %}
-              <ul class="space-y-4">
-                  {% for event in upcoming_events %}
-                      <li class="bg-gray-50 p-4 rounded-lg shadow">
-                          <p class="text-sm text-gray-500">{{ event.start|date:"d.m.Y H:i" }} - {{ event.end|date:"H:i" }}</p>
-                          <p class="font-bold text-gray-800">{{ event.title }}</p>
-                      </li>
-                  {% endfor %}
-              </ul>
-          {% else %}
-              <p class="text-gray-500 italic text-center">Keine anstehenden Termine.</p>
-          {% endif %}
-      </div>
-    </a>
+  <div class="w-80 pl-5 sticky top-24 self-start h-[calc(100vh-2rem)]">
+  <a href="{% url 'calendar_page' %}" class="block text-center text-blue-500 mt-4 transform transition-transform hover:scale-105">
+    <div class="mt-10 mx-auto bg-white p-4 rounded-lg shadow-md w-9/10">
+      <h3 class="text-lg font-semibold text-center mb-4">Nächste Termine</h3>
+      {% if upcoming_events %}
+        <ul class="space-y-4">
+          {% for event in upcoming_events %}
+            <li class="bg-gray-50 p-4 rounded-lg shadow">
+              <p class="text-sm text-gray-500">{{ event.start|date:"d.m.Y H:i" }} - {{ event.end|date:"H:i" }}</p>
+              <p class="font-bold text-gray-800">{{ event.title }}</p>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-gray-500 italic text-center">Keine anstehenden Termine.</p>
+      {% endif %}
+    </div>
+  </a>
   </div>
 </div>
 
