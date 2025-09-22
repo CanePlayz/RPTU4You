@@ -10,44 +10,68 @@
   <!-- Linke Seite: Filterblock -->
   <div class="w-80 pl-5 sticky top-[72px] h-[calc(100vh-72px)]">
     <form id="news-filter-form" method="get" class="bg-white p-4 rounded-lg shadow-md h-full overflow-y-auto">
+      <div>
+        <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center" onclick="toggleFilter('standorte')">
+          <span id="chevron-standorte" class="inline-block transition-transform duration-200 mr-2">&#9654;</span>
+          Standorte
+        </button>
+        <div id="filter-standorte" class="hidden ml-2">
+          {% for loc in locations %}
+            <label class="block">
+              <input type="checkbox" name="location" value="{{ loc.name }}" class="mr-2"
+                {% if loc.name in active_filters.locations %}checked{% endif %}>
+              {{ loc.emoji }} {{ loc.name }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+      <div>
+        <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center" onclick="toggleFilter('kategorien')">
+          <span id="chevron-kategorien" class="inline-block transition-transform duration-200 mr-2">&#9654;</span>
+          Kategorien
+        </button>
+        <div id="filter-kategorien" class="hidden ml-2">
+          {% for cat in categories %}
+            <label class="block">
+              <input type="checkbox" name="category" value="{{ cat.name }}" class="mr-2"
+                {% if cat.name in active_filters.categories %}checked{% endif %}>
+              {{ cat.emoji }} {{ cat.name }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+      <div>
+        <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center" onclick="toggleFilter('zielgruppen')">
+          <span id="chevron-zielgruppen" class="inline-block transition-transform duration-200 mr-2">&#9654;</span>
+          Zielgruppen
+        </button>
+        <div id="filter-zielgruppen" class="hidden ml-2">
+          {% for aud in audiences %}
+            <label class="block">
+              <input type="checkbox" name="audience" value="{{ aud.name }}" class="mr-2"
+                {% if aud.name in active_filters.audiences %}checked{% endif %}>
+              {{ aud.emoji }} {{ aud.name }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+      <div>
+        <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center" onclick="toggleFilter('quellen')">
+          <span id="chevron-quellen" class="inline-block transition-transform duration-200 mr-2">&#9654;</span>
+          Quellen
+        </button>
+        <div id="filter-quellen" class="hidden ml-2">
+          {% for src in sources %}
+            <label class="block">
+              <input type="checkbox" name="source" value="{{ src.name }}" class="mr-2"
+                {% if src.name in active_filters.sources %}checked{% endif %}>
+              {{ src.emoji }} {{ src.name }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
 
-      <h4 class="text-lg font-semibold">Standorte</h4>
-      {% for loc in locations %}
-        <label class="block">
-          <input type="checkbox" name="location" value="{{ loc.name }}" class="mr-2"
-            {% if loc.name in active_filters.locations %}checked{% endif %}>
-          {{ loc.emoji }} {{ loc.name }}
-        </label>
-      {% endfor %}
-
-      <h4 class="text-lg font-semibold">Kategorien</h4>
-      {% for cat in categories %}
-        <label class="block">
-          <input type="checkbox" name="category" value="{{ cat.name }}" class="mr-2"
-            {% if cat.name in active_filters.categories %}checked{% endif %}>
-          {{ cat.emoji }} {{ cat.name }}
-        </label>
-      {% endfor %}
-
-      <h4 class="text-lg font-semibold">Zielgruppen</h4>
-      {% for aud in audiences %}
-        <label class="block">
-          <input type="checkbox" name="audience" value="{{ aud.name }}" class="mr-2"
-            {% if aud.name in active_filters.audiences %}checked{% endif %}>
-          {{ aud.emoji }} {{ aud.name }}
-        </label>
-      {% endfor %}
-
-      <h4 class="text-lg font-semibold">Quellen</h4>
-      {% for src in sources %}
-        <label class="block">
-          <input type="checkbox" name="source" value="{{ src.name }}" class="mr-2"
-            {% if src.name in active_filters.sources %}checked{% endif %}>
-          {{ src.emoji }} {{ src.name }}
-        </label>
-      {% endfor %}
-
-      <button type="button" id="apply-filter-btn" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Filter anwenden</button>
+  <button type="button" id="apply-filter-btn" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Filter anwenden</button>
     </form>
   </div>
 
@@ -90,5 +114,18 @@
 </div>
 
 <!-- Einbindung des neuen JS -->
+<script>
+  function toggleFilter(name) {
+    var el = document.getElementById('filter-' + name);
+    var chevron = document.getElementById('chevron-' + name);
+    if (el.classList.contains('hidden')) {
+      el.classList.remove('hidden');
+      chevron.style.transform = 'rotate(90deg)';
+    } else {
+      el.classList.add('hidden');
+      chevron.style.transform = 'rotate(0deg)';
+    }
+  }
+</script>
 <script src="{% static 'js/news.js' %}"></script>
 {% endblock %}
