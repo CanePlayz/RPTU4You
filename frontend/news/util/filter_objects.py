@@ -19,7 +19,6 @@ def get_objects_to_filter() -> dict[str, Any]:
         + list(InterneWebsite.objects.all())
         + list(ExterneWebsite.objects.all())
         + list(EmailVerteiler.objects.all())
-        + [q for q in Quelle.objects.all() if type(q) is Quelle]
     )
 
     return {

@@ -71,9 +71,11 @@
         </div>
       </div>
 
-  <button type="button" id="apply-filter-btn" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Filter anwenden</button>
-    </form>
-  </div>
+    <button type="button" id="apply-filter-btn" style="margin-top: 10px;">Filter anwenden</button>
+    <button type="button" id="reset-filter-btn" style="margin-top: 10px; margin-left: 10px;">Alles abwählen</button>
+    <button type="button" id="select-all-btn" style="margin-top: 10px; margin-left: 10px;">Alles auswählen</button>
+  </form>
+</div>
 
   <!-- Mitte: News -->
   <div class="flex-1 mt-3 px-8 overflow-y-auto">
@@ -82,7 +84,7 @@
             {% if detail_news %}
                 {% include "news/partials/_news_detail.html" with news=detail_news %}
             {% else %}
-                {% include "news/partials/_news_list.html" with news_list=news_list %}
+                {% include "news/partials/_news_list.html" with news_list=news_list has_more=has_more %}
             {% endif %}
         </div>
         {% if not detail_news %}
