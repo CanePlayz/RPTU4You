@@ -11,15 +11,16 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.core.serializers import serialize
 from django.db import connection
 from django.db.models.query import QuerySet
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.translation import activate, get_language_from_path, gettext_lazy as _
+from django.urls import reverse
+from urllib.parse import urlparse, urlunparse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_GET, require_http_methods
-from icalendar import Calendar
-from icalendar import Event as IcsEvent
-from icalendar import vRecur
 
+from icalendar import Calendar, vRecur, Event as IcsEvent
 from ..forms import PreferencesForm, UserCreationForm2
 from ..models import *
 from ..my_logging import get_logger
@@ -259,10 +260,10 @@ def login_view(request: HttpRequest) -> HttpResponse:
     # Hole next_url aus GET oder POST, je nach Kontext
     if request.method == "POST":
         next_url = request.POST.get(
-            "next", "ForYouPage"
+            "next", "foryoupage"
         )  # Priorisiere POST nach Formularabsendung
     else:
-        next_url = request.GET.get("next", "ForYouPage")  # Initialer GET-Request
+        next_url = request.GET.get("next", "foryoupage")  # Initialer GET-Request
 
     if request.method == "POST":
         username = request.POST["username"]
@@ -300,15 +301,16 @@ def account_view(request: HttpRequest) -> HttpResponse:
     """
     Ansicht für den Account-Bereich, wo Benutzer ihr Passwort und ihren Benutzernamen ändern können.
     """
-    if request.user is AbstractUser:
-        form = PasswordChangeForm(request.user)  # Formular initialisieren
-    else:
+    if not request.user.is_authenticated:
         return redirect("login")
+    if isinstance(request.user, User):
+        form = PasswordChangeForm(request.user)  # Formular initialisieren
 
     if request.method == "POST":
         if "change_password" in request.POST:
             # Neues Passwort-Formular mit POST-Daten erstellen
-            form = PasswordChangeForm(request.user, request.POST)
+            if isinstance(request.user, User):
+                form = PasswordChangeForm(request.user, request.POST)
             if form.is_valid():
                 # Formular speichern und Benutzer aktualisieren
                 user = form.save()
@@ -343,7 +345,7 @@ def update_preferences(request: HttpRequest) -> HttpResponse:
         form = PreferencesForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect("ForYouPage")
+            return redirect("foryoupage")
     else:
         form = PreferencesForm(instance=request.user)
     return render(request, "news/preferences.html", {"form": form})
@@ -511,6 +513,18 @@ def calendar_events(request: HttpRequest) -> HttpResponse:
                     delta = relativedelta(years=1)
                 else:
                     delta = timedelta(days=0)
+
+                # Verhindert, dass mehr als 50 Termine pro Serie erstellt werden
+                count = 0
+                temp_start = current_start
+                while temp_start <= repeat_until:
+                    count += 1
+                    temp_start += delta
+                if count > 50:
+                    return JsonResponse(
+                        {"error": "Maximal 50 Termine pro Serie erlaubt."}, status=400
+                    )
+
                 while current_start <= repeat_until:
                     event = CalendarEvent.objects.create(
                         user=request.user,
@@ -601,59 +615,79 @@ def calendar_event_detail(request: HttpRequest, event_id) -> HttpResponse:
                     return JsonResponse(
                         {"error": "Keine Events in der Serie gefunden."}, status=404
                     )
-                # Neues Start/Ende vom User
-                new_start = None
-                new_end = None
-                if "start" in data:
+
+                # Prüfe, ob Start/Ende geändert werden sollen
+                change_start = "start" in data
+                change_end = "end" in data and data["end"]
+
+                # Berechne repeat-Delta für die Serie
+                repeat_value = event.repeat
+                if repeat_value == "weekly":
+                    repeat_delta = timedelta(weeks=1)
+                elif repeat_value == "daily":
+                    repeat_delta = timedelta(days=1)
+                elif repeat_value == "monthly":
+                    repeat_delta = relativedelta(months=1)
+                elif repeat_value == "yearly":
+                    repeat_delta = relativedelta(years=1)
+                else:
+                    repeat_delta = None
+
+                # Neue Start-/Endzeit für den bearbeiteten Termin
+                new_start_dt = None
+                new_end_dt = None
+                if change_start:
                     new_start_dt = datetime.fromisoformat(data["start"])
                     if timezone.is_naive(new_start_dt):
-                        new_start = timezone.make_aware(
-                            new_start_dt,
-                            timezone.get_current_timezone(),
+                        new_start_dt = timezone.make_aware(
+                            new_start_dt, timezone.get_current_timezone()
                         )
-                    else:
-                        new_start = new_start_dt
-                if "end" in data and data["end"]:
+                if change_end:
                     new_end_dt = datetime.fromisoformat(data["end"])
                     if timezone.is_naive(new_end_dt):
-                        new_end = timezone.make_aware(
-                            new_end_dt,
-                            timezone.get_current_timezone(),
+                        new_end_dt = timezone.make_aware(
+                            new_end_dt, timezone.get_current_timezone()
                         )
-                    else:
-                        new_end = new_end_dt
-                # Für alle Events der Serie: Passe nur Wochentag und Uhrzeit an, das Jahr/Monat/Tag bleibt in der jeweiligen Woche erhalten
-                for ev in events_to_update:
-                    ev.title = data.get("title", ev.title)
-                    ev.description = data.get("description", ev.description)
-                    if new_start:
-                        target_weekday = new_start.weekday()
-                        current_date = ev.start.date()
-                        days_delta = target_weekday - ev.start.weekday()
-                        new_date = current_date + timedelta(days=days_delta)
-                        ev_start_new = datetime.combine(new_date, new_start.timetz())
-                        if timezone.is_naive(ev_start_new):
-                            ev.start = timezone.make_aware(
-                                ev_start_new, timezone.get_current_timezone()
-                            )
-                        else:
-                            ev.start = ev_start_new
-                    if new_end is not None:
+
+                # Finde Index des bearbeiteten Events in der Serie
+                ref_index = None
+                for idx, ev in enumerate(events_to_update):
+                    if ev.id == event.id:
+                        ref_index = idx
+                        break
+                if ref_index is None:
+                    ref_index = 0
+
+                # Setze alle Events neu, basierend auf repeat-Delta und Referenztermin
+                for idx, ev in enumerate(events_to_update):
+                    # Name und Beschreibung immer aktualisieren, falls im Request
+                    if "title" in data:
+                        ev.title = data["title"]
+                    if "description" in data:
+                        ev.description = data["description"]
+
+                    # Startzeit aktualisieren, falls gewünscht
+                    if (
+                        change_start
+                        and repeat_delta is not None
+                        and new_start_dt is not None
+                    ):
+                        offset = idx - ref_index
+                        ev.start = new_start_dt + (repeat_delta * offset)
+                    # Endzeit aktualisieren, falls gewünscht
+                    if (
+                        change_end
+                        and repeat_delta is not None
+                        and new_end_dt is not None
+                    ):
                         if ev.end:
-                            target_weekday = new_end.weekday()
-                            current_date = ev.end.date()
-                            days_delta = target_weekday - ev.end.weekday()
-                            new_date = current_date + timedelta(days=days_delta)
-                            ev_end_new = datetime.combine(new_date, new_end.timetz())
-                            if timezone.is_naive(ev_end_new):
-                                ev.end = timezone.make_aware(
-                                    ev_end_new, timezone.get_current_timezone()
-                                )
-                            else:
-                                ev.end = ev_end_new
-                        else:
+                            offset = idx - ref_index
+                            ev.end = new_end_dt + (repeat_delta * offset)
+                        elif not data["end"]:
                             ev.end = None
                     ev.save()
+
+                # ...neue Logik siehe oben...
                 return JsonResponse(
                     {"message": "Event-Serie erfolgreich aktualisiert."}
                 )
@@ -827,7 +861,9 @@ def import_ics(request: HttpRequest) -> HttpResponse:
                                 repeat_until = None
 
                     now = timezone.now()
-                    group_value = title + str(now)
+                    # Format 'now' to exclude seconds and microseconds
+                    now_formatted = now.strftime("%Y-%m-%d %H:%M")
+                    group_value = title + now_formatted
 
                     # Mapping für FREQ zu delta
                     if repeat == "weekly":
@@ -885,3 +921,36 @@ def db_connection_status(request: HttpRequest) -> HttpResponse:
         result = cursor.fetchone()
         count = result[0] if result is not None else 0
     return JsonResponse({"active_db_connections": count})
+
+
+# Sprache setzen
+def set_language(request):
+    language = request.GET.get("language", "de")  # Default: German
+    activate(language)
+    request.session["django_language"] = language
+
+    # Parse the current URL
+    current_url = request.META.get("HTTP_REFERER", "/")
+    parsed_url = urlparse(current_url)
+
+    # Replace the language prefix in the path
+    path = parsed_url.path
+    current_language = get_language_from_path(path)
+    if current_language:
+        path = path.replace(f"/{current_language}/", f"/{language}/", 1)
+    else:
+        path = f"/{language}{path}" if not path.startswith(f"/{language}") else path
+
+    # Rebuild the URL with the updated path
+    updated_url = urlunparse(
+        (
+            parsed_url.scheme,
+            parsed_url.netloc,
+            path,
+            parsed_url.params,
+            parsed_url.query,
+            parsed_url.fragment,
+        )
+    )
+
+    return HttpResponseRedirect(updated_url)

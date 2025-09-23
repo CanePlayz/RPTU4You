@@ -1,34 +1,69 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block title %}Account{% endblock %}
 
+{% block head-optional %}
+    <style>
+        input[type="text"],
+        input[type="password"] {
+            appearance: none;
+            -webkit-appearance: none;
+            border: 1px solid black;
+            border-radius: 0.375rem;
+            padding: 0.75rem;
+            width: 100%;
+        }
+        body {
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
-<h2>Account</h2>
-<p>Angemeldet als: {{ username }}</p>
-
-{% if messages %}
-    <ul>
-        {% for message in messages %}
-            <li class="{{ message.tags }}">{{ message }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
-
-<h3>Passwort ändern</h3>
-<form method="post">
-    {% csrf_token %}
-    <input type="hidden" name="change_password" value="1">
-    {{ form.as_p }}
-    <button type="submit">Passwort ändern</button>
-</form>
-
-<h3>Benutzername ändern</h3>
-<form method="post">
-    {% csrf_token %}
-    <input type="hidden" name="change_username" value="1">
-    <input type="text" name="new_username" value="{{ username }}" required>
-    <button type="submit">Benutzername ändern</button>
-</form>
-
-<a href="{% url 'News' %}">Zurück zur Startseite</a>
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <h class="text-md font-medium mt-6 mb-2">Benutzername ändern</h>
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            <input type="hidden" name="change_username" value="1">
+            <input type="text" name="new_username" value="{{ username }}" required class="border border-gray-300 rounded-md px-4 py-2 w-full">
+            <button type="submit" class="w-full bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600">Benutzername ändern</button>
+        </form>
+        <br>
+        <h class="text-md font-medium mb-2">Passwort ändern</h>
+        {% if messages %}
+            <ul class="mb-4">
+                {% for message in messages %}
+                    <li class="text-sm text-red-500">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            <input type="hidden" name="change_password" value="1">
+            <div class="relative">
+                <label for="id_new_password" class="block text-sm font-medium text-gray-700">Neues Passwort
+                    <span class="ml-1 text-gray-400 cursor-pointer relative group"> &#x2139;
+                        <!-- Info Kästchen mit Anforderungen ans Passwort -->
+                        <div class="absolute hidden group-hover:block bg-white border border-gray-300 rounded-md p-2 text-sm text-gray-700 w-64 shadow-lg z-50">
+                            Das Passwort muss mindestens 8 Zeichen lang sein, darf nicht zu ähnlich zu persönlichen Informationen sein, nicht nur aus Zahlen bestehen und nicht allgemein üblich sein.
+                        </div>
+                    </span>
+                </label>
+                {{ form.new_password1 }}
+            </div>
+            <div class="relative">
+                <label for="id_new_password2" class="block text-sm font-medium text-gray-700">
+                    Neues Passwort wiederholen
+                </label>
+                {{ form.new_password2 }}
+            </div>
+            <button type="submit" class="w-full bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600">Passwort ändern</button>
+        </form>
+        <!-- Zurück zur Startseite -->
+       <a href="{% url 'News' %}" class="block text-center text-blue-500 mt-4">Zurück zur Startseite</a>
+    </div>
+</div>
 {% endblock %}

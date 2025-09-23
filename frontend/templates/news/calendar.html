@@ -7,29 +7,6 @@ Dein Kalender
 
 {% block head-optional %}
 <style>
-  #calendar {
-    height: 100vh;
-  }
-
-  .fc-event-title {
-    white-space: normal;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    max-width: 100%;
-  }
-
-  .event-description {
-    display: block;
-    font-size: 0.9em;
-    color: #555;
-    margin-top: 2px;
-  }
-
-  .fc-daygrid-event {
-    white-space: normal;
-    padding: 4px;
-  }
-
   /* Globale Events optisch hervorheben */
   .fc-event.global-event {
     background-color: #e0e0e0 !important;
@@ -37,77 +14,53 @@ Dein Kalender
     border-left: 5px solid #0074d9 !important;
     font-style: italic;
   }
-
-  #eventPopup {
-    display: none;
-    position: absolute;
-    top: 50px;
-    right: 20px;
-    background: white;
-    padding: 15px;
-    border: 1px solid #ccc;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-  }
-
-  .calendar-buttons {
-    margin-bottom: 10px;
-  }
-
-  .calendar-buttons button,
-  .calendar-buttons input[type="file"] {
-    margin-right: 10px;
-  }
-
-  .hidden-upload {
-    display: none;
-  }
+  /* Kein Scrollen*/
+   body {
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+        }   
 </style>
 {% endblock %}
 
 {% block content %}
-<h2>Dein Kalender</h2>
-
-<div class="calendar-buttons">
-  <button id="openPopup">Neuen Termin erstellen</button>
-  <button onclick="document.getElementById('icsUpload').click();">ICS-Datei importieren</button>
-  <form id="icsForm" action="{% url 'import_ics' %}" method="post" enctype="multipart/form-data"
-    style="display: inline;">
+<body class="bg-gray-100">
+<div class="bg-gray-100 py-4 px-6 flex justify-between items-center">
+  <button id="openPopup" class="bg-white text-gray-700 border border-gray-300 rounded-md px-4 py-2 hover:bg-gray-100">Neuen Termin erstellen</button>
+  <button onclick="document.getElementById('icsUpload').click();" class="bg-white text-gray-700 border border-gray-300 rounded-md px-4 py-2 hover:bg-gray-100">Kalender importieren</button>
+  <form id="icsForm" action="{% url 'import_ics' %}" method="post" enctype="multipart/form-data" class="inline">
     {% csrf_token %}
-    <input type="file" id="icsUpload" name="ics_file" accept=".ics" class="hidden-upload"
-      onchange="document.getElementById('icsForm').submit();">
+    <input type="file" id="icsUpload" name="ics_file" accept=".ics" class="hidden" onchange="document.getElementById('icsForm').submit();">
   </form>
-  <form action="{% url 'export_ics' %}" method="get" style="display: inline;">
-    <button type="submit">ICS-Datei exportieren</button>
+  <form action="{% url 'export_ics' %}" method="get" class="inline">
+    <button type="submit" class="bg-white text-gray-700 border border-gray-300 rounded-md px-4 py-2 hover:bg-gray-100">Kalender exportieren</button>
   </form>
 </div>
 
-<div id="calendar"></div>
+<div id="calendar" class="mt-4 mx-auto max-w-7xl bg-white h-[calc(100vh-150px)] rounded-lg shadow-md p-4"></div>
 
-<!-- Event-Pop-up -->
-<div id="eventPopup">
-  <h3 id="eventPopupTitle">Termin</h3>
-  <form id="eventForm">
-    <input type="text" id="eventTitle" placeholder="Event Titel" required>
-    <input type="datetime-local" id="eventStart" required>
-    <input type="datetime-local" id="eventEnd">
-    <textarea id="eventDescription" placeholder="Beschreibung"></textarea>
-    <select id="eventRepeat" style="display:none">
+<div id="eventPopup" class="hidden absolute top-12 right-5 bg-white p-4 border border-gray-300 rounded-md shadow-lg z-50">
+  <h3 id="eventPopupTitle" class="text-lg font-semibold">Termin</h3>
+  <form id="eventForm" class="space-y-2">
+    <input type="text" id="eventTitle" placeholder="Event Titel" required class="block w-full border border-gray-300 rounded-md px-3 py-2">
+    <input type="datetime-local" id="eventStart" required class="block w-full border border-gray-300 rounded-md px-3 py-2">
+    <input type="datetime-local" id="eventEnd" class="block w-full border border-gray-300 rounded-md px-3 py-2">
+    <textarea id="eventDescription" placeholder="Beschreibung" class="block w-full border border-gray-300 rounded-md px-3 py-2"></textarea>
+    <select id="eventRepeat" class="hidden w-full border border-gray-300 rounded-md px-3 py-2">
       <option value="none">Keine Wiederholung</option>
       <option value="daily">Täglich</option>
       <option value="weekly">Wöchentlich</option>
       <option value="monthly">Monatlich</option>
       <option value="yearly">Jährlich</option>
     </select>
-    <input type="datetime-local" id="eventRepeatUntil" placeholder="Wiederholen bis" style="display:none">
-    <button type="submit" id="eventSubmitBtn">Hinzufügen</button>
-    <button type="button" id="eventDeleteBtn"
-      style="display:none;background:#e74c3c;color:white;margin-left:10px;">Löschen</button>
-    <!-- Keine Verbergen/Einblenden-Buttons mehr für globale Events -->
-    <button type="button" id="closePopup">Schließen</button>
+    <input type="datetime-local" id="eventRepeatUntil" class="hidden w-full border border-gray-300 rounded-md px-3 py-2">
+    <div class="flex space-x-2">
+      <button type="submit" id="eventSubmitBtn" class="bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600">Hinzufügen</button>
+      <button type="button" id="eventDeleteBtn" class="hidden bg-red-500 text-white rounded-md px-4 py-2 hover:bg-red-600">Löschen</button>
+      <button type="button" id="closePopup" class="bg-gray-500 text-white rounded-md px-4 py-2 hover:bg-gray-600">Schließen</button>
+    </div>
   </form>
 </div>
-
 
 <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
 <input type="hidden" id="currentUserId" value="{{ request.user.id }}">

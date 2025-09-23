@@ -9,6 +9,7 @@ class UserCreationForm2(UserCreationForm):
     class Meta:
         model = User
         fields = ("username", "password1", "password2")
+        
 
 
 class PreferencesForm(forms.ModelForm):
