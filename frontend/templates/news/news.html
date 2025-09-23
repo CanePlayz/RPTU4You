@@ -9,10 +9,11 @@
 <div class="flex bg-gray-100 min-h-screen">
   <!-- Linke Seite: Filterblock -->
   <div class="w-80 pl-5 sticky top-[72px] h-[calc(100vh-72px)]">
-    <form id="news-filter-form" method="get" class="bg-white p-4 rounded-lg shadow-md h-full overflow-y-auto">
+    <form id="news-filter-form" method="get" class="overflow-y-auto">
       <div>
+        <h2 class="text-xl font-extrabold my-4 text-gray-800">Filter</h2>
         <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 rounded transition" onclick="toggleFilter('standorte')">
-          <span id="chevron-standorte" class="inline-block transition-transform duration-200 mr-2">&#x2039;</span>
+          <span id="chevron-standorte" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
           Standorte
         </button>
         <div id="filter-standorte" class="hidden ml-2">
@@ -27,7 +28,7 @@
       </div>
       <div>
         <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 rounded transition" onclick="toggleFilter('kategorien')">
-            <span id="chevron-kategorien" class="inline-block transition-transform duration-200 mr-2">&#x2039;</span>
+            <span id="chevron-kategorien" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
           Kategorien
         </button>
         <div id="filter-kategorien" class="hidden ml-2">
@@ -42,7 +43,7 @@
       </div>
       <div>
         <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 rounded transition" onclick="toggleFilter('zielgruppen')">
-            <span id="chevron-zielgruppen" class="inline-block transition-transform duration-200 mr-2">&#x2039;</span>
+            <span id="chevron-zielgruppen" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
           Zielgruppen
         </button>
         <div id="filter-zielgruppen" class="hidden ml-2">
@@ -57,7 +58,7 @@
       </div>
       <div>
         <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 rounded transition" onclick="toggleFilter('quellen')">
-            <span id="chevron-quellen" class="inline-block transition-transform duration-200 mr-2">&#x2039;</span>
+            <span id="chevron-quellen" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
           Quellen
         </button>
         <div id="filter-quellen" class="hidden ml-2">
@@ -71,9 +72,9 @@
         </div>
       </div>
 
-    <button type="button" id="apply-filter-btn" style="margin-top: 10px;">Filter anwenden</button>
-    <button type="button" id="reset-filter-btn" style="margin-top: 10px; margin-left: 10px;">Alles abwählen</button>
-    <button type="button" id="select-all-btn" style="margin-top: 10px; margin-left: 10px;">Alles auswählen</button>
+  <button type="button" id="reset-filter-btn" class="bg-gray-200 rounded-md px-2 py-1 text-sm hover:bg-gray-300">Alles abwählen</button>
+  <button type="button" id="select-all-btn" class="bg-gray-200 rounded-md px-2 py-1 text-sm hover:bg-gray-300">Alles auswählen</button>
+  <button type="button" id="apply-filter-btn" class="bg-[#042c58] text-white rounded-md px-4 py-2 hover:bg-[#064694]">Filter anwenden</button>
   </form>
 </div>
 
@@ -94,14 +95,16 @@
   </div>
 
   <!-- Rechte Seite: Kleiner Kalender -->
-  <div class="w-80 pl-5 sticky top-[72px] h-[calc(100vh-72px)] bg-gray-100">
-      <h3 class="text-lg font-semibold text-center mb-4">Nächste Termine</h3>
+  <div class="w-80 pr-5 sticky top-[72px] h-[calc(100vh-72px)] bg-gray-100">
+      <h2 class="text-xl font-extrabold my-4 text-gray-800">Nächste Termine</h2>
       {% if upcoming_events %}
         <ul class="space-y-4">
           {% for event in upcoming_events %}
-            <li class="bg-gray-50 p-4 rounded-lg shadow">
-              <p class="text-sm text-gray-500">{{ event.start|date:"d.m.Y H:i" }} - {{ event.end|date:"H:i" }}</p>
-              <p class="font-bold text-gray-800">{{ event.title }}</p>
+            <li class="bg-gray-50 p-4 mr rounded-lg shadow">
+              <a href="{% url 'calendar_page' %}">
+                <p class="font-bold text-gray-800">{{ event.title }}</p>
+                <p class="text-sm text-gray-500">{{ event.start|date:"d.m.Y H:i" }} - {{ event.end|date:"H:i" }}</p>
+              </a>
             </li>
           {% endfor %}
         </ul>
@@ -113,17 +116,16 @@
   </div>
 </div>
 
-<!-- Einbindung des neuen JS -->
 <script>
   function toggleFilter(name) {
     var el = document.getElementById('filter-' + name);
     var chevron = document.getElementById('chevron-' + name);
     if (el.classList.contains('hidden')) {
       el.classList.remove('hidden');
-      chevron.style.transform = 'rotate(90deg)'; // Pfeil zeigt nach unten
+      chevron.style.transform = 'rotate(90deg)'; 
     } else {
       el.classList.add('hidden');
-      chevron.style.transform = 'rotate(0deg)'; // Pfeil zeigt nach links
+      chevron.style.transform = 'rotate(0deg)'; 
     }
   }
 </script>
