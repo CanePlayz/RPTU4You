@@ -21,6 +21,7 @@ urlpatterns = i18n_patterns(
     path("set-language/", views.set_language, name="set_language"),
     # Admin URLs
     # News
+    path("", views.news_view, name="News"),
     path("news/", views.news_view, name="news"),
     path("news/partial/", views.news_partial, name="news_partial"),
     path("news/<int:pk>/", views.news_detail, name="news_detail"),
