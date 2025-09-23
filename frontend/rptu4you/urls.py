@@ -48,4 +48,5 @@ urlpatterns = i18n_patterns(
     # Sonstiges
     path("links/", views.links, name="links"),
     path("db-connections/", views.db_connection_status),
+    path("health/", views.health_check, name="health_check"),
 )
