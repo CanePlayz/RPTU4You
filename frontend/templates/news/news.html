@@ -11,7 +11,7 @@
   <div class="w-80 pl-5 sticky top-[72px] h-[calc(100vh-72px)] overflow-y-auto">
     <form id="news-filter-form" method="get" class="overflow-y-auto">
       <div>
-        <h2 class="text-xl font-extrabold my-4 text-gray-800">Filter</h2>
+        <h2 class="text-xl font-bold my-4 text-gray-800">Filter</h2>
         <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 rounded transition" onclick="toggleFilter('standorte')">
           <span id="chevron-standorte" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
           Standorte
@@ -93,7 +93,7 @@
 
   <!-- Rechte Seite: Kleiner Kalender -->
   <div class="w-80 pr-5 sticky top-[72px] h-[calc(100vh-72px)] bg-gray-100">
-      <h2 class="text-xl font-extrabold my-4 text-gray-800">Nächste Termine</h2>
+      <h2 class="text-xl font-bold my-4 text-gray-800">Nächste Termine</h2>
       {% if upcoming_events %}
         <ul class="space-y-4">
           {% for event in upcoming_events %}
