@@ -1,9 +1,9 @@
-<article class=" flex flex-col gap-2">
+<article class="max-w-[800px] mx-auto flex flex-col gap-2">
   <!--<h2 class="font-bold text-xl text-gray-800 mb-2">{{ news.titel }}</h2>-->
 
   {% if text %}
     <h2 class="font-extrabold text-xl text-gray-800 mb-2">{{ text.titel }}</h2>
-    <div class="text-gray-700">{{ text.text|safe }}</div>
+  <div class="text-gray-700 text-justify">{{ text.text|safe }}</div>
   {% else %}
     <p class="italic text-gray-500">Kein Text in der gewählten Sprache verfügbar.</p>
   {% endif %}
@@ -17,7 +17,7 @@
     <a href="{{ news.link }}" target="_blank" rel="noopener noreferrer" class="bg-[#042c58] text-white rounded px-4 py-1 font-semibold hover:bg-[#064694] transition">Zur Originalquelle</a>
   </div>
 
-  <div class="mt-8">
+  <div class="my-6">
     <a href="#" id="back-to-list" class="text-[#042c58] hover:underline font-semibold">← Zurück zur Übersicht</a>
   </div>
 </article>
