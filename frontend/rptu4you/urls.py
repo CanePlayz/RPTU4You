@@ -17,7 +17,7 @@ urlpatterns = [
     path("kalender/export/", views.export_ics, name="export_ics"),
 ]
 
-urlpatterns = i18n_patterns(
+urlpatterns += i18n_patterns(
     path("set-language/", views.set_language, name="set_language"),
     # Admin URLs
     # News
