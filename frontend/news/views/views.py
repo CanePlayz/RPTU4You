@@ -379,7 +379,11 @@ def calendar_page(request: HttpRequest) -> HttpResponse:
 def calendar_events(request: HttpRequest) -> HttpResponse:
     # GET: Alle Events auflisten
     if request.method == "GET":
-        if request.user.is_authenticated:
+        group_param = request.GET.get("group")
+        if group_param:
+            # Nur Events mit diesem group-Wert zurückgeben
+            events = CalendarEvent.objects.filter(group=group_param)
+        elif request.user.is_authenticated:
             events = CalendarEvent.objects.filter(user=request.user)
             global_events = CalendarEvent.objects.filter(is_global=True)
             events = list(events) + list(global_events)
@@ -400,7 +404,7 @@ def calendar_events(request: HttpRequest) -> HttpResponse:
                 ),
                 "group": event.group,
                 "is_global": event.is_global,
-                "hidden": False,  # Optionally, can be set True if needed
+                "hidden": False,
             }
             for event in events
         ]
