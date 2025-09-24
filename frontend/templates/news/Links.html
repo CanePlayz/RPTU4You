@@ -8,45 +8,131 @@ Uni-Links
 {% endblock %}
     
 {% block content %}
-    <div class="fachschaften">
-   
-        <a id="Architektur_Link" class="Link" href="https://www.architektur.uni-kl.de/fachschaft/">Architektur</a>
-        <a id="Architektur_Bild" class="Bild" href="https://www.architektur.uni-kl.de/fachschaft/"><img class="LogoFS" src="{% static 'images/FS_Architektur.jpg'}" alt="Logo der Fachschaft Architektur" /> </a>
-        
-        <a id="BauIng_Link" class="Link" href="https://bauing.rptu.de/fachschaft">Bauingenieurwesen</a>
-        <a id="BauIng_Bild" class="Bild" href="https://bauing.rptu.de/fachschaft"><img class="LogoFS" src="{% static 'images/FS_BauIng.png'}" alt="Logo der Fachschaft Bauingenieurwesen" /> </a>
-        
-        <a id="Bio_Link" class="Link" href="https://bio.rptu.de/fachschaft">Biologie</a>
-        <a id="Bio_Bild" class="Bild" href="https://bio.rptu.de/fachschaft"><img class="LogoFS" src="{% static 'images/FS_Bio.jpg'}" alt="Logo der Fachschaft Biologie" /> </a>
-        
-        
-        <a id="Chemie_Link" class="Link" href="https://chem.rptu.de/fachschaft">Chemie</a>
-        <a id="Chemie_Bild" class="Bild" href="https://chem.rptu.de/fachschaft"><img class="LogoFS" src="{% static 'images/FS_Chemie.jpg'}" alt="Logo der Fachschaft Chemie" /> </a>
-        
-        
-        <a id="EIT_Link" class="Link" href="http://www.fs.eit.uni-kl.de/">Elektro- & Informationstechnik</a>
-        <a id="EIT_Bild" class="Bild" href="http://www.fs.eit.uni-kl.de/"><img class="LogoFS" src="{% static 'images/FS_EIT.jpg'}" alt="Logo der Fachschaft Elektro- & Informationstechnik" /> </a>
-       
-       
-        <a id="Info_Link" class="Link" href="http://www.fachschaft.informatik.uni-kl.de/">Informatik </a>
-        <a id="Info_Bild" class="Bild" href="http://www.fachschaft.informatik.uni-kl.de/"><img class="LogoFS" src="{% static 'images/FS_Info.jpg'}" alt="Logo der Fachschaft Informatik" /> </a>
-        
-        <a id="MV_Link" class="Link" href="http://www.fs.mv.uni-kl.de/">Maschinenbau & Verfahrenstechnik</a>
-        <a id="MV_Bild" class="Bild" href="http://www.fs.mv.uni-kl.de/"><img class="LogoFS" src="{% static 'images/FS_MV.jpg'}" alt="Logo der Fachschaft Maschinenbau & Verfahrenstechnik" /> </a>
-        
-        <a id="Mathe_Link" class="Link" href="http://fachschaft.mathematik.uni-kl.de/">Mathematik</a>
-        <a id="Mathe_Bild" class="Bild" href="http://fachschaft.mathematik.uni-kl.de/"><img class="LogoFS" src="{% static 'images/FS_Mathe.jpg'}" alt="Logo der Fachschaft Mathematik" /> </a>
-        
-        <a id="Phy_Link" class="Link" href="http://fachschaft.physik.uni-kl.de/">Physik</a>
-        <a id="Phy_Bild" class="Bild" href="http://fachschaft.physik.uni-kl.de/"><img class="LogoFS" src="{% static 'images/FS_Phy.jpg'}" alt="Logo der Fachschaft Physik" /> </a>
-        
-        <a id="RU_Link" class="Link" href="https://ru.rptu.de/fachschaft-1/aktuelles">Raum- & Umweltplanung </a>
-        <a id="RU_Bild" class="Bild" href="https://ru.rptu.de/fachschaft-1/aktuelles"><img class="LogoFS" src="{% static 'images/FS_RU.jpg'}" alt="Logo der Fachschaft Raum- & Umweltplanung" /> </a>
-        
-        <a id="Sowi_Link" class="Link" href="http://www.fs.sowi.uni-kl.de/">Sozialwissenschaften</a> 
-        <a id="Sowi_Bild" class="Bild" href="http://www.fs.sowi.uni-kl.de/"><img class="LogoFS" src="{% static 'images/FS_Sowi.jpg'}" alt="Logo der Fachschaft Sozialwissenschaften" /> </a>
-        
-        <a id="Wiwi_Link" class="Link" href="https://wiwi.rptu.de/fachschaft/aktuelles">Wirtschaftswissenschaften</a>  
-        <a id="Wiwi_Bild" class="Bild" href="https://wiwi.rptu.de/fachschaft/aktuelles"><img class="LogoFS" src="{% static 'FS_Wiwi.jpg'}" alt="Logo der Fachschaft Wirtschaftswissenschaften" /> </a>
-    </div>
+  <main class="max-w-4xl mx-auto p-4">
+
+    <details class="bg-white border border-gray-200 rounded-xl shadow-sm mb-4">
+      <summary class="cursor-pointer p-3 font-semibold text-lg bg-gray-100 rounded-xl">Fachschaften Kaiserslautern</summary>
+      <ul class="p-4 space-y-2">
+        <li><a class="text-blue-700 hover:underline" href="https://www.architektur.uni-kl.de/fachschaft/">Architektur</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://bauing.rptu.de/fachschaft">Bauingenieurwesen</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://bio.rptu.de/fachschaft">Biologie</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://chem.rptu.de/fachschaft">Chemie</a></li>
+        <li><a class="text-blue-700 hover:underline" href="http://www.fs.eit.uni-kl.de/">Elektro- & Informationstechnik</a></li>
+        <li><a class="text-blue-700 hover:underline" href="http://www.fachschaft.informatik.uni-kl.de/">Informatik</a></li>
+        <li><a class="text-blue-700 hover:underline" href="http://www.fs.mv.uni-kl.de/">Maschinenbau & Verfahrenstechnik</a></li>
+        <li><a class="text-blue-700 hover:underline" href="http://fachschaft.mathematik.uni-kl.de/">Mathematik</a></li>
+        <li><a class="text-blue-700 hover:underline" href="http://fachschaft.physik.uni-kl.de/">Physik</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://ru.rptu.de/fachschaft-1/aktuelles">Raum- & Umweltplanung</a></li>
+        <li><a class="text-blue-700 hover:underline" href="http://www.fs.sowi.uni-kl.de/">Sozialwissenschaften</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://wiwi.rptu.de/fachschaft/aktuelles">Wirtschaftswissenschaften</a></li>
+      </ul>
+    </details>
+
+    <details class="bg-white border border-gray-200 rounded-xl shadow-sm mb-4">
+      <summary class="cursor-pointer p-3 font-semibold text-lg bg-gray-100 rounded-xl">Fachschaften Landau</summary>
+      <ul class="p-4 space-y-2">
+        <li><a class="text-blue-700 hover:underline" href="https://www.instagram.com/fachschaft_aew_landau/">Allgemeine Erziehungswissenschaften</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://ezw.rptu.de/institute/bppe/fachschaft-betriebspaedagogik">Betriebspädagogik</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://www.instagram.com/biwi_unilandau/">Bildungswissenschaften</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://hallo-ersties.asta-landau.de/?page_id=88">Grundschulpädagogik</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://philosophie-landau.de/">Philosophie</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://hallo-ersties.asta-landau.de/?page_id=110">Sonderpädagogik</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://www.instagram.com/anglistik.landau/">Anglistik</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://www.instagram.com/darstellendesspiel.landau/">Darstellendes Spiel</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://www.instagram.com/fachschaft_ev.religion_ld/">Evangelische Theologie</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://ksw.rptu.de/institute/institut-fuer-germanistik/studium-und-lehre/fachschaft">Germanistik</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://www.instagram.com/fachschaftkaththeo_landau/">Katholische Theologie</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://www.instagram.com/fs_kunst_landau/">Kunst</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://www.instagram.com/fs_menschenrechtsbildung/">Menschenrechtsbildung</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://www.instagram.com/teampowi/">Politikwissenschaft</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://www.instagram.com/fs.romanistik/">Romanistik</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://www.instagram.com/sokolandau/?r=nametag">Sozial- & Kommunikationswissenschaft</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://fs-wunda-landau.weebly.com/">Wirtschaft und Arbeit</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://www.instagram.com/fsv_biologie.ld/">Biologie</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://www.instagram.com/geo.landau/">Geographie</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://www.instagram.com/fachschaft.mathe.landau/">Mathematik</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://psy.rptu.de/fachschaft">Mensch und Umwelt</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://hallo-ersties.asta-landau.de/?page_id=103">Physik</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://uwi-landau.de/">Umweltwissenschaften</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://www.instagram.com/fachschaftsport_landau/?igshid=MzRlODBiNWFlZA">Sport</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://www.instagram.com/psylandau/?hl=de">Psychologie</a></li>
+      </ul>
+    </details>
+
+    <details class="bg-white border border-gray-200 rounded-xl shadow-sm mb-4">
+      <summary class="cursor-pointer p-3 font-semibold text-lg bg-gray-100 rounded-xl">AStA</summary>
+      <ul class="p-4 space-y-2">
+        <li><a class="text-blue-700 hover:underline" href="https://www.asta.uni-kl.de/">AStA Kaiserslautern</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://asta-landau.de/">AStA Landau</a></li>
+      </ul>
+    </details>
+
+    <details class="bg-white border border-gray-200 rounded-xl shadow-sm mb-4">
+      <summary class="cursor-pointer p-3 font-semibold text-lg bg-gray-100 rounded-xl">Uni-Sport</summary>
+      <ul class="p-4 space-y-2">
+        <li><a class="text-blue-700 hover:underline" href="https://zsgw.rptu.de/unisport/startseite">Uni Sport allgemein</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://www.asta.uni-kl.de/">Uni Sportangebot Kaiserslautern</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://zsgw.rptu.de/unisport/sportprogramm/sportprogramm-ld/sportangebot-a-z-ld">Uni Sportangebot Landau</a></li>
+      </ul>
+    </details>
+
+    <details class="bg-white border border-gray-200 rounded-xl shadow-sm mb-4">
+      <summary class="cursor-pointer p-3 font-semibold text-lg bg-gray-100 rounded-xl">Studierendenparlament</summary>
+      <ul class="p-4 space-y-2">
+        <li><a class="text-blue-700 hover:underline" href="https://www.stupa.uni-kl.de/home">Studienparlament Kaiserslautern</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://stupa-landau.de/">Studienparlament Landau</a></li>
+      </ul>
+    </details>
+
+    <details class="bg-white border border-gray-200 rounded-xl shadow-sm mb-4">
+      <summary class="cursor-pointer p-3 font-semibold text-lg bg-gray-100 rounded-xl">Hochschulgruppen</summary>
+      <ul class="p-4 space-y-2">
+        <li><a class="text-blue-700 hover:underline" href="https://rptu.de/ueber-die-rptu/leben-und-kultur/studentische-gruppen">Studentische Gruppen Übersicht</a></li>
+      </ul>
+    </details>
+
+    <details class="bg-white border border-gray-200 rounded-xl shadow-sm mb-4">
+      <summary class="cursor-pointer p-3 font-semibold text-lg bg-gray-100 rounded-xl">Zentrale Einrichtungen</summary>
+      <ul class="p-4 space-y-2">
+        <li><a class="text-blue-700 hover:underline" href="https://rptu.de/campuskultur">CampusKultur</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://rz.rptu.de/">Regionales Hochschulrechenzentrum</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://ub.rptu.de/">Universitätsbibliothek</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://rptu.de/ueber-die-rptu/organisation/zentrale-einrichtungen">Weitere Einrichtungen Übersicht</a></li>
+      </ul>
+    </details>
+
+    <details class="bg-white border border-gray-200 rounded-xl shadow-sm mb-4">
+      <summary class="cursor-pointer p-3 font-semibold text-lg bg-gray-100 rounded-xl">Fachbereiche</summary>
+      <ul class="p-4 space-y-2">
+        <li><a class="text-blue-700 hover:underline" href="https://rptu.de/ueber-die-rptu/organisation/fachbereiche">Übersicht Fachbereiche</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://architektur.rptu.de/">Architektur</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://bauing.rptu.de/">Bauingenieurwesen</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://bio.rptu.de/">Biologie</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://chem.rptu.de/">Chemie</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://eit.rptu.de/">Elektrotechnik und Informationstechnik</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://ezw.rptu.de/">Erziehungswissenschaften</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://cs.rptu.de/">Informatik</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://ksw.rptu.de/">Kultur- und Sozialwissenschaften</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://mv.rptu.de/">Maschinenbau und Verfahrenstechnik</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://math.rptu.de/">Mathematik</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://nuw.rptu.de/">Natur- und Umweltwissenschaften</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://physik.rptu.de/">Physik</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://psy.rptu.de/">Psychologie</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://ru.rptu.de/startseite">Raum- und Umweltplanung</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://sowi.rptu.de/home">Sozialwissenschaften</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://wiwi.rptu.de/">Wirtschaftswissenschaften</a></li>
+      </ul>
+    </details>
+
+    <details class="bg-white border border-gray-200 rounded-xl shadow-sm mb-4">
+      <summary class="cursor-pointer p-3 font-semibold text-lg bg-gray-100 rounded-xl">Studierendenwerk</summary>
+      <ul class="p-4 space-y-2">
+        <li><a class="text-blue-700 hover:underline" href="https://www.studierendenwerk-kaiserslautern.de/de/">Studierendenwerk Kaiserslautern</a></li>
+        <li><a class="text-blue-700 hover:underline" href="https://stw-vp.de/de/beratung/finanzielle-hilfen/">Studierendenwerk Landau</a></li>
+      </ul>
+    </details>
+
+  </main>
+
     {% endblock %}
+
