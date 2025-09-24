@@ -13,17 +13,12 @@
             padding: 0.75rem;
             width: 100%;
         }
-        body {
-            margin: 0;
-            height: 100vh;
-            overflow: hidden;
-        }
     </style>
 {% endblock %}
 
 {% block content %}
-<div class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+<div class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-gray-100">
+    <div class="bg-white p-6 my-4 rounded-lg shadow-md w-full max-w-md">
         <h class="text-md font-medium mt-6 mb-2">Benutzername ändern</h>
         <form method="post" class="space-y-4">
             {% csrf_token %}
@@ -35,7 +30,7 @@
                 <div class="text-sm text-red-500 mb-2">{{ username_error }}</div>
             {% endif %}
             <input type="text" name="new_username" value="{{ username }}" required class="border border-gray-300 rounded-md px-4 py-2 w-full">
-            <button type="submit" class="w-full bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600">Benutzername ändern</button>
+            <button type="submit" class="w-full bg-[#042c58] text-white rounded-md px-4 py-2 hover:bg-blue-600">Benutzername ändern</button>
         </form>
         <br>
         <h class="text-md font-medium mb-2">Passwort ändern</h>
@@ -99,10 +94,10 @@
                     {% endfor %}
                 </ul>
             {% endif %}
-            <button type="submit" class="w-full bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600">Passwort ändern</button>
+            <button type="submit" class="w-full bg-[#042c58] text-white rounded-md px-4 py-2 hover:bg-blue-600">Passwort ändern</button>
         </form>
         <!-- Zurück zur Startseite -->
-       <a href="{% url 'News' %}" class="block text-center text-blue-500 mt-4">Zurück zur Startseite</a>
+       <a href="{% url 'News' %}" class="block text-center text-[#042c58] mt-4">Zurück zur Startseite</a>
     </div>
 </div>
 {% endblock %}
