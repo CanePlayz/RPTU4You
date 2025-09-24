@@ -25,19 +25,30 @@ Dein Kalender
 
 {% block content %}
 <body class="bg-gray-100">
-<div class="bg-gray-100 py-4 px-6 flex justify-between items-center">
-  <button id="openPopup" class="bg-white text-gray-700 border border-gray-300 rounded-md px-4 py-2 hover:bg-gray-100">Neuen Termin erstellen</button>
-  <button onclick="document.getElementById('icsUpload').click();" class="bg-white text-gray-700 border border-gray-300 rounded-md px-4 py-2 hover:bg-gray-100">Kalender importieren</button>
-  <form id="icsForm" action="{% url 'import_ics' %}" method="post" enctype="multipart/form-data" class="inline">
-    {% csrf_token %}
-    <input type="file" id="icsUpload" name="ics_file" accept=".ics" class="hidden" onchange="document.getElementById('icsForm').submit();">
-  </form>
-  <form action="{% url 'export_ics' %}" method="get" class="inline">
-    <button type="submit" class="bg-white text-gray-700 border border-gray-300 rounded-md px-4 py-2 hover:bg-gray-100">Kalender exportieren</button>
-  </form>
+
+<div class="flex bg-gray-100 min-h-screen">
+  <!-- Linker Bereich: Buttons -->
+  <div class="w-64 p-6 flex flex-col h-[calc(100vh-72px)] items-start">
+    <div class="flex flex-col w-full">
+      <button id="openPopup" class="bg-[#2c3f51] text-white rounded-lg px-4 py-3 w-full flex justify-start text-lg font-semibold hover:bg-[#39506a]">
+        <span class="text-5xl mr-3">+</span>Termin hinzufügen
+      </button> 
+    </div>
+    <div class="flex flex-col w-full gap-4 mt-auto">
+      <button onclick="document.getElementById('icsUpload').click();" class="bg-[#717f8b] text-white rounded-lg px-4 py-2 shadow hover:bg-[#8a99a8] w-full">Kalender importieren</button>
+      <button type="submit" form="exportForm" class="bg-[#717f8b] text-white rounded-lg px-4 py-2 shadow hover:bg-[#8a99a8] w-full">Kalender exportieren</button>
+    </div>
+
+    <form id="icsForm" action="{% url 'import_ics' %}" method="post" enctype="multipart/form-data" class="hidden">
+      {% csrf_token %}
+      <input type="file" id="icsUpload" name="ics_file" accept=".ics" class="hidden" onchange="document.getElementById('icsForm').submit();">
+    </form>
+    <form action="{% url 'export_ics' %}" method="get" class="hidden" id="exportForm"></form>
+  </div>
+  <!-- Rechter Bereich: Kalender -->
+  <div id="calendar" class="flex-1 h-[calc(100vh-72px)] p-4 w-full"></div>
 </div>
 
-<div id="calendar" class="mt-4 mx-auto max-w-7xl bg-white h-[calc(100vh-150px)] rounded-lg shadow-md p-4"></div>
 
 
 <div id="eventPopup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 transition-opacity duration-200">
