@@ -1,31 +1,26 @@
 {% extends "base.html" %}
 
-{% block title %}Anmelden{% endblock %}
+{% block title %}
+Anmelden
+{% endblock %}
 
 {% block head-optional %}
     <style>
-        /* Ausschalten von Browserstandardeinstellungen bezüglich Input-Feldern */
         input[type="text"],
         input[type="password"] {
             appearance: none;
             -webkit-appearance: none;
             border: 1px solid black;
-            border-radius: 0.375rem; /* entspricht rounded-md */
-            padding: 0.75rem; /* entspricht px-3 py-2 */
+            border-radius: 0.375rem; 
+            padding: 0.75rem;
             width: 100%;
-        }
-        /* Kein Scrollen*/
-        body {
-            margin: 0;
-            height: 100vh;
-            overflow: hidden;
         }
     </style>
 {% endblock %}
 
 {% block content %}
-<div class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+<div class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-gray-100">
+    <div class="bg-white p-6 my-4  rounded-lg shadow-md w-full max-w-md">
         <h1 class="text-lg font-semibold text-center mb-4">Anmelden</h1>
         {% if messages %}
             <ul class="mb-4">
@@ -49,9 +44,9 @@
                 <label for="password" class="block text-sm font-medium text-gray-700">Passwort:</label>
                 <input type="password" name="password" id="password" required>
             </div>
-            <button type="submit" class="w-full bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600">Anmelden</button>
+            <button type="submit" class="w-full bg-[#042c58] text-white rounded-md px-4 py-2 hover:bg-[#064694]">Anmelden</button>
         </form>
-        <p class="text-sm text-center mt-4">Noch keinen Account? <a href="{% url 'register' %}" class="text-blue-500 hover:underline">Jetzt registrieren</a></p>
+        <p class="text-sm text-center mt-4">Noch keinen Account? <a href="{% url 'register' %}" class="text-[#042c58] hover:underline">Jetzt registrieren</a></p>
     </div>
 </div>
 {% endblock %}

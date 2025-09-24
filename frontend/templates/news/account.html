@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
-{% block title %}Account{% endblock %}
+{% block title %}
+Account
+{% endblock %}
 
 {% block head-optional %}
     <style>
@@ -30,7 +32,7 @@
                 <div class="text-sm text-red-500 mb-2">{{ username_error }}</div>
             {% endif %}
             <input type="text" name="new_username" value="{{ username }}" required class="border border-gray-300 rounded-md px-4 py-2 w-full">
-            <button type="submit" class="w-full bg-[#042c58] text-white rounded-md px-4 py-2 hover:bg-blue-600">Benutzername ändern</button>
+            <button type="submit" class="w-full bg-[#042c58] text-white rounded-md px-4 py-2 hover:bg-[#064694]">Benutzername ändern</button>
         </form>
         <br>
         <h class="text-md font-medium mb-2">Passwort ändern</h>

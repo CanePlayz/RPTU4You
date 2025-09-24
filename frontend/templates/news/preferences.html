@@ -1,7 +1,9 @@
 
 {% extends 'base.html' %}
 
-{% block title %}Präferenzen{% endblock %}
+{% block title %}
+Präferenzen
+{% endblock %}
 
 {% block head-optional %}
     <style>
@@ -17,7 +19,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="flex items-center pb-10 justify-center min-h-screen bg-gray-100">
+<div class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-gray-100">
     <div class="w-full max-w-5xl px-8">
         <h1 class="text-3xl font-extrabold my-8 text-gray-800">Deine Präferenzen</h1>
         <form method="post" class="flex flex-row gap-6 items-start">
