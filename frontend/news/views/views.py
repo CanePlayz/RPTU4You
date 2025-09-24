@@ -289,39 +289,45 @@ def account_view(request: HttpRequest) -> HttpResponse:
     """
     if not request.user.is_authenticated:
         return redirect("login")
+    username_error = None
+    username_success = None
     if isinstance(request.user, User):
-        form = PasswordChangeForm(request.user)  # Formular initialisieren
+        form = PasswordChangeForm(request.user)
 
     if request.method == "POST":
         if "change_password" in request.POST:
-            # Neues Passwort-Formular mit POST-Daten erstellen
             if isinstance(request.user, User):
                 form = PasswordChangeForm(request.user, request.POST)
-            if form.is_valid():
-                # Formular speichern und Benutzer aktualisieren
-                user = form.save()
-                # Session nach Passwortänderung aktualisieren, damit der Benutzer angemeldet bleibt
-                update_session_auth_hash(request, user)
-                messages.success(request, "Dein Passwort wurde erfolgreich geändert!")
-                return redirect("account")
-            else:
-                messages.error(request, "Bitte korrigiere die Fehler unten.")
+                if form.data.get('old_password'):
+                    old_password = form.data.get('old_password')
+                    if not request.user.check_password(old_password):
+                        # Nur diese Fehlermeldung anzeigen, alle anderen Fehler unterdrücken
+                        form.errors.clear()
+                        form.add_error('old_password', "Das alte Passwort war falsch. Bitte neu eingeben.")
+                    else:
+                        if form.is_valid():
+                            user = form.save()
+                            update_session_auth_hash(request, user)
+                            messages.success(request, "Dein Passwort wurde erfolgreich geändert!")
+                            return redirect("account")
 
         elif "change_username" in request.POST:
-            # Neuen Benutzernamen aus dem Formular holen
             new_username = request.POST.get("new_username")
             if new_username:
                 if User.objects.filter(username=new_username).exists():
-                    messages.error(request, "Dieser Benutzername ist bereits vergeben.")
+                    username_error = "Dieser Benutzername ist bereits vergeben."
                 else:
                     request.user.username = new_username
                     request.user.save()
-                    messages.success(request, "Dein Benutzername wurde geändert!")
-                return redirect("account")
+                    username_success = "Dein Benutzername wurde geändert!"
 
-    # Rendern der Account-Seite mit dem Formular und dem aktuellen Benutzernamen
     return render(
-        request, "news/account.html", {"form": form, "username": request.user.username}
+        request, "news/account.html", {
+            "form": form,
+            "username": request.user.username,
+            "username_error": username_error,
+            "username_success": username_success
+        }
     )
 
 
