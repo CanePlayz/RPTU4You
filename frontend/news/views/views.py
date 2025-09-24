@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import datetime, timedelta
+from datetime import timezone as dt_timezone
 from typing import Any
 from urllib.parse import urlparse, urlunparse
 
@@ -767,10 +768,11 @@ def export_ics(request: HttpRequest) -> HttpResponse:
                     if event.repeat_until:
                         # Ensure repeat_until is a timezone-aware UTC datetime
                         until = event.repeat_until
+
                         if timezone.is_naive(until):
-                            until = timezone.make_aware(until, timezone.utc)
+                            until = timezone.make_aware(until, dt_timezone.utc)
                         else:
-                            until = until.astimezone(timezone.utc)
+                            until = until.astimezone(dt_timezone.utc)
                         # iCalendar expects UTC without tzinfo for UNTIL
                         rrule_dict["UNTIL"] = until.replace(tzinfo=None)
 
