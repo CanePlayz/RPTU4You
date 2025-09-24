@@ -72,8 +72,8 @@
         </div>
       </div>
 
-  <button type="button" id="select-all-btn" class="bg-gray-200 rounded-md px-2 py-1 text-sm hover:bg-gray-300 mb-3">Alles auswählen</button>
-  <button type="button" id="reset-filter-btn" class="bg-gray-200 rounded-md px-2 py-1 text-sm hover:bg-gray-300 mr-3 mb-3">Alles abwählen</button>
+  <button type="button" id="select-all-btn" class="bg-gray-200 rounded-md px-2 py-1 text-sm hover:bg-gray-300 mr-1 my-3">Alles auswählen</button>
+  <button type="button" id="reset-filter-btn" class="bg-gray-200 rounded-md px-2 py-1 text-sm hover:bg-gray-300 my-3">Alles abwählen</button>
   <button type="button" id="apply-filter-btn" class="bg-[#042c58] text-white rounded-md px-4 py-2 hover:bg-[#064694] mb-6">Filter anwenden</button>
   </form>
 </div>
@@ -88,9 +88,6 @@
                 {% include "news/partials/_news_list.html" with news_list=news_list has_more=has_more %}
             {% endif %}
         </div>
-        {% if not detail_news %}
-          <button id="load-more" class="mt-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Mehr laden</button>
-        {% endif %}
     </main>
   </div>
 
@@ -129,5 +126,20 @@
     }
   }
 </script>
+
+<script>
+  // Entferne das "Keine News gefunden" Banner, wenn News geladen werden
+  document.addEventListener('DOMContentLoaded', function() {
+    var loadMoreBtn = document.getElementById('load-more');
+    if (loadMoreBtn) {
+      loadMoreBtn.addEventListener('click', function() {
+        var banner = document.getElementById('no-news-banner');
+        if (banner) {
+          banner.remove();
+        }
+      });
+    }
+  }); 
+</script> 
 <script src="{% static 'js/news.js' %}"></script>
 {% endblock %}
