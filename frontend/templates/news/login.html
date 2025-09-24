@@ -30,7 +30,11 @@
         {% if messages %}
             <ul class="mb-4">
                 {% for message in messages %}
-                    <li class="text-sm text-red-500">{{ message }}</li>
+                    {% if message == "Registrierung erfolgreich! Bitte melde dich an." or message.tags == 'success' %}
+                        <li class="text-sm text-green-600">{{ message }}</li>
+                    {% else %}
+                        <li class="text-sm text-red-500">{{ message }}</li>
+                    {% endif %}
                 {% endfor %}
             </ul>
         {% endif %}
