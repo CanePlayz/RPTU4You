@@ -137,6 +137,14 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   function openEventPopup(mode, eventData) {
+    // Setze das Minimaldatum für "Wiederholen bis" auf das Startdatum
+    function updateRepeatUntilMin() {
+      if (eventStartDate.value) {
+        eventRepeatUntil.min = eventStartDate.value;
+      } else {
+        eventRepeatUntil.min = '';
+      }
+    }
     editMode = mode === "edit";
     editingEventId = eventData ? eventData.id : null;
     // Reset
@@ -145,12 +153,16 @@ document.addEventListener("DOMContentLoaded", function () {
     if (eventData && eventData.start) {
       const startDT = new Date(eventData.start);
       // Hole Datum und Zeit lokal, damit kein Offset entsteht
-      eventStartDate.value = startDT.getFullYear() + "-" + String(startDT.getMonth()+1).padStart(2, '0') + "-" + String(startDT.getDate()).padStart(2, '0');
-      eventStartTime.value = String(startDT.getHours()).padStart(2, '0') + ":" + String(startDT.getMinutes()).padStart(2, '0');
+        let dateOnly = eventData.start.split('T')[0];
+        eventStartDate.value = dateOnly;
+        eventStartTime.value = "";
     } else {
       eventStartDate.value = "";
       eventStartTime.value = "";
     }
+    updateRepeatUntilMin();
+  // Wenn das Startdatum geändert wird, min-Attribut für Wiederholen-bis anpassen
+  eventStartDate.addEventListener("change", updateRepeatUntilMin);
     // Enddatum und Zeit
     if (eventData && eventData.end) {
       const endDT = new Date(eventData.end);
@@ -168,7 +180,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     eventDescription.value = eventData ? eventData.description || "" : "";
     eventRepeat.value = eventData ? eventData.repeat || "none" : "none";
-    eventRepeatUntil.value = eventData && eventData.repeat_until ? eventData.repeat_until.substring(0, 16) : "";
+  eventRepeatUntil.value = eventData && eventData.repeat_until ? eventData.repeat_until.substring(0, 10) : "";
   submitBtn.textContent = editMode ? "Speichern" : "Hinzufügen";
   var eventPopupTitle = document.getElementById("eventPopupTitle");
   eventPopupTitle.textContent = editMode ? "Termin bearbeiten" : "Termin erstellen";
@@ -218,6 +230,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // FullCalendar
+
   var calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: "dayGridMonth",
     headerToolbar: {
@@ -241,6 +254,14 @@ document.addEventListener("DOMContentLoaded", function () {
           }
           openEventPopup("edit", data);
         });
+    },
+    dateClick: function(info) {
+      // info.dateStr ist im Format YYYY-MM-DD oder YYYY-MM-DDTHH:mm:ss je nach View
+      // Wir wollen nur das Datum
+      openEventPopup("create", {
+        start: info.dateStr,
+        // Enddatum leer lassen, User kann es setzen
+      });
     },
     eventDidMount: function (info) {
       var description = info.event.extendedProps.description || "";
