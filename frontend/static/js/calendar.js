@@ -231,6 +231,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // FullCalendar
 
+
   var calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: "dayGridMonth",
     headerToolbar: {
@@ -239,6 +240,16 @@ document.addEventListener("DOMContentLoaded", function () {
       right: "dayGridMonth,timeGridWeek,timeGridDay",
     },
     locale: "de",
+    buttonText: {
+      today: 'Heute',
+      month: 'Monat',
+      week: 'Woche',
+      day: 'Tag',
+      list: 'Liste',
+      prev: '←',
+      next: '→',
+    },
+    allDaySlot: false,
     editable: false,
     events: "/api/calendar-events/",
     eventClick: function (info) {
