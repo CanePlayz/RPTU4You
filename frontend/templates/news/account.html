@@ -50,6 +50,16 @@ Account
         <form method="post" class="space-y-4">
             {% csrf_token %}
             <input type="hidden" name="change_password" value="1">
+            {# Info-Text für Passwort-Anforderungen #}
+            <div id="password-info" class="mb-2 text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md p-2">
+                <b>Passwort:</b>
+                <ul>
+                    <li>Mindestens 8 Zeichen lang sein</li>
+                    <li>Keine Ähnlichkeit zu persönlichen Informationen</li>
+                    <li>Nicht nur Ziffern</li>
+                    <li>Nicht allgemein üblich</li>
+                </ul>
+            </div>
             <div class="relative">
                 <label for="id_old_password" class="block text-sm font-medium text-gray-700">Aktuelles Passwort</label>
                 {{ form.old_password }}
@@ -62,13 +72,7 @@ Account
                 {% endif %}
             </div>
             <div class="relative">
-                <label for="id_new_password1" class="block text-sm font-medium text-gray-700">Neues Passwort
-                    <span class="ml-1 text-gray-400 cursor-pointer relative group"> &#x2139;
-                        <div class="absolute hidden group-hover:block bg-white border border-gray-300 rounded-md p-2 text-sm text-gray-700 w-64 shadow-lg z-50">
-                            Das Passwort muss mindestens 8 Zeichen lang sein, darf nicht zu ähnlich zu persönlichen Informationen sein, nicht nur aus Zahlen bestehen und nicht allgemein üblich sein.
-                        </div>
-                    </span>
-                </label>
+                <label for="id_new_password1" class="block text-sm font-medium text-gray-700">Neues Passwort</label>
                 {{ form.new_password1 }}
                 {% if form.new_password1.errors %}
                     <ul class="text-sm text-red-500 mt-1">
