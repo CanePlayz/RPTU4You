@@ -78,8 +78,6 @@
   });
 var eventHideBtn = document.getElementById("eventHideBtn");
 var eventUnhideBtn = document.getElementById("eventUnhideBtn");
-// Die folgende Datei ist ein Vorschlag für die neue calendar.js, die die gewünschte Funktionalität kapselt.
-// Sie kann in calendar.html eingebunden werden (siehe Kommentar unten).
 
 document.addEventListener("DOMContentLoaded", function () {
   var calendarEl = document.getElementById("calendar");
@@ -152,10 +150,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Startdatum und Zeit
     if (eventData && eventData.start) {
       const startDT = new Date(eventData.start);
-      // Hole Datum und Zeit lokal, damit kein Offset entsteht
-        let dateOnly = eventData.start.split('T')[0];
-        eventStartDate.value = dateOnly;
-        eventStartTime.value = "";
+      eventStartDate.value = startDT.getFullYear() + "-" + String(startDT.getMonth()+1).padStart(2, '0') + "-" + String(startDT.getDate()).padStart(2, '0');
+      eventStartTime.value = String(startDT.getHours()).padStart(2, '0') + ":" + String(startDT.getMinutes()).padStart(2, '0');
     } else {
       eventStartDate.value = "";
       eventStartTime.value = "";
@@ -267,8 +263,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     },
     dateClick: function(info) {
-      // info.dateStr ist im Format YYYY-MM-DD oder YYYY-MM-DDTHH:mm:ss je nach View
-      // Wir wollen nur das Datum
       openEventPopup("create", {
         start: info.dateStr,
         // Enddatum leer lassen, User kann es setzen
