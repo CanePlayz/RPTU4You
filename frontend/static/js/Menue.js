@@ -39,51 +39,43 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Language button or dropdown not found");
   }
 
-    //-----------------------
-    // Darkmode-Einstellungen
-    //-----------------------
-
-    const darkmodeToggle = document.getElementById('darkmode-toggle');
-    // Hilfsfunktion: Cookie setzen
-    function setCookie(name, value, days) {
-        let expires = "";
-        if (days) {
-            const date = new Date();
-            date.setTime(date.getTime() + (days*24*60*60*1000));
-            expires = "; expires=" + date.toUTCString();
-        }
-        document.cookie = name + "=" + value + expires + "; path=/";
-    }
-    // Hilfsfunktion: Cookie lesen
-    function getCookie(name) {
-        const value = "; " + document.cookie;
-        const parts = value.split("; " + name + "=");
-        if (parts.length === 2) return parts.pop().split(';').shift();
-        return null;
-    }
-    // Darkmode anwenden und Button anpassen
-    function applyDarkmode(isDark) {
+        // Custom Darkmode Toggle mit Sonne/Mond-Icon und LocalStorage
+        const darkmodeToggle = document.getElementById('darkmode-toggle');
+        const dot = document.getElementById('toggle-dot');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        // Initial state from localStorage
+        let isDark = localStorage.getItem('theme') === 'dark' ||
+            (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
         if (isDark) {
             document.documentElement.classList.add('dark');
-            darkmodeToggle.textContent = "Light";
+            darkmodeToggle.checked = true;
+            if (dot) dot.style.transform = 'translateX(24px)';
+            if (sunIcon) sunIcon.classList.add('hidden');
+            if (moonIcon) moonIcon.classList.remove('hidden');
         } else {
             document.documentElement.classList.remove('dark');
-            darkmodeToggle.textContent = "Dark";
+            darkmodeToggle.checked = false;
+            if (dot) dot.style.transform = 'translateX(0)';
+            if (sunIcon) sunIcon.classList.remove('hidden');
+            if (moonIcon) moonIcon.classList.add('hidden');
         }
-    }
-    // Beim Laden prüfen, ob Darkmode-Cookie gesetzt ist
-    const darkmodeCookie = getCookie('darkmode');
-    if (darkmodeCookie === 'true') {
-        applyDarkmode(true);
-    } else {
-        applyDarkmode(false);
-    }
-    // Button-Event
-    if (darkmodeToggle) {
-        darkmodeToggle.addEventListener('click', () => {
-            const isDark = !document.documentElement.classList.contains('dark');
-            applyDarkmode(isDark);
-            setCookie('darkmode', isDark ? 'true' : 'false', 365);
-        });
-    }
+        // Toggle event
+        if (darkmodeToggle) {
+            darkmodeToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                    if (dot) dot.style.transform = 'translateX(24px)';
+                    if (sunIcon) sunIcon.classList.add('hidden');
+                    if (moonIcon) moonIcon.classList.remove('hidden');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                    if (dot) dot.style.transform = 'translateX(0)';
+                    if (sunIcon) sunIcon.classList.remove('hidden');
+                    if (moonIcon) moonIcon.classList.add('hidden');
+                }
+            });
+        }
 });
