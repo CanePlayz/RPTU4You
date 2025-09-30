@@ -52,7 +52,7 @@
             <img src="{% static 'images/flaggen/'|add:request.LANGUAGE_CODE|add:'.png' %}" class="w-full h-full rounded-md" alt="{{ request.LANGUAGE_CODE }} Flag">
           </button>
           <!-- Sprachen Dropdown -->
-          <div class="z-50 hidden absolute top-16 right-0 w-48 text-base list-none bg-[#042c58] divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-black" id="language-dropdown-menu">
+          <div class="z-50 hidden absolute top-16 right-0 w-48 text-base list-none bg-[#042c58] divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-[#0a111a]" id="language-dropdown-menu">
             <ul class="py-2 font-medium" role="none">
               <li>
                 <a href="{% url 'set_language' %}?language=de" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">
@@ -111,7 +111,7 @@
           <img class="w-10 h-10 rounded-full" src="{% static 'images/user-icon.png' %}" alt="user photo">
         </button>
         <!--Profil Dropdown-->
-        <div class="z-50 hidden absolute top-16 right-0 w-48 text-base list-none bg-[#042c58] divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-black dropdown-menu" id="user-dropdown"> 
+        <div class="z-50 hidden absolute top-16 right-0 w-48 text-base list-none bg-[#042c58] divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-[#0a111a] dropdown-menu" id="user-dropdown"> 
           {% if user.is_authenticated %}
           <div class="px-4 py-3">
             <span class="block text-sm text-gray-100 dark:text-white">{{ user.username }}</span>
