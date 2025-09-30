@@ -7,15 +7,19 @@
 {% block content %}
 
 <div class="flex bg-gray-100 dark:bg-gray-900 min-h-screen">
+  <!-- ------------------------ -->
   <!-- Linke Seite: Filterblock -->
+  <!-- ------------------------ -->
   <div class="w-80 pl-5 sticky top-[72px] h-[calc(100vh-72px)] overflow-y-auto">
     <form id="news-filter-form" method="get" class="overflow-y-auto">
+      <h2 class="text-xl font-bold my-4 text-gray-800 dark:text-gray-100">Filter</h2>
       <div>
-        <h2 class="text-xl font-bold my-4 text-gray-800 dark:text-gray-100">Filter</h2>
-  <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('standorte')">
+        <!-- Standort Button -->
+        <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('standorte')">
           <span id="chevron-standorte" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
           Standorte
         </button>
+        <!-- Standorte -->
         <div id="filter-standorte" class="hidden ml-2">
           {% for loc in locations %}
             <label class="block text-gray-800 dark:text-white">
@@ -27,10 +31,12 @@
         </div>
       </div>
       <div>
-  <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('kategorien')">
+        <!-- Kategorien Button -->
+        <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('kategorien')">
             <span id="chevron-kategorien" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
           Kategorien
         </button>
+        <!-- Kategorien -->
         <div id="filter-kategorien" class="hidden ml-2">
           {% for cat in categories %}
             <label class="block text-gray-800 dark:text-white">
@@ -42,10 +48,12 @@
         </div>
       </div>
       <div>
-  <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('zielgruppen')">
+        <!-- Zielgruppen Button -->
+        <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('zielgruppen')">
             <span id="chevron-zielgruppen" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
           Zielgruppen
         </button>
+        <!-- Zielgruppen -->
         <div id="filter-zielgruppen" class="hidden ml-2">
           {% for aud in audiences %}
             <label class="block text-gray-800 dark:text-white">
@@ -57,10 +65,12 @@
         </div>
       </div>
       <div>
-  <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('quellen')">
+        <!-- Quellen Button -->
+        <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('quellen')">
             <span id="chevron-quellen" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
           Quellen
         </button>
+        <!-- Quellen -->
         <div id="filter-quellen" class="hidden ml-2">
           {% for src in sources %}
             <label class="block text-gray-800 dark:text-white">
@@ -71,14 +81,15 @@
           {% endfor %}
         </div>
       </div>
-
-  <button type="button" id="select-all-btn" class="bg-gray-200 dark:bg-gray-800 dark:text-gray-100 rounded-md px-2 py-1 text-sm hover:bg-gray-300 dark:hover:bg-gray-700 mr-1 my-3">Alles auswählen</button>
-  <button type="button" id="reset-filter-btn" class="bg-gray-200 dark:bg-gray-800 dark:text-gray-100 rounded-md px-2 py-1 text-sm hover:bg-gray-300 dark:hover:bg-gray-700 my-3">Alles abwählen</button>
-  <button type="button" id="apply-filter-btn" class="bg-[#042c58] dark:bg-gray-800 text-white dark:text-gray-100 rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-gray-700 mb-6">Filter anwenden</button>
-  </form>
-</div>
-
+      <!-- Allgemeine Buttons -->
+      <button type="button" id="select-all-btn" class="bg-gray-200 dark:bg-gray-800 dark:text-gray-100 rounded-md px-2 py-1 text-sm hover:bg-gray-300 dark:hover:bg-gray-700 mr-1 my-3">Alles auswählen</button>
+      <button type="button" id="reset-filter-btn" class="bg-gray-200 dark:bg-gray-800 dark:text-gray-100 rounded-md px-2 py-1 text-sm hover:bg-gray-300 dark:hover:bg-gray-700 my-3">Alles abwählen</button>
+      <button type="button" id="apply-filter-btn" class="bg-[#042c58] dark:bg-gray-800 text-white dark:text-gray-100 rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-gray-700 mb-6">Filter anwenden</button>
+    </form>
+  </div>
+  <!-- ----------- -->
   <!-- Mitte: News -->
+  <!-- ----------- -->
   <div class="flex-1 mt-3 px-8 overflow-y-auto">
     <main id="main">
         <div id="news-container">
@@ -90,10 +101,12 @@
         </div>
     </main>
   </div>
-
-  <!-- Rechte Seite: Kleiner Kalender -->
+  <!-- ----------------------------- -->
+  <!-- Rechte Seite: Nächste Termine -->
+  <!-- ----------------------------- -->
   <div class="w-80 pr-5 sticky top-[72px] h-[calc(100vh-72px)] overflow-auto">
     <h2 class="text-xl font-bold my-4 text-gray-800 dark:text-gray-100">Nächste Termine</h2>
+    <!-- Die einzelnen Termine -->
     {% if upcoming_events %}
       <a href="{% url 'calendar_page' %}">
         <ul class="space-y-4">
@@ -111,7 +124,9 @@
   </div>
 </div>
 
+<!-- Javascript -->
 <script>
+  // Ein- und Ausklappen der Filter
   function toggleFilter(name) {
     var el = document.getElementById('filter-' + name);
     var chevron = document.getElementById('chevron-' + name);
@@ -124,9 +139,8 @@
     }
   }
 </script>
-
 <script>
-  // Entferne das "Keine News gefunden" Banner, wenn News geladen werden
+  // "Keine News gefunden" Banner entfernen, wenn News geladen werden
   document.addEventListener('DOMContentLoaded', function() {
     var loadMoreBtn = document.getElementById('load-more');
     if (loadMoreBtn) {
