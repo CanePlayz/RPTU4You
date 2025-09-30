@@ -9,30 +9,30 @@ Account
 {% endblock %}
 
 {% block content %}
-<div class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-gray-100">
-    <div class="bg-white p-6 my-4 rounded-lg shadow-md w-full max-w-md">
-        <h class="text-md font-medium mt-6 mb-2">Benutzername ändern</h>
+<div class="min-h-[calc(100vh-72px)] bg-gray-100 dark:bg-gray-900 flex items-center justify-center py-8">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md w-full max-w-md">
+    <h class="text-md font-medium mt-6 mb-2 text-gray-800 dark:text-gray-100">Benutzername ändern</h>
         <form method="post" class="space-y-4">
             {% csrf_token %}
             <input type="hidden" name="change_username" value="1">
             {% if username_success %}
-                <div class="text-sm text-green-600 mb-2">{{ username_success }}</div>
+                <div class="text-sm text-green-600 dark:text-green-400 mb-2">{{ username_success }}</div>
             {% endif %}
             {% if username_error %}
-                <div class="text-sm text-red-500 mb-2">{{ username_error }}</div>
+                <div class="text-sm text-red-500 dark:text-red-400 mb-2">{{ username_error }}</div>
             {% endif %}
-            <input type="text" name="new_username" value="{{ username }}" required class="border border-gray-300 rounded-md px-4 py-2 w-full">
-            <button type="submit" class="w-full bg-[#042c58] text-white rounded-md px-4 py-2 hover:bg-[#064694]">Benutzername ändern</button>
+            <input type="text" name="new_username" value="{{ username }}" required class="border border-gray-300 dark:border-gray-700 rounded-md px-4 py-2 w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100">
+            <button type="submit" class="w-full bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-blue-400">Benutzername ändern</button>
         </form>
         <br>
-        <h class="text-md font-medium mb-2">Passwort ändern</h>
+    <h class="text-md font-medium mb-2 text-gray-800 dark:text-gray-100">Passwort ändern</h>
         {% if messages %}
             <ul class="mb-4">
                 {% for message in messages %}
                     {% if message.tags == 'success' %}
-                        <li class="text-sm text-green-600">{{ message }}</li>
+                        <li class="text-sm text-green-600 dark:text-green-400">{{ message }}</li>
                     {% else %}
-                        <li class="text-sm text-red-500">{{ message }}</li>
+                        <li class="text-sm text-red-500 dark:text-red-400">{{ message }}</li>
                     {% endif %}
                 {% endfor %}
             </ul>
@@ -41,7 +41,7 @@ Account
             {% csrf_token %}
             <input type="hidden" name="change_password" value="1">
             {# Info-Text für Passwort-Anforderungen #}
-            <div id="password-info" class="mb-2 text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md p-2">
+            <div id="password-info" class="mb-2 text-sm text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2">
                 <b>Passwort:</b>
                 <ul>
                     <li>Mindestens 8 Zeichen lang sein</li>
@@ -51,10 +51,10 @@ Account
                 </ul>
             </div>
             <div class="relative">
-                <label for="id_old_password" class="block text-sm font-medium text-gray-700">Aktuelles Passwort</label>
+                <label for="id_old_password" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Aktuelles Passwort</label>
                 {{ form.old_password }}
                 {% if form.old_password.errors %}
-                    <ul class="text-sm text-red-500 mt-1">
+                    <ul class="text-sm text-red-500 dark:text-red-400 mt-1">
                         {% for error in form.old_password.errors %}
                             <li>{{ error }}</li>
                         {% endfor %}
@@ -62,10 +62,10 @@ Account
                 {% endif %}
             </div>
             <div class="relative">
-                <label for="id_new_password1" class="block text-sm font-medium text-gray-700">Neues Passwort</label>
+                <label for="id_new_password1" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Neues Passwort</label>
                 {{ form.new_password1 }}
                 {% if form.new_password1.errors %}
-                    <ul class="text-sm text-red-500 mt-1">
+                    <ul class="text-sm text-red-500 dark:text-red-400 mt-1">
                         {% for error in form.new_password1.errors %}
                             <li>{{ error }}</li>
                         {% endfor %}
@@ -73,10 +73,10 @@ Account
                 {% endif %}
             </div>
             <div class="relative">
-                <label for="id_new_password2" class="block text-sm font-medium text-gray-700">Neues Passwort wiederholen</label>
+                <label for="id_new_password2" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Neues Passwort wiederholen</label>
                 {{ form.new_password2 }}
                 {% if form.new_password2.errors %}
-                    <ul class="text-sm text-red-500 mt-1">
+                    <ul class="text-sm text-red-500 dark:text-red-400 mt-1">
                         {% for error in form.new_password2.errors %}
                             <li>{{ error }}</li>
                         {% endfor %}
@@ -84,16 +84,16 @@ Account
                 {% endif %}
             </div>
             {% if form.non_field_errors %}
-                <ul class="text-sm text-red-500 mt-1">
+                <ul class="text-sm text-red-500 dark:text-red-400 mt-1">
                     {% for error in form.non_field_errors %}
                         <li>{{ error }}</li>
                     {% endfor %}
                 </ul>
             {% endif %}
-            <button type="submit" class="w-full bg-[#042c58] text-white rounded-md px-4 py-2 hover:bg-blue-600">Passwort ändern</button>
+            <button type="submit" class="w-full bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600 dark:hover:bg-blue-400">Passwort ändern</button>
         </form>
         <!-- Zurück zur Startseite -->
-       <a href="{% url 'News' %}" class="block text-center text-[#042c58] mt-4">Zurück zur Startseite</a>
+    <a href="{% url 'News' %}" class="block text-center text-[#042c58] dark:text-blue-400 mt-4 hover:underline">Zurück zur Startseite</a>
     </div>
 </div>
 {% endblock %}
