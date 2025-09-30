@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-Anmelden
+    Anmelden
 {% endblock %}
 
 {% block head-optional %}
@@ -10,8 +10,11 @@ Anmelden
 
 {% block content %}
 <div class="min-h-[calc(100vh-72px)] bg-gray-100 dark:bg-gray-900 flex items-center justify-center py-8">
+    <!-- Login-Box -->
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md w-full max-w-md">
+        <!-- Überschrift -->
         <h1 class="text-lg font-semibold text-center mb-4 text-gray-800 dark:text-gray-100">Anmelden</h1>
+        <!-- Informationen zur Anmeldung -->
         {% if messages %}
             <ul class="mb-4">
                 {% for message in messages %}
@@ -23,19 +26,25 @@ Anmelden
                 {% endfor %}
             </ul>
         {% endif %}
+        <!-- Login-Formular -->
         <form method="post" action="{% url 'login' %}" class="space-y-4">
-            {% csrf_token %}
+            <!-- Keine Cross-Site-Request-Forgery-Angriffe -->
+            {% csrf_token %} 
             <input type="hidden" name="next" value="{{ next }}">
+            <!-- Eingabefeld für Benutzername -->
             <div>
                 <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Benutzername:</label>
                 <input type="text" name="username" id="username" required>
             </div>
+            <!-- Eingabefeld für Passwort -->
             <div>
                 <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Passwort:</label>
                 <input type="password" name="password" id="password" required>
             </div>
+            <!-- Absenden-Button -->
             <button type="submit" class="w-full bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-blue-400">Anmelden</button>
         </form>
+        <!-- Link zur Registrierung für neue Nutzer -->
         <p class="text-sm text-center mt-4 text-gray-700 dark:text-gray-200">Noch keinen Account? <a href="{% url 'register' %}" class="text-[#042c58] dark:text-blue-400 hover:underline">Jetzt registrieren</a></p>
     </div>
 </div>

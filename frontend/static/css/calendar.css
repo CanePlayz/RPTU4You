@@ -6,7 +6,7 @@
   font-style: italic;
 }
 
-/* Kein Scrollen*/
+/* Kein Scrollen */
 body {
         margin: 0;
         height: 100vh;
@@ -25,8 +25,8 @@ body {
 .dark .fc-event .fc-event-title, 
 .dark .fc-event .fc-event-time,
 .dark .fc .fc-toolbar-title,
-.dark .fc .fc-day-today, 
-.dark .fc .fc-day-today .fc-daygrid-day-number {
+.dark .fc .fc-day-today,
+.dark .fc-daygrid-day-number {
   color: #fff !important;
 }
 /* Hintergrund für den aktuellen Tag im Kalender im Darkmode */

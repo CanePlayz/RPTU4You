@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Registrieren
+    Registrieren
 {% endblock %}
 
 {% block head-optional %}
@@ -10,11 +10,15 @@ Registrieren
 
 {% block content %}
 <div class="min-h-[calc(100vh-72px)] bg-gray-100 dark:bg-gray-900 flex items-center justify-center py-8">
+    <!-- Registrierungs-Box -->
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md w-full max-w-md">
+        <!-- Überschrift -->
         <h1 class="text-lg font-semibold text-center mb-4 text-gray-800 dark:text-gray-100">Registrieren</h1>
-    <form method="post" class="space-y-4">
+        <!-- Formular für die Registrierung -->
+        <form method="post" class="space-y-4">
+            <!-- Keine Cross-Site-Request-Forgery-Angriffe -->
             {% csrf_token %}
-            {# Benutzername Input #}
+            <!-- Benutzername-Feld -->
             <div>
                 <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">{{ form.username.label }}</label>
                 {{ form.username }}
@@ -22,7 +26,7 @@ Registrieren
                     <p class="text-sm text-red-500 dark:text-red-400 mt-1">{{ form.username.errors|join:", " }}</p>
                 {% endif %}
             </div>
-            {# Info-Text für Passwort-Anforderungen #}
+            <!-- Passwort-Anforderungen als Info-Block -->
             <div id="password-info" class="mb-2 text-sm text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2">
                 <b>Passwort:</b>
                 <ul>
@@ -32,7 +36,7 @@ Registrieren
                     <li>Nicht allgemein üblich</li>
                 </ul>
             </div>
-            {# Alle anderen Felder außer Benutzername #}
+            <!-- Passwort-Felder -->
             {% for field in form %}
                 {% if field.name != 'username' %}
                 <div>
@@ -44,9 +48,11 @@ Registrieren
                 </div>
                 {% endif %}
             {% endfor %}
+            <!-- Absenden-Button -->
             <button type="submit" class="w-full bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-blue-400">Registrieren</button>
         </form>
-    <p class="text-sm text-center mt-4 text-gray-700 dark:text-gray-200">Bereits registriert? <a href="{% url 'login' %}" class="text-[#042c58] dark:text-blue-400 hover:underline">Jetzt anmelden</a></p>
+        <!-- Link zur Login-Seite für bereits registrierte Nutzer -->
+        <p class="text-sm text-center mt-4 text-gray-700 dark:text-gray-200">Bereits registriert? <a href="{% url 'login' %}" class="text-[#042c58] dark:text-blue-400 hover:underline">Jetzt anmelden</a></p>
     </div>
 </div>
 {% endblock %}
