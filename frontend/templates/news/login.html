@@ -5,30 +5,20 @@ Anmelden
 {% endblock %}
 
 {% block head-optional %}
-    <style>
-        input[type="text"],
-        input[type="password"] {
-            appearance: none;
-            -webkit-appearance: none;
-            border: 1px solid black;
-            border-radius: 0.375rem; 
-            padding: 0.75rem;
-            width: 100%;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/input.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-gray-100">
-    <div class="bg-white p-6 my-4  rounded-lg shadow-md w-full max-w-md">
-        <h1 class="text-lg font-semibold text-center mb-4">Anmelden</h1>
+<div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center py-8">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md w-full max-w-md">
+        <h1 class="text-lg font-semibold text-center mb-4 text-gray-800 dark:text-gray-100">Anmelden</h1>
         {% if messages %}
             <ul class="mb-4">
                 {% for message in messages %}
                     {% if message == "Registrierung erfolgreich! Bitte melde dich an." or message.tags == 'success' %}
-                        <li class="text-sm text-green-600">{{ message }}</li>
+                        <li class="text-sm text-green-600 dark:text-green-400">{{ message }}</li>
                     {% else %}
-                        <li class="text-sm text-red-500">{{ message }}</li>
+                        <li class="text-sm text-red-500 dark:text-red-400">{{ message }}</li>
                     {% endif %}
                 {% endfor %}
             </ul>
@@ -37,16 +27,16 @@ Anmelden
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ next }}">
             <div>
-                <label for="username" class="block text-sm font-medium text-gray-700">Benutzername:</label>
+                <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Benutzername:</label>
                 <input type="text" name="username" id="username" required>
             </div>
             <div>
-                <label for="password" class="block text-sm font-medium text-gray-700">Passwort:</label>
+                <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Passwort:</label>
                 <input type="password" name="password" id="password" required>
             </div>
             <button type="submit" class="w-full bg-[#042c58] text-white rounded-md px-4 py-2 hover:bg-[#064694]">Anmelden</button>
         </form>
-        <p class="text-sm text-center mt-4">Noch keinen Account? <a href="{% url 'register' %}" class="text-[#042c58] hover:underline">Jetzt registrieren</a></p>
+        <p class="text-sm text-center mt-4 text-gray-700 dark:text-gray-200">Noch keinen Account? <a href="{% url 'register' %}" class="text-[#042c58] dark:text-blue-400 hover:underline">Jetzt registrieren</a></p>
     </div>
 </div>
 {% endblock %}
