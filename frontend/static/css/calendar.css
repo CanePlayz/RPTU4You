@@ -1,0 +1,41 @@
+/* Globale Events optisch hervorheben */
+.fc-event.global-event {
+  background-color: #e0e0e0 !important;
+  color: #333 !important;
+  border-left: 5px solid #0074d9 !important;
+  font-style: italic;
+}
+
+/* Kein Scrollen*/
+body {
+        margin: 0;
+        height: 100vh;
+        overflow: hidden;
+    }   
+
+/* ------------------------------------- */
+/* Darkmode Anpassungen für den Kalender */
+/* ------------------------------------- */
+
+/* Schriftfarbe des Kalenders im Darkmode */
+.dark .fc .fc-col-header-cell,
+.dark .fc .fc-day-header,
+.dark .fc .fc-col-header-cell-cushion,
+.dark .fc-event, 
+.dark .fc-event .fc-event-title, 
+.dark .fc-event .fc-event-time,
+.dark .fc .fc-toolbar-title,
+.dark .fc .fc-day-today, 
+.dark .fc .fc-day-today .fc-daygrid-day-number {
+  color: #fff !important;
+}
+/* Hintergrund für den aktuellen Tag im Kalender im Darkmode */
+.dark .fc .fc-day-today {
+  background-color: #1e293b !important;
+}
+/* Hintergrundfarbe für globale Events im Darkmode */
+.dark .fc-event.global-event {
+  background-color: #374151 !important;
+  color: #fff !important;
+  border-left: 5px solid #60a5fa !important;
+}
