@@ -35,34 +35,16 @@
       <!-- -------------------------------- -->
       <!-- Mittlere Navigation: Verlinkungen -->
       <!-- -------------------------------- -->
-      <div class="flex items-center justify-center space-x-6 w-1/2">
-        <!--Mobile Version -->
-        <button type="button" data-dropdown-toggle="links-dropdown-menu" class="order-3 inline-flex items-center justify-center px-4 w-7 h-7 text-sm text-gray-900 dark:text-white rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white md:hidden">Links</button>
-        <div class="z-50 hidden absolute top-12 right-0 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700" id="links-dropdown-menu">
-          <ul class="py-2 font-medium" role="none">
-            <li>
-              <a href="{% url 'news' %}" class="text-sm font-medium {% if request.resolver_match.url_name == 'news' or request.resolver_match.url_name == 'news_view' %}text-blue-700 dark:text-blue-500{% else %}text-gray-100 hover:text-blue-200 dark:hover:text-blue-200 {% endif %}">Latest News</a>
-            </li>
-            <li>
-              <a href="{% url 'foryoupage' %}" class="text-sm font-medium {% if request.resolver_match.url_name == 'foryoupage' %}text-blue-700 dark:text-blue-500{% else %}text-gray-100 hover:text-blue-200 dark:text-gray-200 dark:hover:text-blue-200 {% endif %}">4YouPage</a>
-            </li>
-            <li>
-              <a href="{% url 'calendar_page' %}" class="text-sm font-medium {% if request.resolver_match.url_name == 'calendar_page' %}text-blue-700 dark:text-blue-500{% else %}text-gray-100 hover:text-blue-200 dark:text-gray-200 dark:hover:text-blue-200 {% endif %}">Kalender</a>
-            </li>
-            <li>
-              <a href="{% url 'links' %}" class="text-sm font-medium {% if request.resolver_match.url_name == 'links' %}text-blue-700 dark:text-blue-500{% else %}text-gray-100 hover:text-blue-200 dark:text-gray-200 dark:hover:text-blue-200 {% endif %}">Uni Links</a>
-            </li>
-          </ul>
-        </div>
-        <a href="{% url 'news' %}" class="order-1 max-md:hidden md:text-xl md:font-medium md:{% if request.resolver_match.url_name == 'news' or request.resolver_match.url_name == 'news_view' %}text-blue-700 md:dark:text-blue-500{% else %}text-gray-100 md:hover:text-blue-200 md:dark:hover:text-blue-200 {% endif %}">Latest News</a>
-        <a href="{% url 'foryoupage' %}" class="order-2 max-md:hidden md:text-xl md:font-medium md:{% if request.resolver_match.url_name == 'foryoupage' %}text-blue-700 md:dark:text-blue-500{% else %}text-gray-100 md:hover:text-blue-200 md:dark:text-gray-200 md:dark:hover:text-blue-200 {% endif %}">4YouPage</a>
-        <a href="{% url 'calendar_page' %}" class="order-4 max-md:hidden md:text-xl md:font-medium md:{% if request.resolver_match.url_name == 'calendar_page' %}text-blue-700 md:dark:text-blue-500{% else %}text-gray-100 md:hover:text-blue-200 md:dark:text-gray-200 dark:hover:text-blue-200 {% endif %}">Kalender</a>
-        <a href="{% url 'links' %}" class="order-5 max-md:hidden md:text-xl md:font-medium md:{% if request.resolver_match.url_name == 'links' %}text-blue-700 md:dark:text-blue-500{% else %}text-gray-100 md:hover:text-blue-200 md:dark:text-gray-200 md:dark:hover:text-blue-200 {% endif %}">Uni Links</a>
+      <div class="max-md:hidden flex items-center justify-between space-x-6 w-1/2">
+        <a href="{% url 'news' %}" class="md:text-xl md:font-medium md:{% if request.resolver_match.url_name == 'news' or request.resolver_match.url_name == 'news_view' %}text-blue-700 md:dark:text-blue-500{% else %}text-gray-100 md:hover:text-blue-200 md:dark:hover:text-blue-200 {% endif %}">Latest News</a>
+        <a href="{% url 'foryoupage' %}" class="md:text-xl md:font-medium md:{% if request.resolver_match.url_name == 'foryoupage' %}text-blue-700 md:dark:text-blue-500{% else %}text-gray-100 md:hover:text-blue-200 md:dark:text-gray-200 md:dark:hover:text-blue-200 {% endif %}">4YouPage</a>
+        <a href="{% url 'calendar_page' %}" class="md:text-xl md:font-medium md:{% if request.resolver_match.url_name == 'calendar_page' %}text-blue-700 md:dark:text-blue-500{% else %}text-gray-100 md:hover:text-blue-200 md:dark:text-gray-200 dark:hover:text-blue-200 {% endif %}">Kalender</a>
+        <a href="{% url 'links' %}" class="md:text-xl md:font-medium md:{% if request.resolver_match.url_name == 'links' %}text-blue-700 md:dark:text-blue-500{% else %}text-gray-100 md:hover:text-blue-200 md:dark:text-gray-200 md:dark:hover:text-blue-200 {% endif %}">Uni Links</a>
       </div>
       <!-- ----------------------------------------------- -->
       <!-- Rechte Navigation: Profil, Sprache und Darkmode -->
       <!-- ----------------------------------------------- -->
-      <div class="flex items-center justify-end space-x-4 w-1/4 dropdown-container relative pr-10">
+      <div class="flex items-center justify-end space-x-4 w-3/4 md:w-1/4 dropdown-container relative md:pr-10">
         <!-- Sprache und Darkmode -->
         <div class="relative flex items-center pr-7">
           <!-- Sprachen Button -->
@@ -122,8 +104,8 @@
                 </svg>
               </span>
             </label>
-          </div>  
-        </div>
+          </div>
+        </div>  
         <!-- Profil Button -->
         <button type="button" class="flex text-sm bg-transparent rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 profile-icon items-center" id="user-menu-button" aria-expanded="false"> 
           <img class="w-10 h-10 rounded-full" src="{% static 'images/user-icon.png' %}" alt="user photo">
@@ -162,7 +144,26 @@
     {% endblock %}
 
   </div>
-  
+
+  <!--Navigationsleiste mobile unten-->
+  <div class="bg-[#042c58] dark:bg-[#0a111a] fixed bottom-0 flex items-center justify-between w-full md:hidden">
+    <a href="{% url 'news' %}">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z" />
+    </svg>
+    </a>
+    <a href="{% url 'foryoupage' %}" class="text-m font-medium text-white">4You</a>
+    <a href="{% url 'calendar_page' %}">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
+    </svg>
+    </a>
+    <a href="{% url 'links' %}">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+    </svg>
+    </a>
+  </div>
 </body>
 
 </html>
