@@ -12,11 +12,11 @@ Dein Kalender
 
 {% block content %}
 
-<div class="flex bg-gray-100 dark:bg-gray-900 min-h-screen">
+<div class="flex">
   <!-- ----------------------- -->
   <!-- Linker Bereich: Buttons -->
   <!-- ----------------------- -->
-  <div class="w-64 p-6 flex flex-col h-[calc(100vh-72px)] items-start bg-white dark:bg-[#181818] rounded-lg shadow">
+  <div class="w-64 p-6 flex flex-col h-[calc(100vh-72px)] items-start bg-white dark:bg-gray-900 rounded-lg shadow">
     <!-- Termin erstellen Button -->
     <div class="flex flex-col w-full">
       <button id="openPopup" class="bg-[#2c3f51] dark:bg-gray-800 text-white dark:text-gray-100 rounded-lg px-4 py-3 w-full flex justify-start text-lg font-semibold hover:bg-[#39506a] dark:hover:bg-gray-700">
@@ -38,7 +38,7 @@ Dein Kalender
   <!-- ------------------------- -->
   <!-- Rechter Bereich: Kalender -->
   <!-- ------------------------- -->
-  <div id="calendar" class="flex-1 h-[calc(100vh-72px)] p-4 w-full bg-white dark:bg-[#181818] rounded-lg shadow"></div>
+  <div id="calendar" class="flex-1 h-[calc(100vh-72px)] p-4 w-full bg-white dark:bg-gray-900 rounded-lg shadow"></div>
   <!-- Popup für Terminerstellung und -bearbeitung -->
   <div id="eventPopup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 transition-opacity duration-200">
     <div class="w-full max-w-md bg-white dark:bg-[#181818] rounded-2xl shadow-2xl p-6 relative animate-fadeIn">
