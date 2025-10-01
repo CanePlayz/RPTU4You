@@ -19,40 +19,40 @@
 {% endblock %}
 
 {% block content %}
-<div class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-gray-100">
+<div class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-gray-100 dark:bg-gray-900">
     <div class="w-full max-w-5xl px-8">
         <!-- Überschrift -->
-        <h1 class="text-3xl font-extrabold my-8 text-gray-800">Meine Präferenzen</h1>
+    <h1 class="text-3xl font-extrabold my-8 text-gray-800 dark:text-gray-100">Meine Präferenzen</h1>
         <!-- Formular zur Auswahl der Präferenzen -->
         <form method="post" class="flex flex-row gap-6 items-start">
             {% csrf_token %} <!-- CSRF-Schutz -->
             <!-- Standort-Auswahl -->
-            <div class="flex-1 min-w-[180px]">
-                <label for="{{ form.standorte.id_for_label }}" class="block text-lg font-bold text-gray-700 mb-2">{{ form.standorte.label }}</label>
+            <div class="flex-1 min-w-[180px] text-gray-700 dark:text-gray-100">
+                <label for="{{ form.standorte.id_for_label }}" class="block text-lg font-bold text-gray-700 dark:text-gray-100 mb-2">{{ form.standorte.label }}</label>
                 {{ form.standorte }}
                 {% if form.standorte.errors %}
                     <div class="text-sm text-red-500">{{ form.standorte.errors }}</div>
                 {% endif %}
             </div>
             <!-- Inhaltskategorie-Auswahl -->
-            <div class="flex-1 min-w-[180px]">
-                <label for="{{ form.inhaltskategorien.id_for_label }}" class="block text-lg font-bold text-gray-700 mb-2">{{ form.inhaltskategorien.label }}</label>
+            <div class="flex-1 min-w-[180px] text-gray-700 dark:text-gray-100">
+                <label for="{{ form.inhaltskategorien.id_for_label }}" class="block text-lg font-bold text-gray-700 dark:text-gray-100 mb-2">{{ form.inhaltskategorien.label }}</label>
                 {{ form.inhaltskategorien }}
                 {% if form.inhaltskategorien.errors %}
                     <div class="text-sm text-red-500">{{ form.inhaltskategorien.errors }}</div>
                 {% endif %}
             </div>
             <!-- Quellen-Auswahl -->
-            <div class="flex-1 min-w-[180px]">
-                <label for="{{ form.quellen.id_for_label }}" class="block text-lg font-bold text-gray-700 mb-2">{{ form.quellen.label }}</label>
+            <div class="flex-1 min-w-[180px] text-gray-700 dark:text-gray-100">
+                <label for="{{ form.quellen.id_for_label }}" class="block text-lg font-bold text-gray-700 dark:text-gray-100 mb-2">{{ form.quellen.label }}</label>
                 {{ form.quellen }}
                 {% if form.quellen.errors %}
                     <div class="text-sm text-red-500">{{ form.quellen.errors }}</div>
                 {% endif %}
             </div>
             <!-- Zielgruppen-Auswahl -->
-            <div class="flex-1 min-w-[180px]">
-                <label for="{{ form.zielgruppen.id_for_label }}" class="block text-lg font-bold text-gray-700 mb-2">{{ form.zielgruppen.label }}</label>
+            <div class="flex-1 min-w-[180px] text-gray-700 dark:text-gray-100">
+                <label for="{{ form.zielgruppen.id_for_label }}" class="block text-lg font-bold text-gray-700 dark:text-gray-100 mb-2">{{ form.zielgruppen.label }}</label>
                 {{ form.zielgruppen }}
                 {% if form.zielgruppen.errors %}
                     <div class="text-sm text-red-500">{{ form.zielgruppen.errors }}</div>
@@ -60,11 +60,11 @@
             </div>
             <!-- Button zum Speichern der Präferenzen -->
             <div class="flex flex-col justify-end h-full">
-                <button type="submit" class="bg-[#042c58] text-white rounded-md px-4 py-2 hover:bg-[#064694]">Speichern</button>
+                <button type="submit" class="bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600 dark:hover:bg-blue-400">Speichern</button>
             </div>
         </form>
         <!-- Link zurück zur Startseite -->
-        <a href="{% url 'News' %}" class="block text-center text-lg font-bold text-gray-700 mt-6">Zurück zur Startseite</a>
+    <a href="{% url 'News' %}" class="text-[#042c58] dark:text-blue-500 hover:underline font-semibold mt-6 block text-center mx-auto w-fit my-6">← Zurück zur Startseite</a>
     </div>
 </div>
 {% endblock %}
