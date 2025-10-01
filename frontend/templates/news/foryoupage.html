@@ -1,9 +1,45 @@
 {% extends "base.html" %}
 
 {% block title %}
-News
+  4You Page
 {% endblock %}
 
 {% block content %}
-<h2>News<h2>
+<div class="flex bg-gray-100 min-h-screen">
+  <!-- Mitte: News -->
+  <div class="flex-1 mt-3 px-8 overflow-y-auto">
+    <main id="main">
+        <div id="news-container">
+            {% if detail_news %}
+                {% include "news/partials/_news_detail.html" with news=detail_news %}
+            {% else %}
+                {% include "news/partials/_news_list.html" with news_list=news_list has_more=has_more %}
+            {% endif %}
+        </div>
+        {% if not detail_news %}
+          <button id="load-more" class="mt-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Mehr laden</button>
+        {% endif %}
+    </main>
+  </div>
+
+  <!-- Rechte Seite: Kleiner Kalender -->
+  <div class="w-80 pl-5 sticky top-[72px] h-[calc(100vh-72px)] bg-gray-100">
+      <h3 class="text-lg font-semibold text-center mb-4">Nächste Termine</h3>
+      {% if upcoming_events %}
+        <ul class="space-y-4">
+          {% for event in upcoming_events %}
+            <li class="bg-gray-50 p-4 rounded-lg shadow">
+              <p class="text-sm text-gray-500">{{ event.start|date:"d.m.Y H:i" }} - {{ event.end|date:"H:i" }}</p>
+              <p class="font-bold text-gray-800">{{ event.title }}</p>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-gray-500 italic text-center">Keine anstehenden Termine.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/news.js' %}"></script>
 {% endblock %}

@@ -50,7 +50,12 @@ def get_filtered_queryset(active_filters: dict[str, Any]) -> QuerySet[News]:
     if audiences:
         queryset = queryset.filter(zielgruppen__name__in=audiences)
     if sources:
-        queryset = queryset.filter(quelle__name__in=sources)
+        rundmail_types = ["Rundmail", "Sammel-Rundmail"]
+        other_sources = [src for src in sources if src not in rundmail_types]
+        if other_sources:
+            queryset = queryset.filter(quelle__name__in=other_sources)
+        if any(src in rundmail_types for src in sources):
+            queryset = queryset.filter(quelle_typ__in=rundmail_types)
 
     return queryset.order_by("-erstellungsdatum")
 
@@ -193,43 +198,39 @@ def foryoupage(request: HttpRequest) -> HttpResponse:
     """
     Ansicht für die For You-Seite, die personalisierte News anzeigt.
     """
-    if not request.user.is_authenticated:
-        messages.warning(request, "Die For You-Seite ist nur mit Anmeldung einsehbar.")
-        return redirect("login")
+    # Kalender
+    now = timezone.now()
 
+    # Eigene und globale Termine abrufen
+    user_events = CalendarEvent.objects.filter(start__gte=now, user=request.user)
+    global_events = CalendarEvent.objects.filter(start__gte=now, is_global=True)
+    upcoming_events = (user_events | global_events).distinct().order_by("start")[:3]
+
+    # Nutzerpräferenzen abrufen
     if isinstance(request.user, User):
         preferences = {
-            "locations": (
-                request.user.standorte.all()
-                if hasattr(request.user, "standorte")
-                else []
-            ),
-            "categories": (
-                request.user.inhaltskategorien.all()
-                if hasattr(request.user, "preferences")
-                else []
-            ),
-            "audiences": (
-                request.user.zielgruppen.all()
-                if hasattr(request.user, "preferences")
-                else []
-            ),
-            "sources": (
-                request.user.quellen.all()
-                if hasattr(request.user, "preferences")
-                else []
-            ),
+            "locations": request.user.standorte.values_list("name", flat=True),
+            "categories": request.user.inhaltskategorien.values_list("name", flat=True),
+            "audiences": request.user.zielgruppen.values_list("name", flat=True),
+            "sources": request.user.quellen.values_list("name", flat=True),
         }
 
-        news_items = get_filtered_queryset(preferences)
-        news_items = paginate_queryset(news_items)
+        # News basierend auf Präferenzen filtern
+        news_items_queryset = get_filtered_queryset(preferences)
+        total_filtered_count = news_items_queryset.count()
+        paginated_items = paginate_queryset(news_items_queryset)
+        has_more = total_filtered_count > len(paginated_items)
+
+        context = {
+            "upcoming_events": upcoming_events,
+            "news_list": paginated_items,
+            "has_more": has_more,
+        }
+
+        return render(request, "news/foryoupage.html", context)
     else:
         messages.error(request, "Ungültiger Benutzer.")
         return redirect("login")
-
-    return render(
-        request, "news/news.html", {"news_items": news_items, "has_more": True}
-    )
 
 
 def links(request: HttpRequest) -> HttpResponse:

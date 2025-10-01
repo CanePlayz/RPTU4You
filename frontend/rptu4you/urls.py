@@ -5,7 +5,11 @@ from news.views import receive_news, views
 
 # Sprachunabhängige URLs
 urlpatterns = [
+    # Admin
     path("admin/", admin.site.urls),
+    # API
+    path("api/news/", receive_news.ReceiveNews.as_view(), name="receive_news"),
+    path("api/news/rundmail/date", views.request_date, name="request_date"),
     # Kalender
     path("api/calendar-events/", views.calendar_events, name="calendar_events"),
     path(
@@ -26,9 +30,6 @@ urlpatterns += i18n_patterns(
     path("news/partial/", views.news_partial, name="news_partial"),
     path("news/<int:pk>/", views.news_detail, name="news_detail"),
     path("foryoupage/", views.foryoupage, name="foryoupage"),
-    # API
-    path("api/news/", receive_news.ReceiveNews.as_view(), name="receive_news"),
-    path("api/news/rundmail/date", views.request_date, name="request_date"),
     # User
     path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),
