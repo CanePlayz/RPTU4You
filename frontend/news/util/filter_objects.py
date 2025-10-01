@@ -66,17 +66,30 @@ def get_objects_with_emojis() -> dict[str, list[dict[str, str]]]:
     for src in objects["sources"]:
         if isinstance(src, Fachschaft):
             emoji = SOURCES_EMOJIS.get("Fachschaft", "")
+            sources_with_emojis.append({"name": src.name, "emoji": emoji})
         elif isinstance(src, Rundmail):
-            emoji = SOURCES_EMOJIS.get("Rundmail", "")
+            # Einzelne Rundmails nicht hinzufügen
+            continue
         elif isinstance(src, InterneWebsite):
             emoji = SOURCES_EMOJIS.get("Interne Website", "")
+            sources_with_emojis.append({"name": src.name, "emoji": emoji})
         elif isinstance(src, ExterneWebsite):
             emoji = SOURCES_EMOJIS.get("Externe Website", "")
+            sources_with_emojis.append({"name": src.name, "emoji": emoji})
         elif isinstance(src, EmailVerteiler):
             emoji = SOURCES_EMOJIS.get("Email-Verteiler", "")
+            sources_with_emojis.append({"name": src.name, "emoji": emoji})
         else:
             emoji = SOURCES_EMOJIS.get("Quelle", "")
-        sources_with_emojis.append({"name": src.name, "emoji": emoji})
+            sources_with_emojis.append({"name": src.name, "emoji": emoji})
+
+    # Rundmail-Typen explizit hinzufügen
+    sources_with_emojis.append(
+        {"name": "Rundmail", "emoji": SOURCES_EMOJIS.get("Rundmail", "")}
+    )
+    sources_with_emojis.append(
+        {"name": "Sammel-Rundmail", "emoji": SOURCES_EMOJIS.get("Sammel-Rundmail", "")}
+    )
 
     return {
         "locations": locations_with_emojis,

@@ -24,6 +24,7 @@ LOCATION_EMOJIS = {"Kaiserslautern": "🏙️", "Landau": "🌳"}
 
 SOURCES_EMOJIS = {
     "Rundmail": "📧",
+    "Sammel-Rundmail": "📧",
     "Interne Website": "🌐",
     "Externe Website": "🔗",
     "Fachschaft": "👥",
