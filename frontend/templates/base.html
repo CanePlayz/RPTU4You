@@ -1,6 +1,19 @@
 {% load static %}
 <!DOCTYPE html>
+
 <html lang="de">
+  <!-- Darkmode sofort setzen, bevor CSS lädt (Somit deutlich kürzere Ladezeiten) -->
+  <script>
+    (function() {
+      try {
+        var dark = localStorage.getItem('theme') === 'dark';
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (dark || (!localStorage.getItem('theme') && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch(e){}
+    })();
+  </script>
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
