@@ -1,39 +1,85 @@
+x-common-env: &common-env
+  ENVIRONMENT: prod
+  OPENAI_API_KEY: ${OPENAI_API_KEY}
+
 services:
   db:
     image: postgres:latest
     environment:
-      POSTGRES_DB: mydb
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_DB_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_DB_PASSWORD}
     volumes:
       - db_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
     networks:
       - backend
 
   django:
     image: caneplayz/rptu4you-frontend:latest
     environment:
-      - API_KEY=${API_KEY}
-      - ENVIRONMENT=prod
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      <<: *common-env
+      API_KEY: ${API_KEY}
+      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME}
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
+      SERVER: django
     ports:
       - "8000:8000"
     networks:
       - backend
     depends_on:
-      - db
-    command: /app/entrypoint.sh
+      - redis
+    command: ["python", "/app/entrypoint.py"]
+
+  celery-worker:
+    image: caneplayz/rptu4you-frontend:latest
+    environment:
+      <<: *common-env
+    depends_on:
+      - redis
+    networks:
+      - backend
+    command: celery -A rptu4you worker --loglevel=info
+    user: "1001"
+
+  celery-beat:
+    image: caneplayz/rptu4you-frontend:latest
+    depends_on:
+      - redis
+    networks:
+      - backend
+    command: celery -A rptu4you beat --loglevel=info
+    user: "1001"
+
+  flower:
+    image: caneplayz/rptu4you-frontend:latest
+    depends_on:
+      - redis
+    networks:
+      - backend
+    command: celery -A rptu4you flower --port=5555 --address=0.0.0.0
+    ports:
+      - "5555:5555"
+    user: "1001"
 
   scraper:
     image: caneplayz/rptu4you-scraper:latest
     environment:
       - API_KEY=${API_KEY}
+      - IMAP_SERVER=${IMAP_SERVER}
+      - IMAP_PORT=${IMAP_PORT}
+      - IMAP_USERNAME=${IMAP_USERNAME}
+      - IMAP_PASSWORD=${IMAP_PASSWORD}
     networks:
       - backend
-    depends_on:
-      - db
-      - django
-    command: python -u scheduler.py
+    command: ["python", "/app/scheduler.py"]
 
 networks:
   backend:

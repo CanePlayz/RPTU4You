@@ -6,9 +6,9 @@ services:
   db:
     image: postgres:latest
     environment:
-      POSTGRES_DB: mydb
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_DB_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_DB_PASSWORD}
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
@@ -44,7 +44,8 @@ services:
     build:
       context: .
       dockerfile: frontend/Dockerfile
-    environment: *common-env
+    environment:
+      <<: *common-env
     depends_on:
       - redis
     networks:
@@ -67,11 +68,11 @@ services:
     build:
       context: .
       dockerfile: frontend/Dockerfile
-    command: celery -A rptu4you flower --port=5555 --address=0.0.0.0
     depends_on:
       - redis
     networks:
       - backend
+    command: celery -A rptu4you flower --port=5555 --address=0.0.0.0
     ports:
       - "5555:5555"
     user: "1001"
@@ -88,7 +89,7 @@ services:
       - IMAP_PASSWORD=${IMAP_PASSWORD}
     networks:
       - backend
-    command: [python, "/app/scheduler.py"]
+    command: ["python", "/app/scheduler.py"]
 
 networks:
   backend:
