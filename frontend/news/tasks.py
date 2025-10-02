@@ -59,13 +59,35 @@ def add_audiences_and_categories(
     categories: list[str],
     audiences: list[str],
 ):
+    # Erlaube nur vordefinierte Kategorien und Zielgruppen
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    content_categories_file_path = os.path.join(BASE_DIR, "inhaltskategorien.txt")
+    target_group_categories_file_path = os.path.join(
+        BASE_DIR, "publikumskategorien.txt"
+    )
+    with open(
+        content_categories_file_path,
+        "r",
+        encoding="utf-8",
+    ) as file:
+        allowed_categories = file.read().strip().split("\n")
+    with open(
+        target_group_categories_file_path,
+        "r",
+        encoding="utf-8",
+    ) as file:
+        allowed_audiences = file.read().strip().split("\n")
+
+    # Nur erlaubte Kategorien und Zielgruppen hinzufügen
     for category in categories:
-        category_object, _ = InhaltsKategorie.objects.get_or_create(name=category)
-        news.inhaltskategorien.add(category_object)
+        if category in allowed_categories:
+            category_object, _ = InhaltsKategorie.objects.get_or_create(name=category)
+            news.inhaltskategorien.add(category_object)
 
     for audience in audiences:
-        audience_object, _ = Zielgruppe.objects.get_or_create(name=audience)
-        news.zielgruppen.add(audience_object)
+        if audience in allowed_audiences:
+            audience_object, _ = Zielgruppe.objects.get_or_create(name=audience)
+            news.zielgruppen.add(audience_object)
 
 
 # Einzelne Verarbeitungsschritte für News-Objekte zur Parallelisierung
