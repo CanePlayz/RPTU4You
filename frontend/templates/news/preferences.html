@@ -1,8 +1,9 @@
 
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% block title %}
-    Präferenzen
+    {% trans "Präferenzen" %}
 {% endblock %}
 
 {% block head-optional %}
@@ -22,7 +23,7 @@
 <div class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-gray-100">
     <div class="w-full max-w-5xl px-8">
         <!-- Überschrift -->
-        <h1 class="text-3xl font-extrabold my-8 text-gray-800">Meine Präferenzen</h1>
+    <h1 class="text-3xl font-extrabold my-8 text-gray-800">{% trans "Meine Präferenzen" %}</h1>
         <!-- Formular zur Auswahl der Präferenzen -->
         <form method="post" class="flex flex-row gap-6 items-start">
             {% csrf_token %} <!-- CSRF-Schutz -->
@@ -60,11 +61,11 @@
             </div>
             <!-- Button zum Speichern der Präferenzen -->
             <div class="flex flex-col justify-end h-full">
-                <button type="submit" class="bg-[#042c58] text-white rounded-md px-4 py-2 hover:bg-[#064694]">Speichern</button>
+                <button type="submit" class="bg-[#042c58] text-white rounded-md px-4 py-2 hover:bg-[#064694]">{% trans "Speichern" %}</button>
             </div>
         </form>
         <!-- Link zurück zur Startseite -->
-        <a href="{% url 'News' %}" class="block text-center text-lg font-bold text-gray-700 mt-6">Zurück zur Startseite</a>
+    <a href="{% url 'News' %}" class="block text-center text-lg font-bold text-gray-700 mt-6">{% trans "Zurück zur Startseite" %}</a>
     </div>
 </div>
 {% endblock %}

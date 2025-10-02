@@ -1,4 +1,6 @@
+
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block title %}
   4You Page
@@ -17,14 +19,14 @@
             {% endif %}
         </div>
         {% if not detail_news %}
-          <button id="load-more" class="mt-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Mehr laden</button>
+          <button id="load-more" class="mt-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">{% trans "Mehr laden" %}</button>
         {% endif %}
     </main>
   </div>
 
   <!-- Rechte Seite: Kleiner Kalender -->
   <div class="w-80 pl-5 sticky top-[72px] h-[calc(100vh-72px)] bg-gray-100">
-      <h3 class="text-lg font-semibold text-center mb-4">Nächste Termine</h3>
+  <h3 class="text-lg font-semibold text-center mb-4">{% trans "Nächste Termine" %}</h3>
       {% if upcoming_events %}
         <ul class="space-y-4">
           {% for event in upcoming_events %}
@@ -35,7 +37,7 @@
           {% endfor %}
         </ul>
       {% else %}
-        <p class="text-gray-500 italic text-center">Keine anstehenden Termine.</p>
+  <p class="text-gray-500 italic text-center">{% trans "Keine anstehenden Termine." %}</p>
       {% endif %}
     </div>
   </div>
