@@ -301,51 +301,56 @@ def account_view(request: HttpRequest) -> HttpResponse:
         return redirect("login")
     username_error = None
     username_success = None
+
     if isinstance(request.user, User):
         form = PasswordChangeForm(request.user)
 
-    if request.method == "POST":
-        if "change_password" in request.POST:
-            if isinstance(request.user, User):
-                form = PasswordChangeForm(request.user, request.POST)
-                if form.data.get("old_password"):
+        if request.method == "POST":
+            if "change_password" in request.POST:
+                if isinstance(request.user, User):
+                    form = PasswordChangeForm(request.user, request.POST)
                     old_password = form.data.get("old_password")
-                    if not request.user.check_password(old_password):
-                        # Nur diese Fehlermeldung anzeigen, alle anderen Fehler unterdrücken
-                        form.errors.clear()
-                        form.add_error(
-                            "old_password",
-                            "Das alte Passwort war falsch. Bitte neu eingeben.",
-                        )
-                    else:
-                        if form.is_valid():
-                            user = form.save()
-                            update_session_auth_hash(request, user)
-                            messages.success(
-                                request, "Dein Passwort wurde erfolgreich geändert!"
+                    if old_password is not None and isinstance(old_password, str):
+                        if not request.user.check_password(old_password):
+                            # Nur diese Fehlermeldung anzeigen, alle anderen Fehler unterdrücken
+                            form.errors.clear()
+                            form.add_error(
+                                "old_password",
+                                "Das alte Passwort war falsch. Bitte neu eingeben.",
                             )
-                            return redirect("account")
+                        else:
+                            if form.is_valid():
+                                user = form.save()
+                                update_session_auth_hash(request, user)
+                                messages.success(
+                                    request, "Dein Passwort wurde erfolgreich geändert!"
+                                )
+                                return redirect("account")
 
-        elif "change_username" in request.POST:
-            new_username = request.POST.get("new_username")
-            if new_username:
-                if User.objects.filter(username=new_username).exists():
-                    username_error = "Dieser Benutzername ist bereits vergeben."
-                else:
-                    request.user.username = new_username
-                    request.user.save()
-                    username_success = "Dein Benutzername wurde geändert!"
+            elif "change_username" in request.POST:
+                new_username = request.POST.get("new_username")
+                if new_username:
+                    if User.objects.filter(username=new_username).exists():
+                        username_error = "Dieser Benutzername ist bereits vergeben."
+                    else:
+                        request.user.username = new_username
+                        request.user.save()
+                        username_success = "Dein Benutzername wurde geändert!"
 
-    return render(
-        request,
-        "news/account.html",
-        {
-            "form": form,
-            "username": request.user.username,
-            "username_error": username_error,
-            "username_success": username_success,
-        },
-    )
+        return render(
+            request,
+            "news/account.html",
+            {
+                "form": form,
+                "username": request.user.username,
+                "username_error": username_error,
+                "username_success": username_success,
+            },
+        )
+
+    else:
+        messages.error(request, "Ungültiger Benutzer.")
+        return redirect("login")
 
 
 @login_required
