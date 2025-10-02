@@ -1,7 +1,35 @@
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 from django.urls import path
-from news.views import *
+
+from news.views.account import (
+    account_view,
+    login_view,
+    logout_view,
+    register_view,
+    update_preferences,
+)
+from news.views.calendar import (
+    calendar_event_detail,
+    calendar_events,
+    calendar_page,
+    export_ics,
+    import_ics,
+)
+from news.views.news import (
+    foryoupage,
+    links,
+    news_detail,
+    news_partial,
+    news_view,
+)
+from news.views.receive_news import ReceiveNews
+from news.views.system import (
+    db_connection_status,
+    health_check,
+    request_date,
+    set_language,
+)
 
 # Sprachunabhängige URLs
 urlpatterns = [
