@@ -1,13 +1,26 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
+
 <html lang="de">
+  <!-- Darkmode sofort setzen, bevor CSS lädt (Somit deutlich kürzere Ladezeiten) -->
+  <script>
+    (function() {
+      try {
+        var dark = localStorage.getItem('theme') === 'dark';
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (dark || (!localStorage.getItem('theme') && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch(e){}
+    })();
+  </script>
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <link href='https://fonts.googleapis.com/css?family=Red Hat Text' rel='stylesheet'>
-  <script src="{% static 'js/nav.js' %}"> </script>
+  <script src="{% static 'js/base.js' %}"> </script>
   <!-- Tailwind CSS ----- Lokal: <link rel="stylesheet" href="{% static 'css/tailwind-built.css' %}">-->
   <script src="https://cdn.tailwindcss.com"></script>
   <script> tailwind.config = {darkMode: 'class',}</script>

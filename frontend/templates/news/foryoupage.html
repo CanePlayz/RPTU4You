@@ -7,8 +7,90 @@
 {% endblock %}
 
 {% block content %}
-<div class="flex bg-gray-100 min-h-screen">
+<div class="flex bg-gray-100 dark:bg-gray-900 min-h-[calc(100vh-72px)]">
+  <!-- ------------------------ -->
+  <!-- Linke Seite: Filterblock -->
+  <!-- ------------------------ -->
+  <div class="w-80 pl-5 sticky top-[72px] h-[calc(100vh-72px)] overflow-y-auto">
+    <form id="news-filter-form" method="get" class="overflow-y-auto">
+      <h2 class="text-xl font-bold my-4 text-gray-800 dark:text-gray-100">Meine Präferenzen</h2>
+      <div>
+        <!-- Standort Button -->
+        <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('standorte')">
+          <span id="chevron-standorte" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
+          Standorte
+        </button>
+        <!-- Standorte -->
+        <div id="filter-standorte" class="hidden ml-2">
+          {% for loc in locations %}
+            <label class="block text-gray-800 dark:text-white">
+              <input type="checkbox" name="location" value="{{ loc.name }}" class="mr-2"
+                {% if loc.name in active_filters.locations %}checked{% endif %}>
+              {{ loc.emoji }} {{ loc.name }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+      <div>
+        <!-- Kategorien Button -->
+        <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('kategorien')">
+            <span id="chevron-kategorien" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
+          Kategorien
+        </button>
+        <!-- Kategorien -->
+        <div id="filter-kategorien" class="hidden ml-2">
+          {% for cat in categories %}
+            <label class="block text-gray-800 dark:text-white">
+              <input type="checkbox" name="category" value="{{ cat.name }}" class="mr-2"
+                {% if cat.name in active_filters.categories %}checked{% endif %}>
+              {{ cat.emoji }} {{ cat.name }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+      <div>
+        <!-- Zielgruppen Button -->
+        <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('zielgruppen')">
+            <span id="chevron-zielgruppen" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
+          Zielgruppen
+        </button>
+        <!-- Zielgruppen -->
+        <div id="filter-zielgruppen" class="hidden ml-2">
+          {% for aud in audiences %}
+            <label class="block text-gray-800 dark:text-white">
+              <input type="checkbox" name="audience" value="{{ aud.name }}" class="mr-2"
+                {% if aud.name in active_filters.audiences %}checked{% endif %}>
+              {{ aud.emoji }} {{ aud.name }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+      <div>
+        <!-- Quellen Button -->
+        <button type="button" class="w-full text-left text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('quellen')">
+            <span id="chevron-quellen" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
+          Quellen
+        </button>
+        <!-- Quellen -->
+        <div id="filter-quellen" class="hidden ml-2">
+          {% for src in sources %}
+            <label class="block text-gray-800 dark:text-white">
+              <input type="checkbox" name="source" value="{{ src.name }}" class="mr-2"
+                {% if src.name in active_filters.sources %}checked{% endif %}>
+              {{ src.emoji }} {{ src.name }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+      <!-- Allgemeine Buttons -->
+      <button type="button" id="select-all-btn" class="bg-gray-200 dark:bg-gray-800 dark:text-gray-100 rounded-md px-2 py-1 text-sm hover:bg-gray-300 dark:hover:bg-gray-700 mr-1 my-3">Alles auswählen</button>
+      <button type="button" id="reset-filter-btn" class="bg-gray-200 dark:bg-gray-800 dark:text-gray-100 rounded-md px-2 py-1 text-sm hover:bg-gray-300 dark:hover:bg-gray-700 my-3">Alles abwählen</button>
+      <button type="button" id="apply-filter-btn" class="bg-[#042c58] dark:bg-gray-800 text-white dark:text-gray-100 rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-gray-700 mb-6">Filter anwenden</button>
+    </form>
+  </div>
+  <!-- ----------- -->
   <!-- Mitte: News -->
+  <!-- ----------- -->
   <div class="flex-1 mt-3 px-8 overflow-y-auto">
     <main id="main">
         <div id="news-container">
@@ -26,22 +108,51 @@
 
   <!-- Rechte Seite: Kleiner Kalender -->
   <div class="w-80 pl-5 sticky top-[72px] h-[calc(100vh-72px)] bg-gray-100">
-  <h3 class="text-lg font-semibold text-center mb-4">{% trans "Nächste Termine" %}</h3>
+      <h3 class="text-lg font-semibold text-center mb-4">{% trans "Nächste Termine" %}</h3>
       {% if upcoming_events %}
         <ul class="space-y-4">
-          {% for event in upcoming_events %}
-            <li class="bg-gray-50 p-4 rounded-lg shadow">
-              <p class="text-sm text-gray-500">{{ event.start|date:"d.m.Y H:i" }} - {{ event.end|date:"H:i" }}</p>
-              <p class="font-bold text-gray-800">{{ event.title }}</p>
-            </li>
-          {% endfor %}
+        {% for event in upcoming_events %}
+          <li class="bg-gray-50 dark:bg-gray-800 p-4 mr rounded-lg shadow">
+            <p class="font-bold text-gray-800 dark:text-gray-100">{{ event.title }}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">{{ event.start|date:"d.m.Y H:i" }} - {{ event.end|date:"H:i" }}</p>
+          </li>
+        {% endfor %}
         </ul>
       {% else %}
-  <p class="text-gray-500 italic text-center">{% trans "Keine anstehenden Termine." %}</p>
+        <p class="text-gray-500 italic text-center">{% trans "Keine anstehenden Termine." %}</p>
       {% endif %}
     </div>
   </div>
 </div>
 
+<!-- Javascript -->
+<script>
+  // Ein- und Ausklappen der Filter
+  function toggleFilter(name) {
+    var el = document.getElementById('filter-' + name);
+    var chevron = document.getElementById('chevron-' + name);
+    if (el.classList.contains('hidden')) {
+      el.classList.remove('hidden');
+      chevron.style.transform = 'rotate(90deg)'; 
+    } else {
+      el.classList.add('hidden');
+      chevron.style.transform = 'rotate(0deg)'; 
+    }
+  }
+</script>
+<script>
+  // "Keine News gefunden" Banner entfernen, wenn News geladen werden
+  document.addEventListener('DOMContentLoaded', function() {
+    var loadMoreBtn = document.getElementById('load-more');
+    if (loadMoreBtn) {
+      loadMoreBtn.addEventListener('click', function() {
+        var banner = document.getElementById('no-news-banner');
+        if (banner) {
+          banner.remove();
+        }
+      });
+    }
+  }); 
+</script> 
 <script src="{% static 'js/news.js' %}"></script>
 {% endblock %}
