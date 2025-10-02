@@ -177,6 +177,14 @@ class User(AbstractUser):
     inhaltskategorien = models.ManyToManyField(InhaltsKategorie, blank=True)
     zielgruppen = models.ManyToManyField(Zielgruppe, blank=True)
 
+    include_rundmail = models.BooleanField(
+        default=False,
+        verbose_name="Rundmails einbeziehen",
+    )
+    include_sammel_rundmail = models.BooleanField(
+        default=False, verbose_name="Sammel-Rundmails einbeziehen"
+    )
+
     def __str__(self):
         return self.username
 

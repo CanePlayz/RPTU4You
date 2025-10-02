@@ -209,11 +209,19 @@ def foryoupage(request: HttpRequest) -> HttpResponse:
     # Nutzerpräferenzen abrufen
     if isinstance(request.user, User):
         preferences = {
-            "locations": request.user.standorte.values_list("name", flat=True),
-            "categories": request.user.inhaltskategorien.values_list("name", flat=True),
-            "audiences": request.user.zielgruppen.values_list("name", flat=True),
-            "sources": request.user.quellen.values_list("name", flat=True),
+            "locations": list(request.user.standorte.values_list("name", flat=True)),
+            "categories": list(
+                request.user.inhaltskategorien.values_list("name", flat=True)
+            ),
+            "audiences": list(request.user.zielgruppen.values_list("name", flat=True)),
+            "sources": list(request.user.quellen.values_list("name", flat=True)),
         }
+
+        # Rundmail- und Sammel-Rundmail-Präferenzen hinzufügen
+        if request.user.include_rundmail:
+            preferences["sources"].append("Rundmail")
+        if request.user.include_sammel_rundmail:
+            preferences["sources"].append("Sammel-Rundmail")
 
         # News basierend auf Präferenzen filtern
         news_items_queryset = get_filtered_queryset(preferences)
@@ -299,17 +307,22 @@ def account_view(request: HttpRequest) -> HttpResponse:
         if "change_password" in request.POST:
             if isinstance(request.user, User):
                 form = PasswordChangeForm(request.user, request.POST)
-                if form.data.get('old_password'):
-                    old_password = form.data.get('old_password')
+                if form.data.get("old_password"):
+                    old_password = form.data.get("old_password")
                     if not request.user.check_password(old_password):
                         # Nur diese Fehlermeldung anzeigen, alle anderen Fehler unterdrücken
                         form.errors.clear()
-                        form.add_error('old_password', "Das alte Passwort war falsch. Bitte neu eingeben.")
+                        form.add_error(
+                            "old_password",
+                            "Das alte Passwort war falsch. Bitte neu eingeben.",
+                        )
                     else:
                         if form.is_valid():
                             user = form.save()
                             update_session_auth_hash(request, user)
-                            messages.success(request, "Dein Passwort wurde erfolgreich geändert!")
+                            messages.success(
+                                request, "Dein Passwort wurde erfolgreich geändert!"
+                            )
                             return redirect("account")
 
         elif "change_username" in request.POST:
@@ -323,12 +336,14 @@ def account_view(request: HttpRequest) -> HttpResponse:
                     username_success = "Dein Benutzername wurde geändert!"
 
     return render(
-        request, "news/account.html", {
+        request,
+        "news/account.html",
+        {
             "form": form,
             "username": request.user.username,
             "username_error": username_error,
-            "username_success": username_success
-        }
+            "username_success": username_success,
+        },
     )
 
 
