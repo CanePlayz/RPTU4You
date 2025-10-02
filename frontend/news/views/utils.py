@@ -1,0 +1,45 @@
+from typing import Any
+
+from django.db.models.query import QuerySet
+
+from ..models import News
+
+
+def get_filtered_queryset(active_filters: dict[str, Any]) -> QuerySet[News]:
+    """
+    Hilfsfunktion, die News basierend auf GET-Parametern filtert,
+    absteigend sortiert.
+    """
+    locations = active_filters.get("locations", [])
+    categories = active_filters.get("categories", [])
+    audiences = active_filters.get("audiences", [])
+    sources = active_filters.get("sources", [])
+
+    queryset = News.objects.all()
+    if locations:
+        queryset = queryset.filter(standorte__name__in=locations)
+    if categories:
+        queryset = queryset.filter(inhaltskategorien__name__in=categories)
+    if audiences:
+        queryset = queryset.filter(zielgruppen__name__in=audiences)
+    if sources:
+        rundmail_types = ["Rundmail", "Sammel-Rundmail"]
+        other_sources = [src for src in sources if src not in rundmail_types]
+        rundmail_sources = [src for src in sources if src in rundmail_types]
+        if other_sources:
+            queryset = queryset.filter(quelle__name__in=other_sources)
+        if rundmail_sources:
+            queryset = queryset.filter(quelle_typ__in=rundmail_sources)
+
+    return queryset.order_by("-erstellungsdatum")
+
+
+def paginate_queryset(queryset: QuerySet, offset: int = 0, limit: int = 20) -> QuerySet:
+    """
+    Schneidet ein QuerySet entsprechend Offset und Limit.
+    Standard-Werte für offset und limit kommen zum Zug, wenn die
+    News-Seite neu geladen wird. Standardmäßig werden also 20
+    News-Objekte an den Client gesendet, bevor JS auf dem Client
+    weitere News anfordert.
+    """
+    return queryset[offset : offset + limit]
