@@ -48,18 +48,21 @@ def get_objects_with_emojis() -> dict[str, list[dict[str, str]]]:
         {"name": loc.name, "emoji": LOCATION_EMOJIS.get(loc.name, "")}
         for loc in objects["locations"]
     ]
+    locations_with_emojis.sort(key=lambda item: item["name"].lower())
 
     # Emojis zu den Inhaltskategorien hinzufügen, abhängig vom Namen der Kategorie
     categories_with_emojis = [
         {"name": cat.name, "emoji": CATEGORY_EMOJIS.get(cat.name, "")}
         for cat in objects["categories"]
     ]
+    categories_with_emojis.sort(key=lambda item: item["name"].lower())
 
     # Emojis zu den Zielgruppen hinzufügen, abhängig vom Namen der Zielgruppe
     audiences_with_emojis = [
         {"name": aud.name, "emoji": AUDIENCE_EMOJIS.get(aud.name, "")}
         for aud in objects["audiences"]
     ]
+    audiences_with_emojis.sort(key=lambda item: item["name"].lower())
 
     # Emojis zu den Quellen hinzufügen, abhängig vom Typ der Quelle
     sources_with_emojis = []
@@ -90,6 +93,7 @@ def get_objects_with_emojis() -> dict[str, list[dict[str, str]]]:
     sources_with_emojis.append(
         {"name": "Sammel-Rundmail", "emoji": SOURCES_EMOJIS.get("Sammel-Rundmail", "")}
     )
+    sources_with_emojis.sort(key=lambda item: item["name"].lower())
 
     return {
         "locations": locations_with_emojis,
