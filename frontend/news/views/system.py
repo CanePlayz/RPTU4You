@@ -2,9 +2,15 @@ import os
 from datetime import datetime
 from urllib.parse import urlparse, urlunparse
 
+from django.conf import settings
 from django.db import connection
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
-from django.utils.translation import activate, get_language_from_path
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.translation import (
+    activate,
+    get_language_from_path,
+    get_supported_language_variant,
+)
 
 from ..models import News
 
@@ -46,7 +52,12 @@ def health_check(request: HttpRequest) -> HttpResponse:
 
 
 def set_language(request: HttpRequest) -> HttpResponse:
-    language = request.GET.get("language", "de")  # Default: German
+    requested_language = request.GET.get("language", settings.LANGUAGE_CODE)
+    try:
+        language = get_supported_language_variant(requested_language)
+    except LookupError:
+        language = get_supported_language_variant(settings.LANGUAGE_CODE)
+
     activate(language)
     request.session["django_language"] = language
 
@@ -54,8 +65,13 @@ def set_language(request: HttpRequest) -> HttpResponse:
     current_url = request.META.get("HTTP_REFERER", "/")
     parsed_url = urlparse(current_url)
 
+    if current_url and not url_has_allowed_host_and_scheme(
+        current_url, {request.get_host()}, require_https=request.is_secure()
+    ):
+        parsed_url = urlparse("/")
+
     # Replace the language prefix in the path
-    path = parsed_url.path
+    path = parsed_url.path or "/"
     current_language = get_language_from_path(path)
     if current_language:
         path = path.replace(f"/{current_language}/", f"/{language}/", 1)

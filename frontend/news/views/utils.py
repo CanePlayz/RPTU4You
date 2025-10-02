@@ -1,19 +1,23 @@
-from typing import Any
+from typing import Iterable, Mapping, TypeVar
 
+from django.db.models import Model
 from django.db.models.query import QuerySet
 
 from ..models import News
 
+FilterParams = Mapping[str, Iterable[str]]
+T = TypeVar("T", bound=Model)
 
-def get_filtered_queryset(active_filters: dict[str, Any]) -> QuerySet[News]:
+
+def get_filtered_queryset(active_filters: FilterParams) -> QuerySet[News]:
     """
     Hilfsfunktion, die News basierend auf GET-Parametern filtert,
     absteigend sortiert.
     """
-    locations = active_filters.get("locations", [])
-    categories = active_filters.get("categories", [])
-    audiences = active_filters.get("audiences", [])
-    sources = active_filters.get("sources", [])
+    locations = list(active_filters.get("locations", ()))
+    categories = list(active_filters.get("categories", ()))
+    audiences = list(active_filters.get("audiences", ()))
+    sources = list(active_filters.get("sources", ()))
 
     queryset = News.objects.all()
     if locations:
@@ -31,10 +35,12 @@ def get_filtered_queryset(active_filters: dict[str, Any]) -> QuerySet[News]:
         if rundmail_sources:
             queryset = queryset.filter(quelle_typ__in=rundmail_sources)
 
-    return queryset.order_by("-erstellungsdatum")
+    return queryset.distinct().order_by("-erstellungsdatum")
 
 
-def paginate_queryset(queryset: QuerySet, offset: int = 0, limit: int = 20) -> QuerySet:
+def paginate_queryset(
+    queryset: QuerySet[T], offset: int = 0, limit: int = 20
+) -> QuerySet[T]:
     """
     Schneidet ein QuerySet entsprechend Offset und Limit.
     Standard-Werte für offset und limit kommen zum Zug, wenn die

@@ -1,3 +1,5 @@
+from typing import List
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
@@ -7,7 +9,31 @@ from django.views.decorators.http import require_GET
 
 from ..models import CalendarEvent, News, User
 from ..util.filter_objects import get_objects_with_emojis
-from .utils import get_filtered_queryset, paginate_queryset
+from .utils import FilterParams, get_filtered_queryset, paginate_queryset
+
+
+def _build_active_filters(request: HttpRequest) -> FilterParams:
+    return {
+        "locations": request.GET.getlist("location"),
+        "categories": request.GET.getlist("category"),
+        "audiences": request.GET.getlist("audience"),
+        "sources": request.GET.getlist("source"),
+    }
+
+
+def _get_upcoming_events(request: HttpRequest) -> List[CalendarEvent]:
+    now = timezone.now()
+
+    if request.user.is_authenticated:
+        user_events = CalendarEvent.objects.filter(start__gte=now, user=request.user)
+        global_events = CalendarEvent.objects.filter(start__gte=now, is_global=True)
+        return list((user_events | global_events).distinct().order_by("start")[:3])
+
+    return list(
+        CalendarEvent.objects.filter(start__gte=now, is_global=True).order_by("start")[
+            :3
+        ]
+    )
 
 
 @require_GET
@@ -15,29 +41,8 @@ def news_view(request: HttpRequest) -> HttpResponse:
     """
     Ansicht für die News-Seite, die alle News anzeigt.
     """
-    # Kalender
-    now = timezone.now()  # Aktuelle Zeit mit Zeitzone
-
-    if request.user.is_authenticated:
-        # Eigene und globale Termine abrufen
-        user_events = CalendarEvent.objects.filter(start__gte=now, user=request.user)
-        global_events = CalendarEvent.objects.filter(start__gte=now, is_global=True)
-        upcoming_events = (user_events | global_events).distinct().order_by("start")[:3]
-    else:
-        # Nur globale Termine für nicht angemeldete Benutzer
-        upcoming_events = CalendarEvent.objects.filter(
-            start__gte=now, is_global=True
-        ).order_by("start")[:3]
-
-    # News
-
-    # GET-Parameter holen
-    active_filters = {
-        "locations": request.GET.getlist("location"),
-        "categories": request.GET.getlist("category"),
-        "audiences": request.GET.getlist("audience"),
-        "sources": request.GET.getlist("source"),
-    }
+    upcoming_events = _get_upcoming_events(request)
+    active_filters = _build_active_filters(request)
 
     # Hole gefilterte News basierend auf den GET-Parametern für initiale Anzeige
     news_items_queryset = get_filtered_queryset(active_filters)
@@ -71,12 +76,7 @@ def news_partial(request: HttpRequest) -> HttpResponse:
     offset = int(request.GET.get("offset", 0))
     limit = int(request.GET.get("limit", 20))
 
-    active_filters = {
-        "locations": request.GET.getlist("location"),
-        "categories": request.GET.getlist("category"),
-        "audiences": request.GET.getlist("audience"),
-        "sources": request.GET.getlist("source"),
-    }
+    active_filters = _build_active_filters(request)
 
     # Hole gefilterte News basierend auf den GET-Parametern
     news_items_queryset = get_filtered_queryset(active_filters)
@@ -103,19 +103,19 @@ def news_detail(request: HttpRequest, pk: int) -> HttpResponse:
     # Hole den Text für die gewählte Sprache, falls vorhanden
     text = news.texte.filter(sprache__code=lang).first()  # type: ignore[attr-defined]
 
+    if request.GET.get("partial") == "true":
+        return render(
+            request,
+            "news/partials/_news_detail.html",
+            {"news": news, "text": text},
+        )
+
     #  Objekte, nach denen gefiltert werden kann
     objects_to_filter = get_objects_with_emojis()
     locations = objects_to_filter["locations"]
     categories = objects_to_filter["categories"]
     audiences = objects_to_filter["audiences"]
     sources = objects_to_filter["sources"]
-
-    if request.GET.get("partial") == "true":
-        return render(
-            request,
-            "news/partials/_news_detail.html",
-            {"detail_news": news, "text": text},
-        )
 
     return render(
         request,
@@ -137,13 +137,7 @@ def foryoupage(request: HttpRequest) -> HttpResponse:
     """
     Ansicht für die For You-Seite, die personalisierte News anzeigt.
     """
-    # Kalender
-    now = timezone.now()
-
-    # Eigene und globale Termine abrufen
-    user_events = CalendarEvent.objects.filter(start__gte=now, user=request.user)
-    global_events = CalendarEvent.objects.filter(start__gte=now, is_global=True)
-    upcoming_events = (user_events | global_events).distinct().order_by("start")[:3]
+    upcoming_events = _get_upcoming_events(request)
 
     # Nutzerpräferenzen abrufen
     if isinstance(request.user, User):

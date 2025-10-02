@@ -1,33 +1,50 @@
+from typing import cast
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, resolve_url
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from ..forms import PreferencesForm, UserCreationForm2
 from ..models import User
 
 
+def _get_safe_next_url(request: HttpRequest, *, default: str = "foryoupage") -> str:
+    """Return a safe redirect target that stays within the current host."""
+
+    resolved_default = resolve_url(default)
+    param_source = request.POST if request.method == "POST" else request.GET
+    candidate = param_source.get("next")
+    if candidate and url_has_allowed_host_and_scheme(
+        url=candidate,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        return candidate
+    return resolved_default
+
+
 def login_view(request: HttpRequest) -> HttpResponse:
-    # Hole next_url aus GET oder POST, je nach Kontext
-    if request.method == "POST":
-        next_url = request.POST.get(
-            "next", "foryoupage"
-        )  # Priorisiere POST nach Formularabsendung
-    else:
-        next_url = request.GET.get("next", "foryoupage")  # Initialer GET-Request
+    next_url = _get_safe_next_url(request)
 
     if request.method == "POST":
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect(next_url)  # Verwende next_url direkt
+        username = request.POST.get("username", "").strip()
+        password = request.POST.get("password", "")
+
+        if not username or not password:
+            messages.error(
+                request,
+                "Bitte gib sowohl deinen Benutzernamen als auch dein Passwort ein.",
+            )
         else:
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect(next_url)
             messages.error(request, "Ungültige Anmeldedaten.")
-            # Bei Fehler: next_url bleibt erhalten für das erneute Rendern
 
     return render(request, "news/login.html", {"next": next_url})
 
@@ -55,60 +72,54 @@ def account_view(request: HttpRequest) -> HttpResponse:
     """
     Ansicht für den Account-Bereich, wo Benutzer ihr Passwort und ihren Benutzernamen ändern können.
     """
-    if not request.user.is_authenticated:
-        return redirect("login")
-    username_error = None
-    username_success = None
-
-    if isinstance(request.user, User):
-        form = PasswordChangeForm(request.user)
-
-        if request.method == "POST":
-            if "change_password" in request.POST:
-                if isinstance(request.user, User):
-                    form = PasswordChangeForm(request.user, request.POST)
-                    old_password = form.data.get("old_password")
-                    if old_password is not None and isinstance(old_password, str):
-                        if not request.user.check_password(old_password):
-                            # Nur diese Fehlermeldung anzeigen, alle anderen Fehler unterdrücken
-                            form.errors.clear()
-                            form.add_error(
-                                "old_password",
-                                "Das alte Passwort war falsch. Bitte neu eingeben.",
-                            )
-                        else:
-                            if form.is_valid():
-                                user = form.save()
-                                update_session_auth_hash(request, user)
-                                messages.success(
-                                    request, "Dein Passwort wurde erfolgreich geändert!"
-                                )
-                                return redirect("account")
-
-            elif "change_username" in request.POST:
-                new_username = request.POST.get("new_username")
-                if new_username:
-                    if User.objects.filter(username=new_username).exists():
-                        username_error = "Dieser Benutzername ist bereits vergeben."
-                    else:
-                        request.user.username = new_username
-                        request.user.save()
-                        username_success = "Dein Benutzername wurde geändert!"
-
-        return render(
-            request,
-            "news/account.html",
-            {
-                "form": form,
-                "username": request.user.username,
-                "username_error": username_error,
-                "username_success": username_success,
-            },
-        )
-
-    else:
+    if not isinstance(request.user, User):
         messages.error(request, "Ungültiger Benutzer.")
         return redirect("login")
+
+    user = cast(User, request.user)
+    username_error = None
+    username_success = None
+    form = PasswordChangeForm(user)
+
+    if request.method == "POST":
+        if "change_password" in request.POST:
+            form = PasswordChangeForm(user, request.POST)
+            # Prüft automatisch, ob das alte Passwort korrekt ist
+            if form.is_valid():
+                user = form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, "Dein Passwort wurde erfolgreich geändert!")
+                return redirect("account")
+            if "old_password" in form.errors:
+                form.errors["old_password"].clear()
+                form.add_error(
+                    "old_password",
+                    "Das alte Passwort war falsch. Bitte neu eingeben.",
+                )
+
+        elif "change_username" in request.POST:
+            new_username = request.POST.get("new_username", "").strip()
+            if not new_username:
+                username_error = "Bitte gib einen gültigen Benutzernamen ein."
+            elif new_username == user.username:
+                username_error = "Dieser Benutzername wird bereits von dir verwendet."
+            elif User.objects.filter(username__iexact=new_username).exists():
+                username_error = "Dieser Benutzername ist bereits vergeben."
+            else:
+                user.username = new_username
+                user.save(update_fields=["username"])
+                username_success = "Dein Benutzername wurde geändert!"
+
+    return render(
+        request,
+        "news/account.html",
+        {
+            "form": form,
+            "username": request.user.username,
+            "username_error": username_error,
+            "username_success": username_success,
+        },
+    )
 
 
 @login_required

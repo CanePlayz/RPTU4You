@@ -21,7 +21,9 @@ from .util.cleanup.cleanup import extract_parts, get_cleaned_text_from_openai
 
 @close_db_connection
 def process_news_entry(news_entry, openai_api_key, environment, logger: logging.Logger):
-    logger.info(f"Verarbeite News-Eintrag | {news_entry['titel'][:80]}")
+    raw_title = news_entry.get("titel")
+    truncated_title = raw_title[:80] if isinstance(raw_title, str) else "<unbekannt>"
+    logger.info(f"Verarbeite News-Eintrag | {truncated_title}")
 
     # Quellen-Objekt erstellen
     if news_entry["quelle_typ"] in [
@@ -29,7 +31,12 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
         "Sammel-Rundmail",
         "Stellenangebote Sammel-Rundmail",
     ]:
-        rundmail_id = news_entry["rundmail_id"]
+        rundmail_id = news_entry.get("rundmail_id")
+        if rundmail_id is None:
+            logger.warning(
+                f"Rundmail ohne rundmail_id, Eintrag wird übersprungen | {truncated_title}"
+            )
+            return
         # Nachschauen, ob bereits ein Quelle-Objekt mit dieser ID existiert, falls nicht, dann erstellen
         quelle, created = Rundmail.objects.get_or_create(
             name=news_entry["quelle_name"],
@@ -72,9 +79,15 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
         return
 
     # Erstellungsdatum parsen und sicherstellen, dass eine Zeitzone gesetzt ist
-    erstellungsdatum: datetime = make_aware(
-        datetime.strptime(news_entry["erstellungsdatum"], "%d.%m.%Y %H:%M:%S")
-    )
+    try:
+        erstellungsdatum: datetime = make_aware(
+            datetime.strptime(news_entry["erstellungsdatum"], "%d.%m.%Y %H:%M:%S")
+        )
+    except ValueError:
+        logger.error(
+            f"Erstellungsdatum ungültig, Eintrag wird übersprungen | {truncated_title}"
+        )
+        return
 
     # News-Objekt erstellen
     # Überprüfen, ob bereits ein News-Objekt mit diesem Titel existiert
@@ -90,7 +103,7 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
 
     # Wenn das News-Objekt neu erstellt wurde, Text cleanen, Übersetzungen hinzufügen und Kategorisierung durchführen
     if not created:
-        logger.info(f"News-Objekt existiert bereits | {news_entry['titel'][:80]}")
+        logger.info(f"News-Objekt existiert bereits | {truncated_title}")
         return
 
     # Text cleanen
@@ -105,7 +118,7 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
 
     # Wenn ein Fehler auftritt, loggen und weitermachen mit dem nächsten Eintrag
     except Exception as e:
-        logger.error(f"Fehler beim Cleanup: {e} | {news_entry['titel'][:80]}")
+        logger.error(f"Fehler beim Cleanup: {e} | {truncated_title}")
 
         # Fallback: Originaltext speichern
         text_object = Text(
@@ -137,11 +150,12 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
         # Flag is_cleaned_up auf True setzen
         news_item.is_cleaned_up = True
         news_item.save()
-        logger.info(f"Text erfolgreich gecleant | {news_entry['titel'][:80]}")
+        logger.info(f"Text erfolgreich gecleant | {truncated_title}")
 
         # Fehlende Übersetzungen hinzufügen
-        sprachen = Sprache.objects.all()
-        add_missing_translations(sprachen, news_item, openai_api_key, 2400000)
+        add_missing_translations(
+            Sprache.objects.all(), news_item, openai_api_key, 2400000
+        )
 
     # Standorte hinzufügen
     for ort in news_entry["standorte"]:
@@ -158,14 +172,14 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
             2400000,  # Token-Limit für die Verarbeitung neuer News (diese sollen schnell erscheinen)
         )
     except Exception as e:
-        logger.error(f"Fehler bei Kategorisierung: {e} | {news_entry['titel'][:80]}")
+        logger.error(f"Fehler bei Kategorisierung: {e} | {truncated_title}")
         categories, audiences = [], []
 
     add_audiences_and_categories(news_item, categories, audiences)
 
-    logger.info(f"Kategorisierung erfolgreich hinzugefügt | {news_entry['titel'][:80]}")
+    logger.info(f"Kategorisierung erfolgreich hinzugefügt | {truncated_title}")
 
-    logger.info(f"News-Objekt erfolgreich erstellt | {news_entry['titel'][:80]}")
+    logger.info(f"News-Objekt erfolgreich erstellt | {truncated_title}")
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -176,20 +190,34 @@ class ReceiveNews(View):
 
         # API-Key überprüfen
         api_key = os.getenv("API_KEY")
+        if not api_key:
+            logger.error("API_KEY ist nicht gesetzt.")
+            return JsonResponse({"error": "Server misconfigured"}, status=500)
         api_key_request = request.headers.get("API-Key")
         if api_key != api_key_request:
             return JsonResponse({"error": "Unauthorized"}, status=401)
 
         # Daten aus der Anfrage extrahieren
-        if request.headers.get("Content-Encoding") == "gzip":
-            decompressed_body = gzip.decompress(request.body)
-            data = json.loads(decompressed_body.decode("utf-8"))
-        else:
-            data = json.loads(request.body.decode("utf-8"))
+        try:
+            if request.headers.get("Content-Encoding") == "gzip":
+                decompressed_body = gzip.decompress(request.body)
+                data = json.loads(decompressed_body.decode("utf-8"))
+            else:
+                data = json.loads(request.body.decode("utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            logger.warning("Ungültige Anfrage, konnte Payload nicht parsen: %s", exc)
+            return JsonResponse({"error": "Invalid payload"}, status=400)
+
+        if not isinstance(data, list):
+            logger.warning("Ungültige Anfrage, Payload ist kein Array")
+            return JsonResponse({"error": "Payload must be a list"}, status=400)
 
         # Environment und OpenAI-API-Key aus den Environment-Variablen lesen
         environment = os.getenv("ENVIRONMENT", "")
         openai_api_key = os.getenv("OPENAI_API_KEY", "")
+        if not openai_api_key:
+            logger.error("OPENAI_API_KEY ist nicht gesetzt.")
+            return JsonResponse({"error": "Server misconfigured"}, status=500)
         if environment not in ["dev", "prod"]:
             return JsonResponse({"error": "Invalid environment"}, status=400)
 
