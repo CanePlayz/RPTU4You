@@ -52,10 +52,11 @@ def get_filtered_queryset(active_filters: dict[str, Any]) -> QuerySet[News]:
     if sources:
         rundmail_types = ["Rundmail", "Sammel-Rundmail"]
         other_sources = [src for src in sources if src not in rundmail_types]
+        rundmail_sources = [src for src in sources if src in rundmail_types]
         if other_sources:
             queryset = queryset.filter(quelle__name__in=other_sources)
-        if any(src in rundmail_types for src in sources):
-            queryset = queryset.filter(quelle_typ__in=rundmail_types)
+        if rundmail_sources:
+            queryset = queryset.filter(quelle_typ__in=rundmail_sources)
 
     return queryset.order_by("-erstellungsdatum")
 
