@@ -1,4 +1,6 @@
+
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block title %}
   4You Page
@@ -98,16 +100,16 @@
                 {% include "news/partials/_news_list.html" with news_list=news_list has_more=has_more %}
             {% endif %}
         </div>
+        {% if not detail_news %}
+          <button id="load-more" class="mt-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">{% trans "Mehr laden" %}</button>
+        {% endif %}
     </main>
   </div>
-  <!-- ----------------------------- -->
-  <!-- Rechte Seite: Nächste Termine -->
-  <!-- ----------------------------- -->
-  <div class="w-80 pr-5 sticky top-[72px] h-[calc(100vh-72px)] overflow-auto">
-    <h2 class="text-xl font-bold my-4 text-gray-800 dark:text-gray-100">Nächste Termine</h2>
-    <!-- Die einzelnen Termine -->
-    {% if upcoming_events %}
-      <a href="{% url 'calendar_page' %}">
+
+  <!-- Rechte Seite: Kleiner Kalender -->
+  <div class="w-80 pl-5 sticky top-[72px] h-[calc(100vh-72px)] bg-gray-100">
+      <h3 class="text-lg font-semibold text-center mb-4">{% trans "Nächste Termine" %}</h3>
+      {% if upcoming_events %}
         <ul class="space-y-4">
         {% for event in upcoming_events %}
           <li class="bg-gray-50 dark:bg-gray-800 p-4 mr rounded-lg shadow">
@@ -116,10 +118,10 @@
           </li>
         {% endfor %}
         </ul>
-      </a>
-    {% else %}
-      <p class="text-gray-500 dark:text-gray-400 italic text-center">Keine anstehenden Termine.</p>
-    {% endif %}
+      {% else %}
+        <p class="text-gray-500 italic text-center">{% trans "Keine anstehenden Termine." %}</p>
+      {% endif %}
+    </div>
   </div>
 </div>
 

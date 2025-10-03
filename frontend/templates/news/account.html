@@ -1,7 +1,9 @@
+
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% block title %}
-    Account
+    {% trans "Account" %}
 {% endblock %}
 
 {% block head-optional %}
@@ -12,8 +14,8 @@
 <div class="min-h-[calc(100vh-72px)] bg-gray-100 dark:bg-gray-900 flex items-center justify-center py-8">
     <!-- Account-Box -->
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md w-full max-w-md">
-        <!-- Abschnitt: Benutzername ändern -->
-        <h class="text-md font-medium mt-6 mb-2 text-gray-800 dark:text-gray-100">Benutzername ändern</h>
+    <!-- Abschnitt: Benutzername ändern -->
+    <h class="text-md font-medium mt-6 mb-2 text-gray-800 dark:text-gray-100">{% trans "Benutzername ändern" %}</h>
         <form method="post" class="space-y-4">
             <!-- Keine Cross-Site-Request-Forgery-Angriffe -->
             {% csrf_token %}
@@ -28,11 +30,11 @@
             {% endif %}
             <!-- Eingabefeld für neuen Benutzernamen -->
             <input type="text" name="new_username" value="{{ username }}" required class="border border-gray-300 dark:border-gray-700 rounded-md px-4 py-2 w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100">
-            <button type="submit" class="w-full bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-blue-400">Benutzername ändern</button>
+            <button type="submit" class="w-full bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-blue-400">{% trans "Benutzername ändern" %}</button>
         </form>
         <br>
-        <!-- Abschnitt: Passwort ändern -->
-        <h class="text-md font-medium mb-2 text-gray-800 dark:text-gray-100">Passwort ändern</h>
+    <!-- Abschnitt: Passwort ändern -->
+    <h class="text-md font-medium mb-2 text-gray-800 dark:text-gray-100">{% trans "Passwort ändern" %}</h>
         <!-- Informationen zur Passwortänderung -->
         {% if messages %}
             <ul class="mb-4">
@@ -51,17 +53,17 @@
             <input type="hidden" name="change_password" value="1">
             <!-- Info-Block zu Passwort-Anforderungen -->
             <div id="password-info" class="mb-2 text-sm text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2">
-                <b>Passwort:</b>
+                <b>{% trans "Passwort:" %}</b>
                 <ul>
-                    <li>Mindestens 8 Zeichen lang sein</li>
-                    <li>Keine Ähnlichkeit zu persönlichen Informationen</li>
-                    <li>Nicht nur Ziffern</li>
-                    <li>Nicht allgemein üblich</li>
+                    <li>{% trans "Mindestens 8 Zeichen lang sein" %}</li>
+                    <li>{% trans "Keine Ähnlichkeit zu persönlichen Informationen" %}</li>
+                    <li>{% trans "Nicht nur Ziffern" %}</li>
+                    <li>{% trans "Nicht allgemein üblich" %}</li>
                 </ul>
             </div>
             <!-- Eingabefeld für aktuelles Passwort -->
             <div class="relative">
-                <label for="id_old_password" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Aktuelles Passwort</label>
+                <label for="id_old_password" class="block text-sm font-medium text-gray-700 dark:text-gray-200">{% trans "Aktuelles Passwort" %}</label>
                 {{ form.old_password }}
                 {% if form.old_password.errors %}
                     <ul class="text-sm text-red-500 dark:text-red-400 mt-1">
@@ -73,7 +75,7 @@
             </div>
             <!-- Eingabefeld für neues Passwort -->
             <div class="relative">
-                <label for="id_new_password1" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Neues Passwort</label>
+                <label for="id_new_password1" class="block text-sm font-medium text-gray-700 dark:text-gray-200">{% trans "Neues Passwort" %}</label>
                 {{ form.new_password1 }}
                 {% if form.new_password1.errors %}
                     <ul class="text-sm text-red-500 dark:text-red-400 mt-1">
@@ -85,7 +87,7 @@
             </div>
             <!-- Eingabefeld um neues Passwort zu wiederholen -->
             <div class="relative">
-                <label for="id_new_password2" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Neues Passwort wiederholen</label>
+                <label for="id_new_password2" class="block text-sm font-medium text-gray-700 dark:text-gray-200">{% trans "Neues Passwort wiederholen" %}</label>
                 {{ form.new_password2 }}
                 {% if form.new_password2.errors %}
                     <ul class="text-sm text-red-500 dark:text-red-400 mt-1">
@@ -104,10 +106,10 @@
                 </ul>
             {% endif %}
             <!-- Button zum Absenden des Formulars -->
-            <button type="submit" class="w-full bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600 dark:hover:bg-blue-400">Passwort ändern</button>
+            <button type="submit" class="w-full bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600 dark:hover:bg-blue-400">{% trans "Passwort ändern" %}</button>
         </form>
         <!-- Zurück zur Startseite -->
-    <a href="{% url 'News' %}" class="block text-center text-[#042c58] dark:text-blue-400 mt-4 hover:underline">Zurück zur Startseite</a>
+    <a href="{% url 'News' %}" class="block text-center text-[#042c58] dark:text-blue-400 mt-4 hover:underline">{% trans "Zurück zur Startseite" %}</a>
     </div>
 </div>
 {% endblock %}

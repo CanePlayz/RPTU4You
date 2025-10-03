@@ -1,0 +1,627 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-02 15:12+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#: .\rptu4you\settings.py:205
+msgid "Deutsch"
+msgstr "Allemand"
+
+#: .\rptu4you\settings.py:206
+msgid "Englisch"
+msgstr "Anglais"
+
+#: .\rptu4you\settings.py:207
+msgid "Spanisch"
+msgstr "Espagnol"
+
+#: .\rptu4you\settings.py:208
+msgid "Französisch"
+msgstr "Français"
+
+#: .\templates\base.html:16
+msgid "No Title"
+msgstr "Pas de titre"
+
+#: .\templates\base.html:39
+msgid "Latest News"
+msgstr "Dernières nouvelles"
+
+#: .\templates\base.html:40
+msgid "4YouPage"
+msgstr "Page4You"
+
+#: .\templates\base.html:41
+msgid "Kalender"
+msgstr "Calendrier"
+
+#: .\templates\base.html:42
+msgid "Uni Links"
+msgstr "Liens universitaires"
+
+#: .\templates\base.html:120 .\templates\news\account.html:6
+msgid "Account"
+msgstr "Compte"
+
+#: .\templates\base.html:121
+msgid "Fragebogen"
+msgstr "Questionnaire"
+
+#: .\templates\base.html:122
+msgid "Datenschutz"
+msgstr "Protection des données"
+
+#: .\templates\base.html:123
+msgid "Abmelden"
+msgstr "Se déconnecter"
+
+#: .\templates\base.html:128 .\templates\news\login.html:6
+#: .\templates\news\login.html:18 .\templates\news\login.html:47
+msgid "Anmelden"
+msgstr "Se connecter"
+
+#: .\templates\base.html:131 .\templates\news\register.html:6
+#: .\templates\news\register.html:18 .\templates\news\register.html:54
+msgid "Registrieren"
+msgstr "S'inscrire"
+
+#: .\templates\base.html:143
+msgid "No content"
+msgstr "Pas de contenu"
+
+#: .\templates\news\Links.html:6
+msgid "Uni-Links"
+msgstr "Liens universitaires"
+
+#: .\templates\news\Links.html:17
+msgid "Alltags-Links"
+msgstr "Liens quotidiens"
+
+#: .\templates\news\Links.html:20
+msgid "Mensa Kaiserslautern"
+msgstr "Cantine Kaiserslautern"
+
+#: .\templates\news\Links.html:21
+msgid "Mensa Landau"
+msgstr "Cantine Landau"
+
+#: .\templates\news\Links.html:22
+msgid "QIS"
+msgstr "QIS"
+
+#: .\templates\news\Links.html:23
+msgid "KIS-Office"
+msgstr "KIS-Office"
+
+#: .\templates\news\Links.html:24
+msgid "Open Olat"
+msgstr "Open Olat"
+
+#: .\templates\news\Links.html:25
+msgid "Uni-Mail"
+msgstr "Courriel universitaire"
+
+#: .\templates\news\Links.html:26
+msgid "KAI"
+msgstr "KAI"
+
+#: .\templates\news\Links.html:27
+msgid "Campusplan Kaiserslautern"
+msgstr "Plan du campus Kaiserslautern"
+
+#: .\templates\news\Links.html:28
+msgid "Campusplan Landau"
+msgstr "Plan du campus Landau"
+
+#: .\templates\news\Links.html:36
+msgid "Fachschaften Kaiserslautern"
+msgstr "Départements étudiants Kaiserslautern"
+
+#: .\templates\news\Links.html:39 .\templates\news\Links.html:159
+msgid "Architektur"
+msgstr "Architecture"
+
+#: .\templates\news\Links.html:40 .\templates\news\Links.html:160
+msgid "Bauingenieurwesen"
+msgstr "Génie civil"
+
+#: .\templates\news\Links.html:41 .\templates\news\Links.html:78
+#: .\templates\news\Links.html:161
+msgid "Biologie"
+msgstr "Biologie"
+
+#: .\templates\news\Links.html:42 .\templates\news\Links.html:162
+msgid "Chemie"
+msgstr "Chimie"
+
+#: .\templates\news\Links.html:43
+msgid "Elektro- & Informationstechnik"
+msgstr "Génie électrique et informatique"
+
+#: .\templates\news\Links.html:44 .\templates\news\Links.html:165
+msgid "Informatik"
+msgstr "Informatique"
+
+#: .\templates\news\Links.html:45
+msgid "Maschinenbau & Verfahrenstechnik"
+msgstr "Génie mécanique et génie des procédés"
+
+#: .\templates\news\Links.html:46 .\templates\news\Links.html:80
+#: .\templates\news\Links.html:168
+msgid "Mathematik"
+msgstr "Mathématiques"
+
+#: .\templates\news\Links.html:47 .\templates\news\Links.html:82
+#: .\templates\news\Links.html:170
+msgid "Physik"
+msgstr "Physique"
+
+#: .\templates\news\Links.html:48
+msgid "Raum- & Umweltplanung"
+msgstr "Aménagement spatial et environnemental"
+
+#: .\templates\news\Links.html:49 .\templates\news\Links.html:173
+msgid "Sozialwissenschaften"
+msgstr "Sciences sociales"
+
+#: .\templates\news\Links.html:50 .\templates\news\Links.html:174
+msgid "Wirtschaftswissenschaften"
+msgstr "Sciences économiques"
+
+#: .\templates\news\Links.html:58
+msgid "Fachschaften Landau"
+msgstr "Départements étudiants Landau"
+
+#: .\templates\news\Links.html:61
+msgid "Allgemeine Erziehungswissenschaften"
+msgstr "Sciences de l'éducation générale"
+
+#: .\templates\news\Links.html:62
+msgid "Betriebspädagogik"
+msgstr "Pédagogie d'entreprise"
+
+#: .\templates\news\Links.html:63
+msgid "Bildungswissenschaften"
+msgstr "Sciences de l'éducation"
+
+#: .\templates\news\Links.html:64
+msgid "Grundschulpädagogik"
+msgstr "Pédagogie primaire"
+
+#: .\templates\news\Links.html:65
+msgid "Philosophie"
+msgstr "Philosophie"
+
+#: .\templates\news\Links.html:66
+msgid "Sonderpädagogik"
+msgstr "Éducation spécialisée"
+
+#: .\templates\news\Links.html:67
+msgid "Anglistik"
+msgstr "Philologie anglaise"
+
+#: .\templates\news\Links.html:68
+msgid "Darstellendes Spiel"
+msgstr "Théâtre"
+
+#: .\templates\news\Links.html:69
+msgid "Evangelische Theologie"
+msgstr "Théologie protestante"
+
+#: .\templates\news\Links.html:70
+msgid "Germanistik"
+msgstr "Philologie allemande"
+
+#: .\templates\news\Links.html:71
+msgid "Katholische Theologie"
+msgstr "Théologie catholique"
+
+#: .\templates\news\Links.html:72
+msgid "Kunst"
+msgstr "Art"
+
+#: .\templates\news\Links.html:73
+msgid "Menschenrechtsbildung"
+msgstr "Éducation aux droits de l'homme"
+
+#: .\templates\news\Links.html:74
+msgid "Politikwissenschaft"
+msgstr "Science politique"
+
+#: .\templates\news\Links.html:75
+msgid "Romanistik"
+msgstr "Philologie romane"
+
+#: .\templates\news\Links.html:76
+msgid "Sozial- & Kommunikationswissenschaft"
+msgstr "Sciences sociales et de la communication"
+
+#: .\templates\news\Links.html:77
+msgid "Wirtschaft und Arbeit"
+msgstr "Économie et travail"
+
+#: .\templates\news\Links.html:79
+msgid "Geographie"
+msgstr "Géographie"
+
+#: .\templates\news\Links.html:81
+msgid "Mensch und Umwelt"
+msgstr "L'homme et l'environnement"
+
+#: .\templates\news\Links.html:83
+msgid "Umweltwissenschaften"
+msgstr "Sciences de l'environnement"
+
+#: .\templates\news\Links.html:84
+msgid "Sport"
+msgstr "Sport"
+
+#: .\templates\news\Links.html:85 .\templates\news\Links.html:171
+msgid "Psychologie"
+msgstr "Psychologie"
+
+#: .\templates\news\Links.html:93
+msgid "AStA"
+msgstr "AStA"
+
+#: .\templates\news\Links.html:96
+msgid "AStA Kaiserslautern"
+msgstr "AStA Kaiserslautern"
+
+#: .\templates\news\Links.html:97
+msgid "AStA Landau"
+msgstr "AStA Landau"
+
+#: .\templates\news\Links.html:105
+msgid "Uni-Sport"
+msgstr "Sport universitaire"
+
+#: .\templates\news\Links.html:108
+msgid "Uni Sport allgemein"
+msgstr "Sport universitaire général"
+
+#: .\templates\news\Links.html:109
+msgid "Uni Sportangebot Kaiserslautern"
+msgstr "Offre sportive Kaiserslautern"
+
+#: .\templates\news\Links.html:110
+msgid "Uni Sportangebot Landau"
+msgstr "Offre sportive Landau"
+
+#: .\templates\news\Links.html:118
+msgid "Studierendenparlament"
+msgstr "Parlement étudiant"
+
+#: .\templates\news\Links.html:121
+msgid "Studierendenparlament Kaiserslautern"
+msgstr "Parlement étudiant Kaiserslautern"
+
+#: .\templates\news\Links.html:122
+msgid "Studierendenparlament Landau"
+msgstr "Parlement étudiant Landau"
+
+#: .\templates\news\Links.html:130
+msgid "Hochschulgruppen"
+msgstr "Groupes universitaires"
+
+#: .\templates\news\Links.html:133
+msgid "Studentische Gruppen Übersicht"
+msgstr "Aperçu des groupes étudiants"
+
+#: .\templates\news\Links.html:141
+msgid "Zentrale Einrichtungen"
+msgstr "Établissements centraux"
+
+#: .\templates\news\Links.html:144
+msgid "CampusKultur"
+msgstr "Culture du campus"
+
+#: .\templates\news\Links.html:145
+msgid "Regionales Hochschulrechenzentrum"
+msgstr "Centre informatique régional"
+
+#: .\templates\news\Links.html:146
+msgid "Universitätsbibliothek"
+msgstr "Bibliothèque universitaire"
+
+#: .\templates\news\Links.html:147
+msgid "Weitere Einrichtungen Übersicht"
+msgstr "Aperçu des autres établissements"
+
+#: .\templates\news\Links.html:155
+msgid "Fachbereiche"
+msgstr "Départements"
+
+#: .\templates\news\Links.html:158
+msgid "Übersicht Fachbereiche"
+msgstr "Aperçu des départements"
+
+#: .\templates\news\Links.html:163
+msgid "Elektrotechnik und Informationstechnik"
+msgstr "Génie électrique et informatique"
+
+#: .\templates\news\Links.html:164
+msgid "Erziehungswissenschaften"
+msgstr "Sciences de l'éducation"
+
+#: .\templates\news\Links.html:166
+msgid "Kultur- und Sozialwissenschaften"
+msgstr "Sciences culturelles et sociales"
+
+#: .\templates\news\Links.html:167
+msgid "Maschinenbau und Verfahrenstechnik"
+msgstr "Génie mécanique et génie des procédés"
+
+#: .\templates\news\Links.html:169
+msgid "Natur- und Umweltwissenschaften"
+msgstr "Sciences naturelles et de l'environnement"
+
+#: .\templates\news\Links.html:172
+msgid "Raum- und Umweltplanung"
+msgstr "Aménagement spatial et environnemental"
+
+#: .\templates\news\account.html:18 .\templates\news\account.html:33
+msgid "Benutzername ändern"
+msgstr "Modifier le nom d'utilisateur"
+
+#: .\templates\news\account.html:37 .\templates\news\account.html:109
+msgid "Passwort ändern"
+msgstr "Modifier le mot de passe"
+
+#: .\templates\news\account.html:56 .\templates\news\login.html:43
+#: .\templates\news\register.html:33
+msgid "Passwort:"
+msgstr "Mot de passe :"
+
+#: .\templates\news\account.html:58 .\templates\news\register.html:35
+msgid "Mindestens 8 Zeichen lang sein"
+msgstr "Doit contenir au moins 8 caractères"
+
+#: .\templates\news\account.html:59 .\templates\news\register.html:36
+msgid "Keine Ähnlichkeit zu persönlichen Informationen"
+msgstr "Ne pas être similaire aux informations personnelles"
+
+#: .\templates\news\account.html:60 .\templates\news\register.html:37
+msgid "Nicht nur Ziffern"
+msgstr "Ne pas contenir uniquement des chiffres"
+
+#: .\templates\news\account.html:61 .\templates\news\register.html:38
+msgid "Nicht allgemein üblich"
+msgstr "Pas couramment utilisé"
+
+#: .\templates\news\account.html:66
+msgid "Aktuelles Passwort"
+msgstr "Mot de passe actuel"
+
+#: .\templates\news\account.html:78
+msgid "Neues Passwort"
+msgstr "Nouveau mot de passe"
+
+#: .\templates\news\account.html:90
+msgid "Neues Passwort wiederholen"
+msgstr "Répéter le nouveau mot de passe"
+
+#: .\templates\news\account.html:112 .\templates\news\preferences.html:68
+msgid "Zurück zur Startseite"
+msgstr "Retour à la page d'accueil"
+
+#: .\templates\news\calendar.html:6
+msgid "Dein Kalender"
+msgstr "Ton calendrier"
+
+#: .\templates\news\calendar.html:24
+msgid "Termin hinzufügen"
+msgstr "Ajouter un rendez-vous"
+
+#: .\templates\news\calendar.html:29
+msgid "Kalender importieren"
+msgstr "Importer le calendrier"
+
+#: .\templates\news\calendar.html:30
+msgid "Kalender exportieren"
+msgstr "Exporter le calendrier"
+
+#: .\templates\news\calendar.html:49
+msgid "Termin erstellen"
+msgstr "Créer un rendez-vous"
+
+#: .\templates\news\calendar.html:55
+msgid "Titel"
+msgstr "Titre"
+
+#: .\templates\news\calendar.html:58
+msgid "Ganztägig"
+msgstr "Toute la journée"
+
+#: .\templates\news\calendar.html:61
+msgid "Beginn"
+msgstr "Début"
+
+#: .\templates\news\calendar.html:63
+msgid "Startdatum"
+msgstr "Date de début"
+
+#: .\templates\news\calendar.html:65
+msgid "Startzeit"
+msgstr "Heure de début"
+
+#: .\templates\news\calendar.html:73
+msgid "Ende"
+msgstr "Fin"
+
+#: .\templates\news\calendar.html:75
+msgid "Endedatum"
+msgstr "Date de fin"
+
+#: .\templates\news\calendar.html:77
+msgid "Endzeit"
+msgstr "Heure de fin"
+
+#: .\templates\news\calendar.html:85
+msgid "Beschreibung"
+msgstr "Description"
+
+#: .\templates\news\calendar.html:88
+msgid "Weitere Optionen"
+msgstr "Autres options"
+
+#: .\templates\news\calendar.html:94
+msgid "Keine Wiederholung"
+msgstr "Pas de répétition"
+
+#: .\templates\news\calendar.html:95
+msgid "Täglich"
+msgstr "Quotidien"
+
+#: .\templates\news\calendar.html:96
+msgid "Wöchentlich"
+msgstr "Hebdomadaire"
+
+#: .\templates\news\calendar.html:97
+msgid "Monatlich"
+msgstr "Mensuel"
+
+#: .\templates\news\calendar.html:98
+msgid "Jährlich"
+msgstr "Annuel"
+
+#: .\templates\news\calendar.html:100 .\templates\news\calendar.html:101
+msgid "Wiederholen bis"
+msgstr "Répéter jusqu'à"
+
+#: .\templates\news\calendar.html:106
+msgid "Alle Termine dieser Serie bearbeiten/löschen"
+msgstr "Modifier/supprimer tous les rendez-vous de cette série"
+
+#: .\templates\news\calendar.html:110
+msgid "Hinzufügen"
+msgstr "Ajouter"
+
+#: .\templates\news\calendar.html:111
+msgid "Löschen"
+msgstr "Supprimer"
+
+#: .\templates\news\foryoupage.html:22
+#: .\templates\news\partials\_news_list.html:11
+msgid "Mehr laden"
+msgstr "Charger plus"
+
+#: .\templates\news\foryoupage.html:29 .\templates\news\news.html:110
+msgid "Nächste Termine"
+msgstr "Prochains rendez-vous"
+
+#: .\templates\news\foryoupage.html:40 .\templates\news\news.html:124
+msgid "Keine anstehenden Termine."
+msgstr "Aucun rendez-vous à venir."
+
+#: .\templates\news\login.html:38
+msgid "Benutzername:"
+msgstr "Nom d'utilisateur :"
+
+#: .\templates\news\login.html:50
+msgid "Noch keinen Account?"
+msgstr "Pas encore de compte ?"
+
+#: .\templates\news\login.html:50
+msgid "Jetzt registrieren"
+msgstr "S'inscrire maintenant"
+
+#: .\templates\news\news.html:17
+msgid "Filter"
+msgstr "Filtrer"
+
+#: .\templates\news\news.html:22
+msgid "Standorte"
+msgstr "Sites"
+
+#: .\templates\news\news.html:39
+msgid "Kategorien"
+msgstr "Catégories"
+
+#: .\templates\news\news.html:56
+msgid "Zielgruppen"
+msgstr "Groupes cibles"
+
+#: .\templates\news\news.html:73
+msgid "Quellen"
+msgstr "Sources"
+
+#: .\templates\news\news.html:87
+msgid "Alles auswählen"
+msgstr "Tout sélectionner"
+
+#: .\templates\news\news.html:88
+msgid "Alles abwählen"
+msgstr "Tout désélectionner"
+
+#: .\templates\news\news.html:89
+msgid "Filter anwenden"
+msgstr "Appliquer le filtre"
+
+#: .\templates\news\partials\_news_card.html:9
+#: .\templates\news\partials\_news_detail.html:8
+msgid "Quelle:"
+msgstr "Source :"
+
+#: .\templates\news\partials\_news_card.html:10
+msgid "Typ:"
+msgstr "Type :"
+
+#: .\templates\news\partials\_news_detail.html:7
+msgid "Erstellt am:"
+msgstr "Créé le :"
+
+#: .\templates\news\partials\_news_detail.html:9
+msgid "Quellentyp:"
+msgstr "Type de source :"
+
+#: .\templates\news\partials\_news_detail.html:10
+msgid "Zur Originalquelle"
+msgstr "Vers la source originale"
+
+#: .\templates\news\partials\_news_detail.html:17
+msgid "Kein Text in der gewählten Sprache verfügbar."
+msgstr "Aucun texte disponible dans la langue choisie."
+
+#: .\templates\news\partials\_news_detail.html:21
+msgid "Zurück zur Übersicht"
+msgstr "Retour à l'aperçu"
+
+#: .\templates\news\partials\_news_list.html:6
+msgid "Keine News gefunden."
+msgstr "Aucune actualité trouvée."
+
+#: .\templates\news\preferences.html:6
+msgid "Präferenzen"
+msgstr "Préférences"
+
+#: .\templates\news\preferences.html:26
+msgid "Meine Präferenzen"
+msgstr "Mes préférences"
+
+#: .\templates\news\preferences.html:64
+msgid "Speichern"
+msgstr "Enregistrer"
+
+#: .\templates\news\register.html:57
+msgid "Bereits registriert?"
+msgstr "Déjà inscrit ?"
+
+#: .\templates\news\register.html:57
+msgid "Jetzt anmelden"
+msgstr "Se connecter maintenant"
+
