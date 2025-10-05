@@ -6,7 +6,8 @@ const limit = 20;
 // damit wir ihn bei einem "Zurück" (popstate) wiederherstellen können
 let newsFeedState = {
   htmlCache: '',   // hier speichern wir den gerenderten HTML-Inhalt der News-Liste
-  scrollY: 0       // Scrollposition vor dem Klick auf ein Detailobjekt
+  scrollY: 0,       // Scrollposition vor dem Klick auf ein Detailobjekt
+  offset: 20    // aktueller Offset für "Mehr laden"
 };
 
 // Neuer: Zustände pro URL speichern
@@ -56,6 +57,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             offset += limit;
+
+            // Zustand aktualisieren
+            const key = window.location.pathname + window.location.search;
+            const updated = {
+              htmlCache: newsContainer.innerHTML,
+              scrollY: window.scrollY,
+              offset: offset
+            };
+            pageState[key] = updated;
+            sessionStorage.setItem(key, JSON.stringify(updated));
+
             bindLoadMoreButton(); // neu binden falls Button nochmal drin
           });
       });
@@ -90,12 +102,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const currentKey = window.location.pathname + window.location.search;
       const stateObj = {
         htmlCache: document.querySelector('#news-container').innerHTML,
-        scrollY: window.scrollY
+        scrollY: window.scrollY,
+        offset: offset
       };
       pageState[currentKey] = stateObj;
       sessionStorage.setItem(currentKey, JSON.stringify(stateObj));
 
-      // URL aktualisieren, ohne neu zu laden
+      // Neuen Zustand für die Detailansicht in den Verlauf einfügen
       history.pushState({ type: 'detail', id: newsId }, '', `/news/${newsId}/`);
 
       // Lade nur den HTML-Partial-Inhalt der Detailansicht
@@ -153,7 +166,9 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(html => {
           document.querySelector('#news-container').innerHTML = html;
           window.scrollTo(0, 0);
+          const loadMoreBtn = document.getElementById('load-more');
           loadMoreBtn?.classList.add('hidden');
+
         });
     } else {
       const currentKey = window.location.pathname + window.location.search;
@@ -164,6 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (cached) {
         document.querySelector('#news-container').innerHTML = cached.htmlCache;
         window.scrollTo(0, cached.scrollY);
+        offset = cached.offset || 20;
         bindLoadMoreButton();
       } else {
         fetch(`/news/partial?${urlParams.toString()}`)
@@ -207,7 +223,8 @@ document.addEventListener('DOMContentLoaded', () => {
           // Jetzt Zustand speichern
           const stateObj = {
             htmlCache: newsContainer.innerHTML,
-            scrollY: 0
+            scrollY: 0,
+            offset: offset
           };
           pageState[currentKey] = stateObj;
           sessionStorage.setItem(currentKey, JSON.stringify(stateObj));
