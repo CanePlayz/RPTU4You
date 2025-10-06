@@ -92,7 +92,7 @@ class PreferencesForm(forms.ModelForm):
 
         # Label setzen
         self.fields["standorte"].label = "Standorte"
-        self.fields["inhaltskategorien"].label = "Inhaltskategorien"
+        self.fields["inhaltskategorien"].label = "Kategorien"
         self.fields["quellen"].label = "Quellen"
         self.fields["zielgruppen"].label = "Zielgruppen"
         self.fields["include_rundmail"].label = "📧 Rundmails"

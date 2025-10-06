@@ -6,7 +6,8 @@
 
 {% block content %}
 <div class="flex bg-gray-100 dark:bg-gray-900 min-h-[calc(100vh-72px)]">
-  <!-- Linke Seite: Präferenzenformular -->
+
+  <!-- Linke Seite: Präferenzformular -->
   <div class="w-80 pl-5 pr-2 sticky top-[72px] h-[calc(100vh-72px)] overflow-y-auto">
     <form id="preferences-form" action="{% url 'preferences' %}" method="post" class="py-6 pr-2">
       {% csrf_token %}
@@ -91,30 +92,31 @@
   </div>
 
   <!-- Mitte: News -->
+
   <div class="flex-1 mt-3 px-8 overflow-y-auto">
     <main id="main">
       <div id="news-container">
-        {% if detail_news %}
-          {% include "news/partials/_news_detail.html" with news=detail_news %}
-        {% else %}
-          {% include "news/partials/_news_list.html" with news_list=news_list has_more=has_more %}
-        {% endif %}
+        {% include "news/partials/_news_list.html" with news_list=news_list has_more=has_more %}
       </div>
     </main>
   </div>
 
-  <!-- Rechte Seite: Kleiner Kalender -->
+  <!-- Rechte Seite: Kalender -->
+
   <div class="w-80 pr-5 sticky top-[72px] h-[calc(100vh-72px)] overflow-auto">
-    <h3 class="text-lg font-semibold text-center mb-4 text-gray-800 dark:text-gray-100">Nächste Termine</h3>
+    <h2 class="text-xl font-bold my-4 text-gray-800 dark:text-gray-100">Nächste Termine</h2>
+    <!-- Die einzelnen Termine -->
     {% if upcoming_events %}
-      <ul class="space-y-4">
+      <a href="{% url 'calendar_page' %}">
+        <ul class="space-y-4">
         {% for event in upcoming_events %}
-          <li class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg shadow">
-            <p class="text-sm text-gray-500 dark:text-gray-400">{{ event.start|date:"d.m.Y H:i" }} - {{ event.end|date:"H:i" }}</p>
+          <li class="bg-gray-50 dark:bg-gray-800 p-4 mr rounded-lg shadow">
             <p class="font-bold text-gray-800 dark:text-gray-100">{{ event.title }}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">{{ event.start|date:"d.m.Y H:i" }} - {{ event.end|date:"H:i" }}</p>
           </li>
         {% endfor %}
-      </ul>
+        </ul>
+      </a>
     {% else %}
       <p class="text-gray-500 dark:text-gray-400 italic text-center">Keine anstehenden Termine.</p>
     {% endif %}
