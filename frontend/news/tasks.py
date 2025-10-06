@@ -65,7 +65,7 @@ def add_audiences_and_categories(
         BASE_DIR, "views", "util", "categorization", "inhaltskategorien.txt"
     )
     target_group_categories_file_path = os.path.join(
-        BASE_DIR, "publikumskategorien.txt"
+        BASE_DIR, "views", "util", "categorization", "zielgruppen.txt"
     )
     with open(
         content_categories_file_path,
