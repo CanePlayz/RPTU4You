@@ -61,7 +61,9 @@ def add_audiences_and_categories(
 ):
     # Erlaube nur vordefinierte Kategorien und Zielgruppen
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    content_categories_file_path = os.path.join(BASE_DIR, "inhaltskategorien.txt")
+    content_categories_file_path = os.path.join(
+        BASE_DIR, "views", "util", "categorization", "inhaltskategorien.txt"
+    )
     target_group_categories_file_path = os.path.join(
         BASE_DIR, "publikumskategorien.txt"
     )
