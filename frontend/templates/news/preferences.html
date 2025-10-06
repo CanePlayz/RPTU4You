@@ -19,12 +19,12 @@
 {% endblock %}
 
 {% block content %}
-<div class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-gray-100">
+<div class="flex max-md:flex-wrap items-center justify-center min-h-[calc(100vh-72px)] bg-gray-100">
     <div class="w-full max-w-5xl px-8">
         <!-- Überschrift -->
         <h1 class="text-3xl font-extrabold my-8 text-gray-800">Meine Präferenzen</h1>
         <!-- Formular zur Auswahl der Präferenzen -->
-        <form method="post" class="flex flex-row gap-6 items-start">
+        <form method="post" class="flex flex-row max-md:flex-wrap items-start">
             {% csrf_token %} <!-- CSRF-Schutz -->
             <!-- Standort-Auswahl -->
             <div class="flex-1 min-w-[180px]">

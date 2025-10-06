@@ -241,4 +241,33 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   }
+  //Filter dropdown mobile version
+  const toggle = document.getElementById('filter-button');
+  const dropdown = document.getElementById('filter-dropdown');
+  const news = document.getElementById('news');
+
+  if (toggle && dropdown) {
+      toggle.addEventListener('click', (event) => {
+          event.stopPropagation(); // Prevent click from propagating to document
+          const filter_is_Hidden = dropdown.classList.contains('max-md:hidden');
+          if (filter_is_Hidden) {
+              dropdown.classList.remove('max-md:hidden');
+              news.classList.add('hidden')
+          } else {
+              dropdown.classList.add('max-md:hidden');
+              news.classList.remove('hidden');
+          }
+      });
+
+      // Schließt das Dropdown, wenn man außerhalb klickt
+      document.addEventListener('click', (event) => {
+          if (!dropdown.contains(event.target) && !toggle.contains(event.target)) {
+              dropdown.classList.add('max-md:hidden');
+              news.classList.remove('hidden')
+          }
+      });
+  } else {
+      console.error("Filter button or Filter dropdown not found");
+  }
+
 });
