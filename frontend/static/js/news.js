@@ -18,6 +18,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const filterForm = document.getElementById('news-filter-form');
   const newsContainer = document.getElementById('news-container');
 
+  // ---------- Helpers: Locale-Präfix & Key-Kanonisierung ----------
+  function getLocalePrefix() {
+    // z. B. "/de"
+    const m = window.location.pathname.match(/^\/([a-z]{2})(?=\/)/i);
+    return m ? `/${m[1]}` : '';
+  }
+
+  function newsBase() {
+    // z. B. "/de/news/"
+    return `${getLocalePrefix()}/news/`.replace(/\/{2,}/g, '/');
+  }
+
+  function canonicalKey(pathname, search) {
+    const path = pathname.endsWith('/') ? pathname : `${pathname}/`;
+    const q = new URLSearchParams(search).toString();
+    return q ? `${path}?${q}` : path;
+  }
+
+  // Initialen Verlaufseintrag setzen, damit event.state nicht null ist
+  const initKey = canonicalKey(window.location.pathname, window.location.search);
+  if (!history.state) {
+    history.replaceState({ type: 'list', key: initKey }, '', initKey);
+  }
+
   // Hilfsfunktion zum Erstellen der Filter-URLs
   function buildFilterUrls(form) {
     const formData = new FormData(form);
@@ -26,11 +50,13 @@ document.addEventListener('DOMContentLoaded', () => {
       params.append(key, value);
     }
     const query = params.toString();
+    const base = newsBase();
     return {
-      newUrl: `/news/?${query}`,
-      fetchUrl: `/news/partial?${query}`
+      newUrl: query ? `${base}?${query}` : base,
+      fetchUrl: query ? `${base}partial?${query}` : `${base}partial`
     };
   }
+
 
   function bindLoadMoreButton() {
     const loadMoreBtn = document.getElementById('load-more');
@@ -41,7 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // deaktivieren, um mehrfaches Klicken zu verhindern
         loadMoreBtn.disabled = true;
 
-        fetch(`${urls.fetchUrl}&offset=${offset}&limit=${limit}`)
+        const sep = urls.fetchUrl.includes('?') ? '&' : '?';
+        fetch(`${urls.fetchUrl}${sep}offset=${offset}&limit=${limit}`)
           .then(resp => resp.text())
           .then(html => {
             // Temporäres Container-Element zum Parsen des HTMLs
@@ -59,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
             offset += limit;
 
             // Zustand aktualisieren
-            const key = window.location.pathname + window.location.search;
+            const key = canonicalKey(window.location.pathname, window.location.search);
             const updated = {
               htmlCache: newsContainer.innerHTML,
               scrollY: window.scrollY,
@@ -99,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const newsId = card.dataset.id;
 
       // Vor dem Wechsel Zustand der Liste sichern
-      const currentKey = window.location.pathname + window.location.search;
+      const currentKey = canonicalKey(window.location.pathname, window.location.search);
       const stateObj = {
         htmlCache: document.querySelector('#news-container').innerHTML,
         scrollY: window.scrollY,
@@ -109,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
       sessionStorage.setItem(currentKey, JSON.stringify(stateObj));
 
       // Neuen Zustand für die Detailansicht in den Verlauf einfügen
-      history.pushState({ type: 'detail', id: newsId }, '', `/news/${newsId}/`);
+      history.pushState({ type: 'detail', id: newsId, keyPrevUrl: currentKey }, '', `${newsBase()}${newsId}/`);
 
       // Lade nur den HTML-Partial-Inhalt der Detailansicht
       fetch(`/news/${newsId}/?partial=true`)
@@ -133,20 +160,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // ---------------------------------------------
     if (e.target.id === 'back-to-list') {
       e.preventDefault();
-      // Prüfe, ob ein Verlaufseintrag für die Übersicht existiert
-      const overviewUrl = '/news/';
-      const currentKey = overviewUrl + window.location.search;
-      const hasOverviewState =
-        pageState[currentKey] ||
-        sessionStorage.getItem(currentKey);
+      // Prüfe, ob ein Verlaufseintrag für die vorherige Übersicht existiert
+      const keyPrevUrl = history.state?.keyPrevUrl;
+      const hasOverviewState = keyPrevUrl && (pageState[keyPrevUrl] || sessionStorage.getItem(keyPrevUrl));
 
+      // Wenn ja, dann zurück navigieren
       if (hasOverviewState) {
-        history.back();  // löst popstate aus
+        history.back();
       } else {
-        // Kein Verlaufseintrag: explizit zur Übersicht navigieren
-        window.location.href = overviewUrl + window.location.search;
+        // Ansonsten zur Basis-Übersicht navigieren
+        window.location.href = keyPrevUrl || newsBase();
       }
-      return;
     }
   });
 
@@ -161,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (state && state.type === 'detail') {
       // Benutzer springt zurück zu einer Detail-Ansicht
-      fetch(`/news/${state.id}/?partial=true`)
+      fetch(`${newsBase()}${state.id}/?partial=true`)
         .then(resp => resp.text())
         .then(html => {
           document.querySelector('#news-container').innerHTML = html;
@@ -171,7 +195,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         });
     } else {
-      const currentKey = window.location.pathname + window.location.search;
+      // Benutzer springt zurück zu einer Listen-Ansicht
+      const currentKey = canonicalKey(window.location.pathname, window.location.search);
       const cached =
         pageState[currentKey] ||
         JSON.parse(sessionStorage.getItem(currentKey) || 'null');
@@ -182,7 +207,8 @@ document.addEventListener('DOMContentLoaded', () => {
         offset = cached.offset || 20;
         bindLoadMoreButton();
       } else {
-        fetch(`/news/partial?${urlParams.toString()}`)
+        const qs = urlParams.toString();
+        fetch(`${newsBase()}partial${qs ? `?${qs}` : ''}`)
           .then(resp => resp.text())
           .then(html => {
             document.querySelector('#news-container').innerHTML = html;
