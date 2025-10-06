@@ -9,7 +9,7 @@
 {% block content %}
 
 <div class="flex bg-gray-100 dark:bg-gray-900 min-h-[calc(100vh-72px)]">
-  <!-- ------------------------ -->
+
   <!-- Linke Seite: Filterblock -->
   <!-- ------------------------ -->
 
@@ -18,7 +18,7 @@
     <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
     <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
     </svg>
-  </button>  
+  </button>
   <div class="max-md:hidden max-md:w-full max-md:h-full max-md:left-1/2 md:w-80 pl-5 sticky md:top-[72px] md:h-[calc(100vh-72px)] overflow-y-auto max-md:text-sm max-md:flex-wrap" id="filter-dropdown">
     <form id="news-filter-form" method="get" class="overflow-y-auto">
   <h2 class="text-xl font-bold my-4 text-gray-800 dark:text-gray-100">{% trans "Filter" %}</h2>
@@ -96,7 +96,7 @@
   <button type="button" id="apply-filter-btn" class="bg-[#042c58] dark:bg-gray-800 text-white dark:text-gray-100 rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-gray-700 mb-6">{% trans "Filter anwenden" %}</button>
     </form>
   </div>
-  <!-- ----------- -->
+
   <!-- Mitte: News -->
   <!-- ----------- -->
   <div class="flex-1 mt-3 px-8 overflow-y-auto" id="news">
@@ -133,34 +133,6 @@
   </div>
 </div>
 
-<!-- Javascript -->
-<script>
-  // Ein- und Ausklappen der Filter
-  function toggleFilter(name) {
-    var el = document.getElementById('filter-' + name);
-    var chevron = document.getElementById('chevron-' + name);
-    if (el.classList.contains('hidden')) {
-      el.classList.remove('hidden');
-      chevron.style.transform = 'rotate(90deg)'; 
-    } else {
-      el.classList.add('hidden');
-      chevron.style.transform = 'rotate(0deg)'; 
-    }
-  }
-</script>
-<script>
-  // "Keine News gefunden" Banner entfernen, wenn News geladen werden
-  document.addEventListener('DOMContentLoaded', function() {
-    var loadMoreBtn = document.getElementById('load-more');
-    if (loadMoreBtn) {
-      loadMoreBtn.addEventListener('click', function() {
-        var banner = document.getElementById('no-news-banner');
-        if (banner) {
-          banner.remove();
-        }
-      });
-    }
-  }); 
-</script> 
+<script src="{% static 'js/newsFeedCore.js' %}"></script>
 <script src="{% static 'js/news.js' %}"></script>
 {% endblock %}

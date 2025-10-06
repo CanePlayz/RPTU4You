@@ -53,7 +53,6 @@ def get_cleaned_text_from_openai(
                     },
                 ],
                 tools=[],
-                temperature=0.2,
             )
         except Exception as e:
             raise e

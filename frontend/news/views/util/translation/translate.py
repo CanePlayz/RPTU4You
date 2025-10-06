@@ -59,7 +59,6 @@ def translate_html(
                     },
                 ],
                 tools=[],
-                temperature=0.2,
             )
         except Exception as e:
             raise e

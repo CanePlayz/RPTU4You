@@ -20,10 +20,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <link href='https://fonts.googleapis.com/css?family=Red Hat Text' rel='stylesheet'>
+  <script src="{% static 'js/nav.js' %}"> </script>
   <script src="{% static 'js/base.js' %}"> </script>
-  <!-- Tailwind CSS ----- Lokal: <link rel="stylesheet" href="{% static 'css/tailwind-built.css' %}">-->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script> tailwind.config = {darkMode: 'class',}</script>
+  <link rel="stylesheet" href="{% static 'css/tailwind-built.css' %}">
   <title>
     {% block title %}
   {% trans "No Title" %}
@@ -115,13 +114,13 @@
               </span>
             </label>
           </div>
-        </div>  
+        </div>
         <!-- Profil Button -->
-        <button type="button" class="flex text-sm bg-transparent rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 profile-icon items-center" id="user-menu-button" aria-expanded="false"> 
+        <button type="button" class="flex text-sm bg-transparent rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 profile-icon items-center" id="user-menu-button" aria-expanded="false">
           <img class="w-10 h-10 rounded-full" src="{% static 'images/user-icon.png' %}" alt="user photo">
         </button>
         <!--Profil Dropdown-->
-        <div class="z-50 hidden absolute top-16 right-0 w-48 text-base list-none bg-[#042c58] divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-[#0a111a] dropdown-menu" id="user-dropdown"> 
+        <div class="z-50 hidden absolute top-16 right-0 w-48 text-base list-none bg-[#042c58] divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-[#0a111a] dropdown-menu" id="user-dropdown">
           {% if user.is_authenticated %}
           <div class="px-4 py-3">
             <span class="block text-sm text-gray-100 dark:text-white">{{ user.username }}</span>
@@ -133,7 +132,7 @@
             <li><a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">{% trans "Abmelden" %}</a></li>
           </ul>
           {% else %}
-          <ul class="py-2" aria-labelledby="user-menu-button"> 
+          <ul class="py-2" aria-labelledby="user-menu-button">
             <li>
               <a href="{% url 'login' %}?next={{ request.path }}" class="block px-4 py-2 text-sm text-gray-100 hover:bg-gray-100 hover:text-black dark:hover:bg-gray-600 dark:text-white">{% trans "Anmelden" %}</a>
             </li>
@@ -154,6 +153,7 @@
     {% endblock %}
 
   </div>
+
 
   <!--Navigationsleiste mobile unten-->
   <div class="bg-[#042c58] dark:bg-[#0a111a] fixed bottom-0 flex items-center justify-between w-full md:hidden">

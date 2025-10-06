@@ -1,273 +1,150 @@
-// Aktuell geladener Offset (wir starten mit 20, weil 20 beim ersten Rendern schon vorhanden sind)
-let offset = 20;
-const limit = 20;
+// Diese Datei erweitert die Listenlogik aus newsFeedCore.js um die Filterfunktionalität
 
-// In diesem Objekt speichern wir den Zustand des News-Feeds,
-// damit wir ihn bei einem "Zurück" (popstate) wiederherstellen können
-let newsFeedState = {
-  htmlCache: '',   // hier speichern wir den gerenderten HTML-Inhalt der News-Liste
-  scrollY: 0       // Scrollposition vor dem Klick auf ein Detailobjekt
+// Funktion zum Ein- und Ausklappen von Filtersektionen
+window.toggleFilter = function (name) {
+  var section = document.getElementById("filter-" + name);
+  var chevron = document.getElementById("chevron-" + name);
+  if (!section || !chevron) {
+    return;
+  }
+  var isHidden = section.classList.contains("hidden");
+  if (isHidden) {
+    section.classList.remove("hidden");
+    chevron.style.transform = "rotate(90deg)";
+  } else {
+    section.classList.add("hidden");
+    chevron.style.transform = "rotate(0deg)";
+  }
 };
 
-// Neuer: Zustände pro URL speichern
-let pageState = {}; // key = URL (z.B. /news/?location=A), value = { htmlCache, scrollY }
-
-// Starte nach dem Laden der Seite
-document.addEventListener('DOMContentLoaded', () => {
-  const filterForm = document.getElementById('news-filter-form');
-  const newsContainer = document.getElementById('news-container');
-
-  // Hilfsfunktion zum Erstellen der Filter-URLs
-  function buildFilterUrls(form) {
-    const formData = new FormData(form);
-    const params = new URLSearchParams();
-    for (const [key, value] of formData.entries()) {
-      params.append(key, value);
-    }
-    const query = params.toString();
-    return {
-      newUrl: `/news/?${query}`,
-      fetchUrl: `/news/partial?${query}`
-    };
+document.addEventListener("DOMContentLoaded", function () {
+  // Prüft, ob newsFeedCore.js geladen wurde und bricht andernfalls mit einer Fehlermeldung ab
+  if (!window.NewsFeedCore || typeof window.NewsFeedCore.initNewsFeed !== "function") {
+    console.error("NewsFeedCore ist nicht verfügbar. Bitte stelle sicher, dass newsFeedCore.js geladen ist.");
+    return;
   }
 
-  function bindLoadMoreButton() {
-    const loadMoreBtn = document.getElementById('load-more');
-    if (loadMoreBtn) {
-      loadMoreBtn.addEventListener('click', () => {
-        const urls = buildFilterUrls(filterForm);
+  // Referenzen auf alle relevanten Filterelemente erstellen
+  var filterForm = document.getElementById("news-filter-form");
+  var filterApplyButton = document.getElementById("apply-filter-btn");
+  var filterResetButton = document.getElementById("reset-filter-btn");
+  var filterSelectAllButton = document.getElementById("select-all-btn");
 
-        // deaktivieren, um mehrfaches Klicken zu verhindern
-        loadMoreBtn.disabled = true;
-
-        fetch(`${urls.fetchUrl}&offset=${offset}&limit=${limit}`)
-          .then(resp => resp.text())
-          .then(html => {
-            // Temporäres Container-Element zum Parsen des HTMLs
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = html;
-
-            // Entferne alten Button
-            loadMoreBtn.remove();
-            // Füge nur News (und evtl. neuen Button) ein
-            const newContent = tempDiv.children;
-            for (const el of newContent) {
-              newsContainer.appendChild(el);
-            }
-
-            offset += limit;
-            bindLoadMoreButton(); // neu binden falls Button nochmal drin
-          });
-      });
-    }
+  // Ermittelt ein Locale-Präfix aus der URL, etwa /de
+  function getLocalePrefix() {
+    var match = window.location.pathname.match(/^\/([a-z]{2})(?=\/)/i);
+    return match ? "/" + match[1] : "";
   }
 
-  function applyFiltersFromURL(urlParams, form) {
-    // Alle Checkboxen erstmal zurücksetzen
-    const checkboxes = form.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach(cb => cb.checked = false);
-
-    // Für jedes Parametervorkommen die passenden Checkboxen aktivieren
-    for (const [key, value] of urlParams.entries()) {
-      const selector = `input[name="${key}"][value="${value}"]`;
-      const checkbox = form.querySelector(selector);
-      if (checkbox) checkbox.checked = true;
-    }
+  // Basis-URL für die News-Seite inklusive Sprachpräfix, etwa /de/news/
+  function newsBasePath() {
+    return (getLocalePrefix() + "/news/").replace(/\/{2,}/g, "/");
   }
 
-  bindLoadMoreButton(); // initiales Binden beim Seitenladen
+  // Liest Werte aus dem Filterformular und erzeugt einen Query-String
+  function buildQueryFromFilters() {
+    if (!filterForm) {
+      return "";
+    }
+    var formData = new FormData(filterForm);
+    var params = new URLSearchParams();
+    for (var pair of formData.entries()) {
+      params.append(pair[0], pair[1]);
+    }
+    return params.toString();
+  }
 
-  // ---------------------------------------------
-  // 1. Klick auf News-Karte -> lade Detailansicht
-  // ---------------------------------------------
-  document.body.addEventListener('click', (e) => {
-    const card = e.target.closest('.news-card');
-    if (card) {
-      e.preventDefault();
-      const newsId = card.dataset.id;
+  // Setzt Checkboxen anhand der aktuellen URL-Parameter, etwa bei popstate
+  function applyFiltersFromURL(urlParams) {
+    if (!filterForm) {
+      return;
+    }
+    var checkboxes = filterForm.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(function (cb) {
+      cb.checked = false;
+    });
 
-      // Vor dem Wechsel Zustand der Liste sichern
-      const currentKey = window.location.pathname + window.location.search;
-      const stateObj = {
-        htmlCache: document.querySelector('#news-container').innerHTML,
-        scrollY: window.scrollY
+    urlParams.forEach(function (value, key) {
+      var selector = 'input[name="' + key + '"][value="' + value + '"]';
+      var checkbox = filterForm.querySelector(selector);
+      if (checkbox) {
+        checkbox.checked = true;
+      }
+    });
+  }
+
+  // Initialisierung der Core-Logik mit Filterfunktionalität
+  window.NewsFeedCore.initNewsFeed({
+    containerSelector: "#news-container",
+    loadMoreSelector: "#load-more",
+    limit: 20,
+    initialOffset: 20,
+    filterForm: filterForm,
+    filterApplyButton: filterApplyButton,
+    filterResetButton: filterResetButton,
+    filterSelectAllButton: filterSelectAllButton,
+    buildQueryFromFilters: buildQueryFromFilters,
+    applyFiltersFromURL: applyFiltersFromURL,
+    getBasePath: newsBasePath,
+    // URL für Detailansicht
+    getDetailPageUrl: function (id) {
+      return newsBasePath() + id + "/";
+    },
+    // URL für AJAX-Nachladen der Detailansicht
+    getDetailFetchUrl: function (id) {
+      return newsBasePath() + id + "/?partial=true";
+    },
+    // Erzeugt die URLs für die Listenseite und das Nachladen basierend auf dem Query-String
+    buildListUrls: function (query) {
+      var base = newsBasePath();
+      if (query) {
+        return {
+          pageUrl: base + "?" + query,
+          fetchUrl: base + "partial/?" + query,
+        };
+      }
+      return {
+        pageUrl: base,
+        fetchUrl: base + "partial/",
       };
-      pageState[currentKey] = stateObj;
-      sessionStorage.setItem(currentKey, JSON.stringify(stateObj));
+    },
+  });
 
-      // URL aktualisieren, ohne neu zu laden
-      history.pushState({ type: 'detail', id: newsId }, '', `/news/${newsId}/`);
-
-      // Lade nur den HTML-Partial-Inhalt der Detailansicht
-      fetch(`/news/${newsId}/?partial=true`)
-        .then(resp => resp.text())
-        .then(html => {
-          document.querySelector('#news-container').innerHTML = html;
-          window.scrollTo(0, 0);
-        });
-
-      // Button "Mehr laden" ausblenden
-      const loadMoreBtn = document.getElementById('load-more');
-      if (loadMoreBtn) {
-        loadMoreBtn.classList.add('hidden');
-      }
-
-      return; // Detailklick wurde behandelt
-    }
-
-    // ---------------------------------------------
-    // 2. Klick auf "Zurück zur Übersicht" im Detail
-    // ---------------------------------------------
-    if (e.target.id === 'back-to-list') {
-      e.preventDefault();
-      // Prüfe, ob ein Verlaufseintrag für die Übersicht existiert
-      const overviewUrl = '/news/';
-      const currentKey = overviewUrl + window.location.search;
-      const hasOverviewState =
-        pageState[currentKey] ||
-        sessionStorage.getItem(currentKey);
-
-      if (hasOverviewState) {
-        history.back();  // löst popstate aus
-      } else {
-        // Kein Verlaufseintrag: explizit zur Übersicht navigieren
-        window.location.href = overviewUrl + window.location.search;
-      }
+  // Entfernt ein "Keine News gefunden"-Banner, wenn der "Mehr laden"-Button geklickt wird
+  document.addEventListener("click", function (event) {
+    var loadMoreBtn = event.target.closest ? event.target.closest("#load-more") : null;
+    if (!loadMoreBtn) {
       return;
     }
   });
 
-  // ----------------------------------------------
-  // 4. Zurück-Button (Browser oder manuell) → popstate
-  // ----------------------------------------------
-  window.addEventListener('popstate', (event) => {
-    const state = event.state;
 
-    const urlParams = new URLSearchParams(window.location.search);
-    applyFiltersFromURL(urlParams, filterForm);
-
-    if (state && state.type === 'detail') {
-      // Benutzer springt zurück zu einer Detail-Ansicht
-      fetch(`/news/${state.id}/?partial=true`)
-        .then(resp => resp.text())
-        .then(html => {
-          document.querySelector('#news-container').innerHTML = html;
-          window.scrollTo(0, 0);
-          loadMoreBtn?.classList.add('hidden');
-        });
-    } else {
-      const currentKey = window.location.pathname + window.location.search;
-      const cached =
-        pageState[currentKey] ||
-        JSON.parse(sessionStorage.getItem(currentKey) || 'null');
-
-      if (cached) {
-        document.querySelector('#news-container').innerHTML = cached.htmlCache;
-        window.scrollTo(0, cached.scrollY);
-        bindLoadMoreButton();
-      } else {
-        fetch(`/news/partial?${urlParams.toString()}`)
-          .then(resp => resp.text())
-          .then(html => {
-            document.querySelector('#news-container').innerHTML = html;
-            window.scrollTo(0, 0);
-            offset = 20;
-            bindLoadMoreButton();
-          })
-          .catch(err => {
-            console.error('Fehler beim Laden der News-Übersicht:', err);
-          });
-      }
-    }
-  });
-
-  // ----------------------------------------------
-  // 5. Filter anwenden per Button
-  // ----------------------------------------------
-  const filterButton = document.getElementById('apply-filter-btn');
-
-  if (filterForm && filterButton) {
-    filterButton.addEventListener('click', () => {
-      console.log('Filter angewendet');
-      const urls = buildFilterUrls(filterForm);
-      const currentKey = urls.newUrl;
-
-      // Browser-URL aktualisieren
-      history.pushState({ type: 'list', key: currentKey }, '', urls.newUrl);
-
-      // AJAX-Inhalt laden
-      fetch(urls.fetchUrl)
-        .then(resp => resp.text())
-        .then(html => {
-          newsContainer.innerHTML = html;
-          offset = 20; // Reset Offset
-          window.scrollTo(0, 0);
-          bindLoadMoreButton(); // Button neu binden nach Filter
-
-          // Jetzt Zustand speichern
-          const stateObj = {
-            htmlCache: newsContainer.innerHTML,
-            scrollY: 0
-          };
-          pageState[currentKey] = stateObj;
-          sessionStorage.setItem(currentKey, JSON.stringify(stateObj));
-        })
-        .catch(err => {
-          console.error('Fehler beim Laden der gefilterten News:', err);
-        });
-    });
-
-    // Reset-Button Logik: Alle Checkboxen abwählen, aber kein Reload
-    const resetButton = document.getElementById('reset-filter-btn');
-    if (resetButton) {
-      resetButton.addEventListener('click', () => {
-        // Alle Checkboxen im Filter-Formular abwählen
-        const checkboxes = filterForm.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(cb => {
-          cb.checked = false;
-        });
-      });
-    }
-
-    // Select-All-Button Logik: Alle Checkboxen auswählen, aber kein Reload
-    const selectAllButton = document.getElementById('select-all-btn');
-    if (selectAllButton) {
-      selectAllButton.addEventListener('click', () => {
-        // Alle Checkboxen im Filter-Formular auswählen
-        const checkboxes = filterForm.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(cb => {
-          cb.checked = true;
-        });
-      });
-    }
-  }
   //Filter dropdown mobile version
   const toggle = document.getElementById('filter-button');
   const dropdown = document.getElementById('filter-dropdown');
   const news = document.getElementById('news');
 
   if (toggle && dropdown) {
-      toggle.addEventListener('click', (event) => {
-          event.stopPropagation(); // Prevent click from propagating to document
-          const filter_is_Hidden = dropdown.classList.contains('max-md:hidden');
-          if (filter_is_Hidden) {
-              dropdown.classList.remove('max-md:hidden');
-              news.classList.add('hidden')
-          } else {
-              dropdown.classList.add('max-md:hidden');
-              news.classList.remove('hidden');
-          }
-      });
+    toggle.addEventListener('click', (event) => {
+      event.stopPropagation(); // Prevent click from propagating to document
+      const filter_is_Hidden = dropdown.classList.contains('max-md:hidden');
+      if (filter_is_Hidden) {
+        dropdown.classList.remove('max-md:hidden');
+        news.classList.add('hidden')
+      } else {
+        dropdown.classList.add('max-md:hidden');
+        news.classList.remove('hidden');
+      }
+    });
 
-      // Schließt das Dropdown, wenn man außerhalb klickt
-      document.addEventListener('click', (event) => {
-          if (!dropdown.contains(event.target) && !toggle.contains(event.target)) {
-              dropdown.classList.add('max-md:hidden');
-              news.classList.remove('hidden')
-          }
-      });
+    // Schließt das Dropdown, wenn man außerhalb klickt
+    document.addEventListener('click', (event) => {
+      if (!dropdown.contains(event.target) && !toggle.contains(event.target)) {
+        dropdown.classList.add('max-md:hidden');
+        news.classList.remove('hidden')
+      }
+    });
   } else {
-      console.error("Filter button or Filter dropdown not found");
+    console.error("Filter button or Filter dropdown not found");
   }
-
 });

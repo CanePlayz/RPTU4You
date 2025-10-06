@@ -1,53 +1,82 @@
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 from django.urls import path
-from news.views import receive_news, views
+from news.views.account import (
+    account_view,
+    login_view,
+    logout_view,
+    register_view,
+    update_preferences,
+)
+from news.views.calendar import (
+    calendar_event_detail,
+    calendar_events,
+    calendar_page,
+    export_ics,
+    import_ics,
+)
+from news.views.news import (
+    foryoupage,
+    foryoupage_partial,
+    links,
+    news_detail,
+    news_partial,
+    news_view,
+)
+from news.views.receive_news import ReceiveNews
+from news.views.system import (
+    db_connection_status,
+    health_check,
+    request_date,
+    set_language,
+)
 
 # Sprachunabhängige URLs
 urlpatterns = [
     # Admin
     path("admin/", admin.site.urls),
     # API
-    path("api/news/", receive_news.ReceiveNews.as_view(), name="receive_news"),
-    path("api/news/rundmail/date", views.request_date, name="request_date"),
+    path("api/news/", ReceiveNews.as_view(), name="receive_news"),
+    path("api/news/rundmail/date", request_date, name="request_date"),
     # Kalender
-    path("api/calendar-events/", views.calendar_events, name="calendar_events"),
+    path("api/calendar-events/", calendar_events, name="calendar_events"),
     path(
         "api/calendar-events/<int:event_id>/",
-        views.calendar_event_detail,
+        calendar_event_detail,
         name="calendar_event_detail",
     ),
-    path("kalender/import/", views.import_ics, name="import_ics"),
-    path("kalender/export/", views.export_ics, name="export_ics"),
+    path("kalender/import/", import_ics, name="import_ics"),
+    path("kalender/export/", export_ics, name="export_ics"),
 ]
 
+# Sprachabhängige URLs
 urlpatterns += i18n_patterns(
-    path("set-language/", views.set_language, name="set_language"),
-    # Admin URLs
+    path("set-language/", set_language, name="set_language"),
     # News
-    path("", views.news_view, name="News"),
-    path("news/", views.news_view, name="news"),
-    path("news/partial/", views.news_partial, name="news_partial"),
-    path("news/<int:pk>/", views.news_detail, name="news_detail"),
-    path("foryoupage/", views.foryoupage, name="foryoupage"),
+    path("", news_view, name="News"),
+    path("news/", news_view, name="news"),
+    path("news/partial/", news_partial, name="news_partial"),
+    path("news/<int:pk>/", news_detail, name="news_detail"),
+    path("foryoupage/", foryoupage, name="foryoupage"),
+    path("foryoupage/partial/", foryoupage_partial, name="foryoupage_partial"),
     # User
-    path("login/", views.login_view, name="login"),
-    path("logout/", views.logout_view, name="logout"),
-    path("register/", views.register_view, name="register"),
-    path("preferences/", views.update_preferences, name="preferences"),
-    path("account/", views.account_view, name="account"),
+    path("login/", login_view, name="login"),
+    path("logout/", logout_view, name="logout"),
+    path("register/", register_view, name="register"),
+    path("preferences/", update_preferences, name="preferences"),
+    path("account/", account_view, name="account"),
     # Kalender
-    path("kalender/", views.calendar_page, name="calendar_page"),
-    path("api/calendar-events/", views.calendar_events, name="calendar_events"),
+    path("kalender/", calendar_page, name="calendar_page"),
+    path("api/calendar-events/", calendar_events, name="calendar_events"),
     path(
         "api/calendar-events/<int:event_id>/",
-        views.calendar_event_detail,
+        calendar_event_detail,
         name="calendar_event_detail",
     ),
-    path("kalender/import/", views.import_ics, name="import_ics"),
-    path("kalender/export/", views.export_ics, name="export_ics"),
+    path("kalender/import/", import_ics, name="import_ics"),
+    path("kalender/export/", export_ics, name="export_ics"),
     # Sonstiges
-    path("links/", views.links, name="links"),
-    path("db-connections/", views.db_connection_status),
-    path("health/", views.health_check, name="health_check"),
+    path("links/", links, name="links"),
+    path("db-connections/", db_connection_status),
+    path("health/", health_check, name="health_check"),
 )

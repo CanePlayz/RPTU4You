@@ -22,9 +22,7 @@ services:
       - backend
 
   django:
-    build:
-      context: .
-      dockerfile: frontend/Dockerfile
+    image: caneplayz/rptu4you-frontend:latest
     environment:
       <<: *common-env
       API_KEY: ${API_KEY}
@@ -41,9 +39,7 @@ services:
     command: ["python", "/app/entrypoint.py"]
 
   celery-worker:
-    build:
-      context: .
-      dockerfile: frontend/Dockerfile
+    image: caneplayz/rptu4you-frontend:latest
     environment:
       <<: *common-env
     depends_on:
@@ -54,9 +50,7 @@ services:
     user: "1001"
 
   celery-beat:
-    build:
-      context: .
-      dockerfile: frontend/Dockerfile
+    image: caneplayz/rptu4you-frontend:latest
     depends_on:
       - redis
     networks:
@@ -65,9 +59,7 @@ services:
     user: "1001"
 
   flower:
-    build:
-      context: .
-      dockerfile: frontend/Dockerfile
+    image: caneplayz/rptu4you-frontend:latest
     depends_on:
       - redis
     networks:
@@ -78,9 +70,7 @@ services:
     user: "1001"
 
   scraper:
-    build:
-      context: .
-      dockerfile: webscraper/Dockerfile
+    image: caneplayz/rptu4you-scraper:latest
     environment:
       - API_KEY=${API_KEY}
       - IMAP_SERVER=${IMAP_SERVER}
