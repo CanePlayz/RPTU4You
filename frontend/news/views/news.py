@@ -202,4 +202,4 @@ def foryoupage_partial(request: HttpRequest) -> HttpResponse:
 
 
 def links(request: HttpRequest) -> HttpResponse:
-    return render(request, "news/Links.html")
+    return render(request, "news/links.html")
