@@ -238,12 +238,13 @@
         return;
       }
       config.filterApplyButton.addEventListener("click", function () {
+        // Neue Query aus den Filtern erstellen und URLs generieren
         var query = config.buildQueryFromFilters();
         var urls = buildListUrls(query);
         var urlObj = parseUrl(urls.pageUrl);
         var key = canonicalKey(urlObj.pathname, urlObj.search);
 
-        // Vorherigen Zustand sichern, damit ein Zurückspringen möglich ist
+        // Neuen Zustand auf History-Stack legen
         history.pushState({ type: "list", key: key }, "", urls.pageUrl);
 
         // Neue Liste laden, rendern und Zustand sichern
@@ -401,13 +402,14 @@
       });
     }
 
-    // Registriert alle Event-Handler und legt den ersten Cache an
+    // Registriert alle Event-Handler
     bindLoadMoreButton();
     handleFilterApply();
     handleFilterUtilities();
     handleCardClicks();
     handlePopState();
     applyFiltersFromURL(new URLSearchParams(global.location.search));
+
 
     saveListState(initKey, {
       htmlCache: container.innerHTML,
