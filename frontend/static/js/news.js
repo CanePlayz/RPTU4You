@@ -1,5 +1,22 @@
 // Diese Datei erweitert die Listenlogik aus newsFeedCore.js um die Filterfunktionalität
 
+// Funktion zum Ein- und Ausklappen von Filtersektionen
+window.toggleFilter = function (name) {
+  var section = document.getElementById("filter-" + name);
+  var chevron = document.getElementById("chevron-" + name);
+  if (!section || !chevron) {
+    return;
+  }
+  var isHidden = section.classList.contains("hidden");
+  if (isHidden) {
+    section.classList.remove("hidden");
+    chevron.style.transform = "rotate(90deg)";
+  } else {
+    section.classList.add("hidden");
+    chevron.style.transform = "rotate(0deg)";
+  }
+};
+
 document.addEventListener("DOMContentLoaded", function () {
   // Prüft, ob newsFeedCore.js geladen wurde und bricht andernfalls mit einer Fehlermeldung ab
   if (!window.NewsFeedCore || typeof window.NewsFeedCore.initNewsFeed !== "function") {
@@ -91,5 +108,17 @@ document.addEventListener("DOMContentLoaded", function () {
         fetchUrl: base + "partial/",
       };
     },
+  });
+
+  // Entfernt ein "Keine News gefunden"-Banner, wenn der "Mehr laden"-Button geklickt wird
+  document.addEventListener("click", function (event) {
+    var loadMoreBtn = event.target.closest ? event.target.closest("#load-more") : null;
+    if (!loadMoreBtn) {
+      return;
+    }
+    var banner = document.getElementById("no-news-banner");
+    if (banner) {
+      banner.remove();
+    }
   });
 });
