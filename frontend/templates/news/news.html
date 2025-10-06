@@ -1,4 +1,6 @@
+
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block title %}
   Latest News
@@ -19,12 +21,12 @@
   </button>  
   <div class="max-md:hidden max-md:w-full max-md:h-full max-md:left-1/2 md:w-80 pl-5 sticky md:top-[72px] md:h-[calc(100vh-72px)] overflow-y-auto max-md:text-sm max-md:flex-wrap" id="filter-dropdown">
     <form id="news-filter-form" method="get" class="overflow-y-auto">
-      <h2 class="text-xl font-bold my-4 text-gray-800 dark:text-gray-100">Filter</h2>
+  <h2 class="text-xl font-bold my-4 text-gray-800 dark:text-gray-100">{% trans "Filter" %}</h2>
       <div>
         <!-- Standort Button -->
         <button type="button" class="w-full text-left md:text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('standorte')">
           <span id="chevron-standorte" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
-          Standorte
+          {% trans "Standorte" %}
         </button>
         <!-- Standorte -->
         <div id="filter-standorte" class="hidden ml-2">
@@ -41,7 +43,7 @@
         <!-- Kategorien Button -->
         <button type="button" class="w-full text-left md:text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('kategorien')">
             <span id="chevron-kategorien" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
-          Kategorien
+          {% trans "Kategorien" %}
         </button>
         <!-- Kategorien -->
         <div id="filter-kategorien" class="hidden ml-2">
@@ -58,7 +60,7 @@
         <!-- Zielgruppen Button -->
         <button type="button" class="w-full text-left md:text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('zielgruppen')">
             <span id="chevron-zielgruppen" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
-          Zielgruppen
+          {% trans "Zielgruppen" %}
         </button>
         <!-- Zielgruppen -->
         <div id="filter-zielgruppen" class="hidden ml-2">
@@ -75,7 +77,7 @@
         <!-- Quellen Button -->
         <button type="button" class="w-full text-left md:text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('quellen')">
             <span id="chevron-quellen" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
-          Quellen
+          {% trans "Quellen" %}
         </button>
         <!-- Quellen -->
         <div id="filter-quellen" class="hidden ml-2">
@@ -89,9 +91,9 @@
         </div>
       </div>
       <!-- Allgemeine Buttons -->
-      <button type="button" id="select-all-btn" class="bg-gray-200 dark:bg-gray-800 dark:text-gray-100 rounded-md px-2 py-1 text-sm hover:bg-gray-300 dark:hover:bg-gray-700 mr-1 my-3">Alles auswählen</button>
-      <button type="button" id="reset-filter-btn" class="bg-gray-200 dark:bg-gray-800 dark:text-gray-100 rounded-md px-2 py-1 text-sm hover:bg-gray-300 dark:hover:bg-gray-700 my-3">Alles abwählen</button>
-      <button type="button" id="apply-filter-btn" class="bg-[#042c58] dark:bg-gray-800 text-white dark:text-gray-100 rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-gray-700 mb-6">Filter anwenden</button>
+  <button type="button" id="select-all-btn" class="bg-gray-200 dark:bg-gray-800 dark:text-gray-100 rounded-md px-2 py-1 text-sm hover:bg-gray-300 dark:hover:bg-gray-700 mr-1 my-3">{% trans "Alles auswählen" %}</button>
+  <button type="button" id="reset-filter-btn" class="bg-gray-200 dark:bg-gray-800 dark:text-gray-100 rounded-md px-2 py-1 text-sm hover:bg-gray-300 dark:hover:bg-gray-700 my-3">{% trans "Alles abwählen" %}</button>
+  <button type="button" id="apply-filter-btn" class="bg-[#042c58] dark:bg-gray-800 text-white dark:text-gray-100 rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-gray-700 mb-6">{% trans "Filter anwenden" %}</button>
     </form>
   </div>
   <!-- ----------- -->
@@ -112,7 +114,7 @@
   <!-- Rechte Seite: Nächste Termine -->
   <!-- ----------------------------- -->
   <div class="max-md:hidden w-80 pr-5 sticky top-[72px] h-[calc(100vh-72px)] overflow-auto">
-    <h2 class="text-xl font-bold my-4 text-gray-800 dark:text-gray-100">Nächste Termine</h2>
+  <h2 class="text-xl font-bold my-4 text-gray-800 dark:text-gray-100">{% trans "Nächste Termine" %}</h2>
     <!-- Die einzelnen Termine -->
     {% if upcoming_events %}
       <a href="{% url 'calendar_page' %}">
@@ -126,7 +128,7 @@
         </ul>
       </a>
     {% else %}
-      <p class="text-gray-500 dark:text-gray-400 italic text-center">Keine anstehenden Termine.</p>
+  <p class="text-gray-500 dark:text-gray-400 italic text-center">{% trans "Keine anstehenden Termine." %}</p>
     {% endif %}
   </div>
 </div>

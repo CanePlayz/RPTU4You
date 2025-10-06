@@ -79,7 +79,8 @@
 var eventHideBtn = document.getElementById("eventHideBtn");
 var eventUnhideBtn = document.getElementById("eventUnhideBtn");
 
-document.addEventListener("DOMContentLoaded", function () {
+// Expose calendar initialization for dynamic locale
+window.initCalendar = function(locale) {
   var calendarEl = document.getElementById("calendar");
   var csrfToken = document.getElementById("csrfToken").value;
   var eventPopup = document.getElementById("eventPopup");
@@ -226,8 +227,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // FullCalendar
-
-
   var calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: "dayGridMonth",
     headerToolbar: {
@@ -235,16 +234,7 @@ document.addEventListener("DOMContentLoaded", function () {
       center: "title",
       right: "dayGridMonth,timeGridWeek,timeGridDay",
     },
-    locale: "de",
-    buttonText: {
-      today: 'Heute',
-      month: 'Monat',
-      week: 'Woche',
-      day: 'Tag',
-      list: 'Liste',
-      prev: '←',
-      next: '→',
-    },
+    locale: locale || "de",
     allDaySlot: false,
     editable: false,
     events: "/api/calendar-events/",
@@ -408,6 +398,4 @@ document.addEventListener("DOMContentLoaded", function () {
       hidePopup();
     }
   });
-
-});
-
+};
