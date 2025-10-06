@@ -1,7 +1,6 @@
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 from django.urls import path
-
 from news.views.account import (
     account_view,
     login_view,
@@ -18,6 +17,7 @@ from news.views.calendar import (
 )
 from news.views.news import (
     foryoupage,
+    foryoupage_partial,
     links,
     news_detail,
     news_partial,
@@ -49,15 +49,16 @@ urlpatterns = [
     path("kalender/export/", export_ics, name="export_ics"),
 ]
 
+# Sprachabhängige URLs
 urlpatterns += i18n_patterns(
     path("set-language/", set_language, name="set_language"),
-    # Admin URLs
     # News
     path("", news_view, name="News"),
     path("news/", news_view, name="news"),
     path("news/partial/", news_partial, name="news_partial"),
     path("news/<int:pk>/", news_detail, name="news_detail"),
     path("foryoupage/", foryoupage, name="foryoupage"),
+    path("foryoupage/partial/", foryoupage_partial, name="foryoupage_partial"),
     # User
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),

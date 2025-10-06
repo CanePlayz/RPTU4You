@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_GET
 
+from ..forms import PreferencesForm
 from ..models import CalendarEvent, News, User
 from ..util.filter_objects import get_objects_with_emojis
 from .utils import FilterParams, get_filtered_queryset, paginate_queryset
@@ -34,6 +35,22 @@ def _get_upcoming_events(request: HttpRequest) -> List[CalendarEvent]:
             :3
         ]
     )
+
+
+def _build_user_preferences(user: User) -> FilterParams:
+    preferences: dict[str, List[str]] = {
+        "locations": list(user.standorte.values_list("name", flat=True)),
+        "categories": list(user.inhaltskategorien.values_list("name", flat=True)),
+        "audiences": list(user.zielgruppen.values_list("name", flat=True)),
+        "sources": list(user.quellen.values_list("name", flat=True)),
+    }
+
+    if user.include_rundmail:
+        preferences["sources"].append("Rundmail")
+    if user.include_sammel_rundmail:
+        preferences["sources"].append("Sammel-Rundmail")
+
+    return preferences
 
 
 @require_GET
@@ -138,40 +155,50 @@ def foryoupage(request: HttpRequest) -> HttpResponse:
     Ansicht für die For You-Seite, die personalisierte News anzeigt.
     """
     upcoming_events = _get_upcoming_events(request)
+    user = request.user
 
-    # Nutzerpräferenzen abrufen
-    if isinstance(request.user, User):
-        preferences = {
-            "locations": list(request.user.standorte.values_list("name", flat=True)),
-            "categories": list(
-                request.user.inhaltskategorien.values_list("name", flat=True)
-            ),
-            "audiences": list(request.user.zielgruppen.values_list("name", flat=True)),
-            "sources": list(request.user.quellen.values_list("name", flat=True)),
-        }
-
-        # Rundmail- und Sammel-Rundmail-Präferenzen hinzufügen
-        if request.user.include_rundmail:
-            preferences["sources"].append("Rundmail")
-        if request.user.include_sammel_rundmail:
-            preferences["sources"].append("Sammel-Rundmail")
-
-        # News basierend auf Präferenzen filtern
-        news_items_queryset = get_filtered_queryset(preferences)
-        total_filtered_count = news_items_queryset.count()
-        paginated_items = paginate_queryset(news_items_queryset)
-        has_more = total_filtered_count > len(paginated_items)
-
-        context = {
-            "upcoming_events": upcoming_events,
-            "news_list": paginated_items,
-            "has_more": has_more,
-        }
-
-        return render(request, "news/foryoupage.html", context)
-    else:
+    if not isinstance(user, User):
         messages.error(request, "Ungültiger Benutzer.")
         return redirect("login")
+
+    preferences = _build_user_preferences(user)
+    news_items_queryset = get_filtered_queryset(preferences)
+    total_filtered_count = news_items_queryset.count()
+    paginated_items = paginate_queryset(news_items_queryset)
+    has_more = total_filtered_count > len(paginated_items)
+
+    context = {
+        "upcoming_events": upcoming_events,
+        "news_list": paginated_items,
+        "has_more": has_more,
+        "preferences_form": PreferencesForm(instance=user),
+    }
+
+    return render(request, "news/foryoupage.html", context)
+
+
+@require_GET
+@login_required
+def foryoupage_partial(request: HttpRequest) -> HttpResponse:
+    user = request.user
+
+    if not isinstance(user, User):
+        return HttpResponse(status=400)
+
+    offset = int(request.GET.get("offset", 0))
+    limit = int(request.GET.get("limit", 20))
+
+    preferences = _build_user_preferences(user)
+    news_items_queryset = get_filtered_queryset(preferences)
+    total_filtered_count = news_items_queryset.count()
+    paginated_items = paginate_queryset(news_items_queryset, offset, limit)
+    has_more = total_filtered_count > (offset + limit)
+
+    return render(
+        request,
+        "news/partials/_news_list.html",
+        {"news_list": paginated_items, "has_more": has_more},
+    )
 
 
 def links(request: HttpRequest) -> HttpResponse:

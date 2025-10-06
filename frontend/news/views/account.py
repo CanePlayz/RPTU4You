@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, resolve_url
 from django.utils.http import url_has_allowed_host_and_scheme
 
@@ -128,7 +128,18 @@ def update_preferences(request: HttpRequest) -> HttpResponse:
         form = PreferencesForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
+            # AJAX-Anfrage über ForYouPage
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                return JsonResponse(
+                    {
+                        "success": True,
+                        "message": "Deine Präferenzen wurden gespeichert.",
+                    }
+                )
+            # Anfrage über Fragebogen
             return redirect("foryoupage")
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return JsonResponse({"success": False, "errors": form.errors}, status=400)
     else:
         form = PreferencesForm(instance=request.user)
     return render(request, "news/preferences.html", {"form": form})
