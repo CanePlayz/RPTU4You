@@ -18,11 +18,13 @@ window.toggleFilter = function (name) {
 };
 
 document.addEventListener("DOMContentLoaded", function () {
+  console.log("news.js: DOMContentLoaded handler started");
   // Prüft, ob newsFeedCore.js geladen wurde und bricht andernfalls mit einer Fehlermeldung ab
   if (!window.NewsFeedCore || typeof window.NewsFeedCore.initNewsFeed !== "function") {
-    console.error("NewsFeedCore ist nicht verfügbar. Bitte stelle sicher, dass newsFeedCore.js geladen ist.");
+    console.error("news.js: NewsFeedCore fehlt oder initNewsFeed nicht verfügbar");
     return;
   }
+  console.log("news.js: NewsFeedCore vorhanden");
 
   // Referenzen auf alle relevanten Filterelemente erstellen
   var filterForm = document.getElementById("news-filter-form");
@@ -74,6 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Initialisierung der Core-Logik mit Filterfunktionalität
+  console.log("news.js: Initialisiere NewsFeedCore");
   window.NewsFeedCore.initNewsFeed({
     containerSelector: "#news-container",
     loadMoreSelector: "#load-more",
@@ -110,41 +113,52 @@ document.addEventListener("DOMContentLoaded", function () {
     },
   });
 
+  console.log("news.js: NewsFeedCore.initNewsFeed abgeschlossen");
+
   // Entfernt ein "Keine News gefunden"-Banner, wenn der "Mehr laden"-Button geklickt wird
   document.addEventListener("click", function (event) {
     var loadMoreBtn = event.target.closest ? event.target.closest("#load-more") : null;
     if (!loadMoreBtn) {
       return;
     }
+    console.log("news.js: load-more Button erkannt");
   });
 
 
-  //Filter dropdown mobile version
-  const toggle = document.getElementById('filter-button');
-  const dropdown = document.getElementById('filter-dropdown');
-  const news = document.getElementById('news');
+  // Logik für das Ein- und Ausklappen des Filter-Dropdowns auf Mobile
+  const toggle = document.getElementById("filter-button");
+  const dropdown = document.getElementById("filter-dropdown");
+  const news = document.getElementById("news");
+
+  if (!toggle || !dropdown) {
+    console.warn("news.js: Toggle oder Dropdown fehlt", { toggleFound: !!toggle, dropdownFound: !!dropdown });
+  }
 
   if (toggle && dropdown) {
-    toggle.addEventListener('click', (event) => {
-      event.stopPropagation(); // Prevent click from propagating to document
-      const filter_is_Hidden = dropdown.classList.contains('max-md:hidden');
+    console.log("news.js: Registriere mobile Filter-Listener");
+    toggle.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const filter_is_Hidden = dropdown.classList.contains("max-md:hidden");
       if (filter_is_Hidden) {
-        dropdown.classList.remove('max-md:hidden');
-        news.classList.add('hidden')
+        dropdown.classList.remove("max-md:hidden");
+        news.classList.add("hidden")
+        console.log("news.js: Mobile Filter geöffnet");
       } else {
-        dropdown.classList.add('max-md:hidden');
-        news.classList.remove('hidden');
+        dropdown.classList.add("max-md:hidden");
+        news.classList.remove("hidden");
+        console.log("news.js: Mobile Filter geschlossen");
       }
     });
 
-    // Schließt das Dropdown, wenn man außerhalb klickt
-    document.addEventListener('click', (event) => {
+    // Schließt das Dropdown, wenn man außerhalb davon klickt
+    document.addEventListener("click", (event) => {
       if (!dropdown.contains(event.target) && !toggle.contains(event.target)) {
-        dropdown.classList.add('max-md:hidden');
-        news.classList.remove('hidden')
+        dropdown.classList.add("max-md:hidden");
+        news.classList.remove("hidden")
+        console.log("news.js: Mobile Filter über Outside-Click geschlossen");
       }
     });
   } else {
-    console.error("Filter button or Filter dropdown not found");
+    console.error("Filter-Button oder Filter-Dropdown nicht gefunden.");
   }
 });
