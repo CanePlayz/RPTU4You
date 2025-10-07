@@ -18,13 +18,12 @@ window.toggleFilter = function (name) {
 };
 
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("news.js: DOMContentLoaded handler started");
+  console.log("news.js: DOMContentLoaded handler gestartet");
   // Prüft, ob newsFeedCore.js geladen wurde und bricht andernfalls mit einer Fehlermeldung ab
   if (!window.NewsFeedCore || typeof window.NewsFeedCore.initNewsFeed !== "function") {
     console.error("news.js: NewsFeedCore fehlt oder initNewsFeed nicht verfügbar");
     return;
   }
-  console.log("news.js: NewsFeedCore vorhanden");
 
   // Referenzen auf alle relevanten Filterelemente erstellen
   var filterForm = document.getElementById("news-filter-form");
@@ -121,7 +120,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!loadMoreBtn) {
       return;
     }
-    console.log("news.js: load-more Button erkannt");
   });
 
 
@@ -135,18 +133,15 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   if (toggle && dropdown) {
-    console.log("news.js: Registriere mobile Filter-Listener");
     toggle.addEventListener("click", (event) => {
       event.stopPropagation();
       const filter_is_Hidden = dropdown.classList.contains("max-md:hidden");
       if (filter_is_Hidden) {
         dropdown.classList.remove("max-md:hidden");
         news.classList.add("hidden")
-        console.log("news.js: Mobile Filter geöffnet");
       } else {
         dropdown.classList.add("max-md:hidden");
         news.classList.remove("hidden");
-        console.log("news.js: Mobile Filter geschlossen");
       }
     });
 
@@ -155,7 +150,6 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!dropdown.contains(event.target) && !toggle.contains(event.target)) {
         dropdown.classList.add("max-md:hidden");
         news.classList.remove("hidden")
-        console.log("news.js: Mobile Filter über Outside-Click geschlossen");
       }
     });
   } else {

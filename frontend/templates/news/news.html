@@ -11,9 +11,8 @@
 <div class="flex bg-gray-100 dark:bg-gray-900 min-h-[calc(100vh-72px)]">
 
   <!-- Linke Seite: Filterblock -->
-  <!-- ------------------------ -->
 
-  <!-- Button für Dropdown mobile version -->
+  <!-- Button für mobile Filter -->
   <button type="button" class="fixed right-0 top-1/2 md:hidden" data-dropdown-toggle="filter-dropdown" id="filter-button">
     <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
     <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
@@ -98,24 +97,23 @@
   </div>
 
   <!-- Mitte: News -->
-  <!-- ----------- -->
+
   <div class="flex-1 mt-3 px-8 overflow-y-auto" id="news">
     <main id="main">
-        <div id="news-container">
-            {% if detail_news %}
-                {% include "news/partials/_news_detail.html" with news=detail_news %}
-            {% else %}
-                {% include "news/partials/_news_list.html" with news_list=news_list has_more=has_more %}
-            {% endif %}
-        </div>
+      <div id="news-container">
+        {% if detail_news %}
+            {% include "news/partials/_news_detail.html" with news=detail_news %}
+        {% else %}
+            {% include "news/partials/_news_list.html" with news_list=news_list has_more=has_more %}
+        {% endif %}
+      </div>
     </main>
   </div>
-  <!-- ----------------------------- -->
-  <!-- Rechte Seite: Nächste Termine -->
-  <!-- ----------------------------- -->
+
+  <!-- Rechte Seite: Terminkalender -->
+
   <div class="max-md:hidden w-80 pr-5 sticky top-[72px] h-[calc(100vh-72px)] overflow-auto">
   <h2 class="text-xl font-bold my-4 text-gray-800 dark:text-gray-100">{% trans "Nächste Termine" %}</h2>
-    <!-- Die einzelnen Termine -->
     {% if upcoming_events %}
       <a href="{% url 'calendar_page' %}">
         <ul class="space-y-4">

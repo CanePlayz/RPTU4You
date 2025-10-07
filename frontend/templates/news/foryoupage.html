@@ -10,6 +10,7 @@
 <div class="flex bg-gray-100 dark:bg-gray-900 min-h-[calc(100vh-72px)]">
 
   <!-- Linke Seite: Präferenzformular -->
+
   <div class="w-80 pl-5 pr-2 sticky top-[72px] h-[calc(100vh-72px)] overflow-y-auto">
     <form id="preferences-form" action="{% url 'preferences' %}" method="post" class="py-6 pr-2">
       {% csrf_token %}
@@ -102,21 +103,14 @@
       </div>
     </main>
   </div>
-  <!-- ----------------------------- -->
-  <!-- Rechte Seite: Nächste Termine -->
-  <!-- ----------------------------- -->
+
+  <!-- Rechte Seite: Terminkalender -->
+
   <div class="max-md:hidden w-80 pr-5 sticky top-[72px] h-[calc(100vh-72px)] overflow-auto">
   <h2 class="text-xl font-bold my-4 text-gray-800 dark:text-gray-100">{% trans "Nächste Termine" %}</h2>
-    <!-- Die einzelnen Termine -->
     {% if upcoming_events %}
       <a href="{% url 'calendar_page' %}">
         <ul class="space-y-4">
-        {% for event in upcoming_events %}
-          <li class="bg-gray-50 dark:bg-gray-800 p-4 mr rounded-lg shadow">
-            <p class="font-bold text-gray-800 dark:text-gray-100">{{ event.title }}</p>
-            <p class="text-sm text-gray-500 dark:text-gray-400">{{ event.start|date:"d.m.Y H:i" }} - {{ event.end|date:"H:i" }}</p>
-          </li>
-        {% endfor %}
         {% for event in upcoming_events %}
           <li class="bg-gray-50 dark:bg-gray-800 p-4 mr rounded-lg shadow">
             <p class="font-bold text-gray-800 dark:text-gray-100">{{ event.title }}</p>
