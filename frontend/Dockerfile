@@ -1,27 +1,28 @@
-FROM node:20-alpine AS tailwind-build
+FROM node:24-alpine AS tailwind-build
 WORKDIR /app
 
-# Install Tailwind dependencies once so layers stay cacheable
+# Kopiere package.json und installiere Abhängigkeiten
 COPY frontend/tailwind/package*.json ./tailwind/
 RUN cd tailwind \
-    && npm install --production=false --no-audit --progress=false
+    && npm install
 
-# Build the project CSS artifact using the full frontend source as content input
+# Kopiere die Frontend-Dateien als Tailwind-Input und baue die CSS-Datei
 COPY frontend ./
 RUN cd tailwind \
     && npm run build:css
 
-FROM python:3.11-slim
+FROM python:3.13-slim
 WORKDIR /app
 
+# Installiere Python-Pakete
 COPY frontend/requirements.txt ./
 RUN pip install --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
-# Application source
+# Kopiere den Frontend-Code
 COPY frontend /app
 
-# Use the Tailwind CSS artifact built in the Node stage
+# Kopiere die gebaute Tailwind CSS-Datei aus dem vorherigen Build-Stadium
 COPY --from=tailwind-build /app/static/css/tailwind-built.css ./static/css/tailwind-built.css
 
 # Erstelle einen unprivilegierten Benutzer für Celery

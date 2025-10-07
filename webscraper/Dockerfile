@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y \
     xdg-utils \
     && apt-get clean
 
-# Firefox installieren (architekturabhängig)
+# Installiere Firefox (architekturabhängig)
 RUN ARCH=$(dpkg --print-architecture) && \
     if [ "$ARCH" = "amd64" ]; then \
     FIREFOX_URL="https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=de"; \
@@ -34,7 +34,7 @@ RUN ARCH=$(dpkg --print-architecture) && \
     ln -s /opt/firefox/firefox /usr/bin/firefox && \
     rm firefox.tar.xz
 
-# Geckodriver installieren (architekturabhängig)
+# Installiere Geckodriver (architekturabhängig)
 RUN ARCH=$(dpkg --print-architecture) && \
     if [ "$ARCH" = "amd64" ]; then \
     GECKODRIVER_URL="https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux64.tar.gz"; \
@@ -51,8 +51,10 @@ RUN ARCH=$(dpkg --print-architecture) && \
 
 WORKDIR /app
 
+# Installiere Python-Pakete
 COPY webscraper/requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
+# Kopiere den Webscraper-Code
 COPY webscraper /app
