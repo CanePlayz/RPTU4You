@@ -408,9 +408,11 @@
     handleFilterUtilities();
     handleCardClicks();
     handlePopState();
+
+    // Initiale Filter-Anwendung aus der URL, etwa bei Seitenaufruf oder popstate
     applyFiltersFromURL(new URLSearchParams(global.location.search));
 
-
+    var initKey = currentKey();
     saveListState(initKey, {
       htmlCache: container.innerHTML,
       scrollY: global.scrollY,

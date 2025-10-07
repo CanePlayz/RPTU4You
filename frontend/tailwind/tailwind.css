@@ -1,3 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Treat the .dark class on ancestors as the dark-mode switch */
+@custom-variant dark (&:where(.dark, .dark *));
