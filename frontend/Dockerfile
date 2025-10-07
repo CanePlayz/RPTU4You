@@ -7,8 +7,10 @@ RUN cd tailwind \
     && npm install
 
 # Kopiere die Frontend-Dateien als Tailwind-Input und baue die CSS-Datei
-COPY frontend ./
-RUN cd tailwind \
+COPY frontend/tailwind ./tailwind
+COPY frontend/templates ./templates
+RUN mkdir -p static/css \
+    && cd tailwind \
     && npm run build:css
 
 FROM python:3.13-slim
@@ -16,8 +18,8 @@ WORKDIR /app
 
 # Installiere Python-Pakete
 COPY frontend/requirements.txt ./
-RUN pip install --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Kopiere den Frontend-Code
 COPY frontend /app

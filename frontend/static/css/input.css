@@ -11,6 +11,7 @@ input[type="password"] {
     color: #1f2937;
     transition: background 0.2s, color 0.2s;
 }
+
 /* Darkmode */
 .dark input[type="text"],
 .dark input[type="password"] {

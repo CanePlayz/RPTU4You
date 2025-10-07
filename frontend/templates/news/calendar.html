@@ -14,9 +14,9 @@
 {% block content %}
 
 <div class="flex">
-  <!-- ----------------------- -->
+
   <!-- Linker Bereich: Buttons -->
-  <!-- ----------------------- -->
+
   <div class="max-md:hidden w-64 p-6 flex flex-col h-[calc(100vh-72px)] items-start bg-white dark:bg-gray-900 rounded-lg shadow">
     <!-- Termin erstellen Button -->
     <div class="flex flex-col w-full">
@@ -36,9 +36,9 @@
     </form>
     <form action="{% url 'export_ics' %}" method="get" class="hidden" id="exportForm"></form>
   </div>
-  <!-- ------------------------- -->
+
   <!-- Rechter Bereich: Kalender -->
-  <!-- ------------------------- -->
+
   <div id="calendar" class="flex-1 h-[calc(100vh-72px)] p-4 w-full bg-white dark:bg-gray-900 rounded-lg shadow"></div>
   <!-- Popup für Terminerstellung und -bearbeitung -->
   <div id="eventPopup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 transition-opacity duration-200">
@@ -120,12 +120,8 @@
       <button type="submit" form="exportForm" class="bg-[#717f8b] text-sm dark:bg-gray-700 text-white dark:text-gray-100 rounded-lg px-4 py-2 shadow hover:bg-[#8a99a8] dark:hover:bg-gray-600 w-full">Kalender exportieren</button>
 </div>
 
-
-
-
 <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
 <input type="hidden" id="currentUserId" value="{{ request.user.id }}">
-
 
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 <script src="/static/js/calendar.js"></script>
