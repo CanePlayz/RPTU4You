@@ -176,7 +176,7 @@ class User(AbstractUser):
     quellen = models.ManyToManyField(Quelle, blank=True)
     inhaltskategorien = models.ManyToManyField(InhaltsKategorie, blank=True)
     zielgruppen = models.ManyToManyField(Zielgruppe, blank=True)
-
+    trusted = models.BooleanField(default=False)
     include_rundmail = models.BooleanField(
         default=False,
         verbose_name="Rundmails einbeziehen",
