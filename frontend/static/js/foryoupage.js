@@ -170,4 +170,37 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
   });
+
+// Logik für das Ein- und Ausklappen des Filter-Dropdowns auf Mobile
+  const toggle = document.getElementById("4youfilter-button");
+  const dropdown = document.getElementById("4youfilter");
+  const news = document.getElementById("news");
+
+  if (!toggle || !dropdown) {
+    console.warn("news.js: Toggle oder Dropdown fehlt", { toggleFound: !!toggle, dropdownFound: !!dropdown });
+  }
+
+  if (toggle && dropdown) {
+    toggle.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const filter_is_Hidden = dropdown.classList.contains("max-md:hidden");
+      if (filter_is_Hidden) {
+        dropdown.classList.remove("max-md:hidden");
+        news.classList.add("hidden")
+      } else {
+        dropdown.classList.add("max-md:hidden");
+        news.classList.remove("hidden");
+      }
+    });
+
+    // Schließt das Dropdown, wenn man außerhalb davon klickt
+    document.addEventListener("click", (event) => {
+      if (!dropdown.contains(event.target) && !toggle.contains(event.target)) {
+        dropdown.classList.add("max-md:hidden");
+        news.classList.remove("hidden")
+      }
+    });
+  } else {
+    console.error("Filter-Button oder Filter-Dropdown nicht gefunden.");
+  }
 });
