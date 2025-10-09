@@ -36,6 +36,7 @@ wait_for_db()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rptu4you.settings")
 django.setup()
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from news.models import Sprache
@@ -47,6 +48,16 @@ def migrate_db():
     logger.info("Führe Migrationen durch...")
     call_command("migrate", interactive=False)
     logger.info("Migrationen abgeschlossen.")
+
+
+# Statische Dateien sammeln
+def collect_static():
+    if settings.DEBUG:
+        logger.info("DEBUG aktiv, überspringe collectstatic.")
+        return
+    logger.info("Sammle statische Dateien...")
+    call_command("collectstatic", interactive=False, verbosity=0)
+    logger.info("Statische Dateien gesammelt.")
 
 
 # Superuser anlegen
@@ -94,6 +105,7 @@ def disable_unwanted_loggers():
 
 def main():
     migrate_db()
+    collect_static()
     create_superuser()
     create_languages()
     # start_backfill_tasks()

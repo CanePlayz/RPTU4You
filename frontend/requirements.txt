@@ -10,3 +10,4 @@ icalendar
 openai
 psycopg2-binary
 redis
+whitenoise
