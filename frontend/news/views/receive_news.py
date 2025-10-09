@@ -21,6 +21,8 @@ from .util.cleanup.cleanup import extract_parts, get_cleaned_text_from_openai
 
 @close_db_connection
 def process_news_entry(news_entry, openai_api_key, environment, logger: logging.Logger):
+    TOKEN_LIMIT = 2_400_000
+
     raw_title = news_entry.get("titel")
     truncated_title = raw_title[:80] if isinstance(raw_title, str) else "<unbekannt>"
     logger.info(f"Verarbeite News-Eintrag | {truncated_title}")
@@ -112,7 +114,7 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
             news_entry["titel"],
             news_entry["text"],
             openai_api_key,
-            24000000,  # Token-Limit für die Verarbeitung neuer News (diese sollen schnell erscheinen)
+            TOKEN_LIMIT,  # Token-Limit für die Verarbeitung neuer News (diese sollen schnell erscheinen)
         )
         parts = extract_parts(clean_response)
 
@@ -154,7 +156,7 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
 
         # Fehlende Übersetzungen hinzufügen
         add_missing_translations(
-            Sprache.objects.all(), news_item, openai_api_key, 2400000
+            Sprache.objects.all(), news_item, openai_api_key, TOKEN_LIMIT
         )
 
     # Standorte hinzufügen
@@ -169,7 +171,7 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
             news_entry["text"],
             environment,
             openai_api_key,
-            2400000,  # Token-Limit für die Verarbeitung neuer News (diese sollen schnell erscheinen)
+            TOKEN_LIMIT,  # Token-Limit für die Verarbeitung neuer News (diese sollen schnell erscheinen)
         )
     except Exception as e:
         logger.error(f"Fehler bei Kategorisierung: {e} | {truncated_title}")

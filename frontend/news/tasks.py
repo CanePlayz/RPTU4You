@@ -173,7 +173,7 @@ def process_cleanup(news: News, openai_api_key, token_limit, logger: logging.Log
 def backfill_missing_translations():
     logger = get_logger(__name__)
     openai_api_key = os.getenv("OPENAI_API_KEY", "")
-    token_limit = 2000000  # Token-Limit von 2.000.000, da Backfill-Tasks alter News keine höhere Priorität haben
+    token_limit = 2_000_000  # Token-Limit von 2.000.000, da Backfill-Tasks alter News keine höhere Priorität haben
 
     sprachen = Sprache.objects.all()
 
@@ -198,7 +198,7 @@ def backfill_missing_categorizations():
 
     environment = os.getenv("ENVIRONMENT", "")
     openai_api_key = os.getenv("OPENAI_API_KEY", "")
-    token_limit = 2000000  # Token-Limit von 2.000.000, da Backfill-Tasks alter News keine höhere Priorität haben
+    token_limit = 2_000_000  # Token-Limit von 2.000.000, da Backfill-Tasks alter News keine höhere Priorität haben
 
     # Nur News-Objekte, die älter als 5 Minuten sind, werden berücksichtigt
     cutoff_time = now() - timedelta(minutes=5)
@@ -225,7 +225,7 @@ def backfill_cleanup():
     logger = get_logger(__name__)
 
     openai_api_key = os.getenv("OPENAI_API_KEY", "")
-    token_limit = 2000000  # Token-Limit von 2.000.000, da Backfill-Tasks alter News keine höhere Priorität haben
+    token_limit = 2_000_000  # Token-Limit von 2.000.000, da Backfill-Tasks alter News keine höhere Priorität haben
 
     # Nur News-Objekte, die älter als 5 Minuten sind, werden berücksichtigt
     cutoff_time = now() - timedelta(minutes=5)
