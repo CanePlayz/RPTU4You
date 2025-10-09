@@ -109,7 +109,7 @@ def process_translation(
 
 @close_db_connection
 def process_categorization(
-    news: News, environment, openai_api_key, token_limit, logger: logging.Logger
+    news: News, openai_api_key, token_limit, logger: logging.Logger
 ):
     if not news.inhaltskategorien.exists():
         logger.info(f"Füge Kategorisierungen hinzu | {news.titel[:80]}")
@@ -119,7 +119,7 @@ def process_categorization(
             return
         try:
             categories, audiences = get_categorization_from_openai(
-                news.titel, german_text, environment, openai_api_key, token_limit
+                news.titel, german_text, openai_api_key, token_limit
             )
         except Exception as e:
             logger.error(f"Fehler bei Kategorisierung: {e} | {news.titel[:80]}")
@@ -196,7 +196,6 @@ def backfill_missing_translations():
 def backfill_missing_categorizations():
     logger = get_logger(__name__)
 
-    environment = os.getenv("ENVIRONMENT", "")
     openai_api_key = os.getenv("OPENAI_API_KEY", "")
     token_limit = 2_000_000  # Token-Limit von 2.000.000, da Backfill-Tasks alter News keine höhere Priorität haben
 
@@ -209,7 +208,6 @@ def backfill_missing_categorizations():
             executor.submit(
                 process_categorization,
                 news,
-                environment,
                 openai_api_key,
                 token_limit,
                 logger,
