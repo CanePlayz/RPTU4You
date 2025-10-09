@@ -1,5 +1,5 @@
 x-common-env: &common-env
-  ENVIRONMENT: prod
+  DJANGO_DEBUG: "false"
   OPENAI_API_KEY: ${OPENAI_API_KEY}
 
 services:

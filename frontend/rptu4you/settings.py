@@ -20,6 +20,13 @@ from django.utils.translation import gettext_lazy as _
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+def _env_bool(name: str, default: bool) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.lower() in {"1", "true", "yes", "on"}
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -27,14 +34,27 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-(7bb#)z*@+%@6do94)7104yy6zkbs)rm#9n7cc(4ejof)0bf0#"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = _env_bool("DJANGO_DEBUG", default=True)
 
-ALLOWED_HOSTS = [
-    "131.246.169.169",
-    "localhost",
-    "scilab-0041.informatik.uni-kl.de",
-    "django",
-]
+if DEBUG:
+    default_allowed_hosts = [
+        "localhost",
+        "127.0.0.1",
+        "django",
+    ]
+else:
+    default_allowed_hosts = [
+        "131.246.169.169",
+        "scilab-0041.informatik.uni-kl.de",
+    ]
+
+ALLOWED_HOSTS_ENV = os.getenv("DJANGO_ALLOWED_HOSTS")
+if ALLOWED_HOSTS_ENV:
+    ALLOWED_HOSTS = [
+        host.strip() for host in ALLOWED_HOSTS_ENV.split(",") if host.strip()
+    ]
+else:
+    ALLOWED_HOSTS = default_allowed_hosts
 
 
 # Application definition

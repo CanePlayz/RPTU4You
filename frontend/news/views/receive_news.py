@@ -20,7 +20,7 @@ from .util.cleanup.cleanup import extract_parts, get_cleaned_text_from_openai
 
 
 @close_db_connection
-def process_news_entry(news_entry, openai_api_key, environment, logger: logging.Logger):
+def process_news_entry(news_entry, openai_api_key, logger: logging.Logger):
     TOKEN_LIMIT = 2_400_000
 
     raw_title = news_entry.get("titel")
@@ -170,7 +170,6 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
         categories, audiences = get_categorization_from_openai(
             news_entry["titel"],
             news_entry["text"],
-            environment,
             openai_api_key,
             TOKEN_LIMIT,  # Token-Limit für die Verarbeitung neuer News (diese sollen schnell erscheinen)
         )
@@ -213,21 +212,16 @@ class ReceiveNews(View):
             logger.warning("Ungültige Anfrage, Payload ist kein Array")
             return JsonResponse({"error": "Payload must be a list"}, status=400)
 
-        # Environment und OpenAI-API-Key aus den Environment-Variablen lesen
-        environment = os.getenv("ENVIRONMENT", "")
+        # OpenAI-API-Key aus den Environment-Variablen lesen
         openai_api_key = os.getenv("OPENAI_API_KEY", "")
         if not openai_api_key:
             logger.error("OPENAI_API_KEY ist nicht gesetzt.")
             return JsonResponse({"error": "Server misconfigured"}, status=500)
-        if environment not in ["dev", "prod"]:
-            return JsonResponse({"error": "Invalid environment"}, status=400)
 
         # News parallel verarbeiten
         with ThreadPoolExecutor(max_workers=10) as executor:
             futures = [
-                executor.submit(
-                    process_news_entry, entry, openai_api_key, environment, logger
-                )
+                executor.submit(process_news_entry, entry, openai_api_key, logger)
                 for entry in data
             ]
             for future in as_completed(futures):
