@@ -11,8 +11,9 @@ def reserve_tokens(
     expected_tokens: int, token_limit: int
 ) -> Optional[OpenAITokenUsage]:
     """Reserviert Tokens für die Nutzung und checkt das Token-Limit"""
+    utc_today = datetime.datetime.now(datetime.timezone.utc).date()
     usage, _ = OpenAITokenUsage.objects.get_or_create(
-        date=datetime.date.today(), defaults={"used_tokens": 0}
+        date=utc_today, defaults={"used_tokens": 0}
     )
 
     # Update kann nur erfolgreich sein, wenn das Token-Limit nicht überschritten wird
