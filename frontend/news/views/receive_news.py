@@ -165,6 +165,7 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
         news_item.standorte.add(standort_obj)
 
     # Inhaltskategorien und Zielgruppe(n) hinzufügen
+    categories, audiences = [], []
     try:
         categories, audiences = get_categorization_from_openai(
             news_entry["titel"],
@@ -173,13 +174,11 @@ def process_news_entry(news_entry, openai_api_key, environment, logger: logging.
             openai_api_key,
             TOKEN_LIMIT,  # Token-Limit für die Verarbeitung neuer News (diese sollen schnell erscheinen)
         )
+        logger.info(f"Kategorisierung erfolgreich hinzugefügt | {truncated_title}")
     except Exception as e:
         logger.error(f"Fehler bei Kategorisierung: {e} | {truncated_title}")
-        categories, audiences = [], []
-
-    add_audiences_and_categories(news_item, categories, audiences)
-
-    logger.info(f"Kategorisierung erfolgreich hinzugefügt | {truncated_title}")
+    finally:
+        add_audiences_and_categories(news_item, categories, audiences)
 
     logger.info(f"News-Objekt erfolgreich erstellt | {truncated_title}")
 
