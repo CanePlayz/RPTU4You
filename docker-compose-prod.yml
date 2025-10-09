@@ -81,8 +81,23 @@ services:
       - backend
     command: ["python", "/app/scheduler.py"]
 
+  portainer:
+    image: portainer/portainer-ce:latest
+    restart: always
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    command:
+      - --http-enabled
+      - --admin-password=${PORTAINER_PASSWORD_HASH}
+    networks:
+      - backend
+
 networks:
   backend:
 
 volumes:
   db_data:
+  portainer_data:

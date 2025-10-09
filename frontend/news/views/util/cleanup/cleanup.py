@@ -6,7 +6,7 @@ from django.db.models import F
 from openai import OpenAI
 
 from ....models import OpenAITokenUsage
-from ..common import token_limit_reached
+from ..common import release_tokens, reserve_tokens
 
 
 def get_cleaned_text_from_openai(
@@ -17,61 +17,50 @@ def get_cleaned_text_from_openai(
 
     system_message_file_path = os.path.join(BASE_DIR, "system_message.txt")
 
-    if not token_limit_reached(token_limit + 1500):
-        openai = OpenAI(api_key=openai_api_key)
+    usage = reserve_tokens(1500, token_limit)
 
-        # Systemnachricht aus der Datei lesen
-        with open(
-            system_message_file_path,
-            "r",
-            encoding="utf-8",
-        ) as file:
-            system_message = file.read()
-
-        # Prompt für OpenAI-API erstellen
-        prompt = f"Titel: {article_title} \n\nText: {article_text}"
-
-        # OpenAI-API aufrufen, um gecleante Version des Textes zu erhalten
-        try:
-            # Vorsorglich eine durchschnittliche Token-Nutzung speichern
-            usage, _ = OpenAITokenUsage.objects.get_or_create(
-                date=datetime.datetime.now(datetime.timezone.utc).date()
-            )
-
-            OpenAITokenUsage.objects.filter(pk=usage.pk).update(
-                used_tokens=F("used_tokens") + 1500
-            )
-            usage.refresh_from_db()
-
-            response = openai.responses.create(
-                model="gpt-5-mini",
-                input=[
-                    {"role": "developer", "content": system_message},
-                    {
-                        "role": "user",
-                        "content": prompt,
-                    },
-                ],
-                tools=[],
-            )
-        except Exception as e:
-            raise e
-        else:
-            # Tatsächlich genutzte Token in der Datenbank speichern
-            OpenAITokenUsage.objects.filter(pk=usage.pk).update(
-                used_tokens=F("used_tokens") - 1500
-            )
-            usage.refresh_from_db()
-
-            if response.usage:
-                OpenAITokenUsage.objects.filter(pk=usage.pk).update(
-                    used_tokens=F("used_tokens") + response.usage.total_tokens
-                )
-                usage.refresh_from_db()
-
-            return response.output_text.strip()
-    else:
+    if usage is None:
         raise Exception("Token-Limit erreicht.")
+
+    openai = OpenAI(api_key=openai_api_key)
+
+    # Systemnachricht aus der Datei lesen
+    with open(
+        system_message_file_path,
+        "r",
+        encoding="utf-8",
+    ) as file:
+        system_message = file.read()
+
+    # Prompt für OpenAI-API erstellen
+    prompt = f"Titel: {article_title} \n\nText: {article_text}"
+
+    # OpenAI-API aufrufen, um gecleante Version des Textes zu erhalten
+    try:
+        response = openai.responses.create(
+            model="gpt-5-mini",
+            input=[
+                {"role": "developer", "content": system_message},
+                {
+                    "role": "user",
+                    "content": prompt,
+                },
+            ],
+            tools=[],
+        )
+    except Exception as e:
+        release_tokens(usage, 1500)
+        raise e
+
+    release_tokens(usage, 1500)
+
+    if response.usage:
+        OpenAITokenUsage.objects.filter(pk=usage.pk).update(
+            used_tokens=F("used_tokens") + response.usage.total_tokens
+        )
+        usage.refresh_from_db()
+
+    return response.output_text.strip()
 
 
 def extract_parts(response_text: str) -> dict[str, str]:

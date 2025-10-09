@@ -21,7 +21,7 @@ def main():
     load_dotenv(os.path.join(project_root, ".env"))
 
     # wiwi.main()
-    mail_scraper.main()
+    # mail_scraper.main()
     # pressemitteilungen.main()
     # rundmail.main()
 
