@@ -101,7 +101,7 @@ services:
       - portainer_data:/data
     command:
       - --http-enabled
-      - --admin-password=${PORTAINER_ADMIN_PASSWORD_HASH}
+      - --admin-password=${PORTAINER_PASSWORD_HASH}
     networks:
       - backend
 
