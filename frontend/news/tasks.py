@@ -163,7 +163,7 @@ def process_cleanup(news: News, openai_api_key, token_limit, logger: logging.Log
             # Flag is_cleaned_up auf True setzen
             news.is_cleaned_up = True
             news.save()
-            logger.info("Cleanup erfolgreich durchgeführt | {news.titel[:80]}")
+            logger.info(f"Cleanup erfolgreich durchgeführt | {news.titel[:80]}")
 
 
 # Backfill-Tasks mit Parallelisierung
