@@ -1,7 +1,6 @@
 apscheduler
 beautifulsoup4
 celery
-deep-translator
 django
 django-celery-beat
 flower
