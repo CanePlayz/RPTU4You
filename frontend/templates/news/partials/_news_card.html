@@ -1,12 +1,19 @@
 {% load i18n %}
+{% load emojis %}
 <div class="news-card bg-gray-50 dark:bg-gray-800 p-4 rounded-lg shadow hover:bg-gray-100 dark:hover:bg-gray-700 transition cursor-pointer mb-4 border border-gray-200 dark:border-gray-700 flex flex-col gap-2" data-id="{{ news.id }}">
   <!-- Titel der News -->
   <h3 class="font-bold text-lg text-gray-800 dark:text-gray-100">{{ news.titel }}</h3>
   <!-- Erstellungsdatum der News -->
   <p class="text-sm text-gray-500 dark:text-gray-400">{{ news.erstellungsdatum|date:"d.m.Y H:i" }}</p>
-  <!-- Metadaten: Quelle und Typ -->
+  <!-- Metadaten: Quelle und Kategorien -->
   <div class="flex flex-wrap gap-4 text-sm mt-2">
-  <span class="bg-gray-200 dark:bg-gray-700 rounded px-2 py-1 text-gray-700 dark:text-gray-100"><strong>{% trans "Quelle:" %}</strong> {{ news.quelle.name }}</span>
-  <span class="bg-gray-200 dark:bg-gray-700 rounded px-2 py-1 text-gray-700 dark:text-gray-100"><strong>{% trans "Typ:" %}</strong> {{ news.quelle_typ }}</span>
+  <span class="bg-gray-200 dark:bg-gray-700 rounded px-2 py-1 text-gray-700 dark:text-gray-100"><strong>{% trans "Quelle:" %}</strong> {{ news.quelle_typ }}</span>
+  <span class="bg-gray-200 dark:bg-gray-700 rounded px-2 py-1 text-gray-700 dark:text-gray-100">
+    <strong>{% trans "Kategorien:" %}</strong>
+    {% for cat in news.inhaltskategorien.all %}
+      {{ cat.name|kategorie_emoji }}
+    {% endfor %}
+  </span>
   </div>
 </div>
+
