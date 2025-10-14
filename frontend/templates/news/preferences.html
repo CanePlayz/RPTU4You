@@ -19,17 +19,17 @@
 {% endblock %}
 
 {% block content %}
-<div class="flex max-md:flex-wrap items-center justify-center min-h-[calc(100vh-72px)] bg-gray-100 dark:bg-gray-900">
-    <div class="w-full max-w-5xl px-8">
+<div class="flex max-md:flex-wrap items-center justify-center min-h-[calc(100vh-72px)] bg-gray-100 dark:bg-gray-900 dark:text-white">
+    <div class="w-full px-8">
         <!-- Überschrift -->
-    <h1 class="text-3xl font-extrabold my-8 text-gray-800">{% trans "Meine Präferenzen" %}</h1>
+    <h1 class="text-3xl font-extrabold my-8 text-gray-800 dark:text-white">{% trans "Meine Präferenzen" %}</h1>
         <!-- Formular zur Auswahl der Präferenzen -->
         <form method="post" class="flex flex-row max-md:flex-wrap items-start">
             {% csrf_token %} <!-- CSRF-Schutz -->
 
             <!-- Standort-Auswahl -->
-            <div class="flex-1 min-w-[180px] text-gray-700 dark:text-gray-100">
-                <label for="{{ form.standorte.id_for_label }}" class="block text-lg font-bold text-gray-700 dark:text-gray-100 mb-2">{{ form.standorte.label }}</label>
+            <div class="flex-1 min-w-[180px] text-gray-700 dark:text-white">
+                <label for="{{ form.standorte.id_for_label }}" class="block text-lg font-bold text-gray-700 dark:text-white mb-2">{{ form.standorte.label }}</label>
                 {{ form.standorte }}
                 {% if form.standorte.errors %}
                     <div class="text-sm text-red-500">{{ form.standorte.errors }}</div>
@@ -37,8 +37,8 @@
             </div>
 
             <!-- Inhaltskategorie-Auswahl -->
-            <div class="flex-1 min-w-[180px] text-gray-700 dark:text-gray-100">
-                <label for="{{ form.inhaltskategorien.id_for_label }}" class="block text-lg font-bold text-gray-700 dark:text-gray-100 mb-2">{{ form.inhaltskategorien.label }}</label>
+            <div class="flex-1 min-w-[180px] text-gray-700 dark:text-white">
+                <label for="{{ form.inhaltskategorien.id_for_label }}" class="block text-lg font-bold text-gray-700 dark:text-white mb-2">{{ form.inhaltskategorien.label }}</label>
                 {{ form.inhaltskategorien }}
                 {% if form.inhaltskategorien.errors %}
                     <div class="text-sm text-red-500">{{ form.inhaltskategorien.errors }}</div>
@@ -46,8 +46,8 @@
             </div>
 
             <!-- Quellen-Auswahl -->
-            <div class="flex-1 min-w-[180px]">
-                <label for="{{ form.quellen.id_for_label }}" class="block text-lg font-bold text-gray-700 dark:text-gray-100 mb-2">{{ form.quellen.label }}</label>
+            <div class="flex-1 min-w-[300px] dark:text-white">
+                <label for="{{ form.quellen.id_for_label }}" class="block text-lg font-bold text-gray-700 dark:text-white mb-2">{{ form.quellen.label }}</label>
                 <div id="{{ form.quellen.auto_id }}">
                     {% for option in form.ordered_sources %}
                         <div>
@@ -63,8 +63,8 @@
             </div>
 
             <!-- Zielgruppen-Auswahl -->
-            <div class="flex-1 min-w-[180px] text-gray-700 dark:text-gray-100">
-                <label for="{{ form.zielgruppen.id_for_label }}" class="block text-lg font-bold text-gray-700 dark:text-gray-100 mb-2">{{ form.zielgruppen.label }}</label>
+            <div class="flex-1 min-w-[180px] text-gray-700 dark:text-white">
+                <label for="{{ form.zielgruppen.id_for_label }}" class="block text-lg font-bold text-gray-700 dark:text-white mb-2">{{ form.zielgruppen.label }}</label>
                 {{ form.zielgruppen }}
                 {% if form.zielgruppen.errors %}
                     <div class="text-sm text-red-500">{{ form.zielgruppen.errors }}</div>
