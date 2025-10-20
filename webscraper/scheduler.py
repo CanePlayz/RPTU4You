@@ -15,7 +15,7 @@ logger = get_logger(__name__)
 
 def wait_for_django():
     django_url = "http://django:8000/health"
-    for _ in range(30):
+    for _ in range(60):
         try:
             response = requests.get(django_url)
             if response.status_code == 200:
