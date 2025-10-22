@@ -51,7 +51,7 @@
                 {% endif %}
             {% endfor %}
             <!-- Absenden-Button -->
-            <button type="submit" class="w-full bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-blue-400">{% trans "Registrieren" %}</button>
+            <button type="submit" class="w-full bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-blue-400 cursor-pointer">{% trans "Registrieren" %}</button>
         </form>
         <!-- Link zur Login-Seite für bereits registrierte Nutzer -->
     <p class="text-sm text-center mt-4 text-gray-700 dark:text-gray-200">{% trans "Bereits registriert?" %} <a href="{% url 'login' %}" class="text-[#042c58] dark:text-blue-400 hover:underline">{% trans "Jetzt anmelden" %}</a></p>

@@ -30,7 +30,7 @@
   <hr class="my-4 border-gray-300 dark:border-gray-700">
   <!-- Text der Nachricht -->
   {% if text %}
-    <div class="text-gray-700 dark:text-gray-200 text-justify">{{ text.text|safe }}</div>
+    <div class="text-gray-700 dark:text-gray-200">{{ text.text|safe }}</div>
   {% else %}
   <p class="italic text-gray-500 dark:text-gray-400">{% trans "Kein Text in der gewählten Sprache verfügbar." %}</p>
   {% endif %}

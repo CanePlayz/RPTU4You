@@ -20,14 +20,14 @@
   <div class="max-md:hidden w-64 p-6 flex flex-col h-[calc(100vh-72px)] items-start bg-white dark:bg-gray-900 rounded-lg shadow">
     <!-- Termin erstellen Button -->
     <div class="flex flex-col w-full">
-      <button id="openPopup" class="bg-[#2c3f51] dark:bg-gray-800 text-white dark:text-gray-100 rounded-lg px-4 py-3 w-full flex justify-start text-lg font-semibold hover:bg-[#39506a] dark:hover:bg-gray-700">
+      <button id="openPopup" class="bg-[#2c3f51] dark:bg-gray-800 text-white dark:text-gray-100 rounded-lg px-4 py-3 w-full flex justify-start text-lg font-semibold hover:bg-[#39506a] dark:hover:bg-gray-700 cursor-pointer">
       <span class="text-5xl mr-3">+</span>{% trans "Termin hinzufügen" %}
       </button>
     </div>
     <!-- Importieren und Exportieren Buttons -->
     <div class="flex flex-col w-full gap-4 mt-auto">
-  <button onclick="document.getElementById('icsUpload').click();" class="bg-[#717f8b] dark:bg-gray-700 text-white dark:text-gray-100 rounded-lg px-4 py-2 shadow hover:bg-[#8a99a8] dark:hover:bg-gray-600 w-full">{% trans "Kalender importieren" %}</button>
-  <button type="submit" form="exportForm" class="bg-[#717f8b] dark:bg-gray-700 text-white dark:text-gray-100 rounded-lg px-4 py-2 shadow hover:bg-[#8a99a8] dark:hover:bg-gray-600 w-full">{% trans "Kalender exportieren" %}</button>
+  <button onclick="document.getElementById('icsUpload').click();" class="bg-[#717f8b] dark:bg-gray-700 text-white dark:text-gray-100 rounded-lg px-4 py-2 shadow hover:bg-[#8a99a8] dark:hover:bg-gray-600 w-full cursor-pointer">{% trans "Kalender importieren" %}</button>
+  <button type="submit" form="exportForm" class="bg-[#717f8b] dark:bg-gray-700 text-white dark:text-gray-100 rounded-lg px-4 py-2 shadow hover:bg-[#8a99a8] dark:hover:bg-gray-600 w-full cursor-pointer">{% trans "Kalender exportieren" %}</button>
     </div>
     <!-- Versteckte Formulare für Import und Export -->
     <form id="icsForm" action="{% url 'import_ics' %}" method="post" enctype="multipart/form-data" class="hidden">
@@ -47,14 +47,14 @@
       <div class="flex items-center mb-4">
         <div class="w-2 h-8 bg-[#042c58] dark:bg-blue-500 rounded-r-xl mr-3"></div>
   <h3 id="eventPopupTitle" class="text-xl font-semibold text-gray-800 dark:text-gray-100">{% trans "Termin erstellen" %}</h3>
-        <button type="button" id="closePopup" class="ml-auto text-gray-400 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white text-2xl font-bold">&times;</button>
+        <button type="button" id="closePopup" class="ml-auto text-gray-400 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white text-2xl font-bold cursor-pointer">&times;</button>
       </div>
       <!-- Formular für Termin-Daten -->
       <form id="eventForm" class="space-y-4">
         <!-- Titel des Termins -->
   <input type="text" id="eventTitle" placeholder="{% trans 'Titel' %}" required class="block w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#181818] text-gray-800 dark:text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
         <!-- Ganztägig-Button und Beginn-Label -->
-          <button type="button" id="allDayBtn" class="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-100 rounded px-3 py-2 text-sm hover:bg-blue-100 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-700 mb-2">
+          <button type="button" id="allDayBtn" class="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-100 rounded px-3 py-2 text-sm hover:bg-blue-100 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-700 mb-2 cursor-pointer">
             {% trans "Ganztägig" %}
           </button>
         <!-- Startdatum und Startzeit -->
@@ -63,7 +63,7 @@
           <input type="date" id="eventStartDate" required class="flex-1 border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#181818] text-gray-800 dark:text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none" placeholder="{% trans 'Startdatum' %}">
           <div class="relative w-32">
             <input type="text" id="eventStartTime" required class="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#181818] text-gray-800 dark:text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none pr-8" placeholder="{% trans 'Startzeit' %}" autocomplete="off">
-            <button type="button" id="startTimePickerBtn" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 flex items-center justify-center">
+            <button type="button" id="startTimePickerBtn" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 flex items-center justify-center cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </button>
             <div id="startTimeDropdown" class="hidden absolute z-10 right-0 mt-1 w-32 max-h-48 overflow-y-auto bg-white dark:bg-[#181818] border border-gray-300 dark:border-gray-700 rounded shadow-lg"></div>
@@ -75,7 +75,7 @@
           <input type="date" id="eventEndDate" class="flex-1 border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#181818] text-gray-800 dark:text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none" placeholder="{% trans 'Endedatum' %}">
           <div class="relative w-32">
             <input type="text" id="eventEndTime" class="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#181818] text-gray-800 dark:text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none pr-8" placeholder="{% trans 'Endzeit' %}" autocomplete="off">
-            <button type="button" id="endTimePickerBtn" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 flex items-center justify-center">
+            <button type="button" id="endTimePickerBtn" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 flex items-center justify-center cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </button>
             <div id="endTimeDropdown" class="hidden absolute z-10 right-0 mt-1 w-32 max-h-48 overflow-y-auto bg-white dark:bg-[#181818] border border-gray-300 dark:border-gray-700 rounded shadow-lg"></div>
@@ -84,7 +84,7 @@
         <!-- Beschreibung des Termins -->
   <textarea id="eventDescription" placeholder="{% trans 'Beschreibung' %}" class="block w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#181818] text-gray-800 dark:text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"></textarea>
         <!-- Button für weitere Optionen -->
-        <button type="button" id="toggleRepeatOptions" class="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-100 rounded-lg px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-between mt-2">
+        <button type="button" id="toggleRepeatOptions" class="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-100 rounded-lg px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-between mt-2 cursor-pointer">
           <span>{% trans "Weitere Optionen" %}</span>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.293l3.71-4.063a.75.75 0 111.08 1.04l-4.25 4.66a.75.75 0 01-1.08 0l-4.25-4.66a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg>
         </button>
@@ -107,8 +107,8 @@
         </div>
         <!-- Buttons zum Hinzufügen/Löschen -->
         <div class="flex space-x-2 mt-4">
-          <button type="submit" id="eventSubmitBtn" class="flex-1 bg-[#042c58] dark:bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600 dark:hover:bg-blue-400 transition">{% trans "Hinzufügen" %}</button>
-          <button type="button" id="eventDeleteBtn" class="flex-1 hidden bg-red-500 text-white rounded-lg px-4 py-2 hover:bg-red-600 dark:hover:bg-red-400 transition">{% trans "Löschen" %}</button>
+          <button type="submit" id="eventSubmitBtn" class="flex-1 bg-[#042c58] dark:bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600 dark:hover:bg-blue-400 transition cursor-pointer">{% trans "Hinzufügen" %}</button>
+          <button type="button" id="eventDeleteBtn" class="flex-1 hidden bg-red-500 text-white rounded-lg px-4 py-2 hover:bg-red-600 dark:hover:bg-red-400 transition cursor-pointer">{% trans "Löschen" %}</button>
         </div>
       </form>
     </div>
