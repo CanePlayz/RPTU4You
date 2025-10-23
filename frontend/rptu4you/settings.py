@@ -168,7 +168,7 @@ LOCALE_PATHS = [BASE_DIR / "locale"]
 
 STATIC_URL = "static/"
 
-LOGIN_URL = "/login/"
+LOGIN_URL = "login"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
