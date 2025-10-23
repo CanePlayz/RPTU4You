@@ -33,7 +33,7 @@ def main():
 
     wait_for_django()  # Warte auf Django, bevor der Scheduler startet
 
-    scheduler.add_job(
+    """ scheduler.add_job(
         func=rundmail.main,
         trigger=IntervalTrigger(minutes=20),
         id="rundmail_job",
@@ -70,7 +70,7 @@ def main():
     )
 
     logger.info("Scheduler läuft...")
-    scheduler.start()
+    scheduler.start() """
 
 
 if __name__ == "__main__":
