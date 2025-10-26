@@ -46,6 +46,7 @@ else:
     default_allowed_hosts = [
         "131.246.169.169",
         "scilab-0041.informatik.uni-kl.de",
+        "www.scilab-0041.informatik.uni-kl.de",
         "django",
     ]
 
