@@ -2,8 +2,13 @@
 
 {% block title %}News einreichen{% endblock %}
 
+{% block head-optional %}
+    <link rel="stylesheet" href="{% static 'css/input.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="max-w-4xl mx-auto px-4 py-10 text-gray-900 dark:text-gray-100">
+<div class="w-full dark:bg-gray-900 min-h-[calc(100vh-72px)] text-gray-900 dark:text-gray-100">
+  <div class="sticky text-center overflow-x-auto overflow-y-auto pb-13">
   <h1 class="text-3xl font-semibold mb-6">News einreichen</h1>
   <p class="mb-6">
     Reiche hier deine News ein. Wir kümmern uns automatisch um das Aufbereiten, Übersetzen und Kategorisieren.
@@ -19,7 +24,7 @@
     </div>
   {% endif %}
 
-  <form method="post" class="space-y-6">
+  <form method="post" class="space-y-6 overflow-y-auto">
     {% csrf_token %}
 
     <div>
@@ -30,7 +35,7 @@
       {% endif %}
     </div>
 
-    <div>
+    <div class="w-full">
       <label for="id_text" class="block font-medium mb-2">{{ form.text.label }}</label>
       {{ form.text }}
       {% if form.text.errors %}
@@ -47,7 +52,8 @@
       {% endif %}
     </div>
 
-    <div>
+    <div class="md:flex md:flex-row md:content-center md:items-center md:justify-around mb-4">
+      <div class="bg-white dark:bg-gray-700 m-4 p-4 rounded-lg shadow-md h-full">
       <p class="block font-medium mb-2">{{ form.inhaltskategorien.label }}</p>
       {{ form.inhaltskategorien }}
       {% if form.inhaltskategorien.errors %}
@@ -55,7 +61,7 @@
       {% endif %}
     </div>
 
-    <div>
+    <div class="bg-white dark:bg-gray-700 p-4 m-4 rounded-lg shadow-md h-full">
       <p class="block font-medium mb-2">{{ form.zielgruppen.label }}</p>
       {{ form.zielgruppen }}
       {% if form.zielgruppen.errors %}
@@ -63,17 +69,19 @@
       {% endif %}
     </div>
 
-    <div>
+    <div class="bg-white dark:bg-gray-700 p-4 m-4 rounded-lg shadow-md h-full">
       <p class="block font-medium mb-2">{{ form.standorte.label }}</p>
       {{ form.standorte }}
       {% if form.standorte.errors %}
         <p class="text-sm text-red-600 mt-1">{{ form.standorte.errors|join:", " }}</p>
       {% endif %}
     </div>
+    </div>
 
     <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">
       News einreichen
     </button>
   </form>
+  </div>
 </div>
 {% endblock %}

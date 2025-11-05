@@ -3,8 +3,13 @@
 
 {% block title %}Trusted Account Bewerbung{% endblock %}
 
+{% block head-optional %}
+    <link rel="stylesheet" href="{% static 'css/input.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="max-w-3xl mx-auto px-4 py-10 text-gray-900 dark:text-gray-100">
+<div class="bg-gray-100 dark:bg-gray-900 min-h-[calc(100vh-72px)]">
+<div class="max-w-3xl mx-auto px-4 py-10 text-gray-900 dark:text-gray-100 bg-gray-100 dark:bg-gray-900">
   <h1 class="text-3xl font-semibold mb-6">Bewirb dich als Trusted Account</h1>
   <p class="mb-6">
     Trusted Accounts können News direkt über RPTU4You einreichen. Verrate uns kurz, warum du Zugriff erhalten solltest.
@@ -21,11 +26,11 @@
   {% endif %}
 
   {% if last_application %}
-    <div class="rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-3 mb-6">
+    <div class="mb-4 border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg shadow px-4 py-3 mb-6">
       <p class="font-medium">Letzte Entscheidung</p>
-      <p class="text-sm mt-1">Status: {{ last_application.get_status_display }} ({{ last_application.created_at|date:"d.m.Y H:i" }})</p>
+      <p class="text-sm mt-1">Status: <b>{{ last_application.get_status_display }}</b> ({{ last_application.created_at|date:"d.m.Y H:i" }})</p>
       {% if last_application.status == last_application.STATUS_DECLINED %}
-        <p class="text-sm mt-2">Du kannst dich erneut bewerben. Bitte beschreibe diesmal genauer, warum du News einreichen möchtest.</p>
+        <p class="text-sm mt-2">Du kannst dich erneut bewerben. Bitte beschreibe diesmal <b>genauer</b>, warum du News einreichen möchtest.</p>
       {% endif %}
     </div>
   {% endif %}
@@ -44,5 +49,6 @@
       Bewerbung abschicken
     </button>
   </form>
+</div>
 </div>
 {% endblock %}

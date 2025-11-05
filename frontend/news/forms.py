@@ -217,7 +217,7 @@ class TrustedUserApplicationForm(forms.ModelForm):
         model = TrustedUserApplication
         fields = ["motivation"]
         widgets = {
-            "motivation": forms.Textarea(attrs={"rows": 6}),
+            "motivation": forms.Textarea(attrs={"cols": 30, "rows": 6,"class": "bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md"}),
         }
         labels = {
             "motivation": "Warum möchtest du als Trusted Account News einreichen?",
@@ -232,11 +232,12 @@ class TrustedNewsSubmissionForm(forms.Form):
     )
     text = forms.CharField(
         label="Text",
-        widget=forms.Textarea(attrs={"rows": 12}),
+        widget=forms.Textarea(attrs={"rows": 12,"class": "bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md"}),
     )
     link = forms.URLField(
         label="Optionale Quelle (Link)",
         required=False,
+        widget=forms.URLInput(attrs={"cols": 20, "rows": 1, "class": "bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md"}),
     )
     inhaltskategorien = forms.ModelMultipleChoiceField(
         queryset=InhaltsKategorie.objects.none(),
