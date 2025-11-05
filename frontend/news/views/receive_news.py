@@ -27,6 +27,9 @@ def process_news_entry(news_entry, openai_api_key, logger: logging.Logger):
     truncated_title = raw_title[:80] if isinstance(raw_title, str) else "<unbekannt>"
     logger.info(f"Verarbeite News-Eintrag | {truncated_title}")
 
+    manual_categories = news_entry.get("manual_inhaltskategorien", [])
+    manual_audiences = news_entry.get("manual_zielgruppen", [])
+
     # Quellen-Objekt erstellen
     if news_entry["quelle_typ"] in [
         "Rundmail",
@@ -75,6 +78,12 @@ def process_news_entry(news_entry, openai_api_key, logger: logging.Logger):
 
     elif news_entry["quelle_typ"] == "Email-Verteiler":
         quelle, _ = EmailVerteiler.objects.get_or_create(name=news_entry["quelle_name"])
+
+    elif news_entry["quelle_typ"] == "Trusted Account":
+        quelle, created = Quelle.objects.get_or_create(
+            name=news_entry["quelle_name"],
+            defaults={"url": None},
+        )
 
     else:
         logger.warning("Unbekannter Quellentyp, Eintrag wird übersprungen")
@@ -177,7 +186,10 @@ def process_news_entry(news_entry, openai_api_key, logger: logging.Logger):
     except Exception as e:
         logger.error(f"Fehler bei Kategorisierung: {e} | {truncated_title}")
     finally:
-        add_audiences_and_categories(news_item, categories, audiences)
+        # Kombination aus automatisch ermittelten und von Trusted Accounts gegebenen Kategorien/Zielgruppen
+        combined_categories = list(dict.fromkeys([*categories, *manual_categories]))
+        combined_audiences = list(dict.fromkeys([*audiences, *manual_audiences]))
+        add_audiences_and_categories(news_item, combined_categories, combined_audiences)
 
     logger.info(f"News-Objekt erfolgreich erstellt | {truncated_title}")
 

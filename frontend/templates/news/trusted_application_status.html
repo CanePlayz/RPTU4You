@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Trusted Account Bewerbung{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-10 text-gray-900 dark:text-gray-100">
+  <h1 class="text-3xl font-semibold mb-6">Bewerbung in Bearbeitung</h1>
+  <p class="mb-4">Vielen Dank für deine Bewerbung als Trusted Account.</p>
+  <p class="mb-6">
+    Wir prüfen deine Angaben und melden uns schnellstmöglich. Bis dahin kannst du wie gewohnt News lesen und deine Präferenzen anpassen.
+  </p>
+
+  <div class="rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-3">
+    <p class="font-medium">Eingereicht am {{ application.created_at|date:"d.m.Y H:i" }}</p>
+    <p class="text-sm mt-1">Status: {{ application.get_status_display }}</p>
+  </div>
+</div>
+{% endblock %}

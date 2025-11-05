@@ -30,6 +30,7 @@ from news.views.system import (
     request_date,
     set_language,
 )
+from news.views.trusted import trusted_news_portal
 
 # Sprachunabhängige URLs
 urlpatterns = [
@@ -65,6 +66,7 @@ urlpatterns += i18n_patterns(
     path("register/", register_view, name="register"),
     path("preferences/", update_preferences, name="preferences"),
     path("account/", account_view, name="account"),
+    path("trusted/news/", trusted_news_portal, name="trusted_news_portal"),
     # Kalender
     path("kalender/", calendar_page, name="calendar_page"),
     path("api/calendar-events/", calendar_events, name="calendar_events"),

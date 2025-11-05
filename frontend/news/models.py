@@ -7,7 +7,7 @@ from django.utils.timezone import now
 
 class Quelle(models.Model):
     name = models.CharField()
-    url = models.URLField()
+    url = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -97,7 +97,9 @@ class News(models.Model):
     id = models.AutoField(primary_key=True)
 
     link = models.URLField(
-        max_length=1000
+        max_length=1000,
+        blank=True,
+        null=True,
     )  # max_length=1000 ist notwendig, da URLField standardmäßig auf 200 Zeichen begrenzt ist
     # Dieser Titel wird nicht in der UI angezeigt, sondern ist nur für die Identifikation in der Datenbank gedacht
     titel = models.CharField()
@@ -117,6 +119,7 @@ class News(models.Model):
             ("Stellenangebote Sammel-Rundmail", "Stellenangebote Sammel-Rundmail"),
             ("Rundmail", "Rundmail"),
             ("Interne Website", "Interne Website"),
+            ("Trusted Account", "Trusted Account"),
         ],
     )
 
@@ -176,7 +179,7 @@ class User(AbstractUser):
     quellen = models.ManyToManyField(Quelle, blank=True)
     inhaltskategorien = models.ManyToManyField(InhaltsKategorie, blank=True)
     zielgruppen = models.ManyToManyField(Zielgruppe, blank=True)
-    #trusted = models.BooleanField(default=False)
+    is_trusted = models.BooleanField(default=False)
     include_rundmail = models.BooleanField(
         default=False,
         verbose_name="Rundmails einbeziehen",
@@ -190,6 +193,41 @@ class User(AbstractUser):
 
     class Meta:
         verbose_name_plural = "User"
+
+
+class TrustedUserApplication(models.Model):
+    STATUS_PENDING = "pending"
+    STATUS_APPROVED = "approved"
+    STATUS_DECLINED = "declined"
+
+    STATUS_CHOICES = [
+        (STATUS_PENDING, "Ausstehend"),
+        (STATUS_APPROVED, "Genehmigt"),
+        (STATUS_DECLINED, "Abgelehnt"),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="trusted_applications",
+    )
+    motivation = models.TextField()
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default=STATUS_PENDING,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        status_label = dict(self.STATUS_CHOICES).get(self.status, self.status)
+        return f"{self.user.username} ({status_label})"
+
+    class Meta:
+        verbose_name = "Trusted-User-Bewerbung"
+        verbose_name_plural = "Trusted-User-Bewerbungen"
+        ordering = ["-created_at"]
 
 
 # Kalender

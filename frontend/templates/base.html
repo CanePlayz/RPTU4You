@@ -109,7 +109,7 @@
           </div>
         </div>
         <!-- Profil Button -->
-        <button type="button" class="flex text-sm bg-transparent rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 profile-icon items-center" id="user-menu-button" aria-expanded="false">
+        <button type="button" class="flex text-sm bg-transparent rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 profile-icon items-center cursor-pointer" id="user-menu-button" aria-expanded="false">
           <img class="w-10 h-10 rounded-full" src="{% static 'images/user-icon.png' %}" alt="user photo">
         </button>
         <!--Profil Dropdown-->
@@ -121,6 +121,7 @@
           <ul class="py-2" aria-labelledby="user-menu-button">
             <li><a href="{% url 'account' %}" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">{% trans "Account" %}</a></li>
             <li><a href="{% url 'preferences' %}" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">{% trans "Fragebogen" %}</a></li>
+            <li><a href="{% url 'trusted_news_portal' %}" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">{% trans "News einreichen" %}</a></li>
             <li><a href="#" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">{% trans "Datenschutz" %}</a></li>
             <li><a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">{% trans "Abmelden" %}</a></li>
           </ul>

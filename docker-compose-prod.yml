@@ -1,35 +1,46 @@
 x-common-env: &common-env
   DJANGO_DEBUG: "false"
+  IMAP_SERVER: ${IMAP_SERVER}
+  IMAP_PORT: ${IMAP_PORT}
+  IMAP_USERNAME: ${IMAP_USERNAME}
+  IMAP_PASSWORD: ${IMAP_PASSWORD}
   OPENAI_API_KEY: ${OPENAI_API_KEY}
 
 services:
   db:
-    image: postgres:latest
+    image: postgres:18
+    restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_DB_USER}
       POSTGRES_PASSWORD: ${POSTGRES_DB_PASSWORD}
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql
     networks:
       - backend
 
   redis:
     image: redis:7
-    ports:
-      - "6379:6379"
+    restart: unless-stopped
     networks:
       - backend
 
   django:
     image: caneplayz/rptu4you-frontend:latest
+    restart: unless-stopped
     environment:
       <<: *common-env
       API_KEY: ${API_KEY}
       DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME}
       DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
       DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
+      EMAIL_JACOB: ${EMAIL_JACOB}
       SERVER: django
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_SERVER: ${SMTP_SERVER}
+      SMTP_USE_TLS: ${SMTP_USE_TLS}
+      SMTP_USE_SSL: ${SMTP_USE_SSL}
+      SMTP_TIMEOUT: ${SMTP_TIMEOUT}
     ports:
       - "8000:8000"
     networks:
@@ -40,6 +51,7 @@ services:
 
   celery-worker:
     image: caneplayz/rptu4you-frontend:latest
+    restart: unless-stopped
     environment:
       <<: *common-env
     depends_on:
@@ -51,6 +63,7 @@ services:
 
   celery-beat:
     image: caneplayz/rptu4you-frontend:latest
+    restart: unless-stopped
     depends_on:
       - redis
     networks:
@@ -60,6 +73,7 @@ services:
 
   flower:
     image: caneplayz/rptu4you-frontend:latest
+    restart: unless-stopped
     depends_on:
       - redis
     networks:
@@ -71,6 +85,7 @@ services:
 
   scraper:
     image: caneplayz/rptu4you-scraper:latest
+    restart: unless-stopped
     environment:
       - API_KEY=${API_KEY}
       - IMAP_SERVER=${IMAP_SERVER}

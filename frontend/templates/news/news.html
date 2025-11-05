@@ -23,14 +23,14 @@
   <h2 class="text-xl font-bold my-4 text-gray-800 dark:text-gray-100">{% trans "Filter" %}</h2>
       <div>
         <!-- Standort Button -->
-        <button type="button" class="w-full text-left md:text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('standorte')">
+        <button type="button" class="w-full text-left md:text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition cursor-pointer" onclick="toggleFilter('standorte')">
           <span id="chevron-standorte" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
           {% trans "Standorte" %}
         </button>
         <!-- Standorte -->
         <div id="filter-standorte" class="hidden ml-2">
           {% for loc in locations %}
-            <label class="block text-gray-800 dark:text-white">
+            <label class="block text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800 rounded px-1">
               <input type="checkbox" name="location" value="{{ loc.name }}" class="mr-2"
                 {% if loc.name in active_filters.locations %}checked{% endif %}>
               {{ loc.emoji }} {{ loc.name }}
@@ -40,14 +40,14 @@
       </div>
       <div>
         <!-- Kategorien Button -->
-        <button type="button" class="w-full text-left md:text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('kategorien')">
+        <button type="button" class="w-full text-left md:text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition cursor-pointer" onclick="toggleFilter('kategorien')">
             <span id="chevron-kategorien" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
           {% trans "Kategorien" %}
         </button>
         <!-- Kategorien -->
         <div id="filter-kategorien" class="hidden ml-2">
           {% for cat in categories %}
-            <label class="block text-gray-800 dark:text-white">
+            <label class="block text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800 rounded px-1">
               <input type="checkbox" name="category" value="{{ cat.name }}" class="mr-2"
                 {% if cat.name in active_filters.categories %}checked{% endif %}>
               {{ cat.emoji }} {{ cat.name }}
@@ -57,14 +57,14 @@
       </div>
       <div>
         <!-- Zielgruppen Button -->
-        <button type="button" class="w-full text-left md:text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('zielgruppen')">
+        <button type="button" class="w-full text-left md:text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition cursor-pointer" onclick="toggleFilter('zielgruppen')">
             <span id="chevron-zielgruppen" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
           {% trans "Zielgruppen" %}
         </button>
         <!-- Zielgruppen -->
         <div id="filter-zielgruppen" class="hidden ml-2">
           {% for aud in audiences %}
-            <label class="block text-gray-800 dark:text-white">
+            <label class="block text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800 rounded px-1">
               <input type="checkbox" name="audience" value="{{ aud.name }}" class="mr-2"
                 {% if aud.name in active_filters.audiences %}checked{% endif %}>
               {{ aud.emoji }} {{ aud.name }}
@@ -74,14 +74,14 @@
       </div>
       <div>
         <!-- Quellen Button -->
-        <button type="button" class="w-full text-left md:text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition" onclick="toggleFilter('quellen')">
+        <button type="button" class="w-full text-left md:text-lg font-semibold py-2 focus:outline-none flex items-center hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white rounded transition cursor-pointer" onclick="toggleFilter('quellen')">
             <span id="chevron-quellen" class="inline-block transition-transform duration-200 mr-2">&gt;</span>
           {% trans "Quellen" %}
         </button>
         <!-- Quellen -->
         <div id="filter-quellen" class="hidden ml-2">
           {% for src in sources %}
-            <label class="block text-gray-800 dark:text-white">
+            <label class="block text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800 rounded px-1">
               <input type="checkbox" name="source" value="{{ src.name }}" class="mr-2"
                 {% if src.name in active_filters.sources %}checked{% endif %}>
               {{ src.emoji }} {{ src.name }}
@@ -90,9 +90,9 @@
         </div>
       </div>
       <!-- Allgemeine Buttons -->
-  <button type="button" id="select-all-btn" class="bg-gray-200 dark:bg-gray-800 dark:text-gray-100 rounded-md px-2 py-1 text-sm hover:bg-gray-300 dark:hover:bg-gray-700 mr-1 my-3">{% trans "Alles auswählen" %}</button>
-  <button type="button" id="reset-filter-btn" class="bg-gray-200 dark:bg-gray-800 dark:text-gray-100 rounded-md px-2 py-1 text-sm hover:bg-gray-300 dark:hover:bg-gray-700 my-3">{% trans "Alles abwählen" %}</button>
-  <button type="button" id="apply-filter-btn" class="bg-[#042c58] dark:bg-gray-800 text-white dark:text-gray-100 rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-gray-700 mb-6">{% trans "Filter anwenden" %}</button>
+  <button type="button" id="select-all-btn" class="bg-gray-200 dark:bg-gray-800 dark:text-gray-100 rounded-md px-2 py-1 text-sm hover:bg-gray-300 dark:hover:bg-gray-700 mr-1 my-3 cursor-pointer">{% trans "Alles auswählen" %}</button>
+  <button type="button" id="reset-filter-btn" class="bg-gray-200 dark:bg-gray-800 dark:text-gray-100 rounded-md px-2 py-1 text-sm hover:bg-gray-300 dark:hover:bg-gray-700 my-3 cursor-pointer">{% trans "Alles abwählen" %}</button>
+  <button type="button" id="apply-filter-btn" class="bg-[#042c58] dark:bg-gray-800 text-white dark:text-gray-100 rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-gray-700 mb-6 cursor-pointer">{% trans "Filter anwenden" %}</button>
     </form>
   </div>
 

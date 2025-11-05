@@ -30,7 +30,7 @@
             {% endif %}
             <!-- Eingabefeld für neuen Benutzernamen -->
             <input type="text" name="new_username" value="{{ username }}" required class="border border-gray-300 dark:border-gray-700 rounded-md px-4 py-2 w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100">
-            <button type="submit" class="w-full bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-blue-400">{% trans "Benutzername ändern" %}</button>
+            <button type="submit" class="w-full bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-blue-400 cursor-pointer">{% trans "Benutzername ändern" %}</button>
         </form>
         <br>
     <!-- Abschnitt: Passwort ändern -->
@@ -106,7 +106,7 @@
                 </ul>
             {% endif %}
             <!-- Button zum Absenden des Formulars -->
-            <button type="submit" class="w-full bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600 dark:hover:bg-blue-400">{% trans "Passwort ändern" %}</button>
+            <button type="submit" class="w-full bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600 dark:hover:bg-blue-400 cursor-pointer">{% trans "Passwort ändern" %}</button>
         </form>
         <!-- Zurück zur Startseite -->
     <a href="{% url 'News' %}" class="block text-center text-[#042c58] dark:text-blue-400 mt-4 hover:underline">{% trans "Zurück zur Startseite" %}</a>

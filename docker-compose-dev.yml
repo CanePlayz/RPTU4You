@@ -1,23 +1,25 @@
 x-common-env: &common-env
   DJANGO_DEBUG: "true"
+  IMAP_SERVER: ${IMAP_SERVER}
+  IMAP_PORT: ${IMAP_PORT}
+  IMAP_USERNAME: ${IMAP_USERNAME}
+  IMAP_PASSWORD: ${IMAP_PASSWORD}
   OPENAI_API_KEY: ${OPENAI_API_KEY}
 
 services:
   db:
-    image: postgres:latest
+    image: postgres:18
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_DB_USER}
       POSTGRES_PASSWORD: ${POSTGRES_DB_PASSWORD}
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql
     networks:
       - backend
 
   redis:
     image: redis:7
-    ports:
-      - "6379:6379"
     networks:
       - backend
 
@@ -31,7 +33,13 @@ services:
       DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME}
       DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
       DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
+      EMAIL_JACOB: ${EMAIL_JACOB}
       SERVER: django
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_SERVER: ${SMTP_SERVER}
+      SMTP_USE_TLS: ${SMTP_USE_TLS}
+      SMTP_USE_SSL: ${SMTP_USE_SSL}
+      SMTP_TIMEOUT: ${SMTP_TIMEOUT}
     ports:
       - "8000:8000"
     networks:
