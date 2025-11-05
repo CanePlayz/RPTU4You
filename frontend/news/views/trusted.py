@@ -4,6 +4,8 @@ import os
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core import mail
+from django.core.mail import send_mail
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 
@@ -51,7 +53,7 @@ def _handle_application(request: HttpRequest, user: User) -> HttpResponse:
         .first()
     )
 
-    # Neues Bewerbungsformular verarbeiten
+    # Eingereichtes Bewerbungsformular verarbeiten
     if request.method == "POST":
         form = TrustedUserApplicationForm(request.POST)
         if form.is_valid():
@@ -63,6 +65,29 @@ def _handle_application(request: HttpRequest, user: User) -> HttpResponse:
                 request,
                 "Deine Bewerbung wurde eingereicht. Wir melden uns bei dir.",
             )
+
+            # E-Mail-Benachrichtigung an Admins versenden
+            project_mail = (os.getenv("IMAP_USERNAME") or "").strip()
+            try:
+                with mail.get_connection() as connection:
+                    send_mail(
+                        subject="Neue Trusted-User-Bewerbung eingegangen",
+                        message=(
+                            f"Der Benutzer {user.username} hat sich als Trusted User beworben.\n\n"
+                            f"Motivation:\n{application.motivation}\n\n"
+                            "Bitte überprüfe die Bewerbung im Admin-Panel."
+                        ),
+                        from_email=project_mail,
+                        recipient_list=["jpfundst@rptu.de"],
+                        fail_silently=False,
+                        connection=connection,
+                    )
+            except Exception:
+                logger = get_logger(__name__)
+                logger.exception(
+                    "Fehler beim Senden der Bewerbungsbenachrichtigung per E-Mail"
+                )
+
             return redirect("trusted_news_portal")
     else:
         form = TrustedUserApplicationForm()

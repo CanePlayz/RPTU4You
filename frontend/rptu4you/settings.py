@@ -27,6 +27,16 @@ def _env_bool(name: str, default: bool) -> bool:
     return value.lower() in {"1", "true", "yes", "on"}
 
 
+def _env_int(name: str, default: int) -> int:
+    value = os.getenv(name)
+    if not value:
+        return default
+    try:
+        return int(value)
+    except ValueError:
+        return default
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -162,6 +172,19 @@ USE_TZ = True
 
 # Globaler Übersetzungsordner
 LOCALE_PATHS = [BASE_DIR / "locale"]
+
+
+# E-Mail-Konfiguration
+EMAIL_HOST = os.getenv("SMTP_SERVER", "").strip()
+EMAIL_USE_SSL = _env_bool("SMTP_USE_SSL", default=False)
+EMAIL_USE_TLS = _env_bool("SMTP_USE_TLS", default=not EMAIL_USE_SSL)
+if EMAIL_USE_SSL:
+    EMAIL_USE_TLS = False
+
+EMAIL_PORT = _env_int("SMTP_PORT", 465 if EMAIL_USE_SSL else 587)
+EMAIL_HOST_USER = os.getenv("IMAP_USERNAME", "").strip()
+EMAIL_HOST_PASSWORD = os.getenv("IMAP_PASSWORD", "").strip()
+EMAIL_TIMEOUT = int(os.getenv("SMTP_TIMEOUT", 30))
 
 
 # Static files (CSS, JavaScript, Images)
