@@ -1,4 +1,4 @@
-from typing import Any, cast
+from typing import Any, Callable, Iterable, cast
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
@@ -16,6 +16,58 @@ from .models import (
 )
 from .util.filter_objects import get_objects_with_emojis
 
+# Setup, um Formular-Komponenten in wiederverwendbarer Weise zu definieren
+EmojiFieldConfig = dict[str, Any]
+
+
+EMOJI_FIELD_CONFIG: dict[str, EmojiFieldConfig] = {
+    "inhaltskategorien": {
+        "label": "Kategorien",
+        "emoji_key": "categories",
+        "queryset": lambda: InhaltsKategorie.objects.order_by("name"),
+    },
+    "zielgruppen": {
+        "label": "Zielgruppen",
+        "emoji_key": "audiences",
+        "queryset": lambda: Zielgruppe.objects.order_by("name"),
+    },
+    "standorte": {
+        "label": "Standorte",
+        "emoji_key": "locations",
+        "queryset": lambda: Standort.objects.order_by("name"),
+    },
+}
+
+
+# Funktionen zum Aufbau von Emoji-Labels und Choices
+def build_emoji_lookup(emoji_data: dict[str, Any], key: str) -> dict[str, str]:
+    """Erstellt ein Mapping von Objektname zu Emoji für die angegebene Emoji-Gruppe. Format: {"Objektname": "Emoji"}."""
+    return {
+        entry.get("name", ""): entry.get("emoji", "")
+        for entry in emoji_data.get(key, [])
+        if entry.get("name")
+    }
+
+
+def label_with_emoji(obj: Any, mapping: dict[str, str]) -> str:
+    """Gibt den Objektnamen mit vorangestelltem Emoji zurück, falls eines vorhanden ist."""
+    name = getattr(obj, "name", str(obj))
+    emoji = mapping.get(name, "")
+    return f"{emoji} {name}" if emoji else name
+
+
+def build_emoji_choices(
+    objs: Iterable[Any], mapping: dict[str, str]
+) -> list[tuple[Any, str]]:
+    """Erzeugt Choice-Liste bestehend aus Tupeln aus Primärschlüssel und Emoji-Label."""
+    choices: list[tuple[Any, str]] = []
+    for obj in objs:
+        pk = getattr(obj, "pk", None)
+        if pk is None:
+            continue
+        choices.append((pk, label_with_emoji(obj, mapping)))
+    return choices
+
 
 class UserCreationForm2(UserCreationForm):
     class Meta:
@@ -23,6 +75,7 @@ class UserCreationForm2(UserCreationForm):
         fields = ("username", "password1", "password2")
 
 
+# Formular für Benutzerpräferenzen
 class PreferencesForm(forms.ModelForm):
     class Meta:
         model = User
@@ -51,37 +104,23 @@ class PreferencesForm(forms.ModelForm):
 
         # Emojis holen
         emoji_data = get_objects_with_emojis()
+        emoji_mappings = {
+            key: build_emoji_lookup(emoji_data, key)
+            for key in ("categories", "audiences", "locations", "sources")
+        }
 
-        # Hilfsfunktion: Emoji nach Name suchen
-        def get_emoji(name, emoji_list):
-            for entry in emoji_list:
-                if entry["name"] == name:
-                    return entry["emoji"]
-            return ""
-
-        # Standorte-Choices mit Emoji
-        standorte_queryset = self.fields["standorte"].queryset.order_by("name")  # type: ignore[attr-defined]
-        standorte_objs = list(standorte_queryset)
-        self.fields["standorte"].choices = [
-            (obj.pk, f"{get_emoji(obj.name, emoji_data['locations'])} {obj.name}")
-            for obj in standorte_objs
-        ]
-
-        # Inhaltskategorien-Choices mit Emoji
-        inhaltskategorien_queryset = self.fields["inhaltskategorien"].queryset.order_by("name")  # type: ignore[attr-defined]
-        inhaltskategorien_objs = list(inhaltskategorien_queryset)
-        self.fields["inhaltskategorien"].choices = [
-            (obj.pk, f"{get_emoji(obj.name, emoji_data['categories'])} {obj.name}")
-            for obj in inhaltskategorien_objs
-        ]
-
-        # Zielgruppen-Choices mit Emoji
-        zielgruppen_queryset = self.fields["zielgruppen"].queryset.order_by("name")  # type: ignore[attr-defined]
-        zielgruppen_objs = list(zielgruppen_queryset)
-        self.fields["zielgruppen"].choices = [
-            (obj.pk, f"{get_emoji(obj.name, emoji_data['audiences'])} {obj.name}")
-            for obj in zielgruppen_objs
-        ]
+        for field_name in ("inhaltskategorien", "zielgruppen", "standorte"):
+            config = EMOJI_FIELD_CONFIG[field_name]
+            queryset_builder = cast(Callable[[], Iterable[Any]], config["queryset"])
+            field = cast(forms.ModelMultipleChoiceField, self.fields[field_name])
+            queryset = queryset_builder()
+            objects = list(queryset)
+            field.queryset = queryset
+            field.label = config["label"]
+            field.widget = forms.CheckboxSelectMultiple()
+            field.choices = build_emoji_choices(
+                objects, emoji_mappings[config["emoji_key"]]
+            )
 
         # Quellen-Choices mit Emoji, ohne Rundmail-Objekte
         rundmail_filter = (
@@ -95,16 +134,12 @@ class PreferencesForm(forms.ModelForm):
         quellen_objs = [
             obj for obj in quellen_queryset if not isinstance(obj, Rundmail)
         ]
-        self.fields["quellen"].choices = [
-            (obj.pk, f"{get_emoji(obj.name, emoji_data['sources'])} {obj.name}")
-            for obj in quellen_objs
-        ]
+        self.fields["quellen"].choices = build_emoji_choices(
+            quellen_objs, emoji_mappings["sources"]
+        )
 
-        # Label setzen
-        self.fields["standorte"].label = "Standorte"
-        self.fields["inhaltskategorien"].label = "Kategorien"
+        # Weitere Label setzen
         self.fields["quellen"].label = "Quellen"
-        self.fields["zielgruppen"].label = "Zielgruppen"
         self.fields["include_rundmail"].label = "📧 Rundmails"
         self.fields["include_sammel_rundmail"].label = "📧 Sammel-Rundmails"
 
@@ -198,33 +233,35 @@ class TrustedNewsSubmissionForm(forms.Form):
         required=False,
     )
     inhaltskategorien = forms.ModelMultipleChoiceField(
-        label="Kategorie",
         queryset=InhaltsKategorie.objects.none(),
-        widget=forms.CheckboxSelectMultiple(),
     )
     zielgruppen = forms.ModelMultipleChoiceField(
-        label="Zielgruppen",
         queryset=Zielgruppe.objects.none(),
-        widget=forms.CheckboxSelectMultiple(),
     )
     standorte = forms.ModelMultipleChoiceField(
-        label="Standorte",
         queryset=Standort.objects.none(),
-        widget=forms.CheckboxSelectMultiple(),
     )
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        category_field = cast(
-            forms.ModelMultipleChoiceField, self.fields["inhaltskategorien"]
-        )
-        audience_field = cast(
-            forms.ModelMultipleChoiceField, self.fields["zielgruppen"]
-        )
-        location_field = cast(forms.ModelMultipleChoiceField, self.fields["standorte"])
-        category_field.queryset = InhaltsKategorie.objects.order_by("name")
-        audience_field.queryset = Zielgruppe.objects.order_by("name")
-        location_field.queryset = Standort.objects.order_by("name")
+        emoji_data = get_objects_with_emojis()
+        emoji_mappings = {
+            key: build_emoji_lookup(emoji_data, key)
+            for key in ("categories", "audiences", "locations")
+        }
+
+        for field_name in ("inhaltskategorien", "zielgruppen", "standorte"):
+            config = EMOJI_FIELD_CONFIG[field_name]
+            queryset_builder = cast(Callable[[], Iterable[Any]], config["queryset"])
+            field = cast(forms.ModelMultipleChoiceField, self.fields[field_name])
+            queryset = queryset_builder()
+            objects = list(queryset)
+            field.queryset = queryset
+            field.label = config["label"]
+            field.widget = forms.CheckboxSelectMultiple()
+            field.choices = build_emoji_choices(
+                objects, emoji_mappings[config["emoji_key"]]
+            )
 
     def clean_inhaltskategorien(self):
         categories = self.cleaned_data["inhaltskategorien"]
