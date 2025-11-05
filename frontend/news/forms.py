@@ -77,6 +77,7 @@ class UserCreationForm2(UserCreationForm):
 
 # Formular für Benutzerpräferenzen
 class PreferencesForm(forms.ModelForm):
+    # Verbindung zum User-Modell und Definition der Felder
     class Meta:
         model = User
         fields = [
@@ -88,19 +89,13 @@ class PreferencesForm(forms.ModelForm):
             "include_sammel_rundmail",
         ]
         widgets = {
-            "standorte": forms.CheckboxSelectMultiple(),
-            "inhaltskategorien": forms.CheckboxSelectMultiple(),
-            "quellen": forms.CheckboxSelectMultiple(),
-            "zielgruppen": forms.CheckboxSelectMultiple(),
             "include_rundmail": forms.CheckboxInput(),
             "include_sammel_rundmail": forms.CheckboxInput(),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ordered_sources = (
-            []
-        )  # Filled with quellen and Rundmail options for the template
+        self.ordered_sources = []
 
         # Emojis holen
         emoji_data = get_objects_with_emojis()
@@ -109,6 +104,7 @@ class PreferencesForm(forms.ModelForm):
             for key in ("categories", "audiences", "locations", "sources")
         }
 
+        # Formularfelder konfigurieren
         for field_name in ("inhaltskategorien", "zielgruppen", "standorte"):
             config = EMOJI_FIELD_CONFIG[field_name]
             queryset_builder = cast(Callable[[], Iterable[Any]], config["queryset"])
@@ -156,16 +152,22 @@ class PreferencesForm(forms.ModelForm):
                 user.include_sammel_rundmail
             )
 
+        # Quellen-Optionen sortieren (Checkboxes + Rundmail-Optionen)
+        # Sortierschlüssel vorbereiten
         quelle_sort_lookup = {str(obj.pk): obj.name for obj in quellen_objs}
         combined_options: list[dict[str, str]] = []
 
+        # Für alle Checkboxen im Quellen-Field
         for checkbox in self["quellen"]:  # type: ignore[misc]
+            # Rohwert des Checkbox-Elements ermitteln
             raw_value = getattr(checkbox, "choice_value", None)
             if raw_value is None:
                 raw_value = getattr(checkbox, "value", "")
             if raw_value in (None, "") and hasattr(checkbox, "data"):
                 raw_value = checkbox.data.get("value", "")  # type: ignore[assignment]
+            # Sortierschlüssel bestimmen
             sort_key = quelle_sort_lookup.get(str(raw_value), checkbox.choice_label)
+            # Dictionary mit Label, ID, HTML-Input und Sortierschlüssel erstellen
             combined_options.append(
                 {
                     "label": checkbox.choice_label,
@@ -175,6 +177,7 @@ class PreferencesForm(forms.ModelForm):
                 }
             )
 
+        # Rundmail-Optionen hinzufügen
         for field_name in ("include_rundmail", "include_sammel_rundmail"):
             bound_field = self[field_name]
             combined_options.append(
@@ -186,12 +189,14 @@ class PreferencesForm(forms.ModelForm):
                 }
             )
 
+        # Optionen nach Sortierschlüssel sortieren
         combined_options.sort(key=lambda option: option["sort_key"])
         for option in combined_options:
             option.pop("sort_key", None)
 
         self.ordered_sources = combined_options
 
+    # Speichern der Präferenzen
     def save(self, commit=True):
         user: User = super().save(commit=False)
         if commit:
@@ -220,6 +225,7 @@ class TrustedUserApplicationForm(forms.ModelForm):
 
 
 class TrustedNewsSubmissionForm(forms.Form):
+    # Formularfelder definieren
     titel = forms.CharField(
         label="Titel",
         max_length=255,
@@ -244,12 +250,14 @@ class TrustedNewsSubmissionForm(forms.Form):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+        # Emoji-Daten holen
         emoji_data = get_objects_with_emojis()
         emoji_mappings = {
             key: build_emoji_lookup(emoji_data, key)
             for key in ("categories", "audiences", "locations")
         }
 
+        # Formularfelder mit Emoji-Labels und -Choices versehen
         for field_name in ("inhaltskategorien", "zielgruppen", "standorte"):
             config = EMOJI_FIELD_CONFIG[field_name]
             queryset_builder = cast(Callable[[], Iterable[Any]], config["queryset"])
@@ -263,6 +271,7 @@ class TrustedNewsSubmissionForm(forms.Form):
                 objects, emoji_mappings[config["emoji_key"]]
             )
 
+    # Validierung der Mehrfachauswahl-Felder
     def clean_inhaltskategorien(self):
         categories = self.cleaned_data["inhaltskategorien"]
         if not categories:
@@ -281,6 +290,7 @@ class TrustedNewsSubmissionForm(forms.Form):
             raise forms.ValidationError("Bitte wähle mindestens einen Standort aus.")
         return locations
 
+    # Vom Nutzer eingegebene Daten in für receive_news.py geeignetes Format umwandeln
     def build_payload(self, user: User) -> dict[str, Any]:
         cleaned = self.cleaned_data
         submission_time = timezone.now().strftime("%d.%m.%Y %H:%M:%S")
