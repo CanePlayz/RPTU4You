@@ -1,9 +1,7 @@
-import hashlib
 import uuid
 from datetime import timedelta
 
-from django.contrib import admin
-from django.utils import timezone
+from django.contrib import admin, messages
 
 from .models import *
 
@@ -18,8 +16,109 @@ admin.site.register(InhaltsKategorie)
 admin.site.register(Zielgruppe)
 admin.site.register(Sprache)
 admin.site.register(Text)
-admin.site.register(User)
 admin.site.register(OpenAITokenUsage)
+
+
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = (
+        "username",
+        "email",
+        "is_trusted",
+        "is_staff",
+        "is_superuser",
+        "is_active",
+        "last_login",
+    )
+    list_filter = (
+        "is_trusted",
+        "is_staff",
+        "is_superuser",
+        "is_active",
+    )
+    search_fields = ("username", "email")
+    readonly_fields = ("date_joined", "last_login")
+    ordering = ("username",)
+
+
+@admin.register(TrustedUserApplication)
+class TrustedUserApplicationAdmin(admin.ModelAdmin):
+    list_display = (
+        "user",
+        "status",
+        "user_is_trusted",
+        "created_at",
+        "updated_at",
+        "motivation_preview",
+    )
+    list_filter = ("status", "created_at")
+    search_fields = ("user__username", "motivation")
+    readonly_fields = ("created_at", "updated_at")
+    actions = ["mark_as_approved", "mark_as_declined", "mark_as_pending"]
+
+    @admin.display(boolean=True, description="User ist trusted?")
+    def user_is_trusted(self, obj: TrustedUserApplication) -> bool:
+        return obj.user.is_trusted
+
+    @admin.display(description="Motivation")
+    def motivation_preview(self, obj: TrustedUserApplication) -> str:
+        preview = obj.motivation.strip()
+        return (preview[:75] + "…") if len(preview) > 75 else preview
+
+    def _set_status(self, request, queryset, status: str, success_message: str) -> None:
+        updated = 0
+        for application in queryset.select_related("user"):
+            if application.status != status:
+                application.status = status
+                application.save()
+            user = application.user
+            if status == TrustedUserApplication.STATUS_APPROVED and not user.is_trusted:
+                user.is_trusted = True
+                user.save(update_fields=["is_trusted"])
+            elif status == TrustedUserApplication.STATUS_DECLINED:
+                if (
+                    not TrustedUserApplication.objects.filter(
+                        user=user,
+                        status=TrustedUserApplication.STATUS_APPROVED,
+                    )
+                    .exclude(pk=application.pk)
+                    .exists()
+                    and user.is_trusted
+                ):
+                    user.is_trusted = False
+                    user.save(update_fields=["is_trusted"])
+            updated += 1
+        if updated:
+            self.message_user(
+                request, success_message.format(count=updated), messages.SUCCESS
+            )
+
+    @admin.action(description="Auswahl genehmigen")
+    def mark_as_approved(self, request, queryset):
+        self._set_status(
+            request,
+            queryset,
+            TrustedUserApplication.STATUS_APPROVED,
+            "{count} Bewerbung(en) genehmigt.",
+        )
+
+    @admin.action(description="Auswahl ablehnen")
+    def mark_as_declined(self, request, queryset):
+        self._set_status(
+            request,
+            queryset,
+            TrustedUserApplication.STATUS_DECLINED,
+            "{count} Bewerbung(en) abgelehnt.",
+        )
+
+    @admin.action(description="Auswahl zurück auf ausstehend setzen")
+    def mark_as_pending(self, request, queryset):
+        self._set_status(
+            request,
+            queryset,
+            TrustedUserApplication.STATUS_PENDING,
+            "{count} Bewerbung(en) wieder auf ausstehend gesetzt.",
+        )
 
 
 @admin.register(News)
