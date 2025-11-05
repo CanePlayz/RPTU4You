@@ -117,6 +117,7 @@ class News(models.Model):
             ("Stellenangebote Sammel-Rundmail", "Stellenangebote Sammel-Rundmail"),
             ("Rundmail", "Rundmail"),
             ("Interne Website", "Interne Website"),
+            ("Trusted Account", "Trusted Account"),
         ],
     )
 
@@ -176,7 +177,7 @@ class User(AbstractUser):
     quellen = models.ManyToManyField(Quelle, blank=True)
     inhaltskategorien = models.ManyToManyField(InhaltsKategorie, blank=True)
     zielgruppen = models.ManyToManyField(Zielgruppe, blank=True)
-    #trusted = models.BooleanField(default=False)
+    is_trusted = models.BooleanField(default=False)
     include_rundmail = models.BooleanField(
         default=False,
         verbose_name="Rundmails einbeziehen",
@@ -190,6 +191,41 @@ class User(AbstractUser):
 
     class Meta:
         verbose_name_plural = "User"
+
+
+class TrustedUserApplication(models.Model):
+    STATUS_PENDING = "pending"
+    STATUS_APPROVED = "approved"
+    STATUS_DECLINED = "declined"
+
+    STATUS_CHOICES = [
+        (STATUS_PENDING, "Ausstehend"),
+        (STATUS_APPROVED, "Genehmigt"),
+        (STATUS_DECLINED, "Abgelehnt"),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="trusted_applications",
+    )
+    motivation = models.TextField()
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default=STATUS_PENDING,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        status_label = dict(self.STATUS_CHOICES).get(self.status, self.status)
+        return f"{self.user.username} ({status_label})"
+
+    class Meta:
+        verbose_name = "Trusted-User-Bewerbung"
+        verbose_name_plural = "Trusted-User-Bewerbungen"
+        ordering = ["-created_at"]
 
 
 # Kalender
