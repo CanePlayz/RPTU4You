@@ -78,7 +78,7 @@ def _handle_application(request: HttpRequest, user: User) -> HttpResponse:
                             "Bitte überprüfe die Bewerbung im Admin-Panel."
                         ),
                         from_email=project_mail,
-                        recipient_list=["jpfundst@rptu.de"],
+                        recipient_list=[str(os.getenv("EMAIL_JACOB"))],
                         fail_silently=False,
                         connection=connection,
                     )
