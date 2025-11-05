@@ -110,6 +110,7 @@ def news_partial(request: HttpRequest) -> HttpResponse:
 
 @require_GET
 def news_detail(request: HttpRequest, pk: int) -> HttpResponse:
+    """Partielles Laden von News-Details oder bei Direktaufruf die komplette News-Seite mit Details."""
     news: News = get_object_or_404(
         News.objects.prefetch_related("texte__sprache", "quelle"), pk=pk
     )

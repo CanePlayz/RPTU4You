@@ -7,7 +7,7 @@ from django.utils.timezone import now
 
 class Quelle(models.Model):
     name = models.CharField()
-    url = models.URLField()
+    url = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -97,7 +97,9 @@ class News(models.Model):
     id = models.AutoField(primary_key=True)
 
     link = models.URLField(
-        max_length=1000
+        max_length=1000,
+        blank=True,
+        null=True,
     )  # max_length=1000 ist notwendig, da URLField standardmäßig auf 200 Zeichen begrenzt ist
     # Dieser Titel wird nicht in der UI angezeigt, sondern ist nur für die Identifikation in der Datenbank gedacht
     titel = models.CharField()

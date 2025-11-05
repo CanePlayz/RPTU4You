@@ -1,9 +1,19 @@
+from typing import Any, cast
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Q
+from django.utils import timezone
 from django.utils.safestring import mark_safe
 
-from .models import *
+from .models import (
+    InhaltsKategorie,
+    Rundmail,
+    Standort,
+    TrustedUserApplication,
+    User,
+    Zielgruppe,
+)
 from .util.filter_objects import get_objects_with_emojis
 
 
@@ -160,3 +170,98 @@ class PreferencesForm(forms.ModelForm):
             user.save()
 
         return user
+
+
+class TrustedUserApplicationForm(forms.ModelForm):
+    class Meta:
+        model = TrustedUserApplication
+        fields = ["motivation"]
+        widgets = {
+            "motivation": forms.Textarea(attrs={"rows": 6}),
+        }
+        labels = {
+            "motivation": "Warum möchtest du als Trusted Account News einreichen?",
+        }
+
+
+class TrustedNewsSubmissionForm(forms.Form):
+    titel = forms.CharField(
+        label="Titel",
+        max_length=255,
+    )
+    text = forms.CharField(
+        label="Text",
+        widget=forms.Textarea(attrs={"rows": 12}),
+    )
+    link = forms.URLField(
+        label="Optionale Quelle (Link)",
+        required=False,
+    )
+    inhaltskategorien = forms.ModelMultipleChoiceField(
+        label="Kategorie",
+        queryset=InhaltsKategorie.objects.none(),
+        widget=forms.CheckboxSelectMultiple(),
+    )
+    zielgruppen = forms.ModelMultipleChoiceField(
+        label="Zielgruppen",
+        queryset=Zielgruppe.objects.none(),
+        widget=forms.CheckboxSelectMultiple(),
+    )
+    standorte = forms.ModelMultipleChoiceField(
+        label="Standorte",
+        queryset=Standort.objects.none(),
+        widget=forms.CheckboxSelectMultiple(),
+    )
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        category_field = cast(
+            forms.ModelMultipleChoiceField, self.fields["inhaltskategorien"]
+        )
+        audience_field = cast(
+            forms.ModelMultipleChoiceField, self.fields["zielgruppen"]
+        )
+        location_field = cast(forms.ModelMultipleChoiceField, self.fields["standorte"])
+        category_field.queryset = InhaltsKategorie.objects.order_by("name")
+        audience_field.queryset = Zielgruppe.objects.order_by("name")
+        location_field.queryset = Standort.objects.order_by("name")
+
+    def clean_inhaltskategorien(self):
+        categories = self.cleaned_data["inhaltskategorien"]
+        if not categories:
+            raise forms.ValidationError("Bitte wähle mindestens eine Kategorie aus.")
+        return categories
+
+    def clean_zielgruppen(self):
+        audiences = self.cleaned_data["zielgruppen"]
+        if not audiences:
+            raise forms.ValidationError("Bitte wähle mindestens eine Zielgruppe aus.")
+        return audiences
+
+    def clean_standorte(self):
+        locations = self.cleaned_data["standorte"]
+        if not locations:
+            raise forms.ValidationError("Bitte wähle mindestens einen Standort aus.")
+        return locations
+
+    def build_payload(self, user: User) -> dict[str, Any]:
+        cleaned = self.cleaned_data
+        submission_time = timezone.now().strftime("%d.%m.%Y %H:%M:%S")
+        link_input = (cleaned["link"] or "").strip()
+        link = link_input if link_input else None
+        return {
+            "titel": cleaned["titel"],
+            "text": cleaned["text"],
+            "link": link,
+            "standorte": [location.name for location in cleaned["standorte"]],
+            "quelle_typ": "Trusted Account",
+            "quelle_name": user.username,
+            "trusted_user_id": user.pk,
+            "erstellungsdatum": submission_time,
+            "manual_inhaltskategorien": [
+                category.name for category in cleaned["inhaltskategorien"]
+            ],
+            "manual_zielgruppen": [
+                zielgruppe.name for zielgruppe in cleaned["zielgruppen"]
+            ],
+        }
