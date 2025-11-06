@@ -8,7 +8,7 @@
 {% block content %}
 <div class="page-shell">
     <div class="accent-card max-w-4xl">
-        <h1 class="text-3xl font-semibold mb-6 text-center">News einreichen</h1>
+        <h1 class="accent-card-title text-center mb-6">News einreichen</h1>
         <p class="mb-6 text-center">
             Reiche hier deine News ein. Wir kümmern uns automatisch um das Aufbereiten, Übersetzen und Kategorisieren.
         </p>
@@ -27,7 +27,7 @@
             {% csrf_token %}
 
             <div class="space-y-2">
-                <label for="id_titel" class="block font-medium mb-2">{{ form.titel.label }}</label>
+                <label for="id_titel" class="form-label">{{ form.titel.label }}</label>
                 {{ form.titel }}
                 {% if form.titel.errors %}
                 <p class="text-sm text-red-600 mt-1">{{ form.titel.errors|join:", " }}</p>
@@ -36,7 +36,7 @@
 
             <div class="grid gap-6 md:grid-cols-2 md:items-start">
                 <div class="space-y-2">
-                    <label for="id_text" class="block font-medium mb-2">{{ form.text.label }}</label>
+                    <label for="id_text" class="form-label">{{ form.text.label }}</label>
                     {{ form.text }}
                     {% if form.text.errors %}
                     <p class="text-sm text-red-600 mt-1">{{ form.text.errors|join:", " }}</p>
@@ -44,7 +44,7 @@
                 </div>
 
                 <div class="space-y-2">
-                    <label for="id_link" class="block font-medium mb-2">{{ form.link.label }}</label>
+                    <label for="id_link" class="form-label">{{ form.link.label }}</label>
                     {{ form.link }}
                     {% if form.link.errors %}
                     <p class="text-sm text-red-600 mt-1">{{ form.link.errors|join:", " }}</p>
@@ -54,7 +54,7 @@
 
             <div class="grid gap-6 md:grid-cols-3 md:items-start">
                 <div class="space-y-2">
-                    <p class="block font-medium">{{ form.standorte.label }}</p>
+                    <p class="form-label">{{ form.standorte.label }}</p>
                     <div class="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-4 rounded-lg shadow-sm">
                         {{ form.standorte }}
                     </div>
@@ -64,7 +64,7 @@
                 </div>
 
                 <div class="space-y-2">
-                    <p class="block font-medium">{{ form.inhaltskategorien.label }}</p>
+                    <p class="form-label">{{ form.inhaltskategorien.label }}</p>
                     <div class="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-4 rounded-lg shadow-sm">
                         {{ form.inhaltskategorien }}
                     </div>
@@ -74,7 +74,7 @@
                 </div>
 
                 <div class="space-y-2">
-                    <p class="block font-medium">{{ form.zielgruppen.label }}</p>
+                    <p class="form-label">{{ form.zielgruppen.label }}</p>
                     <div class="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-4 rounded-lg shadow-sm">
                         {{ form.zielgruppen }}
                     </div>

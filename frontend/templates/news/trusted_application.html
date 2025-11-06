@@ -9,7 +9,7 @@
 <div class="page-shell">
     <div class="accent-card max-w-3xl">
         <div class="space-y-3 mb-8">
-            <h1 class="text-3xl font-semibold">Bewirb dich als Trusted Account</h1>
+            <h1 class="accent-card-title">Bewirb dich als Trusted Account</h1>
             <p>
                 Trusted Accounts können News direkt über RPTU4You einreichen. Verrate uns bitte kurz, warum du Zugriff erhalten solltest.
             </p>
@@ -41,7 +41,7 @@
         <form method="post" class="space-y-6">
             {% csrf_token %}
             <div>
-                <label class="block mb-2 font-medium" for="id_motivation">{{ form.motivation.label }}</label>
+                <label class="form-label" for="id_motivation">{{ form.motivation.label }}</label>
                 {{ form.motivation }}
                 {% if form.motivation.errors %}
                 <p class="text-sm text-red-600 mt-1">{{ form.motivation.errors|join:", " }}</p>

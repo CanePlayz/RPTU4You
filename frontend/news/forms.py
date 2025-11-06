@@ -178,15 +178,18 @@ class PreferencesForm(forms.ModelForm):
             | Q(name__startswith="Sammel-Rundmail")
             | Q(name__startswith="Stellenangebote Sammel-Rundmail")
         )
-        quellen_queryset = (
-            self.fields["quellen"].queryset.exclude(rundmail_filter).order_by("name")  # type: ignore[attr-defined]
-        )
+        # Rundmails und Sammel-Rundmails aus dem Quellen-Queryset entfernen
+        quellen_field = cast(forms.ModelMultipleChoiceField, self.fields["quellen"])
+        quellen_queryset = quellen_field.queryset.exclude(rundmail_filter).order_by(
+            "name"
+        )  # type: ignore[attr-defined]
+        quellen_field.queryset = quellen_queryset
         quellen_objs = [
             obj for obj in quellen_queryset if not isinstance(obj, Rundmail)
         ]
-        self.fields["quellen"].choices = build_emoji_choices(
-            quellen_objs, emoji_mappings["sources"]
-        )
+        quellen_choices = build_emoji_choices(quellen_objs, emoji_mappings["sources"])
+        quellen_field.widget = forms.CheckboxSelectMultiple()
+        quellen_field.choices = quellen_choices
 
         # Weitere Label setzen
         self.fields["quellen"].label = "Quellen"
