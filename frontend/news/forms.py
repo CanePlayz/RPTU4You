@@ -1,7 +1,8 @@
+import re
 from typing import Any, Callable, Iterable, cast
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.db.models import Q
 from django.utils import timezone
 from django.utils.safestring import mark_safe
@@ -69,10 +70,63 @@ def build_emoji_choices(
     return choices
 
 
+def ensure_widget_has_class(field: forms.Field, css_class: str = "form-field") -> None:
+    """Sorgt dafür, dass die Widget-Attribute die gewünschte CSS-Klasse enthalten."""
+    classes = field.widget.attrs.get("class", "").split()
+    if css_class not in classes:
+        classes.append(css_class)
+        field.widget.attrs["class"] = " ".join(classes)
+
+
 class UserCreationForm2(UserCreationForm):
     class Meta:
         model = User
         fields = ("username", "password1", "password2")
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            ensure_widget_has_class(field)
+
+
+# Formular für Benutzernamenänderung
+class UsernameChangeForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["username"]
+        labels = {"username": "Benutzername"}
+        widgets = {
+            "username": forms.TextInput(
+                attrs={
+                    "class": "form-field",
+                    "required": True,
+                }
+            )
+        }
+
+    def clean_username(self) -> str:
+        username = self.cleaned_data.get("username", "").strip()
+        if not username:
+            raise forms.ValidationError("Bitte gib einen gültigen Benutzernamen ein.")
+        if username == self.instance.username:
+            raise forms.ValidationError(
+                "Dieser Benutzername wird bereits von dir verwendet."
+            )
+        if (
+            User.objects.filter(username__iexact=username)
+            .exclude(pk=self.instance.pk)
+            .exists()
+        ):
+            raise forms.ValidationError("Dieser Benutzername ist bereits vergeben.")
+        return username
+
+
+# Formular für Passwortänderung mit angepasstem Styling
+class StyledPasswordChangeForm(PasswordChangeForm):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            ensure_widget_has_class(field)
 
 
 # Formular für Benutzerpräferenzen
@@ -217,7 +271,13 @@ class TrustedUserApplicationForm(forms.ModelForm):
         model = TrustedUserApplication
         fields = ["motivation"]
         widgets = {
-            "motivation": forms.Textarea(attrs={"cols": 30, "rows": 6,"class": "bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md"}),
+            "motivation": forms.Textarea(
+                attrs={
+                    "cols": 30,
+                    "rows": 6,
+                    "class": "form-field",
+                }
+            ),
         }
         labels = {
             "motivation": "Warum möchtest du als Trusted Account News einreichen?",
@@ -229,15 +289,29 @@ class TrustedNewsSubmissionForm(forms.Form):
     titel = forms.CharField(
         label="Titel",
         max_length=255,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-field",
+            }
+        ),
     )
     text = forms.CharField(
         label="Text",
-        widget=forms.Textarea(attrs={"rows": 12,"class": "bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md"}),
+        widget=forms.Textarea(
+            attrs={
+                "rows": 12,
+                "class": "form-field",
+            }
+        ),
     )
     link = forms.URLField(
         label="Optionale Quelle (Link)",
         required=False,
-        widget=forms.URLInput(attrs={"cols": 20, "rows": 1, "class": "bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md"}),
+        widget=forms.URLInput(
+            attrs={
+                "class": "form-field",
+            }
+        ),
     )
     inhaltskategorien = forms.ModelMultipleChoiceField(
         queryset=InhaltsKategorie.objects.none(),

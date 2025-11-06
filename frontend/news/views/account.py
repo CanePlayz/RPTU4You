@@ -3,12 +3,16 @@ from typing import cast
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, resolve_url
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from ..forms import PreferencesForm, UserCreationForm2
+from ..forms import (
+    PreferencesForm,
+    StyledPasswordChangeForm,
+    UserCreationForm2,
+    UsernameChangeForm,
+)
 from ..models import User
 
 
@@ -77,47 +81,46 @@ def account_view(request: HttpRequest) -> HttpResponse:
         return redirect("login")
 
     user = cast(User, request.user)
-    username_error = None
-    username_success = None
-    form = PasswordChangeForm(user)
+    password_form = StyledPasswordChangeForm(user, prefix="password")
+    username_form = UsernameChangeForm(instance=user, prefix="username")
 
     if request.method == "POST":
-        if "change_password" in request.POST:
-            form = PasswordChangeForm(user, request.POST)
-            # Prüft automatisch, ob das alte Passwort korrekt ist
-            if form.is_valid():
-                user = form.save()
+        action = request.POST.get("action")
+        if action == "change_password":
+            password_form = StyledPasswordChangeForm(
+                user,
+                request.POST,
+                prefix="password",
+            )
+            if password_form.is_valid():
+                user = password_form.save()
                 update_session_auth_hash(request, user)
                 messages.success(request, "Dein Passwort wurde erfolgreich geändert!")
                 return redirect("account")
-            if "old_password" in form.errors:
-                form.errors["old_password"].clear()
-                form.add_error(
+            if "old_password" in password_form.errors:
+                password_form.errors["old_password"].clear()
+                password_form.add_error(
                     "old_password",
                     "Das alte Passwort war falsch. Bitte neu eingeben.",
                 )
 
-        elif "change_username" in request.POST:
-            new_username = request.POST.get("new_username", "").strip()
-            if not new_username:
-                username_error = "Bitte gib einen gültigen Benutzernamen ein."
-            elif new_username == user.username:
-                username_error = "Dieser Benutzername wird bereits von dir verwendet."
-            elif User.objects.filter(username__iexact=new_username).exists():
-                username_error = "Dieser Benutzername ist bereits vergeben."
-            else:
-                user.username = new_username
-                user.save(update_fields=["username"])
-                username_success = "Dein Benutzername wurde geändert!"
+        elif action == "change_username":
+            username_form = UsernameChangeForm(
+                request.POST,
+                instance=user,
+                prefix="username",
+            )
+            if username_form.is_valid():
+                username_form.save()
+                messages.success(request, "Dein Benutzername wurde geändert!")
+                return redirect("account")
 
     return render(
         request,
         "news/account.html",
         {
-            "form": form,
-            "username": request.user.username,
-            "username_error": username_error,
-            "username_success": username_success,
+            "password_form": password_form,
+            "username_form": username_form,
         },
     )
 

@@ -1,54 +1,57 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}Trusted Account Bewerbung{% endblock %}
-
-{% block head-optional %}
-    <link rel="stylesheet" href="{% static 'css/input.css' %}">
+{% block title %}
+    {% trans "Bewerbung Trusted Account" %}
 {% endblock %}
 
 {% block content %}
-<div class="bg-gray-100 dark:bg-gray-900 min-h-[calc(100vh-72px)]">
-<div class="max-w-3xl mx-auto px-4 py-10 text-gray-900 dark:text-gray-100 bg-gray-100 dark:bg-gray-900">
-  <h1 class="text-3xl font-semibold mb-6">Bewirb dich als Trusted Account</h1>
-  <p class="mb-6">
-    Trusted Accounts können News direkt über RPTU4You einreichen. Verrate uns kurz, warum du Zugriff erhalten solltest.
-  </p>
-
-  {% if messages %}
-    <div class="space-y-3 mb-6">
-      {% for message in messages %}
-        <div class="rounded border px-4 py-3 {% if message.tags %}bg-blue-50 dark:bg-blue-900/40 border-blue-200 dark:border-blue-700{% else %}bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700{% endif %}">
-          {{ message }}
+<div class="page-shell">
+    <div class="accent-card max-w-3xl">
+        <div class="space-y-3 mb-8">
+            <h1 class="text-3xl font-semibold">Bewirb dich als Trusted Account</h1>
+            <p>
+                Trusted Accounts können News direkt über RPTU4You einreichen. Verrate uns bitte kurz, warum du Zugriff erhalten solltest.
+            </p>
+            <p>
+                Nach dem Absenden deines Antrags kannst du auf dieser Seite den Status deiner Bewerbung einsehen.
+            </p>
         </div>
-      {% endfor %}
-    </div>
-  {% endif %}
 
-  {% if last_application %}
-    <div class="mb-4 border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg shadow px-4 py-3 mb-6">
-      <p class="font-medium">Letzte Entscheidung</p>
-      <p class="text-sm mt-1">Status: <b>{{ last_application.get_status_display }}</b> ({{ last_application.created_at|date:"d.m.Y H:i" }})</p>
-      {% if last_application.status == last_application.STATUS_DECLINED %}
-        <p class="text-sm mt-2">Du kannst dich erneut bewerben. Bitte beschreibe diesmal <b>genauer</b>, warum du News einreichen möchtest.</p>
-      {% endif %}
-    </div>
-  {% endif %}
+        {% if messages %}
+        <div class="space-y-3 mb-6 w-full">
+            {% for message in messages %}
+            <div class="rounded border px-4 py-3 {% if message.tags %}bg-blue-50 dark:bg-blue-900/40 border-blue-200 dark:border-blue-700{% else %}bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
 
-  <form method="post" class="space-y-6">
-    {% csrf_token %}
-    <div>
-      <label class="block mb-2 font-medium" for="id_motivation">{{ form.motivation.label }}</label>
-      {{ form.motivation }}
-      {% if form.motivation.errors %}
-        <p class="text-sm text-red-600 mt-1">{{ form.motivation.errors|join:", " }}</p>
-      {% endif %}
-    </div>
+        {% if last_application %}
+        <div class="status-card mb-6">
+            <p class="font-medium">Letzter Antrag</p>
+            <p class="text-sm mt-2">Status: <b>{{ last_application.get_status_display }}</b> ({{ last_application.created_at|date:"d.m.Y H:i" }})</p>
+            {% if last_application.status == last_application.STATUS_DECLINED %}
+            <p class="text-sm mt-1">Du kannst dich erneut bewerben. Bitte beschreibe diesmal <b>genauer</b>, warum du News einreichen möchtest.</p>
+            {% endif %}
+        </div>
+        {% endif %}
 
-    <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">
-      Bewerbung abschicken
-    </button>
-  </form>
-</div>
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            <div>
+                <label class="block mb-2 font-medium" for="id_motivation">{{ form.motivation.label }}</label>
+                {{ form.motivation }}
+                {% if form.motivation.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.motivation.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">
+                Bewerbung abschicken
+            </button>
+        </form>
+    </div>
 </div>
 {% endblock %}

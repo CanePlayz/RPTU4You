@@ -1,87 +1,95 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}News einreichen{% endblock %}
-
-{% block head-optional %}
-    <link rel="stylesheet" href="{% static 'css/input.css' %}">
+{% block title %}
+    {% trans "News einreichen" %}
 {% endblock %}
 
 {% block content %}
-<div class="w-full dark:bg-gray-900 min-h-[calc(100vh-72px)] text-gray-900 dark:text-gray-100">
-  <div class="sticky text-center overflow-x-auto overflow-y-auto pb-13">
-  <h1 class="text-3xl font-semibold mb-6">News einreichen</h1>
-  <p class="mb-6">
-    Reiche hier deine News ein. Wir kümmern uns automatisch um das Aufbereiten, Übersetzen und Kategorisieren.
-  </p>
+<div class="page-shell">
+    <div class="accent-card max-w-4xl">
+        <h1 class="text-3xl font-semibold mb-6 text-center">News einreichen</h1>
+        <p class="mb-6 text-center">
+            Reiche hier deine News ein. Wir kümmern uns automatisch um das Aufbereiten, Übersetzen und Kategorisieren.
+        </p>
 
-  {% if messages %}
-    <div class="space-y-3 mb-6">
-      {% for message in messages %}
-        <div class="rounded border px-4 py-3 {% if message.tags %}bg-blue-50 dark:bg-blue-900/40 border-blue-200 dark:border-blue-700{% else %}bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700{% endif %}">
-          {{ message }}
+        {% if messages %}
+        <div class="space-y-3 mb-6">
+            {% for message in messages %}
+            <div class="rounded border px-4 py-3 {% if message.tags %}bg-blue-50 dark:bg-blue-900/40 border-blue-200 dark:border-blue-700{% else %}bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
         </div>
-      {% endfor %}
-    </div>
-  {% endif %}
+        {% endif %}
 
-  <form method="post" class="space-y-6 overflow-y-auto">
-    {% csrf_token %}
+        <form method="post" class="space-y-8">
+            {% csrf_token %}
 
-    <div>
-      <label for="id_titel" class="block font-medium mb-2">{{ form.titel.label }}</label>
-      {{ form.titel }}
-      {% if form.titel.errors %}
-        <p class="text-sm text-red-600 mt-1">{{ form.titel.errors|join:", " }}</p>
-      {% endif %}
-    </div>
+            <div class="space-y-2">
+                <label for="id_titel" class="block font-medium mb-2">{{ form.titel.label }}</label>
+                {{ form.titel }}
+                {% if form.titel.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.titel.errors|join:", " }}</p>
+                {% endif %}
+            </div>
 
-    <div class="w-full">
-      <label for="id_text" class="block font-medium mb-2">{{ form.text.label }}</label>
-      {{ form.text }}
-      {% if form.text.errors %}
-        <p class="text-sm text-red-600 mt-1">{{ form.text.errors|join:", " }}</p>
-      {% endif %}
-    </div>
+            <div class="grid gap-6 md:grid-cols-2 md:items-start">
+                <div class="space-y-2">
+                    <label for="id_text" class="block font-medium mb-2">{{ form.text.label }}</label>
+                    {{ form.text }}
+                    {% if form.text.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.text.errors|join:", " }}</p>
+                    {% endif %}
+                </div>
 
-    <div>
-      <label for="id_link" class="block font-medium mb-2">{{ form.link.label }}</label>
-      <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">Optional: Verweise auf die Ursprungsquelle.</p>
-      {{ form.link }}
-      {% if form.link.errors %}
-        <p class="text-sm text-red-600 mt-1">{{ form.link.errors|join:", " }}</p>
-      {% endif %}
-    </div>
+                <div class="space-y-2">
+                    <label for="id_link" class="block font-medium mb-2">{{ form.link.label }}</label>
+                    {{ form.link }}
+                    {% if form.link.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ form.link.errors|join:", " }}</p>
+                    {% endif %}
+                </div>
+            </div>
 
-    <div class="md:flex md:flex-row md:content-center md:items-center md:justify-around mb-4">
-      <div class="bg-white dark:bg-gray-700 m-4 p-4 rounded-lg shadow-md h-full">
-      <p class="block font-medium mb-2">{{ form.inhaltskategorien.label }}</p>
-      {{ form.inhaltskategorien }}
-      {% if form.inhaltskategorien.errors %}
-        <p class="text-sm text-red-600 mt-1">{{ form.inhaltskategorien.errors|join:", " }}</p>
-      {% endif %}
-    </div>
+            <div class="grid gap-6 md:grid-cols-3 md:items-start">
+                <div class="space-y-2">
+                    <p class="block font-medium">{{ form.standorte.label }}</p>
+                    <div class="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-4 rounded-lg shadow-sm">
+                        {{ form.standorte }}
+                    </div>
+                    {% if form.standorte.errors %}
+                    <p class="text-sm text-red-600">{{ form.standorte.errors|join:", " }}</p>
+                    {% endif %}
+                </div>
 
-    <div class="bg-white dark:bg-gray-700 p-4 m-4 rounded-lg shadow-md h-full">
-      <p class="block font-medium mb-2">{{ form.zielgruppen.label }}</p>
-      {{ form.zielgruppen }}
-      {% if form.zielgruppen.errors %}
-        <p class="text-sm text-red-600 mt-1">{{ form.zielgruppen.errors|join:", " }}</p>
-      {% endif %}
-    </div>
+                <div class="space-y-2">
+                    <p class="block font-medium">{{ form.inhaltskategorien.label }}</p>
+                    <div class="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-4 rounded-lg shadow-sm">
+                        {{ form.inhaltskategorien }}
+                    </div>
+                    {% if form.inhaltskategorien.errors %}
+                    <p class="text-sm text-red-600">{{ form.inhaltskategorien.errors|join:", " }}</p>
+                    {% endif %}
+                </div>
 
-    <div class="bg-white dark:bg-gray-700 p-4 m-4 rounded-lg shadow-md h-full">
-      <p class="block font-medium mb-2">{{ form.standorte.label }}</p>
-      {{ form.standorte }}
-      {% if form.standorte.errors %}
-        <p class="text-sm text-red-600 mt-1">{{ form.standorte.errors|join:", " }}</p>
-      {% endif %}
-    </div>
-    </div>
+                <div class="space-y-2">
+                    <p class="block font-medium">{{ form.zielgruppen.label }}</p>
+                    <div class="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-4 rounded-lg shadow-sm">
+                        {{ form.zielgruppen }}
+                    </div>
+                    {% if form.zielgruppen.errors %}
+                    <p class="text-sm text-red-600">{{ form.zielgruppen.errors|join:", " }}</p>
+                    {% endif %}
+                </div>
+            </div>
 
-    <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">
-      News einreichen
-    </button>
-  </form>
-  </div>
+            <div class="flex justify-center">
+                <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">
+                    News einreichen
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}

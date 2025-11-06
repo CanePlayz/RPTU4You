@@ -1,24 +1,25 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Trusted Account Bewerbung{% endblock %}
-
-{% block head-optional %}
-    <link rel="stylesheet" href="{% static 'css/input.css' %}">
+{% block title %}
+    {% trans "Bewerbung Trusted Account" %}
 {% endblock %}
 
 {% block content %}
-<div class="bg-gray-100 dark:bg-gray-900 min-h-[calc(100vh-72px)]">
-<div class="max-w-2xl mx-auto px-4 py-10 text-gray-900 dark:text-gray-100 bg-gray-100 dark:bg-gray-900">
-  <h1 class="text-3xl font-semibold mb-6">Bewerbung in Bearbeitung</h1>
-  <p class="mb-4">Vielen Dank für deine Bewerbung als Trusted Account.</p>
-  <p class="mb-6">
-    Wir prüfen deine Angaben und melden uns schnellstmöglich. Bis dahin kannst du wie gewohnt News lesen und deine Präferenzen anpassen.
-  </p>
+<div class="page-shell">
+    <div class="accent-card max-w-2xl">
+        <div class="space-y-3 mb-8">
+            <h1 class="text-3xl font-semibold">Bewerbung in Bearbeitung</h1>
+            <p>Vielen Dank für deine Bewerbung als Trusted Account.</p>
+            <p>
+                Wir prüfen deine Angaben und melden uns schnellstmöglich. Bis dahin kannst du wie gewohnt News lesen und deine Präferenzen anpassen.
+            </p>
+        </div>
 
-  <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md px-4 py-3">
-    <p class="font-medium">Eingereicht am {{ application.created_at|date:"d.m.Y H:i" }}</p>
-    <p class="text-m mt-1">Status: <b>{{ application.get_status_display }}</b></p>
-  </div>
-</div>
+        <div class="status-card">
+            <p class="font-medium">Eingereicht am {{ application.created_at|date:"d.m.Y H:i" }}</p>
+            <p class="text-m mt-1">Status: <b>{{ application.get_status_display }}</b></p>
+        </div>
+    </div>
 </div>
 {% endblock %}

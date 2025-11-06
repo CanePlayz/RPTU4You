@@ -1,4 +1,3 @@
-
 {% extends 'base.html' %}
 {% load i18n %}
 
@@ -6,53 +5,61 @@
     {% trans "Account" %}
 {% endblock %}
 
-{% block head-optional %}
-    <link rel="stylesheet" href="{% static 'css/input.css' %}">
-{% endblock %}
-
 {% block content %}
-<div class="min-h-[calc(100vh-72px)] bg-gray-100 dark:bg-gray-900 flex items-center justify-center py-8">
-    <!-- Account-Box -->
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md w-full max-w-md">
+<div class="page-shell">
+    <div class="accent-card max-w-md">
+    {% if messages %}
+        <ul class="mb-4">
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    <li class="text-sm text-green-600 dark:text-green-400">{{ message }}</li>
+                {% else %}
+                    <li class="text-sm text-red-500 dark:text-red-400">{{ message }}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% endif %}
     <!-- Abschnitt: Benutzername ändern -->
     <h class="text-md font-medium mt-6 mb-2 text-gray-800 dark:text-gray-100">{% trans "Benutzername ändern" %}</h>
         <form method="post" class="space-y-4">
             <!-- Keine Cross-Site-Request-Forgery-Angriffe -->
             {% csrf_token %}
-            <input type="hidden" name="change_username" value="1">
-            <!-- Erfolgreiche Änderung des Benutzernamens -->
-            {% if username_success %}
-                <div class="text-sm text-green-600 dark:text-green-400 mb-2">{{ username_success }}</div>
-            {% endif %}
-            <!-- Fehler bei Änderung des Benutzernamens -->
-            {% if username_error %}
-                <div class="text-sm text-red-500 dark:text-red-400 mb-2">{{ username_error }}</div>
+            {% if username_form.non_field_errors %}
+                <ul class="text-sm text-red-500 dark:text-red-400">
+                    {% for error in username_form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
             {% endif %}
             <!-- Eingabefeld für neuen Benutzernamen -->
-            <input type="text" name="new_username" value="{{ username }}" required class="border border-gray-300 dark:border-gray-700 rounded-md px-4 py-2 w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100">
-            <button type="submit" class="w-full bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-blue-400 cursor-pointer">{% trans "Benutzername ändern" %}</button>
+            <div class="relative">
+                <label for="{{ username_form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">{% trans "Neuer Benutzername" %}</label>
+                {{ username_form.username }}
+                {% if username_form.username.errors %}
+                    <ul class="text-sm text-red-500 dark:text-red-400 mt-1">
+                        {% for error in username_form.username.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            <button type="submit" name="action" value="change_username" class="w-full bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-blue-400 cursor-pointer">{% trans "Benutzername ändern" %}</button>
         </form>
         <br>
     <!-- Abschnitt: Passwort ändern -->
     <h class="text-md font-medium mb-2 text-gray-800 dark:text-gray-100">{% trans "Passwort ändern" %}</h>
-        <!-- Informationen zur Passwortänderung -->
-        {% if messages %}
-            <ul class="mb-4">
-                {% for message in messages %}
-                    {% if message.tags == 'success' %}
-                        <li class="text-sm text-green-600 dark:text-green-400">{{ message }}</li>
-                    {% else %}
-                        <li class="text-sm text-red-500 dark:text-red-400">{{ message }}</li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
-        {% endif %}
         <form method="post" class="space-y-4">
             <!-- Keine Cross-Site-Request-Forgery-Angriffe -->
             {% csrf_token %}
-            <input type="hidden" name="change_password" value="1">
+            {% if password_form.non_field_errors %}
+                <ul class="text-sm text-red-500 dark:text-red-400">
+                    {% for error in password_form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
             <!-- Info-Block zu Passwort-Anforderungen -->
-            <div id="password-info" class="mb-2 text-sm text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2">
+            <div id="password-info" class="mb-2 text-sm text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md p-2">
                 <b>{% trans "Passwort:" %}</b>
                 <ul>
                     <li>{% trans "Mindestens 8 Zeichen lang sein" %}</li>
@@ -63,11 +70,11 @@
             </div>
             <!-- Eingabefeld für aktuelles Passwort -->
             <div class="relative">
-                <label for="id_old_password" class="block text-sm font-medium text-gray-700 dark:text-gray-200">{% trans "Aktuelles Passwort" %}</label>
-                {{ form.old_password }}
-                {% if form.old_password.errors %}
+                <label for="{{ password_form.old_password.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">{% trans "Aktuelles Passwort" %}</label>
+                {{ password_form.old_password }}
+                {% if password_form.old_password.errors %}
                     <ul class="text-sm text-red-500 dark:text-red-400 mt-1">
-                        {% for error in form.old_password.errors %}
+                        {% for error in password_form.old_password.errors %}
                             <li>{{ error }}</li>
                         {% endfor %}
                     </ul>
@@ -75,11 +82,11 @@
             </div>
             <!-- Eingabefeld für neues Passwort -->
             <div class="relative">
-                <label for="id_new_password1" class="block text-sm font-medium text-gray-700 dark:text-gray-200">{% trans "Neues Passwort" %}</label>
-                {{ form.new_password1 }}
-                {% if form.new_password1.errors %}
+                <label for="{{ password_form.new_password1.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">{% trans "Neues Passwort" %}</label>
+                {{ password_form.new_password1 }}
+                {% if password_form.new_password1.errors %}
                     <ul class="text-sm text-red-500 dark:text-red-400 mt-1">
-                        {% for error in form.new_password1.errors %}
+                        {% for error in password_form.new_password1.errors %}
                             <li>{{ error }}</li>
                         {% endfor %}
                     </ul>
@@ -87,26 +94,26 @@
             </div>
             <!-- Eingabefeld um neues Passwort zu wiederholen -->
             <div class="relative">
-                <label for="id_new_password2" class="block text-sm font-medium text-gray-700 dark:text-gray-200">{% trans "Neues Passwort wiederholen" %}</label>
-                {{ form.new_password2 }}
-                {% if form.new_password2.errors %}
+                <label for="{{ password_form.new_password2.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">{% trans "Neues Passwort wiederholen" %}</label>
+                {{ password_form.new_password2 }}
+                {% if password_form.new_password2.errors %}
                     <ul class="text-sm text-red-500 dark:text-red-400 mt-1">
-                        {% for error in form.new_password2.errors %}
+                        {% for error in password_form.new_password2.errors %}
                             <li>{{ error }}</li>
                         {% endfor %}
                     </ul>
                 {% endif %}
             </div>
             <!-- Weitere Fehler -->
-            {% if form.non_field_errors %}
+            {% if password_form.non_field_errors %}
                 <ul class="text-sm text-red-500 dark:text-red-400 mt-1">
-                    {% for error in form.non_field_errors %}
+                    {% for error in password_form.non_field_errors %}
                         <li>{{ error }}</li>
                     {% endfor %}
                 </ul>
             {% endif %}
             <!-- Button zum Absenden des Formulars -->
-            <button type="submit" class="w-full bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600 dark:hover:bg-blue-400 cursor-pointer">{% trans "Passwort ändern" %}</button>
+            <button type="submit" name="action" value="change_password" class="w-full bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600 dark:hover:bg-blue-400 cursor-pointer">{% trans "Passwort ändern" %}</button>
         </form>
         <!-- Zurück zur Startseite -->
     <a href="{% url 'News' %}" class="block text-center text-[#042c58] dark:text-blue-400 mt-4 hover:underline">{% trans "Zurück zur Startseite" %}</a>
