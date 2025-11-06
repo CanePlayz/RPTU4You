@@ -1,0 +1,21 @@
+Starten lokal:
+docker compose -f docker-compose-dev.yml up -d --build --force-recreate
+
+Stoppen lokal:
+docker compose -f docker-compose-dev.yml down --volumes --remove-orphans
+
+Starten auf Server:
+/opt/RPTU4You$ sudo docker compose up -d --pull always
+
+Stoppen auf Server:
+/opt/RPTU4You$ sudo docker compose down
+
+Export von Server:
+ssh RPTU4You "docker exec rptu4you-db-1 pg_dump -U admin -d mydb" > "C:\Users\jjpfs\Backups\dbbackup$(Get-Date -Format 'yyyy-MM-dd_HH-mm').sql"
+
+Lokaler Import:
+docker compose -f docker-compose-dev.yml exec db psql -U admin -d mydb -c "DROP SCHEMA public CASCADE;"
+docker compose -f docker-compose-dev.yml exec db psql -U admin -d mydb -c "CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO admin;" Get-Content "C:\Users\jjpfs\Backups\dbbackup2025-11-05_14-42.sql" | docker compose -f docker-compose-dev.yml exec -T db psql -U admin -d mydb
+
+Import auf Server:
+Get-Content "C:\Users\jjpfs\Backups\dbbackup2025-10-24_01-29.sql" -Raw | ssh RPTU4You "docker exec -i rptu4you-db-1 psql -U admin -d mydb"
