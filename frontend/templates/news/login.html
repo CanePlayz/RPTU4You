@@ -12,17 +12,7 @@
     <div class="accent-card max-w-md">
         <h1 class="accent-card-title text-center mb-4">{% trans "Anmelden" %}</h1>
         <!-- Informationen zur Anmeldung -->
-        {% if messages %}
-            <ul class="mb-4">
-                {% for message in messages %}
-                    {% if message == "Registrierung erfolgreich! Bitte melde dich an." or message.tags == 'success' %}
-                        <li class="text-sm text-green-600 dark:text-green-400">{{ message }}</li>
-                    {% else %}
-                        <li class="text-sm text-red-500 dark:text-red-400">{{ message }}</li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
-        {% endif %}
+        {% include "partials/_messages.html" %}
         <!-- Login-Formular -->
         <form method="post" action="{% url 'login' %}" class="space-y-4">
             <!-- Keine Cross-Site-Request-Forgery-Angriffe -->

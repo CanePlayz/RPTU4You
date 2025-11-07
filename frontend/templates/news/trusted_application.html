@@ -19,17 +19,6 @@
                 Nach dem Absenden deines Antrags kannst du auf dieser Seite den Status deiner Bewerbung einsehen.
             </p>
         </div>
-
-        {% if messages %}
-        <div class="space-y-3 mb-6 w-full">
-            {% for message in messages %}
-            <div class="rounded border px-4 py-3 {% if message.tags %}bg-blue-50 dark:bg-blue-900/40 border-blue-200 dark:border-blue-700{% else %}bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600{% endif %}">
-                {{ message }}
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-
         {% if last_application %}
         <div class="status-card mb-6">
             <p class="font-medium">Letzter Antrag</p>
@@ -46,7 +35,7 @@
                 <label class="form-label" for="id_motivation">{{ form.motivation.label }}</label>
                 {{ form.motivation }}
                 {% if form.motivation.errors %}
-                <p class="text-sm text-red-600 mt-1">{{ form.motivation.errors|join:", " }}</p>
+                <p class="form-error">{{ form.motivation.errors|join:", " }}</p>
                 {% endif %}
             </div>
 

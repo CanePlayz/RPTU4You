@@ -23,6 +23,7 @@
 {% block content %}
 <div class="page-shell">
     <div class="accent-card max-w-6xl">
+        {% include "partials/_messages.html" %}
         <h1 class="accent-card-title text-center mb-8">{% trans "Meine Präferenzen" %}</h1>
 
         <form method="post" class="space-y-8">
@@ -35,7 +36,7 @@
                     <div class="status-card space-y-3">
                     {{ form.standorte }}
                     {% if form.standorte.errors %}
-                        <div class="text-sm text-red-500">{{ form.standorte.errors }}</div>
+                        <p class="form-error">{{ form.standorte.errors|join:", " }}</p>
                     {% endif %}
                     </div>
                 </div>
@@ -46,7 +47,7 @@
                     <div class="status-card space-y-3">
                     {{ form.inhaltskategorien }}
                     {% if form.inhaltskategorien.errors %}
-                        <div class="text-sm text-red-500">{{ form.inhaltskategorien.errors }}</div>
+                        <p class="form-error">{{ form.inhaltskategorien.errors|join:", " }}</p>
                     {% endif %}
                     </div>
                 </div>
@@ -65,7 +66,7 @@
                     {% endfor %}
                     </div>
                     {% if form.quellen.errors %}
-                        <div class="text-sm text-red-500">{{ form.quellen.errors }}</div>
+                        <p class="form-error">{{ form.quellen.errors|join:", " }}</p>
                     {% endif %}
                     </div>
                 </div>
@@ -76,7 +77,7 @@
                     <div class="status-card space-y-3">
                     {{ form.zielgruppen }}
                     {% if form.zielgruppen.errors %}
-                        <div class="text-sm text-red-500">{{ form.zielgruppen.errors }}</div>
+                        <p class="form-error">{{ form.zielgruppen.errors|join:", " }}</p>
                     {% endif %}
                     </div>
                 </div>

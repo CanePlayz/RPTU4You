@@ -20,7 +20,6 @@ from .receive_news import process_news_entry
 def trusted_news_portal(request: HttpRequest) -> HttpResponse:
     user = request.user
     if not isinstance(user, User):
-        messages.error(request, "Ungültiger Benutzer.")
         return redirect("login")
 
     if user.is_trusted:
@@ -90,10 +89,6 @@ def _handle_application(request: HttpRequest, user: User) -> HttpResponse:
             application.user = user
             application.status = TrustedUserApplication.STATUS_PENDING
             application.save()
-            messages.success(
-                request,
-                "Deine Bewerbung wurde eingereicht. Wir melden uns bei dir.",
-            )
 
             try:
                 # Benachrichtigung in eigenem Thread senden, damit der Request nicht blockiert wird
@@ -148,10 +143,10 @@ def _handle_submission(request: HttpRequest, user: User) -> HttpResponse:
                     )
                 else:
                     messages.success(
-                        request, "Deine News wurde eingereicht und wird verarbeitet."
+                        request,
+                        "Deine News wurde eingereicht und wird verarbeitet.",
                     )
-                    # Weiterleitung zur News-Übersicht
-                    return redirect("news")
+                    form = TrustedNewsSubmissionForm()
 
     # Falls keine News gesendet wurde, leeres Formular anzeigen
     else:

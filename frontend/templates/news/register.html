@@ -20,7 +20,7 @@
                 <label for="{{ form.username.id_for_label }}" class="form-label">{{ form.username.label }}</label>
                 {{ form.username }}
                 {% if form.username.errors %}
-                    <p class="text-sm text-red-500 dark:text-red-400 mt-1">{{ form.username.errors|join:", " }}</p>
+                    <p class="form-error">{{ form.username.errors|join:", " }}</p>
                 {% endif %}
             </div>
             <!-- Info-Block zu Passwort-Anforderungen -->
@@ -42,7 +42,7 @@
                     <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
                     {{ field }}
                     {% if field.errors %}
-                        <p class="text-sm text-red-500 dark:text-red-400 mt-1">{{ field.errors|join:", " }}</p>
+                        <p class="form-error">{{ field.errors|join:", " }}</p>
                     {% endif %}
                 </div>
                 {% endif %}

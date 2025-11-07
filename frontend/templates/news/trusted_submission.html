@@ -14,16 +14,7 @@
         <p class="mb-6 text-center">
             Reiche hier deine News ein. Wir kümmern uns automatisch um das Aufbereiten, Übersetzen und Kategorisieren.
         </p>
-
-        {% if messages %}
-        <div class="space-y-3 mb-6">
-            {% for message in messages %}
-            <div class="rounded border px-4 py-3 {% if message.tags %}bg-blue-50 dark:bg-blue-900/40 border-blue-200 dark:border-blue-700{% else %}bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600{% endif %}">
-                {{ message }}
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
+        {% include "partials/_messages.html" %}
 
         <form method="post" class="space-y-8">
             {% csrf_token %}
@@ -32,7 +23,7 @@
                 <label for="id_titel" class="form-label">{{ form.titel.label }}</label>
                 {{ form.titel }}
                 {% if form.titel.errors %}
-                <p class="text-sm text-red-600 mt-1">{{ form.titel.errors|join:", " }}</p>
+                <p class="form-error">{{ form.titel.errors|join:", " }}</p>
                 {% endif %}
             </div>
 
@@ -41,7 +32,7 @@
                     <label for="id_text" class="form-label">{{ form.text.label }}</label>
                     {{ form.text }}
                     {% if form.text.errors %}
-                    <p class="text-sm text-red-600 mt-1">{{ form.text.errors|join:", " }}</p>
+                    <p class="form-error">{{ form.text.errors|join:", " }}</p>
                     {% endif %}
                 </div>
 
@@ -49,7 +40,7 @@
                     <label for="id_link" class="form-label">{{ form.link.label }}</label>
                     {{ form.link }}
                     {% if form.link.errors %}
-                    <p class="text-sm text-red-600 mt-1">{{ form.link.errors|join:", " }}</p>
+                    <p class="form-error">{{ form.link.errors|join:", " }}</p>
                     {% endif %}
                 </div>
             </div>
@@ -61,7 +52,7 @@
                         {{ form.standorte }}
                     </div>
                     {% if form.standorte.errors %}
-                    <p class="text-sm text-red-600">{{ form.standorte.errors|join:", " }}</p>
+                    <p class="form-error">{{ form.standorte.errors|join:", " }}</p>
                     {% endif %}
                 </div>
 
@@ -71,7 +62,7 @@
                         {{ form.inhaltskategorien }}
                     </div>
                     {% if form.inhaltskategorien.errors %}
-                    <p class="text-sm text-red-600">{{ form.inhaltskategorien.errors|join:", " }}</p>
+                    <p class="form-error">{{ form.inhaltskategorien.errors|join:", " }}</p>
                     {% endif %}
                 </div>
 
@@ -81,7 +72,7 @@
                         {{ form.zielgruppen }}
                     </div>
                     {% if form.zielgruppen.errors %}
-                    <p class="text-sm text-red-600">{{ form.zielgruppen.errors|join:", " }}</p>
+                    <p class="form-error">{{ form.zielgruppen.errors|join:", " }}</p>
                     {% endif %}
                 </div>
             </div>
