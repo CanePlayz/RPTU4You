@@ -3,131 +3,133 @@
 {% load i18n %}
 
 {% block title %}
-  ForYouPage
+ForYouPage
 {% endblock %}
 
 {% block content %}
 <div class="flex bg-gray-100 dark:bg-gray-900 min-h-[calc(100vh-72px)]">
 
-  <!-- Linke Seite: Präferenzformular -->
-  <!-- Button für mobile Filter -->
-  <button type="button" class="fixed right-0 top-1/2 md:hidden" data-dropdown-toggle="4youfilter" id="4youfilter-button">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
-    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
-    </svg>
-  </button>
-  <div id="4youfilter" class="max-md:hidden max-md:left-0 max-md:w-full md:w-80 pl-5 pr-2 sticky md:top-[72px] h-[calc(100vh-72px)] overflow-y-auto">
-    <form id="preferences-form" action="{% url 'preferences' %}" method="post" class="py-6 pr-2">
-      {% csrf_token %}
-      <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">Deine Präferenzen</h2>
-      <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">Passe deine Empfehlungen für die 4YouPage an.</p>
+    <!-- Linke Seite: Präferenzformular -->
 
-      {% if preferences_form.non_field_errors %}
-        <ul class="text-sm text-red-600 space-y-1 mb-3">
-          {% for error in preferences_form.non_field_errors %}
-            <li>{{ error }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
+    <!-- Button für Präferenzformular auf Mobilgeräten -->
+    <button type="button" class="fixed right-0 top-1/2 md:hidden" data-dropdown-toggle="4youfilter" id="4youfilter-button">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
+        </svg>
+    </button>
 
-      <div class="space-y-6">
-        <div>
-          <label for="{{ preferences_form.standorte.id_for_label }}" class="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">{{ preferences_form.standorte.label }}</label>
-          <div class="space-y-2 text-gray-800 dark:text-gray-100 cursor-pointer">
-            {{ preferences_form.standorte }}
-          </div>
-          {% if preferences_form.standorte.errors %}
-            <ul class="mt-1 text-xs text-red-600 space-y-1">
-              {% for error in preferences_form.standorte.errors %}
+    <div id="preferences" class="max-md:hidden max-md:left-0 max-md:w-full md:w-80 pl-5 pr-2 sticky md:top-[72px] h-[calc(100vh-72px)] overflow-y-auto">
+        <form id="preferences-form" action="{% url 'preferences' %}" method="post" class="py-6 pr-2">
+            {% csrf_token %}
+            <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">Deine Präferenzen</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">Passe deine Empfehlungen für die 4YouPage an.</p>
+
+            {% if preferences_form.non_field_errors %}
+            <ul class="text-sm text-red-600 space-y-1 mb-3">
+                {% for error in preferences_form.non_field_errors %}
                 <li>{{ error }}</li>
-              {% endfor %}
+                {% endfor %}
             </ul>
-          {% endif %}
-        </div>
+            {% endif %}
 
-        <div>
-          <label for="{{ preferences_form.inhaltskategorien.id_for_label }}" class="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">{{ preferences_form.inhaltskategorien.label }}</label>
-          <div class="space-y-2 text-gray-800 dark:text-gray-100 cursor-pointer">
-            {{ preferences_form.inhaltskategorien }}
-          </div>
-          {% if preferences_form.inhaltskategorien.errors %}
-            <ul class="mt-1 text-xs text-red-600 space-y-1">
-              {% for error in preferences_form.inhaltskategorien.errors %}
-                <li>{{ error }}</li>
-              {% endfor %}
+            <div class="space-y-6">
+                <div>
+                    <label for="{{ preferences_form.standorte.id_for_label }}" class="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">{{ preferences_form.standorte.label }}</label>
+                    <div class="space-y-2 text-gray-800 dark:text-gray-100 cursor-pointer">
+                        {{ preferences_form.standorte }}
+                    </div>
+                    {% if preferences_form.standorte.errors %}
+                    <ul class="mt-1 text-xs text-red-600 space-y-1">
+                        {% for error in preferences_form.standorte.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label for="{{ preferences_form.inhaltskategorien.id_for_label }}" class="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">{{ preferences_form.inhaltskategorien.label }}</label>
+                    <div class="space-y-2 text-gray-800 dark:text-gray-100 cursor-pointer">
+                        {{ preferences_form.inhaltskategorien }}
+                    </div>
+                    {% if preferences_form.inhaltskategorien.errors %}
+                    <ul class="mt-1 text-xs text-red-600 space-y-1">
+                        {% for error in preferences_form.inhaltskategorien.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label for="{{ preferences_form.zielgruppen.id_for_label }}" class="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">{{ preferences_form.zielgruppen.label }}</label>
+                    <div class="space-y-2 text-gray-800 dark:text-gray-100 cursor-pointer">
+                        {{ preferences_form.zielgruppen }}
+                    </div>
+                    {% if preferences_form.zielgruppen.errors %}
+                    <ul class="mt-1 text-xs text-red-600 space-y-1">
+                        {% for error in preferences_form.zielgruppen.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label for="{{ preferences_form.quellen.auto_id }}" class="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">{{ preferences_form.quellen.label }}</label>
+                    <div id="{{ preferences_form.quellen.auto_id }}" class="text-gray-800 dark:text-gray-100">
+                        {% for option in preferences_form.ordered_sources %}
+                        <div>
+                            <label for="{{ option.id }}">
+                                {{ option.input_html|safe }} {{ option.label }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if preferences_form.quellen.errors %}
+                    <ul class="mt-1 text-xs text-red-600 space-y-1">
+                        {% for error in preferences_form.quellen.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <p id="preferences-feedback" class="hidden text-sm mt-3"></p>
+            <button type="submit" id="preferences-submit-btn" class="max-md:left-1/2 mt-4 w-full rounded-md bg-[#042c58] text-white px-4 py-2 hover:bg-[#064694] cursor-pointer">Speichern</button>
+        </form>
+    </div>
+
+    <!-- Mitte: News -->
+
+    <div id="news" class="flex-1 mt-3 px-8 overflow-y-auto">
+        <main id="main">
+            <div id="news-container">
+                {% include "news/partials/_news_list.html" with news_list=news_list has_more=has_more %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Rechte Seite: Terminkalender -->
+
+    <div id="calendar" class="max-md:hidden w-80 pr-5 sticky top-[72px] h-[calc(100vh-72px)] overflow-auto">
+        <h2 class="text-xl font-bold my-4 text-gray-800 dark:text-gray-100">{% trans "Nächste Termine" %}</h2>
+        {% if upcoming_events %}
+        <a href="{% url 'calendar_page' %}">
+            <ul class="space-y-4">
+                {% for event in upcoming_events %}
+                <li class="bg-gray-50 dark:bg-gray-800 p-4 mr rounded-lg shadow">
+                    <p class="font-bold text-gray-800 dark:text-gray-100">{{ event.title }}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ event.start|date:"d.m.Y H:i" }} - {{ event.end|date:"H:i" }}</p>
+                </li>
+                {% endfor %}
             </ul>
-          {% endif %}
-        </div>
-
-        <div>
-          <label for="{{ preferences_form.zielgruppen.id_for_label }}" class="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">{{ preferences_form.zielgruppen.label }}</label>
-          <div class="space-y-2 text-gray-800 dark:text-gray-100 cursor-pointer">
-            {{ preferences_form.zielgruppen }}
-          </div>
-          {% if preferences_form.zielgruppen.errors %}
-            <ul class="mt-1 text-xs text-red-600 space-y-1">
-              {% for error in preferences_form.zielgruppen.errors %}
-                <li>{{ error }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        </div>
-
-        <div>
-          <label for="{{ preferences_form.quellen.auto_id }}" class="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">{{ preferences_form.quellen.label }}</label>
-          <div id="{{ preferences_form.quellen.auto_id }}" class="text-gray-800 dark:text-gray-100">
-            {% for option in preferences_form.ordered_sources %}
-              <div>
-                <label for="{{ option.id }}">
-                  {{ option.input_html|safe }} {{ option.label }}
-                </label>
-              </div>
-            {% endfor %}
-          </div>
-          {% if preferences_form.quellen.errors %}
-            <ul class="mt-1 text-xs text-red-600 space-y-1">
-              {% for error in preferences_form.quellen.errors %}
-                <li>{{ error }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        </div>
-      </div>
-
-      <p id="preferences-feedback" class="hidden text-sm mt-3"></p>
-      <button type="submit" id="preferences-submit-btn" class="max-md:left-1/2 mt-4 w-full rounded-md bg-[#042c58] text-white px-4 py-2 hover:bg-[#064694] cursor-pointer">Speichern</button>
-    </form>
-  </div>
-
-  <!-- Mitte: News -->
-
-  <div class="flex-1 mt-3 px-8 overflow-y-auto" id="news">
-    <main id="main">
-      <div id="news-container">
-        {% include "news/partials/_news_list.html" with news_list=news_list has_more=has_more %}
-      </div>
-    </main>
-  </div>
-
-  <!-- Rechte Seite: Terminkalender -->
-
-  <div class="max-md:hidden w-80 pr-5 sticky top-[72px] h-[calc(100vh-72px)] overflow-auto">
-  <h2 class="text-xl font-bold my-4 text-gray-800 dark:text-gray-100">{% trans "Nächste Termine" %}</h2>
-    {% if upcoming_events %}
-      <a href="{% url 'calendar_page' %}">
-        <ul class="space-y-4">
-        {% for event in upcoming_events %}
-          <li class="bg-gray-50 dark:bg-gray-800 p-4 mr rounded-lg shadow">
-            <p class="font-bold text-gray-800 dark:text-gray-100">{{ event.title }}</p>
-            <p class="text-sm text-gray-500 dark:text-gray-400">{{ event.start|date:"d.m.Y H:i" }} - {{ event.end|date:"H:i" }}</p>
-          </li>
-        {% endfor %}
-        </ul>
-      </a>
-    {% else %}
-  <p class="text-gray-500 dark:text-gray-400 italic text-center">{% trans "Keine anstehenden Termine." %}</p>
-    {% endif %}
-  </div>
+        </a>
+        {% else %}
+        <p class="text-gray-500 dark:text-gray-400 italic text-center">{% trans "Keine anstehenden Termine." %}</p>
+        {% endif %}
+    </div>
 </div>
 
 <script src="{% static 'js/newsFeedCore.js' %}"></script>

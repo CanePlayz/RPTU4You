@@ -3,175 +3,66 @@
 <!DOCTYPE html>
 
 <html lang="de">
-  <!-- Darkmode sofort setzen, bevor CSS lädt -->
-  <script>
+<!-- Darkmode sofort setzen, bevor CSS lädt -->
+<script>
     (function() {
-      try {
-        var dark = localStorage.getItem('theme') === 'dark';
-        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (dark || (!localStorage.getItem('theme') && prefersDark)) {
-          document.documentElement.classList.add('dark');
-        }
-      } catch(e){}
+        try {
+            var dark = localStorage.getItem('theme') === 'dark';
+            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (dark || (!localStorage.getItem('theme') && prefersDark)) {
+                document.documentElement.classList.add('dark');
+            }
+        } catch(e){}
     })();
-  </script>
+</script>
 
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta charset="UTF-8">
-  <link href='https://fonts.googleapis.com/css?family=Red Hat Text' rel='stylesheet'>
-  <script src="{% static 'js/base.js' %}"> </script>
-  <link rel="stylesheet" href="{% static 'css/tailwind-built.css' %}">
-  <link rel="stylesheet" href="{% static 'css/global.css' %}">
-  <title>
-    {% block title %}
-  {% trans "No Title" %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <link href='https://fonts.googleapis.com/css?family=Red Hat Text' rel='stylesheet'>
+    <script src="{% static 'js/base.js' %}"> </script>
+    <link rel="stylesheet" href="{% static 'css/tailwind-built.css' %}">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <title>
+        {% block title %}
+        {% trans "No Title" %}
+        {% endblock %}
+    </title>
+    {% block head-optional %}
     {% endblock %}
-  </title>
-  {% block head-optional %}
-  {% endblock %}
 </head>
 
 <body class="page-grid">
-  <header class="sticky top-0 z-50">
-    <nav class="bg-[#042c58] dark:bg-[#0a111a] w-full">
-      <div class="flex flex-wrap items-center justify-between mx-auto p-4">
-      <!-- Linke Navigation: RPTU4You -->
-      <div class="flex items-center pl-3 w-1/4">
-  <a href="{% url 'News' %}" class="max-md:text-xl self-center md:text-2xl font-bold whitespace-nowrap text-white">RPTU4You</a>
-      </div>
-      <!-- Mittlere Navigation: Verlinkungen -->
-      <div class="max-md:hidden flex items-center justify-between space-x-6 w-1/2">
-  <a href="{% url 'news' %}" class="text-xl font-medium {% if request.resolver_match.url_name == 'news' or request.resolver_match.url_name == 'News' %}text-blue-700 dark:text-blue-500{% else %}text-white hover:text-black dark:text-gray-200 dark:hover:text-blue-200 {% endif %}">{% trans "Latest News" %}</a>
-  <a href="{% url 'foryoupage' %}" class="text-xl font-medium {% if request.resolver_match.url_name == 'foryoupage' %}text-blue-700 dark:text-blue-500{% else %}text-white hover:text-black dark:text-gray-200 dark:hover:text-blue-200 {% endif %}">{% trans "4YouPage" %}</a>
-  <a href="{% url 'calendar_page' %}" class="text-xl font-medium {% if request.resolver_match.url_name == 'calendar_page' %}text-blue-700 dark:text-blue-500{% else %}text-white hover:text-black dark:text-gray-200 dark:hover:text-blue-200 {% endif %}">{% trans "Kalender" %}</a>
-  <a href="{% url 'links' %}" class="text-xl font-medium {% if request.resolver_match.url_name == 'links' %}text-blue-700 dark:text-blue-500{% else %}text-white hover:text-black dark:text-gray-200 dark:hover:text-blue-200 {% endif %}">{% trans "Uni-Links" %}</a>
-      </div>
-      <!-- Rechte Navigation: Profil, Sprache und Darkmode -->
-      <div class="flex items-center justify-end space-x-4 w-3/4 md:w-1/4 dropdown-container relative md:pr-10">
-        <!-- Sprache und Darkmode -->
-        <div class="relative flex items-center pr-7">
-          <!-- Sprachen Button -->
-          <button type="button" data-dropdown-toggle="language-dropdown-menu" class="inline-flex items-center justify-center w-7 h-7 text-sm text-gray-900 dark:text-white rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-            <img src="{% static 'images/flaggen/'|add:request.LANGUAGE_CODE|add:'.png' %}" class="w-full h-full rounded" alt="{{ request.LANGUAGE_CODE }} Flag">
-          </button>
-          <!-- Sprachen Dropdown -->
-          <div class="z-50 hidden absolute top-16 right-0 w-48 text-base list-none bg-[#042c58] divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-[#0a111a]" id="language-dropdown-menu">
-            <ul class="py-2 font-medium" role="none">
-              <li>
-                <a href="{% url 'set_language' %}?language=de" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">
-                  <div class="inline-flex items-center">
-                    <img src="{% static 'images/flaggen/de.png' %}" class="w-5 h-5 rounded-full me-2" alt="German Flag">
-                    Deutsch
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a href="{% url 'set_language' %}?language=en" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">
-                  <div class="inline-flex items-center">
-                    <img src="{% static 'images/flaggen/en.png' %}" class="w-5 h-5 rounded-full me-2" alt="English Flag">
-                    English
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a href="{% url 'set_language' %}?language=es" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">
-                  <div class="inline-flex items-center">
-                    <img src="{% static 'images/flaggen/es.png' %}" class="w-5 h-5 rounded-full me-2" alt="Spanish Flag">
-                    Español
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a href="{% url 'set_language' %}?language=fr" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">
-                  <div class="inline-flex items-center">
-                    <img src="{% static 'images/flaggen/fr.png' %}" class="w-5 h-5 rounded-full me-2" alt="French Flag">
-                    Français
-                  </div>
-                </a>
-              </li>
-            </ul>
-          </div>
-          <!-- Darkmode Schalter -->
-          <!-- Quelle: https://www.youtube.com/watch?v=S-T9XoCMwt4 -->
-          <div class="ml-6 flex items-center">
-            <input type="checkbox" id="darkmode-toggle" class="hidden" />
-            <label for="darkmode-toggle" class="relative w-14 h-8 block rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer transition">
-              <span class="absolute left-1 top-1 w-6 h-6 rounded-full transition-transform duration-300 bg-yellow-400 dark:bg-gray-800 flex items-center justify-center" id="toggle-dot">
-                <svg id="sun-icon" class="w-5 h-5" viewBox="0 0 24 24" fill="none">
-                  <g id="Environment / Sun">
-                    <path id="Vector" d="M12 4V2M12 20V22M6.41421 6.41421L5 5M17.728 17.728L19.1422 19.1422M4 12H2M20 12H22M17.7285 6.41421L19.1427 5M6.4147 17.728L5.00049 19.1422M12 17C9.23858 17 7 14.7614 7 12C7 9.23858 9.23858 7 12 7C14.7614 7 17 9.23858 17 12C17 14.7614 14.7614 17 12 17Z" stroke="#b45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </g>
+    <!-- Navigation -->
+    {% include "partials/navbar.html" %}
+
+    <!-- Hauptbereich -->
+    <main id="content-area" class="relative bg-white dark:bg-[#181818]">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Navigationsleiste für Mobilgeräte -->
+    <footer class="bg-[#042c58] dark:bg-[#0a111a] md:hidden sticky bottom-0 z-40">
+        <div class="flex items-center justify-between w-full px-6 py-3">
+            <a href="{% url 'news' %}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z" />
                 </svg>
-                <svg id="moon-icon" class="w-5 h-5 hidden" viewBox="0 0 24 24" fill="none">
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M3.39703 11.6315C3.39703 16.602 7.42647 20.6315 12.397 20.6315C15.6858 20.6315 18.5656 18.8664 20.1358 16.23C16.7285 17.3289 12.6922 16.7548 9.98282 14.0455C7.25201 11.3146 6.72603 7.28415 7.86703 3.89293C5.20697 5.47927 3.39703 8.38932 3.39703 11.6315ZM21.187 13.5851C22.0125 13.1021 23.255 13.6488 23 14.5706C21.7144 19.2187 17.4543 22.6315 12.397 22.6315C6.3219 22.6315 1.39703 17.7066 1.39703 11.6315C1.39703 6.58874 4.93533 2.25845 9.61528 0.999986C10.5393 0.751502 11.0645 1.99378 10.5641 2.80935C8.70026 5.84656 8.83194 10.0661 11.397 12.6312C13.9319 15.1662 18.1365 15.3702 21.187 13.5851Z" fill="#f3f4f6"/>
+            </a>
+            <a href="{% url 'foryoupage' %}" class="text-m font-medium text-white">4You</a>
+            <a href="{% url 'calendar_page' %}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
                 </svg>
-              </span>
-            </label>
-          </div>
+            </a>
+            <a href="{% url 'links' %}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+                </svg>
+            </a>
         </div>
-        <!-- Profil Button -->
-        <button type="button" class="flex text-sm bg-transparent rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 profile-icon items-center cursor-pointer" id="user-menu-button" aria-expanded="false">
-          <img class="w-10 h-10 rounded-full" src="{% static 'images/user-icon.png' %}" alt="user photo">
-        </button>
-        <!--Profil Dropdown-->
-        <div class="z-50 hidden absolute top-16 right-0 w-48 text-base list-none bg-[#042c58] divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-[#0a111a] dropdown-menu" id="user-dropdown">
-          {% if user.is_authenticated %}
-          <div class="px-4 py-3">
-            <span class="block text-sm text-gray-100 dark:text-white">{{ user.username }}</span>
-          </div>
-          <ul class="py-2" aria-labelledby="user-menu-button">
-            <li><a href="{% url 'account' %}" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">{% trans "Account" %}</a></li>
-            <li><a href="{% url 'preferences' %}" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">{% trans "Fragebogen" %}</a></li>
-            <li><a href="{% url 'trusted_news_portal' %}" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">{% trans "News einreichen" %}</a></li>
-            <li><a href="#" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">{% trans "Datenschutz" %}</a></li>
-            <li><a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">{% trans "Abmelden" %}</a></li>
-          </ul>
-          {% else %}
-          <ul class="py-2" aria-labelledby="user-menu-button">
-            <li>
-              <a href="{% url 'login' %}?next={{ request.path }}" class="block px-4 py-2 text-sm text-gray-100 hover:bg-gray-100 hover:text-black dark:hover:bg-gray-600 dark:text-white">{% trans "Anmelden" %}</a>
-            </li>
-            <li>
-              <a href="{% url 'register' %}" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">{% trans "Registrieren" %}</a>
-            </li>
-          </ul>
-          {% endif %}
-        </div>
-      </div>
-    </nav>
-  </header>
-
-  <main id="wrapper" class="relative bg-white dark:bg-[#181818]">
-
-    {% block content %}
-  {% trans "No content" %}
-    {% endblock %}
-
-  </main>
-
-
-  <!--Navigationsleiste mobile unten-->
-  <footer class="bg-[#042c58] dark:bg-[#0a111a] md:hidden sticky bottom-0 z-40">
-    <div class="flex items-center justify-between w-full px-6 py-3">
-    <a href="{% url 'news' %}">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
-    <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z" />
-    </svg>
-    </a>
-    <a href="{% url 'foryoupage' %}" class="text-m font-medium text-white">4You</a>
-    <a href="{% url 'calendar_page' %}">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
-    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
-    </svg>
-    </a>
-    <a href="{% url 'links' %}">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
-    <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
-    </svg>
-    </a>
-    </div>
-  </footer>
+    </footer>
 </body>
 
 </html>

@@ -1,0 +1,111 @@
+{% load static %}
+{% load i18n %}
+<header class="sticky top-0 z-50">
+  <nav class="bg-[#042c58] dark:bg-[#0a111a] w-full">
+    <div class="flex flex-wrap items-center justify-between mx-auto p-4">
+      <!-- Linke Navigation: RPTU4You -->
+      <div class="flex items-center pl-3 w-1/4">
+        <a href="{% url 'News' %}" class="max-md:text-xl self-center md:text-2xl font-bold whitespace-nowrap text-white">RPTU4You</a>
+      </div>
+      <!-- Mittlere Navigation: Verlinkungen -->
+      <div class="max-md:hidden flex items-center justify-between space-x-6 w-1/2">
+        <a href="{% url 'news' %}" class="text-xl font-medium {% if request.resolver_match.url_name == 'news' or request.resolver_match.url_name == 'News' %}text-blue-700 dark:text-blue-500{% else %}text-white hover:text-black dark:text-gray-200 dark:hover:text-blue-200 {% endif %}">{% trans "Latest News" %}</a>
+        <a href="{% url 'foryoupage' %}" class="text-xl font-medium {% if request.resolver_match.url_name == 'foryoupage' %}text-blue-700 dark:text-blue-500{% else %}text-white hover:text-black dark:text-gray-200 dark:hover:text-blue-200 {% endif %}">{% trans "4YouPage" %}</a>
+        <a href="{% url 'calendar_page' %}" class="text-xl font-medium {% if request.resolver_match.url_name == 'calendar_page' %}text-blue-700 dark:text-blue-500{% else %}text-white hover:text-black dark:text-gray-200 dark:hover:text-blue-200 {% endif %}">{% trans "Kalender" %}</a>
+        <a href="{% url 'links' %}" class="text-xl font-medium {% if request.resolver_match.url_name == 'links' %}text-blue-700 dark:text-blue-500{% else %}text-white hover:text-black dark:text-gray-200 dark:hover:text-blue-200 {% endif %}">{% trans "Uni-Links" %}</a>
+      </div>
+      <!-- Rechte Navigation: Profil, Sprache und Darkmode -->
+      <div class="flex items-center justify-end space-x-4 w-3/4 md:w-1/4 dropdown-container relative md:pr-10">
+        <!-- Sprache und Darkmode -->
+        <div class="relative flex items-center pr-7">
+          <!-- Sprachen Button -->
+          <button type="button" data-dropdown-toggle="language-dropdown-menu" class="inline-flex items-center justify-center w-7 h-7 text-sm text-gray-900 dark:text-white rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
+            <img src="{% static 'images/flaggen/'|add:request.LANGUAGE_CODE|add:'.png' %}" class="w-full h-full rounded" alt="{{ request.LANGUAGE_CODE }} Flag">
+          </button>
+          <!-- Sprachen Dropdown -->
+          <div class="z-50 hidden absolute top-16 right-0 w-48 text-base list-none bg-[#042c58] divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-[#0a111a]" id="language-dropdown-menu">
+            <ul class="py-2 font-medium" role="none">
+              <li>
+                <a href="{% url 'set_language' %}?language=de" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">
+                  <div class="inline-flex items-center">
+                    <img src="{% static 'images/flaggen/de.png' %}" class="w-5 h-5 rounded-full me-2" alt="German Flag">
+                    Deutsch
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'set_language' %}?language=en" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">
+                  <div class="inline-flex items-center">
+                    <img src="{% static 'images/flaggen/en.png' %}" class="w-5 h-5 rounded-full me-2" alt="English Flag">
+                    English
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'set_language' %}?language=es" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">
+                  <div class="inline-flex items-center">
+                    <img src="{% static 'images/flaggen/es.png' %}" class="w-5 h-5 rounded-full me-2" alt="Spanish Flag">
+                    Español
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'set_language' %}?language=fr" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">
+                  <div class="inline-flex items-center">
+                    <img src="{% static 'images/flaggen/fr.png' %}" class="w-5 h-5 rounded-full me-2" alt="French Flag">
+                    Français
+                  </div>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <!-- Darkmode Schalter -->
+          <!-- Quelle: https://www.youtube.com/watch?v=S-T9XoCMwt4 -->
+          <div class="ml-6 flex items-center">
+            <input type="checkbox" id="darkmode-toggle" class="hidden" />
+            <label for="darkmode-toggle" class="relative w-14 h-8 block rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer transition">
+              <span class="absolute left-1 top-1 w-6 h-6 rounded-full transition-transform duration-300 bg-yellow-400 dark:bg-gray-800 flex items-center justify-center" id="toggle-dot">
+                <svg id="sun-icon" class="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                  <g id="Environment / Sun">
+                    <path id="Vector" d="M12 4V2M12 20V22M6.41421 6.41421L5 5M17.728 17.728L19.1422 19.1422M4 12H2M20 12H22M17.7285 6.41421L19.1427 5M6.4147 17.728L5.00049 19.1422M12 17C9.23858 17 7 14.7614 7 12C7 9.23858 9.23858 7 12 7C14.7614 7 17 9.23858 17 12C17 14.7614 14.7614 17 12 17Z" stroke="#b45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </g>
+                </svg>
+                <svg id="moon-icon" class="w-5 h-5 hidden" viewBox="0 0 24 24" fill="none">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M3.39703 11.6315C3.39703 16.602 7.42647 20.6315 12.397 20.6315C15.6858 20.6315 18.5656 18.8664 20.1358 16.23C16.7285 17.3289 12.6922 16.7548 9.98282 14.0455C7.25201 11.3146 6.72603 7.28415 7.86703 3.89293C5.20697 5.47927 3.39703 8.38932 3.39703 11.6315ZM21.187 13.5851C22.0125 13.1021 23.255 13.6488 23 14.5706C21.7144 19.2187 17.4543 22.6315 12.397 22.6315C6.3219 22.6315 1.39703 17.7066 1.39703 11.6315C1.39703 6.58874 4.93533 2.25845 9.61528 0.999986C10.5393 0.751502 11.0645 1.99378 10.5641 2.80935C8.70026 5.84656 8.83194 10.0661 11.397 12.6312C13.9319 15.1662 18.1365 15.3702 21.187 13.5851Z" fill="#f3f4f6"/>
+                </svg>
+              </span>
+            </label>
+          </div>
+        </div>
+        <!-- Profil Button -->
+        <button type="button" class="flex text-sm bg-transparent rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 profile-icon items-center cursor-pointer" id="user-menu-button" aria-expanded="false">
+          <img class="w-10 h-10 rounded-full" src="{% static 'images/user-icon.png' %}" alt="user photo">
+        </button>
+        <!--Profil Dropdown-->
+        <div class="z-50 hidden absolute top-16 right-0 w-48 text-base list-none bg-[#042c58] divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-[#0a111a] dropdown-menu" id="user-dropdown">
+          {% if user.is_authenticated %}
+          <div class="px-4 py-3">
+            <span class="block text-sm text-gray-100 dark:text-white">{{ user.username }}</span>
+          </div>
+          <ul class="py-2" aria-labelledby="user-menu-button">
+            <li><a href="{% url 'account' %}" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">{% trans "Account" %}</a></li>
+            <li><a href="{% url 'preferences' %}" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">{% trans "Fragebogen" %}</a></li>
+            <li><a href="{% url 'trusted_news_portal' %}" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">{% trans "News einreichen" %}</a></li>
+            <li><a href="#" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">{% trans "Datenschutz" %}</a></li>
+            <li><a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">{% trans "Abmelden" %}</a></li>
+          </ul>
+          {% else %}
+          <ul class="py-2" aria-labelledby="user-menu-button">
+            <li>
+              <a href="{% url 'login' %}?next={{ request.path }}" class="block px-4 py-2 text-sm text-gray-100 hover:bg-gray-100 hover:text-black dark:hover:bg-gray-600 dark:text-white">{% trans "Anmelden" %}</a>
+            </li>
+            <li>
+              <a href="{% url 'register' %}" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">{% trans "Registrieren" %}</a>
+            </li>
+          </ul>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
