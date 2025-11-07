@@ -22,6 +22,11 @@ EmojiFieldConfig = dict[str, Any]
 
 
 EMOJI_FIELD_CONFIG: dict[str, EmojiFieldConfig] = {
+    "standorte": {
+        "label": "Standorte",
+        "emoji_key": "locations",
+        "queryset": lambda: Standort.objects.order_by("name"),
+    },
     "inhaltskategorien": {
         "label": "Kategorien",
         "emoji_key": "categories",
@@ -31,11 +36,6 @@ EMOJI_FIELD_CONFIG: dict[str, EmojiFieldConfig] = {
         "label": "Zielgruppen",
         "emoji_key": "audiences",
         "queryset": lambda: Zielgruppe.objects.order_by("name"),
-    },
-    "standorte": {
-        "label": "Standorte",
-        "emoji_key": "locations",
-        "queryset": lambda: Standort.objects.order_by("name"),
     },
 }
 
@@ -137,8 +137,8 @@ class PreferencesForm(forms.ModelForm):
         fields = [
             "standorte",
             "inhaltskategorien",
-            "quellen",
             "zielgruppen",
+            "quellen",
             "include_rundmail",
             "include_sammel_rundmail",
         ]
@@ -159,7 +159,7 @@ class PreferencesForm(forms.ModelForm):
         }
 
         # Formularfelder konfigurieren
-        for field_name in ("inhaltskategorien", "zielgruppen", "standorte"):
+        for field_name in ("standorte", "inhaltskategorien", "zielgruppen"):
             config = EMOJI_FIELD_CONFIG[field_name]
             queryset_builder = cast(Callable[[], Iterable[Any]], config["queryset"])
             field = cast(forms.ModelMultipleChoiceField, self.fields[field_name])
@@ -336,7 +336,7 @@ class TrustedNewsSubmissionForm(forms.Form):
         }
 
         # Formularfelder mit Emoji-Labels und -Choices versehen
-        for field_name in ("inhaltskategorien", "zielgruppen", "standorte"):
+        for field_name in ("standorte", "inhaltskategorien", "zielgruppen"):
             config = EMOJI_FIELD_CONFIG[field_name]
             queryset_builder = cast(Callable[[], Iterable[Any]], config["queryset"])
             field = cast(forms.ModelMultipleChoiceField, self.fields[field_name])
