@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import threading
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -26,6 +27,34 @@ def trusted_news_portal(request: HttpRequest) -> HttpResponse:
         return _handle_submission(request, user)
 
     return _handle_application(request, user)
+
+
+def _send_trusted_application_notification(username: str, motivation: str) -> None:
+    """Sendet die Trusted-Application-Mail außerhalb des Request-Threads."""
+    logger = get_logger(__name__)
+    recipient = (os.getenv("EMAIL_JACOB") or "").strip()
+
+    project_mail = (os.getenv("IMAP_USERNAME") or "").strip() or None
+    message = (
+        f"Der Benutzer {username} hat sich als Trusted User beworben.\n\n"
+        f"Motivation:\n{motivation}\n\n"
+        "Bitte überprüfe die Bewerbung im Admin-Panel."
+    )
+
+    try:
+        with mail.get_connection() as connection:
+            send_mail(
+                subject="Neue Trusted-User-Bewerbung eingegangen",
+                message=message,
+                from_email=project_mail,
+                recipient_list=[recipient],
+                fail_silently=False,
+                connection=connection,
+            )
+    except Exception:
+        logger.exception(
+            "Fehler beim Senden der Trusted-User-Benachrichtigung per E-Mail"
+        )
 
 
 def _handle_application(request: HttpRequest, user: User) -> HttpResponse:
@@ -66,27 +95,16 @@ def _handle_application(request: HttpRequest, user: User) -> HttpResponse:
                 "Deine Bewerbung wurde eingereicht. Wir melden uns bei dir.",
             )
 
-            # E-Mail-Benachrichtigung an Admins versenden
-            project_mail = (os.getenv("IMAP_USERNAME") or "").strip()
             try:
-                with mail.get_connection() as connection:
-                    send_mail(
-                        subject="Neue Trusted-User-Bewerbung eingegangen",
-                        message=(
-                            f"Der Benutzer {user.username} hat sich als Trusted User beworben.\n\n"
-                            f"Motivation:\n{application.motivation}\n\n"
-                            "Bitte überprüfe die Bewerbung im Admin-Panel."
-                        ),
-                        from_email=project_mail,
-                        recipient_list=[str(os.getenv("EMAIL_JACOB"))],
-                        fail_silently=False,
-                        connection=connection,
-                    )
+                # Benachrichtigung in eigenem Thread senden, damit der Request nicht blockiert wird
+                threading.Thread(
+                    target=_send_trusted_application_notification,
+                    args=(application.user.username, application.motivation),
+                    daemon=True,
+                ).start()
             except Exception:
                 logger = get_logger(__name__)
-                logger.exception(
-                    "Fehler beim Senden der Bewerbungsbenachrichtigung per E-Mail"
-                )
+                logger.exception("Fehler beim Starten der Bewerbungsbenachrichtigung")
 
             return redirect("trusted_news_portal")
     else:
