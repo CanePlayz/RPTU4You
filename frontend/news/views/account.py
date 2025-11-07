@@ -131,6 +131,7 @@ def update_preferences(request: HttpRequest) -> HttpResponse:
         form = PreferencesForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
+            messages.success(request, "Deine Präferenzen wurden gespeichert.")
             # AJAX-Anfrage über ForYouPage
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return JsonResponse(
@@ -139,8 +140,8 @@ def update_preferences(request: HttpRequest) -> HttpResponse:
                         "message": "Deine Präferenzen wurden gespeichert.",
                     }
                 )
-            # Anfrage über Fragebogen
-            return redirect("foryoupage")
+            # Nicht-AJAX-Anfragen bleiben auf der Einstellungsseite
+            return redirect("preferences")
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return JsonResponse({"success": False, "errors": form.errors}, status=400)
     else:
