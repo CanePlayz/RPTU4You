@@ -1,6 +1,7 @@
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 from django.urls import path
+from django.views.generic import TemplateView
 from news.views.account import (
     account_view,
     login_view,
@@ -79,6 +80,16 @@ urlpatterns += i18n_patterns(
     path("kalender/export/", export_ics, name="export_ics"),
     # Sonstiges
     path("links/", links, name="links"),
+    path(
+        "impressum/",
+        TemplateView.as_view(template_name="news/impressum.html"),
+        name="impressum",
+    ),
+    path(
+        "datenschutz/",
+        TemplateView.as_view(template_name="news/datenschutz.html"),
+        name="datenschutz",
+    ),
     path("db-connections/", db_connection_status),
     path("health/", health_check, name="health_check"),
 )

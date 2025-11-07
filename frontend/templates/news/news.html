@@ -8,7 +8,7 @@ Latest News
 
 {% block content %}
 
-<div class="flex bg-gray-100 dark:bg-gray-900 min-h-[calc(100vh-72px)]">
+<div class="columns-row">
 
     <!-- Linke Seite: Filter -->
 
@@ -19,7 +19,7 @@ Latest News
         </svg>
     </button>
 
-    <div id="filter" class="max-md:hidden max-md:w-full max-md:h-full max-md:left-1/2 md:w-80 pl-5 sticky md:top-[72px] md:h-[calc(100vh-72px)] overflow-y-auto max-md:text-sm max-md:flex-wrap">
+    <div id="filter" class="side-column scrollable-column">
         <form id="news-filter-form" method="get" class="overflow-y-auto">
             <h2 class="text-xl font-bold my-4 text-gray-800 dark:text-gray-100">{% trans "Filter" %}</h2>
             <div>
@@ -99,21 +99,19 @@ Latest News
 
     <!-- Mitte: News -->
 
-    <div class="flex-1 mt-3 px-8 overflow-y-auto" id="news">
-        <main id="main">
-            <div id="news-container">
-                {% if detail_news %}
-                {% include "news/partials/_news_detail.html" with news=detail_news %}
-                {% else %}
-                {% include "news/partials/_news_list.html" with news_list=news_list has_more=has_more %}
-                {% endif %}
-            </div>
-        </main>
+    <div id="news" class="middle-column scrollable-column">
+        <div id="news-container" class="news-container">
+            {% if detail_news %}
+            {% include "news/partials/_news_detail.html" with news=detail_news %}
+            {% else %}
+            {% include "news/partials/_news_list.html" with news_list=news_list has_more=has_more %}
+            {% endif %}
+        </div>
     </div>
 
     <!-- Rechte Seite: Terminkalender -->
 
-    <div id="calendar" class="max-md:hidden w-80 pr-5 sticky top-[72px] h-[calc(100vh-72px)] overflow-auto">
+    <div id="calendar" class="side-column">
         <h2 class="text-xl font-bold my-4 text-gray-800 dark:text-gray-100">{% trans "Nächste Termine" %}</h2>
         {% if upcoming_events %}
         <a href="{% url 'calendar_page' %}">

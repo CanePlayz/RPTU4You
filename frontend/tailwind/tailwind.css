@@ -7,14 +7,51 @@
 @source "../templates/**/*.html";
 @source "../news/**/*.py";
 
-/* Formular-Felder */
 @layer components {
-    .page-grid {
-		@apply min-h-screen grid grid-rows-[auto_1fr_auto] bg-white dark:bg-[#181818];
+	/* Hauptfenster */
+    .window {
+		@apply relative w-[95vw] h-[95vh] border-2 border-[#222] rounded-[40px] overflow-hidden flex flex-col min-h-0;
 	}
-    .page-shell {
-		@apply min-h-[calc(100vh-72px)] bg-gray-100 dark:bg-gray-900 flex items-center justify-center py-15;
+
+	/* Navigationsleiste */
+	.nav-bar {
+		@apply sticky top-0 z-10 bg-[#042c58] dark:bg-[#0a111a] w-full;
 	}
+
+	/* Content-Area */
+	/* Standard: NICHT scrollen (3-Spalten-Layouts) */
+	.content-area {
+		@apply bg-gray-100 dark:bg-gray-900 flex-1 min-h-0 overflow-hidden;
+	}
+	/* Opt-in: Ganze Seite scrollen (Seiten mit Karte) */
+	.content-scroll {
+		@apply overflow-y-auto;
+	}
+
+	/* 3-Spalten-Layout */
+	.columns-row {
+		@apply flex flex-row flex-1 min-h-0 h-full;
+	}
+	.side-column {
+		@apply w-1/5 p-5;
+	}
+	.middle-column {
+		@apply w-3/5 p-5;
+	}
+	.scrollable-column {
+		@apply overflow-y-auto min-w-0 min-h-0;
+	}
+
+	/* Karten-Layout */
+	.page-shell {
+		@apply bg-gray-100 dark:bg-gray-900 min-h-full grid place-items-center py-15;
+	}
+	/* Reserve für Scrolling auf Mobile mit Nav-Footer */
+	@media (max-width: 767px) {
+		.content-scroll { scroll-padding-bottom: 4rem; }
+	}
+
+	/* Karten und Formulare */
     .accent-card-title {
 		@apply text-2xl md:text-3xl font-semibold text-gray-800 dark:text-gray-100;
 	}
@@ -29,5 +66,16 @@
 	}
 	.status-card {
 		@apply bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-md w-full p-4;
+	}
+
+	/* Footer */
+	.site-footer {
+		@apply bg-[#042c58] dark:bg-[#0a111a] text-gray-100 flex flex-col md:flex-row items-center justify-between gap-4 px-6 py-6 text-sm md:text-base;
+	}
+	.site-footer__links {
+		@apply flex flex-col md:flex-row items-center gap-6;
+	}
+	.site-footer__link {
+		@apply text-gray-100 hover:text-white transition-colors duration-200;
 	}
 }
