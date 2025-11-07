@@ -80,7 +80,7 @@ def process_news_entry(news_entry, openai_api_key, logger: logging.Logger):
         quelle, _ = EmailVerteiler.objects.get_or_create(name=news_entry["quelle_name"])
 
     elif news_entry["quelle_typ"] == "Trusted Account":
-        quelle, created = Quelle.objects.get_or_create(
+        quelle, created = TrustedAccountQuelle.objects.get_or_create(
             name=news_entry["quelle_name"],
             defaults={"url": None},
         )

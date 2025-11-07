@@ -29,4 +29,5 @@ SOURCES_EMOJIS = {
     "Externe Website": "🔗",
     "Fachschaft": "👥",
     "Email-Verteiler": "📬",
+    "Trusted Account": "👤",
 }

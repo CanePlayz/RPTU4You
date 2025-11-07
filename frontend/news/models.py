@@ -63,6 +63,14 @@ class EmailVerteiler(Quelle):
         verbose_name_plural = "Email-Verteiler"
 
 
+class TrustedAccountQuelle(Quelle):
+    def __str__(self):
+        return self.name
+
+    class Meta:  # type: ignore[no-redef]
+        verbose_name_plural = "Trusted Accounts"
+
+
 class Standort(models.Model):
     name = models.CharField(max_length=100, unique=True)
 

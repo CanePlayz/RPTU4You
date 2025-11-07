@@ -19,6 +19,7 @@ def get_objects_to_filter() -> dict[str, Any]:
         + list(InterneWebsite.objects.all())
         + list(ExterneWebsite.objects.all())
         + list(EmailVerteiler.objects.all())
+        + list(TrustedAccountQuelle.objects.all())
     )
 
     return {
@@ -81,6 +82,9 @@ def get_objects_with_emojis() -> dict[str, list[dict[str, str]]]:
             sources_with_emojis.append({"name": src.name, "emoji": emoji})
         elif isinstance(src, EmailVerteiler):
             emoji = SOURCES_EMOJIS.get("Email-Verteiler", "")
+            sources_with_emojis.append({"name": src.name, "emoji": emoji})
+        elif isinstance(src, TrustedAccountQuelle):
+            emoji = SOURCES_EMOJIS.get("Trusted Account", "")
             sources_with_emojis.append({"name": src.name, "emoji": emoji})
         else:
             emoji = SOURCES_EMOJIS.get("Quelle", "")
