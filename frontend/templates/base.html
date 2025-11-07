@@ -7,9 +7,12 @@
 <script>
     (function() {
         try {
-            var dark = localStorage.getItem('theme') === 'dark';
-            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (dark || (!localStorage.getItem('theme') && prefersDark)) {
+            var storedTheme = localStorage.getItem('theme');
+            if (!storedTheme) {
+                localStorage.setItem('theme', 'dark');
+                storedTheme = 'dark';
+            }
+            if (storedTheme === 'dark') {
                 document.documentElement.classList.add('dark');
             }
         } catch(e){}
