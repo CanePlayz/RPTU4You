@@ -1,0 +1,113 @@
+{
+    "_meta": {
+        "schema_version": 1,
+        "timezone": "Europe/Berlin",
+        "description": "Trage öffentliche Termine unter 'events' ein. 'start' und optional 'end' akzeptieren ISO-8601-Zeitstempel oder YYYY-MM-DD-Daten. Setze 'all_day': true, damit Einträge ohne 'end' als ganztägig interpretiert werden."
+    },
+    "_examples": [
+        {
+            "title": "Semesterbeginn",
+            "start": "2025-10-27",
+            "description": "Beginn des Wintersemesters.",
+            "all_day": true
+        }
+    ],
+    "events": [
+        {
+            "title": "",
+            "start": "2025--",
+            "description": "",
+            "all_day": true
+        },
+        {
+            "title": "",
+            "start": "2025--",
+            "description": "",
+            "all_day": true
+        },
+        {
+            "title": "",
+            "start": "2025--",
+            "description": "",
+            "all_day": true
+        },
+        {
+            "title": "",
+            "start": "2025--",
+            "description": "",
+            "all_day": true
+        },
+        {
+            "title": "",
+            "start": "2025--",
+            "description": "",
+            "all_day": true
+        },
+        {
+            "title": "",
+            "start": "2025--",
+            "description": "",
+            "all_day": true
+        },
+        {
+            "title": "",
+            "start": "2025--",
+            "description": "",
+            "all_day": true
+        },
+        {
+            "title": "",
+            "start": "2025--",
+            "description": "",
+            "all_day": true
+        },
+        {
+            "title": "",
+            "start": "2025--",
+            "description": "",
+            "all_day": true
+        },
+        {
+            "title": "",
+            "start": "2025--",
+            "description": "",
+            "all_day": true
+        },
+        {
+            "title": "",
+            "start": "2025--",
+            "description": "",
+            "all_day": true
+        },
+        {
+            "title": "",
+            "start": "2025--",
+            "description": "",
+            "all_day": true
+        },
+        {
+            "title": "",
+            "start": "2025--",
+            "description": "",
+            "all_day": true
+        },
+        {
+            "title": "",
+            "start": "2025--",
+            "description": "",
+            "all_day": true
+        },
+        {
+            "title": "",
+            "start": "2025--",
+            "description": "",
+            "all_day": true
+        },
+        {
+            "title": "",
+            "start": "2025--",
+            "description": "",
+            "all_day": true
+        }
+    ]
+}
