@@ -1,6 +1,7 @@
 from typing import List
 
 from django.contrib.auth.decorators import login_required
+from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -114,8 +115,8 @@ def news_detail(request: HttpRequest, pk: int) -> HttpResponse:
         News.objects.prefetch_related("texte__sprache", "quelle"), pk=pk
     )
 
-    # Sprache aus GET-Parameter (Standard: "de")
-    lang = request.GET.get("lang", "de")
+    # Sprache aus Django-Einstellungen holen
+    lang = getattr(request, "LANGUAGE_CODE", "")
 
     # Hole den Text für die gewählte Sprache, falls vorhanden
     text = news.texte.filter(sprache__code=lang).first()  # type: ignore[attr-defined]

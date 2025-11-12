@@ -1,8 +1,15 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
+
+if TYPE_CHECKING:
+    from django.db.models.manager import RelatedManager
 
 # News
 
@@ -137,6 +144,20 @@ class News(models.Model):
     created_at = models.DateTimeField(default=now, editable=False)
 
     def __str__(self):
+        return self.titel
+
+    if TYPE_CHECKING:
+        texte: RelatedManager["Text"]
+
+    def get_translated_title(self, lang_code: str) -> str:
+        """Gibt den übersetzten Titel für den angegebenen Sprachcode zurück."""
+        if not lang_code:
+            return self.titel
+
+        translation = self.texte.filter(sprache__code=lang_code).first()
+        if translation:
+            return translation.titel
+
         return self.titel
 
     class Meta:
