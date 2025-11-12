@@ -11,8 +11,9 @@ from django.utils.translation import (
     get_language_from_path,
     get_supported_language_variant,
 )
+from django.utils.translation import gettext as _
 
-from ..models import News
+from ..models import News, User
 
 
 def request_date(request: HttpRequest) -> HttpResponse:
@@ -20,7 +21,7 @@ def request_date(request: HttpRequest) -> HttpResponse:
     api_key = os.getenv("API_KEY")
     api_key_request = request.headers.get("API-Key")
     if api_key != api_key_request:
-        return JsonResponse({"error": "Unauthorized"}, status=401)
+        return JsonResponse({"error": _("Unauthorized")}, status=401)
 
     # Aktuelles Datum der neuesten News abrufen
     try:
@@ -30,7 +31,7 @@ def request_date(request: HttpRequest) -> HttpResponse:
         ).latest("erstellungsdatum")
     except News.DoesNotExist:
         # Wenn keine News-Objekte vorhanden sind, gib eine Fehlermeldung zurück
-        return JsonResponse({"error": "No news available"}, status=404)
+        return JsonResponse({"error": _("No news available")}, status=404)
 
     date: datetime = latest_news.erstellungsdatum
 
@@ -60,6 +61,11 @@ def set_language(request: HttpRequest) -> HttpResponse:
 
     activate(language)
     request.session["django_language"] = language
+
+    if request.user.is_authenticated and isinstance(request.user, User):
+        if request.user.preferred_language != language:
+            request.user.preferred_language = language
+            request.user.save()
 
     # Parse the current URL
     current_url = request.META.get("HTTP_REFERER", "/")

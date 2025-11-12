@@ -11,20 +11,28 @@
 <div class="page-shell">
     <div class="accent-card max-w-3xl">
         <div class="space-y-3 mb-8">
-            <h1 class="accent-card-title">Bewirb dich als Trusted Account</h1>
+            <h1 class="accent-card-title">{% trans "Bewirb dich als Trusted Account" %}</h1>
             <p>
-                Trusted Accounts können News direkt über RPTU4You einreichen. Verrate uns bitte kurz, warum du Zugriff erhalten solltest.
+                {% trans "Trusted Accounts können News direkt über RPTU4You einreichen. Verrate uns bitte kurz, warum du Zugriff erhalten solltest." %}
             </p>
             <p>
-                Nach dem Absenden deines Antrags kannst du auf dieser Seite den Status deiner Bewerbung einsehen.
+                {% trans "Nach dem Absenden deines Antrags kannst du auf dieser Seite den Status deiner Bewerbung einsehen." %}
             </p>
         </div>
         {% if last_application %}
         <div class="status-card mb-6">
-            <p class="font-medium">Letzter Antrag</p>
-            <p class="text-sm mt-2">Status: <b>{{ last_application.get_status_display }}</b> ({{ last_application.created_at|date:"d.m.Y H:i" }})</p>
+            <p class="font-medium">{% trans "Letzter Antrag" %}</p>
+            <p class="text-sm mt-2">
+                {% blocktrans trimmed with status=last_application.get_status_display date=last_application.created_at|date:"d.m.Y H:i" %}
+                Status: <strong>{{ status }}</strong> ({{ date }})
+                {% endblocktrans %}
+            </p>
             {% if last_application.status == last_application.STATUS_DECLINED %}
-            <p class="text-sm mt-1">Du kannst dich erneut bewerben. Bitte beschreibe diesmal <b>genauer</b>, warum du News einreichen möchtest.</p>
+            <p class="text-sm mt-1">
+                {% blocktrans trimmed %}
+                Du kannst dich erneut bewerben. Bitte beschreibe diesmal <strong>genauer</strong>, warum du News einreichen möchtest.
+                {% endblocktrans %}
+            </p>
             {% endif %}
         </div>
         {% endif %}
@@ -40,7 +48,7 @@
             </div>
 
             <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">
-                Bewerbung abschicken
+                {% trans "Bewerbung abschicken" %}
             </button>
         </form>
     </div>

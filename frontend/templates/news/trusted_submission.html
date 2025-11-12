@@ -10,9 +10,9 @@
 {% block content %}
 <div class="page-shell">
     <div class="accent-card max-w-4xl">
-        <h1 class="accent-card-title text-center mb-6">News einreichen</h1>
+        <h1 class="accent-card-title text-center mb-6">{% trans "News einreichen" %}</h1>
         <p class="mb-6 text-center">
-            Reiche hier deine News ein. Wir kümmern uns automatisch um das Aufbereiten, Übersetzen und Kategorisieren.
+            {% trans "Reiche hier deine News ein. Wir kümmern uns automatisch um das Aufbereiten, Übersetzen und Kategorisieren." %}
         </p>
         {% include "partials/_messages.html" %}
 
@@ -79,7 +79,7 @@
 
             <div class="flex justify-center">
                 <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">
-                    News einreichen
+                    {% trans "News einreichen" %}
                 </button>
             </div>
         </form>

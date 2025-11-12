@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block title %}
-ForYouPage
+    {% trans "4YouPage" %}
 {% endblock %}
 
 {% block content %}
@@ -21,8 +21,8 @@ ForYouPage
     <div id="preferences" class="max-md:hidden max-md:left-0 max-md:w-full md:w-80 pl-5 pr-2 sticky md:top-[72px] h-[calc(100vh-72px)] overflow-y-auto">
         <form id="preferences-form" action="{% url 'preferences' %}" method="post" class="py-6 pr-2">
             {% csrf_token %}
-            <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">Deine Präferenzen</h2>
-            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">Passe deine Empfehlungen für die 4YouPage an.</p>
+            <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">{% trans "Deine Präferenzen" %}</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">{% trans "Passe deine Empfehlungen für die 4YouPage an." %}</p>
 
             {% if preferences_form.non_field_errors %}
                 {% for error in preferences_form.non_field_errors %}
@@ -87,7 +87,7 @@ ForYouPage
             </div>
 
             <p id="preferences-feedback" class="hidden text-sm mt-3"></p>
-            <button type="submit" id="preferences-submit-btn" class="max-md:left-1/2 mt-4 w-full rounded-md bg-[#042c58] text-white px-4 py-2 hover:bg-[#064694] cursor-pointer">Speichern</button>
+            <button type="submit" id="preferences-submit-btn" class="max-md:left-1/2 mt-4 w-full rounded-md bg-[#042c58] text-white px-4 py-2 hover:bg-[#064694] cursor-pointer">{% trans "Speichern" %}</button>
         </form>
     </div>
 

@@ -12,48 +12,100 @@
             <h1 class="accent-card-title mb-4">{% trans "Datenschutz" %}</h1>
             <section class="space-y-6 text-xs md:text-sm text-gray-700 dark:text-gray-200">
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Vorwort</h2>
-                    <p>In dieser Datenschutzerklärung informiert RPTU4You darüber, welche personenbezogenen Daten bei der Nutzung der Website verarbeitet werden und welche Cookies hierbei zum Einsatz kommen.</p>
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">{% trans "Vorwort" %}</h2>
+                    <p>
+                        {% blocktrans trimmed %}
+                        In dieser Datenschutzerklärung informiert RPTU4You darüber, welche personenbezogenen Daten bei der Nutzung der Website verarbeitet werden und welche Cookies hierbei zum Einsatz kommen.
+                        {% endblocktrans %}
+                    </p>
                 </div>
 
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Besuch der Website ohne Anmeldung</h2>
-                    <p>Beim Aufruf der Website setzt RPTU4You einen CSRF-Cookie, um Cross-Site-Request-Forgery-Angriffe zu verhindern und die Integrität der Anwendung sicherzustellen. Der Cookie wird als zufällig generierte Zeichenfolge gespeichert und ermöglicht keine Identifikation einzelner Nutzerinnen oder Nutzer.</p>
-                    <p>Filtereinstellungen, die unter &quot;Latest News&quot; gewählt und über &quot;Filter anwenden&quot; bestätigt werden, werden ausschließlich temporär im jeweils aktiven Browser gehalten und nach dem Verlassen der Seite gelöscht.</p>
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">{% trans "Besuch der Website ohne Anmeldung" %}</h2>
+                    <p>
+                        {% blocktrans trimmed %}
+                        Beim Aufruf der Website setzt RPTU4You einen CSRF-Cookie, um Cross-Site-Request-Forgery-Angriffe zu verhindern und die Integrität der Anwendung sicherzustellen. Der Cookie wird als zufällig generierte Zeichenfolge gespeichert und ermöglicht keine Identifikation einzelner Nutzerinnen oder Nutzer.
+                        {% endblocktrans %}
+                    </p>
+                    <p>
+                        {% blocktrans trimmed %}
+                        Filtereinstellungen, die unter "Latest News" gewählt und über "Filter anwenden" bestätigt werden, werden ausschließlich temporär im jeweils aktiven Browser gehalten und nach dem Verlassen der Seite gelöscht.
+                        {% endblocktrans %}
+                    </p>
                 </div>
 
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Registrierung und Authentifizierung</h2>
-                    <p>Für die Registrierung sind ein Benutzername und ein Passwort anzugeben. Der Benutzername wird im Benutzerkonto gespeichert. Das Passwort wird ausschließlich in gehashter Form abgelegt; eine Wiederherstellung des ursprünglichen Passworts ist nicht möglich. Zusätzlich wird dem Konto eine interne Identifikationsnummer zugewiesen, die keine Rückschlüsse auf persönliche Daten zulässt.</p>
-                    <p>Nach erfolgreicher Anmeldung setzt RPTU4You einen Session-Cookie, um den Login-Zustand aufrechtzuerhalten. Dieser Cookie verfällt automatisch am ersten Tag des Folgemonats oder sobald Sie sich aktiv abmelden.</p>
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">{% trans "Registrierung und Authentifizierung" %}</h2>
+                    <p>
+                        {% blocktrans trimmed %}
+                        Für die Registrierung sind ein Benutzername und ein Passwort anzugeben. Der Benutzername wird im Benutzerkonto gespeichert. Das Passwort wird ausschließlich in gehashter Form abgelegt; eine Wiederherstellung des ursprünglichen Passworts ist nicht möglich. Zusätzlich wird dem Konto eine interne Identifikationsnummer zugewiesen, die keine Rückschlüsse auf persönliche Daten zulässt.
+                        {% endblocktrans %}
+                    </p>
+                    <p>
+                        {% blocktrans trimmed %}
+                        Nach erfolgreicher Anmeldung setzt RPTU4You einen Session-Cookie, um den Login-Zustand aufrechtzuerhalten. Dieser Cookie verfällt automatisch am ersten Tag des Folgemonats oder sobald Sie sich aktiv abmelden.
+                        {% endblocktrans %}
+                    </p>
                 </div>
 
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Trusted Accounts</h2>
-                    <p>Für die Beantragung eines Trusted Accounts ist eine Begründung erforderlich. Diese Begründung wird zusammen mit dem zugehörigen Benutzerkonto gespeichert, um die Entscheidung der zuständigen Mitarbeitenden nachvollziehbar zu dokumentieren. Die Daten bleiben unabhängig vom Ergebnis des Antrags erhalten.</p>
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">{% trans "Trusted Accounts" %}</h2>
+                    <p>
+                        {% blocktrans trimmed %}
+                        Für die Beantragung eines Trusted Accounts ist eine Begründung erforderlich. Diese Begründung wird zusammen mit dem zugehörigen Benutzerkonto gespeichert, um die Entscheidung der zuständigen Mitarbeitenden nachvollziehbar zu dokumentieren. Die Daten bleiben unabhängig vom Ergebnis des Antrags erhalten.
+                        {% endblocktrans %}
+                    </p>
                 </div>
 
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Kalenderfunktionen</h2>
-                    <p>Nach der Anmeldung können Nutzerinnen und Nutzer eigene Termine anlegen. Die Termininhalte werden gespeichert, um sie im persönlichen Kalender sowie auf der 4YouPage anzuzeigen.</p>
-                    <p>Kalenderdateien, die über die Funktion &quot;Kalender importieren&quot; hochgeladen werden, werden in der Datenbank von RPTU4You abgelegt, damit sie dauerhaft in der Anwendung zur Verfügung stehen.</p>
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">{% trans "Kalenderfunktionen" %}</h2>
+                    <p>
+                        {% blocktrans trimmed %}
+                        Nach der Anmeldung können Nutzerinnen und Nutzer eigene Termine anlegen. Die Termininhalte werden gespeichert, um sie im persönlichen Kalender sowie auf der 4YouPage anzuzeigen.
+                        {% endblocktrans %}
+                    </p>
+                    <p>
+                        {% blocktrans trimmed %}
+                        Kalenderdateien, die über die Funktion "Kalender importieren" hochgeladen werden, werden in der Datenbank von RPTU4You abgelegt, damit sie dauerhaft in der Anwendung zur Verfügung stehen.
+                        {% endblocktrans %}
+                    </p>
                 </div>
 
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Präferenzeinstellungen</h2>
-                    <p>Über die Präferenzverwaltung können individuelle Filter für News-Kategorien, Standorte, Zielgruppen und Quellen hinterlegt werden. Die Einstellungen werden dem Benutzerkonto zugeordnet und bleiben bis zu einer Änderung durch die Nutzerin oder den Nutzer bestehen.</p>
-                    <p>Die Filter können jederzeit über die 4YouPage oder den Menüpunkt &quot;Präferenzen&quot; angepasst werden. Änderungen wirken sich unmittelbar auf die dargestellten Inhalte aus.</p>
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">{% trans "Präferenzeinstellungen" %}</h2>
+                    <p>
+                        {% blocktrans trimmed %}
+                        Über die Präferenzverwaltung können individuelle Filter für News-Kategorien, Standorte, Zielgruppen und Quellen hinterlegt werden. Die Einstellungen werden dem Benutzerkonto zugeordnet und bleiben bis zu einer Änderung durch die Nutzerin oder den Nutzer bestehen.
+                        {% endblocktrans %}
+                    </p>
+                    <p>
+                        {% blocktrans trimmed %}
+                        Die Filter können jederzeit über die 4YouPage oder den Menüpunkt "Präferenzen" angepasst werden. Änderungen wirken sich unmittelbar auf die dargestellten Inhalte aus.
+                        {% endblocktrans %}
+                    </p>
                 </div>
 
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Datensicherheit und Weitergabe</h2>
-                    <p>RPTU4You trifft organisatorische und technische Maßnahmen, um gespeicherte Daten vor unberechtigtem Zugriff zu schützen. Eine Weitergabe personenbezogener Daten an Dritte findet nicht statt, es sei denn, gesetzliche Vorgaben verpflichten RPTU4You hierzu.</p>
-                    <p>Nutzerinnen und Nutzer können jederzeit Auskunft über die zu ihrer Person gespeicherten Daten verlangen und die Berichtigung oder Löschung veranlassen, sofern keine entgegenstehenden gesetzlichen Aufbewahrungspflichten bestehen.</p>
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">{% trans "Datensicherheit und Weitergabe" %}</h2>
+                    <p>
+                        {% blocktrans trimmed %}
+                        RPTU4You trifft organisatorische und technische Maßnahmen, um gespeicherte Daten vor unberechtigtem Zugriff zu schützen. Eine Weitergabe personenbezogener Daten an Dritte findet nicht statt, es sei denn, gesetzliche Vorgaben verpflichten RPTU4You hierzu.
+                        {% endblocktrans %}
+                    </p>
+                    <p>
+                        {% blocktrans trimmed %}
+                        Nutzerinnen und Nutzer können jederzeit Auskunft über die zu ihrer Person gespeicherten Daten verlangen und die Berichtigung oder Löschung veranlassen, sofern keine entgegenstehenden gesetzlichen Aufbewahrungspflichten bestehen.
+                        {% endblocktrans %}
+                    </p>
                 </div>
 
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Kontakt</h2>
-                    <p>Für datenschutzbezogene Anliegen steht Ihnen das RPTU4You-Team unter der im Impressum genannten Kontaktadresse zur Verfügung.</p>
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">{% trans "Kontakt" %}</h2>
+                    <p>
+                        {% blocktrans trimmed %}
+                        Für datenschutzbezogene Anliegen steht Ihnen das RPTU4You-Team unter der im Impressum genannten Kontaktadresse zur Verfügung.
+                        {% endblocktrans %}
+                    </p>
                 </div>
             </section>
         </div>

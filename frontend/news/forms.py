@@ -2,10 +2,12 @@ import re
 from typing import Any, Callable, Iterable, cast
 
 from django import forms
+from django.conf import settings
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.db.models import Q
 from django.utils import timezone
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 
 from .models import (
     InhaltsKategorie,
@@ -23,17 +25,17 @@ EmojiFieldConfig = dict[str, Any]
 
 EMOJI_FIELD_CONFIG: dict[str, EmojiFieldConfig] = {
     "standorte": {
-        "label": "Standorte",
+        "label": _("Standorte"),
         "emoji_key": "locations",
         "queryset": lambda: Standort.objects.order_by("name"),
     },
     "inhaltskategorien": {
-        "label": "Kategorien",
+        "label": _("Kategorien"),
         "emoji_key": "categories",
         "queryset": lambda: InhaltsKategorie.objects.order_by("name"),
     },
     "zielgruppen": {
-        "label": "Zielgruppen",
+        "label": _("Zielgruppen"),
         "emoji_key": "audiences",
         "queryset": lambda: Zielgruppe.objects.order_by("name"),
     },
@@ -94,7 +96,7 @@ class UsernameChangeForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["username"]
-        labels = {"username": "Benutzername"}
+        labels = {"username": _("Benutzername")}
         widgets = {
             "username": forms.TextInput(
                 attrs={
@@ -107,17 +109,19 @@ class UsernameChangeForm(forms.ModelForm):
     def clean_username(self) -> str:
         username = self.cleaned_data.get("username", "").strip()
         if not username:
-            raise forms.ValidationError("Bitte gib einen gültigen Benutzernamen ein.")
+            raise forms.ValidationError(
+                _("Bitte gib einen gültigen Benutzernamen ein.")
+            )
         if username == self.instance.username:
             raise forms.ValidationError(
-                "Dieser Benutzername wird bereits von dir verwendet."
+                _("Dieser Benutzername wird bereits von dir verwendet.")
             )
         if (
             User.objects.filter(username__iexact=username)
             .exclude(pk=self.instance.pk)
             .exists()
         ):
-            raise forms.ValidationError("Dieser Benutzername ist bereits vergeben.")
+            raise forms.ValidationError(_("Dieser Benutzername ist bereits vergeben."))
         return username
 
 
@@ -149,7 +153,7 @@ class PreferencesForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ordered_sources = []
+        self.ordered_sources: list[dict[str, str]] = []
 
         # Emojis holen
         emoji_data = get_objects_with_emojis()
@@ -187,14 +191,15 @@ class PreferencesForm(forms.ModelForm):
         quellen_objs = [
             obj for obj in quellen_queryset if not isinstance(obj, Rundmail)
         ]
-        quellen_choices = build_emoji_choices(quellen_objs, emoji_mappings["sources"])
         quellen_field.widget = forms.CheckboxSelectMultiple()
-        quellen_field.choices = quellen_choices
-
+        quellen_field.choices = build_emoji_choices(
+            quellen_objs, emoji_mappings["sources"]
+        )
         # Weitere Label setzen
-        self.fields["quellen"].label = "Quellen"
-        self.fields["include_rundmail"].label = "📧 Rundmails"
-        self.fields["include_sammel_rundmail"].label = "📧 Sammel-Rundmails"
+
+        self.fields["quellen"].label = _("Quellen")
+        self.fields["include_rundmail"].label = _("📧 Rundmails")
+        self.fields["include_sammel_rundmail"].label = _("📧 Sammel-Rundmails")
 
         # Standardwerte auf Präferenzen des Benutzers setzen
         user: User = self.instance
@@ -212,7 +217,6 @@ class PreferencesForm(forms.ModelForm):
         # Quellen-Optionen sortieren (Checkboxes + Rundmail-Optionen)
         # Sortierschlüssel vorbereiten
         quelle_sort_lookup = {str(obj.pk): obj.name for obj in quellen_objs}
-        combined_options: list[dict[str, str]] = []
 
         # Für alle Checkboxen im Quellen-Field
         for checkbox in self["quellen"]:  # type: ignore[misc]
@@ -222,51 +226,70 @@ class PreferencesForm(forms.ModelForm):
                 raw_value = getattr(checkbox, "value", "")
             if raw_value in (None, "") and hasattr(checkbox, "data"):
                 raw_value = checkbox.data.get("value", "")  # type: ignore[assignment]
+            choice_label = str(checkbox.choice_label)
             # Sortierschlüssel bestimmen
-            sort_key = quelle_sort_lookup.get(str(raw_value), checkbox.choice_label)
+            sort_key = quelle_sort_lookup.get(str(raw_value), choice_label)
             # Dictionary mit Label, ID, HTML-Input und Sortierschlüssel erstellen
-            combined_options.append(
+            self.ordered_sources.append(
                 {
-                    "label": checkbox.choice_label,
+                    "label": choice_label,
                     "id": checkbox.id_for_label,
                     "input_html": mark_safe(checkbox.tag()),
-                    "sort_key": sort_key.lower(),
+                    "sort_key": str(sort_key).lower(),
                 }
             )
 
         # Rundmail-Optionen hinzufügen
         for field_name in ("include_rundmail", "include_sammel_rundmail"):
             bound_field = self[field_name]
-            combined_options.append(
+            label = str(bound_field.label)
+            self.ordered_sources.append(
                 {
-                    "label": bound_field.label,
+                    "label": label,
                     "id": bound_field.id_for_label,
                     "input_html": mark_safe(bound_field.as_widget()),
-                    "sort_key": bound_field.label.lower(),
+                    "sort_key": label.lower(),
                 }
             )
 
         # Optionen nach Sortierschlüssel sortieren
-        combined_options.sort(key=lambda option: option["sort_key"])
-        for option in combined_options:
+        self.ordered_sources.sort(key=lambda option: option["sort_key"])
+        for option in self.ordered_sources:
             option.pop("sort_key", None)
 
-        self.ordered_sources = combined_options
-
-    # Speichern der Präferenzen
-    def save(self, commit=True):
+    def save(self, commit: bool = True) -> User:
         user: User = super().save(commit=False)
+        user.include_rundmail = self.cleaned_data["include_rundmail"]
+        user.include_sammel_rundmail = self.cleaned_data["include_sammel_rundmail"]
         if commit:
             user.save()
             user.standorte.set(self.cleaned_data["standorte"])
             user.inhaltskategorien.set(self.cleaned_data["inhaltskategorien"])
             user.quellen.set(self.cleaned_data["quellen"])
             user.zielgruppen.set(self.cleaned_data["zielgruppen"])
-            user.include_rundmail = self.cleaned_data["include_rundmail"]
-            user.include_sammel_rundmail = self.cleaned_data["include_sammel_rundmail"]
-            user.save()
 
         return user
+
+
+# Formular für die Auswahl der bevorzugten Sprache
+class LanguagePreferenceForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["preferred_language"]
+        labels = {"preferred_language": _("Bevorzugte Sprache ändern")}
+        widgets = {
+            "preferred_language": forms.Select(
+                attrs={
+                    "class": "form-field",
+                }
+            )
+        }
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        preferred_language_field = self.fields["preferred_language"]
+        preferred_language_field.choices = settings.LANGUAGES
+        ensure_widget_has_class(preferred_language_field)
 
 
 class TrustedUserApplicationForm(forms.ModelForm):
@@ -283,14 +306,14 @@ class TrustedUserApplicationForm(forms.ModelForm):
             ),
         }
         labels = {
-            "motivation": "Warum möchtest du als Trusted Account News einreichen?",
+            "motivation": _("Warum möchtest du als Trusted Account News einreichen?"),
         }
 
 
 class TrustedNewsSubmissionForm(forms.Form):
     # Formularfelder definieren
     titel = forms.CharField(
-        label="Titel",
+        label=_("Titel"),
         max_length=255,
         widget=forms.TextInput(
             attrs={
@@ -299,7 +322,7 @@ class TrustedNewsSubmissionForm(forms.Form):
         ),
     )
     text = forms.CharField(
-        label="Text",
+        label=_("Text"),
         widget=forms.Textarea(
             attrs={
                 "rows": 12,
@@ -308,7 +331,7 @@ class TrustedNewsSubmissionForm(forms.Form):
         ),
     )
     link = forms.URLField(
-        label="Optionale Quelle (Link)",
+        label=_("Optionale Quelle (Link)"),
         required=False,
         widget=forms.URLInput(
             attrs={
@@ -353,19 +376,21 @@ class TrustedNewsSubmissionForm(forms.Form):
     def clean_inhaltskategorien(self):
         categories = self.cleaned_data["inhaltskategorien"]
         if not categories:
-            raise forms.ValidationError("Bitte wähle mindestens eine Kategorie aus.")
+            raise forms.ValidationError(_("Bitte wähle mindestens eine Kategorie aus."))
         return categories
 
     def clean_zielgruppen(self):
         audiences = self.cleaned_data["zielgruppen"]
         if not audiences:
-            raise forms.ValidationError("Bitte wähle mindestens eine Zielgruppe aus.")
+            raise forms.ValidationError(
+                _("Bitte wähle mindestens eine Zielgruppe aus.")
+            )
         return audiences
 
     def clean_standorte(self):
         locations = self.cleaned_data["standorte"]
         if not locations:
-            raise forms.ValidationError("Bitte wähle mindestens einen Standort aus.")
+            raise forms.ValidationError(_("Bitte wähle mindestens einen Standort aus."))
         return locations
 
     # Vom Nutzer eingegebene Daten in für receive_news.py geeignetes Format umwandeln

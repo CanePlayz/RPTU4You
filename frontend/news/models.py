@@ -1,6 +1,8 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.timezone import now
+from django.utils.translation import gettext_lazy as _
 
 # News
 
@@ -190,10 +192,17 @@ class User(AbstractUser):
     is_trusted = models.BooleanField(default=False)
     include_rundmail = models.BooleanField(
         default=False,
-        verbose_name="Rundmails einbeziehen",
+        verbose_name=_("Rundmails einbeziehen"),
     )
     include_sammel_rundmail = models.BooleanField(
-        default=False, verbose_name="Sammel-Rundmails einbeziehen"
+        default=False,
+        verbose_name=_("Sammel-Rundmails einbeziehen"),
+    )
+    preferred_language = models.CharField(
+        max_length=5,
+        choices=settings.LANGUAGES,
+        default=settings.LANGUAGE_CODE,
+        verbose_name=_("Bevorzugte Sprache"),
     )
 
     def __str__(self):
@@ -209,9 +218,9 @@ class TrustedUserApplication(models.Model):
     STATUS_DECLINED = "declined"
 
     STATUS_CHOICES = [
-        (STATUS_PENDING, "Ausstehend"),
-        (STATUS_APPROVED, "Genehmigt"),
-        (STATUS_DECLINED, "Abgelehnt"),
+        (STATUS_PENDING, _("Ausstehend")),
+        (STATUS_APPROVED, _("Genehmigt")),
+        (STATUS_DECLINED, _("Abgelehnt")),
     ]
 
     user = models.ForeignKey(

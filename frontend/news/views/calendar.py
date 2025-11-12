@@ -10,6 +10,7 @@ from django.db.models import Q
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from icalendar import Calendar
@@ -42,13 +43,13 @@ def _parse_json(request: HttpRequest) -> Dict[str, Any]:
         body = request.body.decode("utf-8") if request.body else "{}"
         return json.loads(body or "{}")
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
-        raise ValueError("Ungültige JSON-Daten.") from exc
+        raise ValueError(_("Ungültige JSON-Daten.")) from exc
 
 
 def _coerce_iso_datetime(value: str, *, field: str) -> datetime:
     # ISO-String prüfen und als bewusst datierte Zeit zurückgeben
     if not value:
-        raise ValueError(f"{field} ist erforderlich.")
+        raise ValueError(_("%(field)s ist erforderlich.") % {"field": field})
 
     cleaned = value.strip()
     if cleaned.endswith("Z"):
@@ -57,7 +58,9 @@ def _coerce_iso_datetime(value: str, *, field: str) -> datetime:
     try:
         parsed = datetime.fromisoformat(cleaned)
     except ValueError as exc:
-        raise ValueError(f"{field} hat ein ungültiges Format.") from exc
+        raise ValueError(
+            _("%(field)s hat ein ungültiges Format.") % {"field": field}
+        ) from exc
 
     if timezone.is_naive(parsed):
         parsed = timezone.make_aware(parsed, timezone.get_current_timezone())
@@ -71,7 +74,9 @@ def _ensure_future(start: datetime, *, now: Optional[datetime] = None) -> None:
     # Stellt sicher dass Termine nicht in der Vergangenheit liegen
     current = now or timezone.now()
     if start < current:
-        raise ValueError("Der Startzeitpunkt darf nicht in der Vergangenheit liegen.")
+        raise ValueError(
+            _("Der Startzeitpunkt darf nicht in der Vergangenheit liegen.")
+        )
 
 
 def _get_repeat_delta(repeat: str) -> Optional[RepeatDelta]:
@@ -88,7 +93,7 @@ def _generate_occurrences(
     # Berechnet alle Vorkommen einer Terminserie bis zum Enddatum
     delta = _get_repeat_delta(repeat)
     if delta is None:
-        raise ValueError("Unbekannter Wiederholungstyp.")
+        raise ValueError(_("Unbekannter Wiederholungstyp."))
 
     occurrences: list[tuple[datetime, Optional[datetime]]] = []
     current_start = start
@@ -97,13 +102,13 @@ def _generate_occurrences(
     while current_start <= repeat_until:
         occurrences.append((current_start, current_end))
         if len(occurrences) > MAX_SERIES_OCCURRENCES:
-            raise ValueError("Maximal 50 Termine pro Serie erlaubt.")
+            raise ValueError(_("Maximal 50 Termine pro Serie erlaubt."))
 
         current_start = current_start + delta
         current_end = current_end + delta if current_end else None
 
     if not occurrences:
-        raise ValueError("Wiederholungsende muss nach dem Startzeitpunkt liegen.")
+        raise ValueError(_("Wiederholungsende muss nach dem Startzeitpunkt liegen."))
 
     return occurrences
 
@@ -166,7 +171,7 @@ def calendar_events(request: HttpRequest) -> HttpResponse:
         return JsonResponse([_serialize_event(event) for event in events], safe=False)
 
     if not request.user.is_authenticated:
-        return JsonResponse({"error": "Nicht authentifiziert."}, status=401)
+        return JsonResponse({"error": _("Nicht authentifiziert.")}, status=401)
 
     try:
         data = _parse_json(request)
@@ -179,12 +184,12 @@ def calendar_events(request: HttpRequest) -> HttpResponse:
     description = str(data.get("description", ""))
     repeat = str(data.get("repeat", "none")).lower()
     if repeat not in REPEAT_INTERVALS:
-        return JsonResponse({"error": "Unbekannter Wiederholungstyp."}, status=400)
+        return JsonResponse({"error": _("Unbekannter Wiederholungstyp.")}, status=400)
     repeat_until_raw = data.get("repeat_until")
 
     if not title or not start_raw:
         return JsonResponse(
-            {"error": "Titel und Startzeit sind erforderlich."}, status=400
+            {"error": _("Titel und Startzeit sind erforderlich.")}, status=400
         )
 
     try:
@@ -201,7 +206,11 @@ def calendar_events(request: HttpRequest) -> HttpResponse:
             return JsonResponse({"error": str(exc)}, status=400)
         if end_datetime < start_datetime:
             return JsonResponse(
-                {"error": "Der Endzeitpunkt darf nicht vor dem Startzeitpunkt liegen."},
+                {
+                    "error": _(
+                        "Der Endzeitpunkt darf nicht vor dem Startzeitpunkt liegen."
+                    )
+                },
                 status=400,
             )
 
@@ -251,10 +260,14 @@ def calendar_events(request: HttpRequest) -> HttpResponse:
     except Exception as exc:
         logger.exception("Fehler bei der Event-Erstellung")
         return JsonResponse(
-            {"error": f"Fehler bei der Event-Erstellung: {exc}"}, status=500
+            {
+                "error": _("Fehler bei der Event-Erstellung: %(error)s")
+                % {"error": str(exc)}
+            },
+            status=500,
         )
 
-    return JsonResponse({"message": "Event erfolgreich gespeichert."}, status=201)
+    return JsonResponse({"message": _("Event erfolgreich gespeichert.")}, status=201)
 
 
 @csrf_exempt
@@ -272,11 +285,11 @@ def calendar_event_detail(request: HttpRequest, event_id) -> HttpResponse:
         if not request.user.is_authenticated or (
             event.user != request.user and not request.user.is_staff
         ):
-            return JsonResponse({"error": "Keine Berechtigung."}, status=403)
+            return JsonResponse({"error": _("Keine Berechtigung.")}, status=403)
 
         if event.user is None and not request.user.is_staff:
             return JsonResponse(
-                {"error": "Globale Termine können nicht bearbeitet werden."},
+                {"error": _("Globale Termine können nicht bearbeitet werden.")},
                 status=403,
             )
 
@@ -296,7 +309,8 @@ def calendar_event_detail(request: HttpRequest, event_id) -> HttpResponse:
             )
             if not events_to_update:
                 return JsonResponse(
-                    {"error": "Keine Events in der Serie gefunden."}, status=404
+                    {"error": _("Keine Events in der Serie gefunden.")},
+                    status=404,
                 )
 
             start_value = str(data.get("start", "")).strip()
@@ -331,7 +345,9 @@ def calendar_event_detail(request: HttpRequest, event_id) -> HttpResponse:
             if new_end_dt and new_end_dt < reference_start:
                 return JsonResponse(
                     {
-                        "error": "Der Endzeitpunkt darf nicht vor dem Startzeitpunkt liegen."
+                        "error": _(
+                            "Der Endzeitpunkt darf nicht vor dem Startzeitpunkt liegen."
+                        )
                     },
                     status=400,
                 )
@@ -358,7 +374,7 @@ def calendar_event_detail(request: HttpRequest, event_id) -> HttpResponse:
 
                 ev.save()
 
-            return JsonResponse({"message": "Event-Serie erfolgreich aktualisiert."})
+            return JsonResponse({"message": _("Event-Serie erfolgreich aktualisiert.")})
 
         # Einzeltermin aktualisieren
         if "title" in data:
@@ -388,7 +404,11 @@ def calendar_event_detail(request: HttpRequest, event_id) -> HttpResponse:
 
         if new_end and new_end < new_start:
             return JsonResponse(
-                {"error": "Der Endzeitpunkt darf nicht vor dem Startzeitpunkt liegen."},
+                {
+                    "error": _(
+                        "Der Endzeitpunkt darf nicht vor dem Startzeitpunkt liegen."
+                    )
+                },
                 status=400,
             )
 
@@ -397,17 +417,19 @@ def calendar_event_detail(request: HttpRequest, event_id) -> HttpResponse:
             event.end = new_end
 
         event.save()
-        return JsonResponse({"message": "Event erfolgreich aktualisiert."})
+        return JsonResponse({"message": _("Event erfolgreich aktualisiert.")})
 
     # DELETE Anfrage löscht den Termin
     if not request.user.is_authenticated or (
         event.user != request.user and not request.user.is_staff
     ):
-        return JsonResponse({"error": "Keine Berechtigung."}, status=403)
+        return JsonResponse({"error": _("Keine Berechtigung.")}, status=403)
 
     if event.user is None and not request.user.is_staff:
         return JsonResponse(
-            {"error": "Globale Termine können nicht gelöscht werden."},
+            {
+                "error": _("Globale Termine können nicht gelöscht werden."),
+            },
             status=403,
         )
 
@@ -480,7 +502,10 @@ def export_ics(request: HttpRequest) -> HttpResponse:
         return response
 
     except Exception as e:
-        messages.error(request, f"Fehler beim Exportieren: {str(e)}")
+        messages.error(
+            request,
+            _("Fehler beim Exportieren: %(error)s") % {"error": str(e)},
+        )
         return redirect("calendar_page")
 
 
@@ -495,7 +520,7 @@ def import_ics(request: HttpRequest) -> HttpResponse:
             calendar = Calendar.from_ical(file_content)
             for component in calendar.walk():
                 if component.name == "VEVENT":
-                    title = str(component.get("summary", "Ohne Titel"))
+                    title = str(component.get("summary", _("Ohne Titel")))
                     start_value = component.get("dtstart").dt
                     end_component = component.get("dtend")
                     end_value = end_component.dt if end_component else None
@@ -592,7 +617,9 @@ def import_ics(request: HttpRequest) -> HttpResponse:
                         if truncated:
                             messages.warning(
                                 request,
-                                "Beim Import wurden aus Wiederholungen nur die ersten 50 Termine angelegt.",
+                                _(
+                                    "Beim Import wurden aus Wiederholungen nur die ersten 50 Termine angelegt."
+                                ),
                             )
                     else:
                         CalendarEvent.objects.create(
@@ -605,9 +632,11 @@ def import_ics(request: HttpRequest) -> HttpResponse:
                             repeat_until=repeat_until,
                             group=group_value,
                         )
-
-            messages.success(request, "ICS-Datei erfolgreich importiert.")
+            messages.success(request, _("ICS-Datei erfolgreich importiert."))
         except Exception as e:
-            messages.error(request, f"Fehler beim Importieren: {str(e)}")
+            messages.error(
+                request,
+                _("Fehler beim Importieren: %(error)s") % {"error": str(e)},
+            )
 
     return redirect("calendar_page")

@@ -20,7 +20,7 @@
         <div class="relative flex items-center pr-7">
           <!-- Sprachen Button -->
           <button type="button" data-dropdown-toggle="language-dropdown-menu" class="inline-flex items-center justify-center w-7 h-7 text-sm text-gray-900 dark:text-white rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-            <img src="{% static 'images/flaggen/'|add:request.LANGUAGE_CODE|add:'.png' %}" class="w-full h-full rounded" alt="{{ request.LANGUAGE_CODE }} Flag">
+            <img src="{% static 'images/flaggen/'|add:request.LANGUAGE_CODE|add:'.png' %}" class="w-full h-full rounded" alt="{% trans 'Aktuelle Sprache' %}">
           </button>
           <!-- Sprachen Dropdown -->
           <div class="z-50 hidden absolute top-16 right-0 w-48 text-base list-none bg-[#042c58] divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-[#0a111a]" id="language-dropdown-menu">
@@ -28,32 +28,32 @@
               <li>
                 <a href="{% url 'set_language' %}?language=de" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">
                   <div class="inline-flex items-center">
-                    <img src="{% static 'images/flaggen/de.png' %}" class="w-5 h-5 rounded-full me-2" alt="German Flag">
-                    Deutsch
+                    <img src="{% static 'images/flaggen/de.png' %}" class="w-5 h-5 rounded-full me-2" alt="{% trans 'Deutsche Flagge' %}">
+                    {% trans "Deutsch" %}
                   </div>
                 </a>
               </li>
               <li>
                 <a href="{% url 'set_language' %}?language=en" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">
                   <div class="inline-flex items-center">
-                    <img src="{% static 'images/flaggen/en.png' %}" class="w-5 h-5 rounded-full me-2" alt="English Flag">
-                    English
+                    <img src="{% static 'images/flaggen/en.png' %}" class="w-5 h-5 rounded-full me-2" alt="{% trans 'Englische Flagge' %}">
+                    {% trans "English" %}
                   </div>
                 </a>
               </li>
               <li>
                 <a href="{% url 'set_language' %}?language=es" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">
                   <div class="inline-flex items-center">
-                    <img src="{% static 'images/flaggen/es.png' %}" class="w-5 h-5 rounded-full me-2" alt="Spanish Flag">
-                    Español
+                    <img src="{% static 'images/flaggen/es.png' %}" class="w-5 h-5 rounded-full me-2" alt="{% trans 'Spanische Flagge' %}">
+                    {% trans "Español" %}
                   </div>
                 </a>
               </li>
               <li>
                 <a href="{% url 'set_language' %}?language=fr" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">
                   <div class="inline-flex items-center">
-                    <img src="{% static 'images/flaggen/fr.png' %}" class="w-5 h-5 rounded-full me-2" alt="French Flag">
-                    Français
+                    <img src="{% static 'images/flaggen/fr.png' %}" class="w-5 h-5 rounded-full me-2" alt="{% trans 'Französische Flagge' %}">
+                    {% trans "Français" %}
                   </div>
                 </a>
               </li>

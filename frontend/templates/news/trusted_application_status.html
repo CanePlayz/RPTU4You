@@ -11,16 +11,24 @@
 <div class="page-shell">
     <div class="accent-card max-w-2xl">
         <div class="space-y-3 mb-8">
-            <h1 class="accent-card-title">Bewerbung in Bearbeitung</h1>
-            <p>Vielen Dank für deine Bewerbung als Trusted Account.</p>
+            <h1 class="accent-card-title">{% trans "Bewerbung in Bearbeitung" %}</h1>
+            <p>{% trans "Vielen Dank für deine Bewerbung als Trusted Account." %}</p>
             <p>
-                Wir prüfen deine Angaben und melden uns schnellstmöglich. Bis dahin kannst du wie gewohnt News lesen und deine Präferenzen anpassen.
+                {% trans "Wir prüfen deine Angaben und melden uns schnellstmöglich. Bis dahin kannst du wie gewohnt News lesen und deine Präferenzen anpassen." %}
             </p>
         </div>
 
         <div class="status-card">
-            <p class="font-medium">Eingereicht am {{ application.created_at|date:"d.m.Y H:i" }}</p>
-            <p class="text-m mt-1">Status: <b>{{ application.get_status_display }}</b></p>
+            <p class="font-medium">
+                {% blocktrans trimmed with date=application.created_at|date:"d.m.Y H:i" %}
+                Eingereicht am {{ date }}
+                {% endblocktrans %}
+            </p>
+            <p class="text-m mt-1">
+                {% blocktrans trimmed with status=application.get_status_display %}
+                Status: <strong>{{ status }}</strong>
+                {% endblocktrans %}
+            </p>
         </div>
     </div>
 </div>

@@ -34,10 +34,10 @@
                 <div class="space-y-3">
                     <label for="{{ form.standorte.id_for_label }}" class="block text-lg font-bold text-gray-700 dark:text-white">{{ form.standorte.label }}</label>
                     <div class="status-card space-y-3">
-                    {{ form.standorte }}
-                    {% if form.standorte.errors %}
-                        <p class="form-error">{{ form.standorte.errors|join:", " }}</p>
-                    {% endif %}
+                        {{ form.standorte }}
+                        {% if form.standorte.errors %}
+                            <p class="form-error">{{ form.standorte.errors|join:", " }}</p>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -45,10 +45,10 @@
                 <div class="space-y-3">
                     <label for="{{ form.inhaltskategorien.id_for_label }}" class="block text-lg font-bold text-gray-700 dark:text-white">{{ form.inhaltskategorien.label }}</label>
                     <div class="status-card space-y-3">
-                    {{ form.inhaltskategorien }}
-                    {% if form.inhaltskategorien.errors %}
-                        <p class="form-error">{{ form.inhaltskategorien.errors|join:", " }}</p>
-                    {% endif %}
+                        {{ form.inhaltskategorien }}
+                        {% if form.inhaltskategorien.errors %}
+                            <p class="form-error">{{ form.inhaltskategorien.errors|join:", " }}</p>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -56,18 +56,18 @@
                 <div class="space-y-3">
                     <label for="{{ form.quellen.id_for_label }}" class="block text-lg font-bold text-gray-700 dark:text-white mb-2">{{ form.quellen.label }}</label>
                     <div class="status-card space-y-3">
-                    <div id="{{ form.quellen.auto_id }}" class="space-y-2">
-                        {% for option in form.ordered_sources %}
-                            <div style="margin: 0;">
-                                <label for="{{ option.id }}">
-                                    {{ option.input_html|safe }} {{ option.label }}
-                                </label>
-                            </div>
-                    {% endfor %}
-                    </div>
-                    {% if form.quellen.errors %}
-                        <p class="form-error">{{ form.quellen.errors|join:", " }}</p>
-                    {% endif %}
+                        <div id="{{ form.quellen.auto_id }}" class="space-y-2">
+                            {% for option in form.ordered_sources %}
+                                <div style="margin: 0;">
+                                    <label for="{{ option.id }}">
+                                        {{ option.input_html|safe }} {{ option.label }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if form.quellen.errors %}
+                            <p class="form-error">{{ form.quellen.errors|join:", " }}</p>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -75,10 +75,10 @@
                 <div class="space-y-3">
                     <label for="{{ form.zielgruppen.id_for_label }}" class="block text-lg font-bold text-gray-700 dark:text-white">{{ form.zielgruppen.label }}</label>
                     <div class="status-card space-y-3">
-                    {{ form.zielgruppen }}
-                    {% if form.zielgruppen.errors %}
-                        <p class="form-error">{{ form.zielgruppen.errors|join:", " }}</p>
-                    {% endif %}
+                        {{ form.zielgruppen }}
+                        {% if form.zielgruppen.errors %}
+                            <p class="form-error">{{ form.zielgruppen.errors|join:", " }}</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>

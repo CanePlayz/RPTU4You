@@ -9,6 +9,7 @@ from django.core import mail
 from django.core.mail import send_mail
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
+from django.utils.translation import gettext as _
 
 from ..forms import TrustedNewsSubmissionForm, TrustedUserApplicationForm
 from ..models import TrustedUserApplication, User
@@ -34,16 +35,19 @@ def _send_trusted_application_notification(username: str, motivation: str) -> No
     recipient = (os.getenv("EMAIL_JACOB") or "").strip()
 
     project_mail = (os.getenv("IMAP_USERNAME") or "").strip() or None
-    message = (
-        f"Der Benutzer {username} hat sich als Trusted User beworben.\n\n"
-        f"Motivation:\n{motivation}\n\n"
+    message = _(
+        "Der Benutzer %(username)s hat sich als Trusted User beworben.\n\n"
+        "Motivation:\n%(motivation)s\n\n"
         "Bitte überprüfe die Bewerbung im Admin-Panel."
-    )
+    ) % {
+        "username": username,
+        "motivation": motivation,
+    }
 
     try:
         with mail.get_connection() as connection:
             send_mail(
-                subject="Neue Trusted-User-Bewerbung eingegangen",
+                subject=_("Neue Trusted-User-Bewerbung eingegangen"),
                 message=message,
                 from_email=project_mail,
                 recipient_list=[recipient],
@@ -128,7 +132,9 @@ def _handle_submission(request: HttpRequest, user: User) -> HttpResponse:
             if not openai_api_key:
                 messages.error(
                     request,
-                    "Beim Einreichen ist ein Fehler aufgetreten. Bitte versuche es später erneut.",
+                    _(
+                        "Beim Einreichen ist ein Fehler aufgetreten. Bitte versuche es später erneut."
+                    ),
                 )
             else:
                 logger = get_logger(__name__)
@@ -139,12 +145,14 @@ def _handle_submission(request: HttpRequest, user: User) -> HttpResponse:
                     logger.exception("Fehler beim Einreichen über Trusted Accounts")
                     messages.error(
                         request,
-                        "Beim Einreichen ist ein Fehler aufgetreten. Bitte versuche es später erneut.",
+                        _(
+                            "Beim Einreichen ist ein Fehler aufgetreten. Bitte versuche es später erneut."
+                        ),
                     )
                 else:
                     messages.success(
                         request,
-                        "Deine News wurde eingereicht und wird verarbeitet.",
+                        _("Deine News wurde eingereicht und wird verarbeitet."),
                     )
                     form = TrustedNewsSubmissionForm()
 
