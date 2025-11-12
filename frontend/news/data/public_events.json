@@ -14,99 +14,177 @@
     ],
     "events": [
         {
-            "title": "",
-            "start": "2025--",
-            "description": "",
+            "title": "Semesterbeginn Wintersemester 2025/26",
+            "start": "2025-10-01",
+            "description": "Offizieller Semesterstart",
             "all_day": true
         },
         {
-            "title": "",
-            "start": "2025--",
-            "description": "",
+            "title": "Semesterende Wintersemester 2025/26",
+            "start": "2026-03-31",
+            "description": "Offizielles Semesterende",
             "all_day": true
         },
         {
-            "title": "",
-            "start": "2025--",
-            "description": "",
+            "title": "Beginn der Lehrveranstaltungen (WiSe 2025/26)",
+            "start": "2025-10-20",
+            "description": "Vorlesungsbeginn im Wintersemester 2025/26",
             "all_day": true
         },
         {
-            "title": "",
-            "start": "2025--",
-            "description": "",
+            "title": "Ende der Lehrveranstaltungen (WiSe 2025/26)",
+            "start": "2026-02-07",
+            "description": "Vorlesungsende im Wintersemester 2025/26",
             "all_day": true
         },
         {
-            "title": "",
-            "start": "2025--",
-            "description": "",
+            "title": "Beginn Rückmeldezeitraum SoSe 2026",
+            "start": "2026-01-02",
+            "description": "Beginn Rückmeldung für das Sommersemester 2026 (2.1.–28.1.2026)",
             "all_day": true
         },
         {
-            "title": "",
-            "start": "2025--",
-            "description": "",
+            "title": "Ende Rückmeldezeitraum SoSe 2026",
+            "start": "2026-01-28",
+            "description": "Ende Rückmeldung für das Sommersemester 2026 (2.1.–28.1.2026)",
             "all_day": true
         },
         {
-            "title": "",
-            "start": "2025--",
-            "description": "",
+            "title": "Beginn Prüfungsanmeldung KL (WiSe 2025/26)",
+            "start": "2025-11-16",
+            "description": "Beginn Anmeldezeitraum für Prüfungen in Kaiserslautern (16.11.–16.12.2025)",
             "all_day": true
         },
         {
-            "title": "",
-            "start": "2025--",
-            "description": "",
+            "title": "Ende Prüfungsanmeldung KL (WiSe 2025/26)",
+            "start": "2025-12-16",
+            "description": "Ende Anmeldezeitraum für Prüfungen in Kaiserslautern (16.11.–16.12.2025)",
             "all_day": true
         },
         {
-            "title": "",
-            "start": "2025--",
-            "description": "",
+            "title": "Beginn Prüfungsanmeldung Landau (WiSe 2025/26)",
+            "start": "2025-12-15",
+            "description": "Beginn Anmeldezeitraum für Prüfungen in Landau (15.12.2025–15.01.2026)",
             "all_day": true
         },
         {
-            "title": "",
-            "start": "2025--",
-            "description": "",
+            "title": "Ende Prüfungsanmeldung Landau (WiSe 2025/26)",
+            "start": "2026-01-15",
+            "description": "Ende Anmeldezeitraum für Prüfungen in Landau (15.12.2025–15.01.2026)",
             "all_day": true
         },
         {
-            "title": "",
-            "start": "2025--",
-            "description": "",
+            "title": "Frist Fach- und Studiengangwechsel (zulassungsbeschränkt)",
+            "start": "2025-07-15",
+            "description": "Wechselfrist für zulassungsbeschränkte Studiengänge",
             "all_day": true
         },
         {
-            "title": "",
-            "start": "2025--",
-            "description": "",
+            "title": "Frist Fach- und Studiengangwechsel (zulassungsfrei)",
+            "start": "2025-09-30",
+            "description": "Wechselfrist für zulassungsfreie Studiengänge",
             "all_day": true
         },
         {
-            "title": "",
-            "start": "2025--",
-            "description": "",
+            "title": "Bewerbungsfrist WiSe 2025/26 (Präsenz, zulassungsbeschränkt)",
+            "start": "2025-07-15",
+            "description": "Ende der Bewerbungsfrist für zulassungsbeschränkte Präsenzstudiengänge zum WiSe 2025/26",
             "all_day": true
         },
         {
-            "title": "",
-            "start": "2025--",
-            "description": "",
+            "title": "Bewerbungsfrist WiSe 2025/26 (Präsenz, zulassungsfrei)",
+            "start": "2025-09-15",
+            "description": "Ende der Bewerbungsfrist für zulassungsfreie Präsenzstudiengänge zum WiSe 2025/26",
             "all_day": true
         },
         {
-            "title": "",
-            "start": "2025--",
-            "description": "",
+            "title": "Bewerbungsfrist SoSe 2026 (Präsenz, zulassungsbeschränkt)",
+            "start": "2026-01-15",
+            "description": "Ende der Bewerbungsfrist für zulassungsbeschränkte Präsenzstudiengänge zum SoSe 2026",
             "all_day": true
         },
         {
-            "title": "",
-            "start": "2025--",
-            "description": "",
+            "title": "Bewerbungsfrist SoSe 2026 (Präsenz, zulassungsfrei)",
+            "start": "2026-03-15",
+            "description": "Ende der Bewerbungsfrist für zulassungsfreie Präsenzstudiengänge zum SoSe 2026",
+            "all_day": true
+        },
+        {
+            "title": "Bewerbungsfrist WiSe 2025/26 Fernstudium (DISC)",
+            "start": "2025-07-15",
+            "description": "Ende der Bewerbungsfrist für weiterbildende Fernstudiengänge (DISC) zum WiSe 2025/26",
+            "all_day": true
+        },
+        {
+            "title": "Bewerbungsfrist SoSe 2026 Fernstudium (DISC)",
+            "start": "2026-01-15",
+            "description": "Ende der Bewerbungsfrist für weiterbildende Fernstudiengänge (DISC) zum SoSe 2026",
+            "all_day": true
+        },
+        {
+            "title": "Senatssitzung Kaiserslautern",
+            "start": "2025-05-07",
+            "description": "Senat der RPTU tagt in Kaiserslautern (Sommersemester 2025)",
+            "all_day": true
+        },
+        {
+            "title": "Senatssitzung Landau",
+            "start": "2025-06-11",
+            "description": "Senat der RPTU tagt in Landau (Sommersemester 2025)",
+            "all_day": true
+        },
+        {
+            "title": "Senatssitzung Kaiserslautern",
+            "start": "2025-07-09",
+            "description": "Senat der RPTU tagt in Kaiserslautern (Sommersemester 2025)",
+            "all_day": true
+        },
+        {
+            "title": "Zusatztermin Senatssitzung Kaiserslautern",
+            "start": "2025-09-03",
+            "description": "Zusätzliche Senatssitzung in der vorlesungsfreien Zeit in Kaiserslautern (Sommersemester 2025)",
+            "all_day": true
+        },
+        {
+            "title": "Senatssitzung Landau",
+            "start": "2025-11-12",
+            "description": "Senat der RPTU tagt in Landau (Wintersemester 2025/26)",
+            "all_day": true
+        },
+        {
+            "title": "Senatssitzung Kaiserslautern",
+            "start": "2025-12-10",
+            "description": "Senat der RPTU tagt in Kaiserslautern (Wintersemester 2025/26)",
+            "all_day": true
+        },
+        {
+            "title": "Senatssitzung Landau",
+            "start": "2026-01-21",
+            "description": "Senat der RPTU tagt in Landau (Wintersemester 2025/26)",
+            "all_day": true
+        },
+        {
+            "title": "Zusatztermin Senatssitzung Landau",
+            "start": "2026-03-18",
+            "description": "Zusätzliche Senatssitzung in der vorlesungsfreien Zeit in Landau (Wintersemester 2025/26)",
+            "all_day": true
+        },
+        {
+            "title": "Allerheiligen (Feiertag)",
+            "start": "2025-11-01",
+            "description": "Feiertag: Allerheiligen – keine Lehrveranstaltungen",
+            "all_day": true
+        },
+        {
+            "title": "Beginn Weihnachtsferien",
+            "start": "2025-12-22",
+            "description": "Beginn der Weihnachtsferien – keine Lehrveranstaltungen",
+            "all_day": true
+        },
+        {
+            "title": "Ende Weihnachtsferien",
+            "start": "2026-01-02",
+            "description": "Ende der Weihnachtsferien – Lehrveranstaltungen finden wieder statt",
             "all_day": true
         }
     ]
