@@ -8,11 +8,35 @@
 {% block content %}
 <div class="page-shell">
     <section class="max-w-3xl w-full">
-        <div class="accent-card">
-            <h1 class="accent-card-title mb-4">{% trans "Impressum" %}</h1>
-            <p class="text-sm md:text-base text-gray-700 dark:text-gray-200">
-                {% trans "Hier finden Sie die Pflichtangaben nach § 5 TMG. Bitte ergänzen Sie die Inhalte entsprechend Ihrer Organisation." %}
-            </p>
+        <div class="accent-card space-y-6">
+            <div>
+                <h1 class="accent-card-title mb-4">{% trans "Impressum" %}</h1>
+                <p class="text-sm md:text-base text-gray-700 dark:text-gray-200">
+                    {% trans "Nachfolgende Angaben dienen als fiktive Platzhalter." %}
+                </p>
+            </div>
+
+            <div class="text-sm md:text-base text-gray-700 dark:text-gray-200 space-y-4">
+                <div>
+                    <p class="font-semibold">RPTU4You Campus Services</p>
+                    <p>Digitale Campusallee 42</p>
+                    <p>"67663 Kaiserslautern</p>
+                </div>
+
+                <div>
+                    <p><span class="font-semibold">{% trans "Kontakt" %}:</span> campusservice@rptu4you.de</p>
+                    <p><span class="font-semibold">{% trans "Telefon" %}:</span> +49 123 456 789 00</p>
+                </div>
+
+                <div>
+                    <p><span class="font-semibold">{% trans "Vertretungsberechtigt" %}:</span> Dr. Alex Morgenstern </p>
+                    <p><span class="font-semibold">{% trans "USt-IdNr." %}:</span> DE00 0000 000</p>
+                </div>
+
+                <div>
+                    <p><span class="font-semibold">{% trans "Inhaltlich Verantwortliche" %}:</span> Jana Campus, {% trans "erreichbar unter" %} campusservice@rptu4you.de</p>
+                </div>
+            </div>
         </div>
     </section>
 </div>
