@@ -9,11 +9,10 @@ from datetime import datetime
 from datetime import time as datetime_time
 from datetime import timedelta
 from pathlib import Path
-from typing import Any, Dict, Set, Tuple, cast
+from typing import Any, Dict, Iterable, Set, Tuple, Type
 
 import django
 import psycopg2
-from celery.app.task import Task
 from news.my_logging import get_logger
 from psycopg2 import OperationalError
 
@@ -44,10 +43,22 @@ django.setup()
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
+from django.db import transaction
 from django.utils import timezone
 from django.utils.dateparse import parse_date, parse_datetime
-from news.models import CalendarEvent, Sprache
-from news.tasks import backfill_missing_categorizations, backfill_missing_translations
+from django.utils.text import slugify
+from news.models import (
+    CalendarEvent,
+    EmailVerteiler,
+    ExterneWebsite,
+    Fachschaft,
+    InhaltsKategorie,
+    InterneWebsite,
+    Sprache,
+    Standort,
+    TrustedAccountQuelle,
+    Zielgruppe,
+)
 
 
 # Migrations durchführen
@@ -115,8 +126,7 @@ def create_public_calendar_events():
 
     if not events_path.exists():
         logger.info(
-            "Keine öffentliche Kalenderdatei gefunden unter %s. Überspringe.",
-            events_path,
+            f"Keine öffentliche Kalenderdatei gefunden unter {events_path}. Überspringe."
         )
         return
 
@@ -125,14 +135,14 @@ def create_public_calendar_events():
         raw_data: Dict[str, Any] = json.loads(events_path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
         logger.error(
-            "Konnte öffentliche Kalenderdatei nicht lesen (%s): %s", events_path, exc
+            f"Konnte öffentliche Kalenderdatei nicht lesen ({events_path}): {exc}"
         )
         return
 
     # Einträge verarbeiten
     events = raw_data.get("events", [])
     if not isinstance(events, list):
-        logger.error("Schlüssel 'events' muss eine Liste sein (%s).", events_path)
+        logger.error(f"Schlüssel 'events' muss eine Liste sein ({events_path}).")
         return
 
     tz = timezone.get_current_timezone()
@@ -144,7 +154,7 @@ def create_public_calendar_events():
     # Jeden Eintrag verarbeiten
     for item in events:
         if not isinstance(item, dict):
-            logger.warning("Ignoriere Kalendereintrag, da er kein Objekt ist: %s", item)
+            logger.warning(f"Ignoriere Kalendereintrag, da er kein Objekt ist: {item}")
             continue
 
         # Erforderliche Felder extrahieren
@@ -153,11 +163,11 @@ def create_public_calendar_events():
 
         # Validierung der erforderlichen Felder
         if not title or not isinstance(title, str):
-            logger.warning("Kalendereintrag ohne gültigen Titel übersprungen: %s", item)
+            logger.warning(f"Kalendereintrag ohne gültigen Titel übersprungen: {item}")
             continue
         if not start_raw or not isinstance(start_raw, str):
             logger.warning(
-                "Kalendereintrag '%s' ohne gültigen Startzeitpunkt übersprungen.", title
+                f"Kalendereintrag '{title}' ohne gültigen Startzeitpunkt übersprungen."
             )
             continue
 
@@ -165,11 +175,11 @@ def create_public_calendar_events():
         title = title.strip()
         start_raw = start_raw.strip()
         if not title:
-            logger.warning("Kalendereintrag ohne gültigen Titel übersprungen: %s", item)
+            logger.warning(f"Kalendereintrag ohne gültigen Titel übersprungen: {item}")
             continue
         if not start_raw:
             logger.warning(
-                "Kalendereintrag '%s' ohne gültigen Startzeitpunkt übersprungen.", title
+                f"Kalendereintrag '{title}' ohne gültigen Startzeitpunkt übersprungen."
             )
             continue
 
@@ -178,7 +188,7 @@ def create_public_calendar_events():
             start_dt = _parse_event_datetime(start_raw, tz)
         except ValueError as exc:
             logger.warning(
-                "Kalendereintrag '%s' besitzt ungültigen Startzeitpunkt: %s", title, exc
+                f"Kalendereintrag '{title}' besitzt ungültigen Startzeitpunkt: {exc}"
             )
             continue
 
@@ -186,7 +196,7 @@ def create_public_calendar_events():
         # Gleiche Titel und Startzeiten werden nur einmal angelegt.
         if dedup_key in seen_keys:
             logger.warning(
-                "Doppelter Kalendereintrag für '%s' (%s) ignoriert.", title, start_dt
+                f"Doppelter Kalendereintrag für '{title}' ({start_dt}) ignoriert."
             )
             continue
         seen_keys.add(dedup_key)
@@ -199,15 +209,12 @@ def create_public_calendar_events():
                 end_dt = _parse_event_datetime(end_raw, tz)
             except ValueError as exc:
                 logger.warning(
-                    "Kalendereintrag '%s' besitzt ungültigen Endzeitpunkt: %s",
-                    title,
-                    exc,
+                    f"Kalendereintrag '{title}' besitzt ungültigen Endzeitpunkt: {exc}"
                 )
                 continue
             if end_dt < start_dt:
                 logger.warning(
-                    "Kalendereintrag '%s' übersprungen, da Endzeitpunkt vor dem Start liegt.",
-                    title,
+                    f"Kalendereintrag '{title}' übersprungen, da Endzeitpunkt vor dem Start liegt."
                 )
                 continue
 
@@ -224,8 +231,7 @@ def create_public_calendar_events():
         # Sicherstellen, dass Endzeitpunkt nach Startzeitpunkt liegt
         if end_dt and end_dt < start_dt:
             logger.warning(
-                "Kalendereintrag '%s' übersprungen, da berechneter Endzeitpunkt vor dem Start liegt.",
-                title,
+                f"Kalendereintrag '{title}' übersprungen, da berechneter Endzeitpunkt vor dem Start liegt."
             )
             continue
 
@@ -251,17 +257,196 @@ def create_public_calendar_events():
         else:
             updated_count += 1
 
-        logger.debug(
-            "Kalendereintrag '%s' synchronisiert (id=%s).",
-            event.title,
-            event.id,
-        )
+        logger.debug(f"Kalendereintrag '{event.title}' synchronisiert (id={event.id}).")
 
     logger.info(
-        "Öffentliche Kalendereinträge synchronisiert: %s erstellt, %s aktualisiert.",
-        created_count,
-        updated_count,
+        f"Öffentliche Kalendereinträge synchronisiert: {created_count} erstellt, {updated_count} aktualisiert."
     )
+
+
+# Vokabular-Daten laden
+def _load_vocab_data(file_path: Path) -> Dict[str, Any]:
+    """Lädt die Vokabular-Daten aus der angegebenen JSON-Datei."""
+    with file_path.open("r", encoding="utf-8") as file:
+        return json.load(file)
+
+
+def _sync_vocab_entries(
+    entries: Iterable[Dict[str, Any]],
+    model: Type[Any],
+) -> None:
+    # Für jede Kategorie in den Daten
+    for entry in entries:
+        # Namen extrahieren
+        names = entry.get("names") or {}
+        german_name = (names.get("de") or "").strip()
+
+        # Objekt holen oder erstellen
+        if not german_name:
+            continue
+
+        slug_value = slugify(entry.get("slug") or german_name)
+
+        # Objekt holen (mehrfacher Lookup für Resistenz)
+        obj = model.objects.filter(slug=slug_value).first()
+        if obj is None:
+            obj = model.objects.filter(name=german_name).first()
+
+        # Falls nötig Objekt erstellen
+        was_created = obj is None
+        if was_created:
+            obj = model(slug=slug_value, name=german_name)
+
+        changed = was_created
+
+        # Slug aktualisieren
+        if getattr(obj, "slug", None) != slug_value:
+            obj.slug = slug_value
+            changed = True
+
+        # Namen in Deutsch aktualisieren
+        if hasattr(obj, "name") and obj.name != german_name:
+            obj.name = german_name
+            changed = True
+
+        # Namen in verschiedenen Sprachen aktualisieren
+        for lang_code, value in names.items():
+            if not isinstance(value, str):
+                continue
+            translated_value = value.strip()
+            field_name = f"name_{lang_code}"
+            if (
+                hasattr(obj, field_name)
+                and getattr(obj, field_name) != translated_value
+            ):
+                setattr(obj, field_name, translated_value)
+                changed = True
+
+        # Objekt speichern, falls nötig
+        if changed:
+            obj.save()
+
+
+# Zuordnung für Quellenmodelle
+SOURCE_MODEL_MAP: Dict[str, Type[Any]] = {
+    "EmailVerteiler": EmailVerteiler,
+    "Fachschaft": Fachschaft,
+    "InterneWebsite": InterneWebsite,
+    "ExterneWebsite": ExterneWebsite,
+    "TrustedAccount": TrustedAccountQuelle,
+    "TrustedAccountQuelle": TrustedAccountQuelle,
+}
+
+
+def _sync_source_entries(entries: Iterable[Dict[str, Any]]) -> None:
+    # Für alle Einträge in den Daten
+    for entry in entries:
+        # Quellen-Typ extrahieren
+        type_key = entry.get("type")
+        if not isinstance(type_key, str):
+            logger.warning(f"Quelle ohne gültigen Typ übersprungen: {entry}")
+            continue
+
+        # Passendes Modell bestimmen
+        model = SOURCE_MODEL_MAP.get(type_key)
+        if model is None:
+            logger.warning(f"Unbekannter Quellentyp '{type_key}' übersprungen.")
+            continue
+
+        # Namen extrahieren
+        names = entry.get("names") or {}
+        if not isinstance(names, dict):
+            logger.warning(f"Quelle ohne gültige Namensstruktur übersprungen: {entry}")
+            continue
+        german_name = (names.get("de") or "").strip()
+        if not german_name:
+            logger.warning(f"Quelle ohne deutschen Namen übersprungen: {entry}")
+            continue
+
+        slug_value = slugify(entry.get("slug") or german_name)
+
+        # URL extrahieren
+        raw_url = entry.get("url")
+        url = None
+        if isinstance(raw_url, str):
+            url = raw_url.strip() or None
+
+        # Objekt holen (mehrfacher Lookup für Resistenz)
+        obj = model.objects.filter(slug=slug_value).first()
+        if obj is None and url is not None:
+            obj = model.objects.filter(url=url).first()
+        if obj is None:
+            obj = model.objects.filter(name=german_name).first()
+
+        # Falls nötig Objekt erstellen
+        was_created = obj is None
+        if was_created:
+            obj = model(slug=slug_value)
+
+        changed = was_created
+
+        # Slug aktualisieren
+        if getattr(obj, "slug", None) != slug_value:
+            obj.slug = slug_value
+            changed = True
+
+        # Namen in Deutsch aktualisieren
+        if hasattr(obj, "name") and obj.name != german_name:
+            obj.name = german_name
+            changed = True
+
+        # URL aktualisieren
+        if obj.url != url:
+            obj.url = url
+            changed = True
+
+        # Namen in verschiedenen Sprachen aktualisieren
+        for lang_code, value in names.items():
+            if not isinstance(value, str):
+                continue
+            translated_value = value.strip()
+            field_name = f"name_{lang_code}"
+            if (
+                hasattr(obj, field_name)
+                and getattr(obj, field_name) != translated_value
+            ):
+                setattr(obj, field_name, translated_value)
+                changed = True
+
+        # Objekt speichern, falls nötig
+        if changed:
+            obj.save()
+
+
+# Datenbank-Elemente für Kategorien anlegen
+def create_category_translations():
+    logger.info("Erstelle Kategorien-Objekte in verschiedenen Sprachen...")
+    data_file = Path(__file__).resolve().parent / "news" / "util" / "categories.json"
+    data = _load_vocab_data(data_file)
+
+    with transaction.atomic():
+        for label, key, model in (
+            ("Inhaltskategorie", "content_categories", InhaltsKategorie),
+            ("Zielgruppe", "audience_categories", Zielgruppe),
+            ("Standort", "location_categories", Standort),
+        ):
+            _sync_vocab_entries(data.get(key, []), model)
+
+    logger.info("Kategorien-Objekte erstellt.")
+
+
+# Datenbank-Elemente für Quellen anlegen
+def create_sources():
+    logger.info("Synchronisiere Quellen...")
+    data_file = Path(__file__).resolve().parent / "news" / "util" / "categories.json"
+    data = _load_vocab_data(data_file)
+
+    source_entries: list = data.get("sources", [])
+
+    with transaction.atomic():
+        _sync_source_entries(source_entries)
+
+    logger.info("Quellen-Objekte erstellt.")
 
 
 # Unerwünschte Logger deaktivieren
@@ -278,6 +463,8 @@ def main():
     create_superuser()
     create_languages()
     create_public_calendar_events()
+    create_category_translations()
+    create_sources()
     disable_unwanted_loggers()
 
     server = os.getenv("SERVER", "development")

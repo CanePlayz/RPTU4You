@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "modeltranslation",
     "news",
 ]
 
@@ -171,6 +172,14 @@ USE_I18N = True
 
 USE_TZ = True
 
+LANGUAGES = [
+    ("de", _("Deutsch")),
+    ("en", _("Englisch")),
+    ("es", _("Spanisch")),
+    ("fr", _("Französisch")),
+]
+
+
 # Globaler Übersetzungsordner
 LOCALE_PATHS = [BASE_DIR / "locale"]
 
@@ -252,11 +261,3 @@ LOGGING = {
         },
     },
 }
-
-# Sprachenauswahl
-LANGUAGES = [
-    ("de", _("Deutsch")),
-    ("en", _("Englisch")),
-    ("es", _("Spanisch")),
-    ("fr", _("Französisch")),
-]

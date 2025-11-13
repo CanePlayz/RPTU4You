@@ -9,6 +9,7 @@ from django.utils.timezone import now
 
 from .models import *
 from .my_logging import get_logger
+from .util.category_registry import get_audience_categories, get_content_categories
 from .util.close_db_connection import close_db_connection
 from .views.util.categorization.categorize import get_categorization_from_openai
 from .views.util.cleanup.cleanup import extract_parts, get_cleaned_text_from_openai
@@ -59,26 +60,9 @@ def add_audiences_and_categories(
     categories: list[str],
     audiences: list[str],
 ):
-    # Erlaube nur vordefinierte Kategorien und Zielgruppen
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    content_categories_file_path = os.path.join(
-        BASE_DIR, "views", "util", "categorization", "inhaltskategorien.txt"
-    )
-    target_group_categories_file_path = os.path.join(
-        BASE_DIR, "views", "util", "categorization", "publikumskategorien.txt"
-    )
-    with open(
-        content_categories_file_path,
-        "r",
-        encoding="utf-8",
-    ) as file:
-        allowed_categories = file.read().strip().split("\n")
-    with open(
-        target_group_categories_file_path,
-        "r",
-        encoding="utf-8",
-    ) as file:
-        allowed_audiences = file.read().strip().split("\n")
+    # Erlaube nur vordefinierte Kategorien und Zielgruppen aus der zentralen Definition
+    allowed_categories = set(get_content_categories())
+    allowed_audiences = set(get_audience_categories())
 
     # Nur erlaubte Kategorien und Zielgruppen hinzufügen
     for category in categories:

@@ -32,8 +32,8 @@
                 <div id="filter-standorte" class="hidden ml-2">
                     {% for loc in locations %}
                     <label class="block text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800 rounded px-1">
-                        <input type="checkbox" name="location" value="{{ loc.name }}" class="mr-2"
-                        {% if loc.name in active_filters.locations %}checked{% endif %}>
+                        <input type="checkbox" name="location" value="{{ loc.identifier }}" class="mr-2"
+                        {% if loc.identifier in active_filters.locations %}checked{% endif %}>
                         {{ loc.emoji }} {{ loc.name }}
                     </label>
                     {% endfor %}
@@ -49,8 +49,8 @@
                 <div id="filter-kategorien" class="hidden ml-2">
                     {% for cat in categories %}
                     <label class="block text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800 rounded px-1">
-                        <input type="checkbox" name="category" value="{{ cat.name }}" class="mr-2"
-                        {% if cat.name in active_filters.categories %}checked{% endif %}>
+                        <input type="checkbox" name="category" value="{{ cat.identifier }}" class="mr-2"
+                        {% if cat.identifier in active_filters.categories %}checked{% endif %}>
                         {{ cat.emoji }} {{ cat.name }}
                     </label>
                     {% endfor %}
@@ -66,8 +66,8 @@
                 <div id="filter-zielgruppen" class="hidden ml-2">
                     {% for aud in audiences %}
                     <label class="block text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800 rounded px-1">
-                        <input type="checkbox" name="audience" value="{{ aud.name }}" class="mr-2"
-                        {% if aud.name in active_filters.audiences %}checked{% endif %}>
+                        <input type="checkbox" name="audience" value="{{ aud.identifier }}" class="mr-2"
+                        {% if aud.identifier in active_filters.audiences %}checked{% endif %}>
                         {{ aud.emoji }} {{ aud.name }}
                     </label>
                     {% endfor %}
@@ -83,8 +83,8 @@
                 <div id="filter-quellen" class="hidden ml-2">
                     {% for src in sources %}
                     <label class="block text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800 rounded px-1">
-                        <input type="checkbox" name="source" value="{{ src.name }}" class="mr-2"
-                        {% if src.name in active_filters.sources %}checked{% endif %}>
+                        <input type="checkbox" name="source" value="{{ src.identifier }}" class="mr-2"
+                        {% if src.identifier in active_filters.sources %}checked{% endif %}>
                         {{ src.emoji }} {{ src.name }}
                     </label>
                     {% endfor %}

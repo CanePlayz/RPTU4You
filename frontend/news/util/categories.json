@@ -1,0 +1,359 @@
+{
+    "languages": [
+        "de",
+        "en",
+        "es",
+        "fr"
+    ],
+    "content_categories": [
+        {
+            "id": "forschung",
+            "slug": "research",
+            "names": {
+                "de": "Forschung",
+                "en": "Research",
+                "es": "Investigación",
+                "fr": "Recherche"
+            },
+            "emoji": "🔬"
+        },
+        {
+            "id": "lehrveranstaltung",
+            "slug": "course",
+            "names": {
+                "de": "Lehrveranstaltung",
+                "en": "Course",
+                "es": "Curso",
+                "fr": "Cours"
+            },
+            "emoji": "📚"
+        },
+        {
+            "id": "hochschulgruppen",
+            "slug": "student-groups",
+            "names": {
+                "de": "Hochschulgruppen",
+                "en": "Student Groups",
+                "es": "Grupos universitarios",
+                "fr": "Groupes universitaires"
+            },
+            "emoji": "🤝"
+        },
+        {
+            "id": "wettbewerb",
+            "slug": "competition",
+            "names": {
+                "de": "Wettbewerb",
+                "en": "Competition",
+                "es": "Competición",
+                "fr": "Compétition"
+            },
+            "emoji": "🏆"
+        },
+        {
+            "id": "party",
+            "slug": "party",
+            "names": {
+                "de": "Party",
+                "en": "Party",
+                "es": "Fiesta",
+                "fr": "Fête"
+            },
+            "emoji": "🎉"
+        },
+        {
+            "id": "vortrag",
+            "slug": "lecture",
+            "names": {
+                "de": "Vortrag",
+                "en": "Lecture",
+                "es": "Conferencia",
+                "fr": "Conférence"
+            },
+            "emoji": "🎤"
+        },
+        {
+            "id": "stellenangebot",
+            "slug": "job-offer",
+            "names": {
+                "de": "Stellenangebot",
+                "en": "Job Offer",
+                "es": "Oferta de empleo",
+                "fr": "Offre d'emploi"
+            },
+            "emoji": "💼"
+        },
+        {
+            "id": "wahlen",
+            "slug": "elections",
+            "names": {
+                "de": "Wahlen",
+                "en": "Elections",
+                "es": "Elecciones",
+                "fr": "Élections"
+            },
+            "emoji": "🗳️"
+        },
+        {
+            "id": "verwaltung",
+            "slug": "administration",
+            "names": {
+                "de": "Verwaltung",
+                "en": "Administration",
+                "es": "Administración",
+                "fr": "Administration"
+            },
+            "emoji": "🏢"
+        },
+        {
+            "id": "messe",
+            "slug": "fair",
+            "names": {
+                "de": "Messe",
+                "en": "Fair",
+                "es": "Feria",
+                "fr": "Salon"
+            },
+            "emoji": "🏛️"
+        },
+        {
+            "id": "soziales",
+            "slug": "social",
+            "names": {
+                "de": "Soziales",
+                "en": "Social",
+                "es": "Social",
+                "fr": "Social"
+            },
+            "emoji": "🗣️"
+        },
+        {
+            "id": "sport",
+            "slug": "sports",
+            "names": {
+                "de": "Sport",
+                "en": "Sports",
+                "es": "Deportes",
+                "fr": "Sport"
+            },
+            "emoji": "🏃"
+        },
+        {
+            "id": "umfrage",
+            "slug": "survey",
+            "names": {
+                "de": "Umfrage",
+                "en": "Survey",
+                "es": "Encuesta",
+                "fr": "Sondage"
+            },
+            "emoji": "📝"
+        },
+        {
+            "id": "austausch",
+            "slug": "exchange",
+            "names": {
+                "de": "Austausch",
+                "en": "Exchange",
+                "es": "Intercambio",
+                "fr": "Échange"
+            },
+            "emoji": "🌍"
+        },
+        {
+            "id": "workshop",
+            "slug": "workshop",
+            "names": {
+                "de": "Workshop",
+                "en": "Workshop",
+                "es": "Taller",
+                "fr": "Atelier"
+            },
+            "emoji": "🛠️"
+        },
+        {
+            "id": "diversitaet",
+            "slug": "diversity",
+            "names": {
+                "de": "Diversität",
+                "en": "Diversity",
+                "es": "Diversidad",
+                "fr": "Diversité"
+            },
+            "emoji": "🌈"
+        },
+        {
+            "id": "studiengang",
+            "slug": "degree-program",
+            "names": {
+                "de": "Studiengang",
+                "en": "Degree Program",
+                "es": "Programa de estudios",
+                "fr": "Programme d'études"
+            },
+            "emoji": "🧑‍🎓"
+        }
+    ],
+    "audience_categories": [
+        {
+            "id": "studierende",
+            "slug": "students",
+            "names": {
+                "de": "Studierende",
+                "en": "Students",
+                "es": "Estudiantes",
+                "fr": "Étudiants"
+            },
+            "emoji": "🎓"
+        },
+        {
+            "id": "mitarbeitende",
+            "slug": "staff",
+            "names": {
+                "de": "Mitarbeitende",
+                "en": "Staff",
+                "es": "Personal",
+                "fr": "Personnel"
+            },
+            "emoji": "👩‍💼"
+        },
+        {
+            "id": "lehrende",
+            "slug": "instructors",
+            "names": {
+                "de": "Lehrende",
+                "en": "Instructors",
+                "es": "Docentes",
+                "fr": "Enseignants"
+            },
+            "emoji": "👨‍🏫"
+        }
+    ],
+    "location_categories": [
+        {
+            "id": "kaiserslautern",
+            "slug": "kaiserslautern",
+            "names": {
+                "de": "Kaiserslautern",
+                "en": "Kaiserslautern",
+                "es": "Kaiserslautern",
+                "fr": "Kaiserslautern"
+            },
+            "emoji": "🏙️"
+        },
+        {
+            "id": "landau",
+            "slug": "landau",
+            "names": {
+                "de": "Landau",
+                "en": "Landau",
+                "es": "Landau",
+                "fr": "Landau"
+            },
+            "emoji": "🌳"
+        }
+    ],
+    "source_categories": [
+        {
+            "id": "mailverteiler-inf-kolloquium",
+            "slug": "inf-kolloquium-mailing-list",
+            "type": "EmailVerteiler",
+            "names": {
+                "de": "Mailverteiler inf-kolloquium",
+                "en": "Inf-kolloquium mailing list",
+                "es": "Lista de correo inf-kolloquium",
+                "fr": "Liste de diffusion inf-kolloquium"
+            },
+            "emoji": "📬",
+            "url": null
+        },
+        {
+            "id": "mailverteiler-inf-stud",
+            "slug": "inf-stud-mailing-list",
+            "type": "EmailVerteiler",
+            "names": {
+                "de": "Mailverteiler inf-stud",
+                "en": "Inf-stud mailing list",
+                "es": "Lista de correo inf-stud",
+                "fr": "Liste de diffusion inf-stud"
+            },
+            "emoji": "📬",
+            "url": null
+        },
+        {
+            "id": "mailverteiler-inf-all",
+            "slug": "inf-all-mailing-list",
+            "type": "EmailVerteiler",
+            "names": {
+                "de": "Mailverteiler inf-all",
+                "en": "Inf-all mailing list",
+                "es": "Lista de correo inf-all",
+                "fr": "Liste de diffusion inf-all"
+            },
+            "emoji": "📬",
+            "url": null
+        },
+        {
+            "id": "mailverteiler-inf-stud-ba",
+            "slug": "inf-stud-ba-mailing-list",
+            "type": "EmailVerteiler",
+            "names": {
+                "de": "Mailverteiler inf-stud-ba",
+                "en": "Inf-stud-ba mailing list",
+                "es": "Lista de correo inf-stud-ba",
+                "fr": "Liste de diffusion inf-stud-ba"
+            },
+            "emoji": "📬",
+            "url": null
+        },
+        {
+            "id": "mailverteiler-inf-stud-erstsemester",
+            "slug": "inf-stud-first-semester-mailing-list",
+            "type": "EmailVerteiler",
+            "names": {
+                "de": "Mailverteiler inf-stud-erstsemester",
+                "en": "Inf-stud first semester mailing list",
+                "es": "Lista de correo inf-stud primer semestre",
+                "fr": "Liste de diffusion inf-stud premier semestre"
+            },
+            "emoji": "📬",
+            "url": null
+        },
+        {
+            "id": "fachbereich-wiwi",
+            "slug": "school-of-business-and-economics",
+            "type": "Fachschaft",
+            "names": {
+                "de": "Fachbereich WiWi",
+                "en": "School of Business and Economics",
+                "es": "Facultad de Economía y Empresa",
+                "fr": "Département d'économie et de gestion"
+            },
+            "emoji": "👥",
+            "url": "https://wiwi.rptu.de/aktuelles/aktuelles-und-mitteilungen"
+        },
+        {
+            "id": "rptu-newsroom",
+            "slug": "rptu-newsroom",
+            "type": "InterneWebsite",
+            "names": {
+                "de": "RPTU Newsroom",
+                "en": "RPTU newsroom",
+                "es": "Sala de prensa de la RPTU",
+                "fr": "Salle de presse de la RPTU"
+            },
+            "emoji": "🌐",
+            "url": "https://rptu.de/newsroom"
+        }
+    ],
+    "ui_icons": {
+        "links_alltags": "🎓",
+        "links_fachschaften": "👥",
+        "links_asta": "🏛️",
+        "links_sport": "🏃‍♂️",
+        "links_stupa": "🗳️",
+        "links_groups": "🤝",
+        "links_institutions": "🏢",
+        "links_departments": "📚"
+    }
+}

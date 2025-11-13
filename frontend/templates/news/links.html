@@ -1,6 +1,6 @@
 
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n emojis %}
 
 {% block title %}
 {% trans "Uni-Links" %}
@@ -16,7 +16,7 @@
       <details class="group border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm dark:text-white bg-gray-50 dark:bg-gray-800">
         <summary class="cursor-pointer p-4 font-semibold text-lg bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center group-open:bg-[#e6eef7] dark:group-open:bg-gray-700 transition">
           <span class="inline-block transition-transform duration-200 mr-2 group-open:rotate-90">&gt;</span>
-            <span class="mr-2">🎓</span>
+            <span class="mr-2">{% ui_icon "links_alltags" %}</span>
           {% trans "Alltags-Links" %}
         </summary>
         <ul class="p-4 space-y-2">
@@ -35,7 +35,7 @@
       <details class="group border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm dark:text-white bg-gray-50 dark:bg-gray-800">
         <summary class="cursor-pointer p-4 font-semibold text-lg bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center group-open:bg-[#e6eef7] dark:group-open:bg-gray-700 transition">
           <span class="inline-block transition-transform duration-200 mr-2 group-open:rotate-90">&gt;</span>
-            <span class="mr-2">👥</span>
+            <span class="mr-2">{% ui_icon "links_fachschaften" %}</span>
           {% trans "Fachschaften Kaiserslautern" %}
         </summary>
         <ul class="p-4 space-y-2">
@@ -57,7 +57,7 @@
       <details class="group border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm dark:text-white bg-gray-50 dark:bg-gray-800">
         <summary class="cursor-pointer p-4 font-semibold text-lg bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center group-open:bg-[#e6eef7] dark:group-open:bg-gray-700 transition">
           <span class="inline-block transition-transform duration-200 mr-2 group-open:rotate-90">&gt;</span>
-          <span class="mr-2">👥</span>
+          <span class="mr-2">{% ui_icon "links_fachschaften" %}</span>
           {% trans "Fachschaften Landau" %}
         </summary>
         <ul class="p-4 space-y-2">
@@ -92,7 +92,7 @@
       <details class="group border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm dark:text-white bg-gray-50 dark:bg-gray-800">
         <summary class="cursor-pointer p-4 font-semibold text-lg bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center group-open:bg-[#e6eef7] dark:group-open:bg-gray-700 transition">
           <span class="inline-block transition-transform duration-200 mr-2 group-open:rotate-90">&gt;</span>
-          <span class="mr-2">🏛️</span>
+          <span class="mr-2">{% ui_icon "links_asta" %}</span>
           {% trans "AStA" %}
         </summary>
         <ul class="p-4 space-y-2">
@@ -104,7 +104,7 @@
       <details class="group border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm dark:text-white bg-gray-50 dark:bg-gray-800">
         <summary class="cursor-pointer p-4 font-semibold text-lg bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center group-open:bg-[#e6eef7] dark:group-open:bg-gray-700 transition">
           <span class="inline-block transition-transform duration-200 mr-2 group-open:rotate-90">&gt;</span>
-          <span class="mr-2">🏃‍♂️</span>
+          <span class="mr-2">{% ui_icon "links_sport" %}</span>
           {% trans "Uni-Sport" %}
         </summary>
         <ul class="p-4 space-y-2">
@@ -117,7 +117,7 @@
       <details class="group border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm dark:text-white bg-gray-50 dark:bg-gray-800">
         <summary class="cursor-pointer p-4 font-semibold text-lg bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center group-open:bg-[#e6eef7] dark:group-open:bg-gray-700 transition">
           <span class="inline-block transition-transform duration-200 mr-2 group-open:rotate-90">&gt;</span>
-          <span class="mr-2">🗳️</span>
+          <span class="mr-2">{% ui_icon "links_stupa" %}</span>
           {% trans "Studierendenparlament" %}
         </summary>
         <ul class="p-4 space-y-2">
@@ -129,7 +129,7 @@
       <details class="group border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm dark:text-white bg-gray-50 dark:bg-gray-800">
         <summary class="cursor-pointer p-4 font-semibold text-lg bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center group-open:bg-[#e6eef7] dark:group-open:bg-gray-700 transition">
           <span class="inline-block transition-transform duration-200 mr-2 group-open:rotate-90">&gt;</span>
-          <span class="mr-2">🤝</span>
+          <span class="mr-2">{% ui_icon "links_groups" %}</span>
           {% trans "Hochschulgruppen" %}
         </summary>
         <ul class="p-4 space-y-2">
@@ -140,7 +140,7 @@
       <details class="group border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm dark:text-white bg-gray-50 dark:bg-gray-800">
         <summary class="cursor-pointer p-4 font-semibold text-lg bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center group-open:bg-[#e6eef7] dark:group-open:bg-gray-700 transition">
           <span class="inline-block transition-transform duration-200 mr-2 group-open:rotate-90">&gt;</span>
-          <span class="mr-2">🏢</span>
+          <span class="mr-2">{% ui_icon "links_institutions" %}</span>
           {% trans "Zentrale Einrichtungen" %}
         </summary>
         <ul class="p-4 space-y-2">
@@ -154,7 +154,7 @@
       <details class="group border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm dark:text-white bg-gray-50 dark:bg-gray-800">
         <summary class="cursor-pointer p-4 font-semibold text-lg bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center group-open:bg-[#e6eef7] dark:group-open:bg-gray-700 transition">
           <span class="inline-block transition-transform duration-200 mr-2 group-open:rotate-90">&gt;</span>
-          <span class="mr-2">📚</span>
+          <span class="mr-2">{% ui_icon "links_departments" %}</span>
           {% trans "Fachbereiche" %}
         </summary>
         <ul class="p-4 space-y-2">
@@ -181,4 +181,3 @@
   </div>
 </div>
 {% endblock %}
-

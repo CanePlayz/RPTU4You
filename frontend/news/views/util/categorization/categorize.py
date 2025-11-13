@@ -7,6 +7,7 @@ from django.db.models import F
 from openai import OpenAI
 
 from ....models import OpenAITokenUsage
+from ....util.category_registry import get_audience_categories, get_content_categories
 from ..common import release_tokens, reserve_tokens
 
 
@@ -18,25 +19,11 @@ def get_categorization_from_openai(
 ) -> tuple[list[str], list[str]]:
     # Dateipfade relativ zum aktuellen Verzeichnis konstruieren
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    content_categories_file_path = os.path.join(BASE_DIR, "inhaltskategorien.txt")
-    target_group_categories_file_path = os.path.join(
-        BASE_DIR, "publikumskategorien.txt"
-    )
     system_message_file_path = os.path.join(BASE_DIR, "system_message.txt")
 
-    # Inhaltskategorien und Zielgruppen aus der Datei lesen
-    with open(
-        content_categories_file_path,
-        "r",
-        encoding="utf-8",
-    ) as file:
-        categories = file.read().strip().split("\n")
-    with open(
-        target_group_categories_file_path,
-        "r",
-        encoding="utf-8",
-    ) as file:
-        audiences = file.read().strip().split("\n")
+    # Inhaltskategorien und Zielgruppen aus der zentralen Definition laden
+    categories = get_content_categories()
+    audiences = get_audience_categories()
 
     usage = reserve_tokens(1500, token_limit)
 

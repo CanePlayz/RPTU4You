@@ -4,10 +4,12 @@ import logging
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
+from typing import Optional
 
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.timezone import make_aware
+from django.utils.translation import gettext, override
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
@@ -18,9 +20,97 @@ from ..util.close_db_connection import close_db_connection
 from .util.categorization.categorize import get_categorization_from_openai
 from .util.cleanup.cleanup import extract_parts, get_cleaned_text_from_openai
 
+RUNDMAIL_SOURCE_TYPES = {
+    "Rundmail",
+    "Sammel-Rundmail",
+    "Stellenangebote Sammel-Rundmail",
+}
+
+STATIC_SOURCE_MODELS = {
+    "Interne Website": InterneWebsite,
+    "Fachschaft": Fachschaft,
+    "Email-Verteiler": EmailVerteiler,
+    "Trusted Account": TrustedAccountQuelle,
+}
+
+RUNDMAIL_TRANSLATION_FALLBACKS = {
+    "de": "📧 Rundmails",
+    "en": "📧 Circular mails",
+    "es": "📧 Correos circulares",
+    "fr": "📧 Circulaire",
+}
+
+SAMMEL_RUNDMAIL_TRANSLATION_FALLBACKS = {
+    "de": "📧 Sammel-Rundmails",
+    "en": "📧 Collective circular mails",
+    "es": "📧 Correos circulares colectivos",
+    "fr": "📧 Circulaire collective",
+}
+
+
+def _load_translation_map(msgid: str, fallbacks: dict[str, str]) -> dict[str, str]:
+    """Gibt eine Übersetzungskarte für die angegebenen Sprachen zurück."""
+    translation_map: dict[str, str] = {}
+    for language_code, fallback in fallbacks.items():
+        try:
+            with override(language_code):
+                translated = gettext(msgid)
+        except Exception:
+            translated = None
+
+        translation_map[language_code] = translated or fallback
+    return translation_map
+
+
+RUNDMAIL_BASE_NAMES = _load_translation_map(
+    "📧 Rundmails", RUNDMAIL_TRANSLATION_FALLBACKS
+)
+
+SAMMEL_RUNDMAIL_BASE_NAMES = _load_translation_map(
+    "📧 Sammel-Rundmails", SAMMEL_RUNDMAIL_TRANSLATION_FALLBACKS
+)
+
+JOB_SAMMEL_RUNDMAIL_BASE_NAMES = {
+    "de": "Stellenangebote Sammel-Rundmail",
+    "en": "Job postings digest newsletter",
+    "es": "Correo colectivo de ofertas de empleo",
+    "fr": "Circulaire collective des offres d'emploi",
+}
+
+DATE_PREPOSITIONS = {
+    "de": "vom",
+    "en": "from",
+    "es": "del",
+    "fr": "du",
+}
+
+
+def _build_rundmail_localized_names(
+    source_type: str, created_at: datetime
+) -> dict[str, str]:
+    created_date = created_at.strftime("%d.%m.%Y")
+
+    if source_type == "Rundmail":
+        return dict(RUNDMAIL_BASE_NAMES)
+
+    if source_type == "Sammel-Rundmail":
+        return {
+            lang: f"{base} {DATE_PREPOSITIONS[lang]} {created_date}"
+            for lang, base in SAMMEL_RUNDMAIL_BASE_NAMES.items()
+        }
+
+    if source_type == "Stellenangebote Sammel-Rundmail":
+        return {
+            lang: f"{base} {DATE_PREPOSITIONS[lang]} {created_date}"
+            for lang, base in JOB_SAMMEL_RUNDMAIL_BASE_NAMES.items()
+        }
+
+    return {}
+
 
 @close_db_connection
 def process_news_entry(news_entry, openai_api_key, logger: logging.Logger):
+    # Maximale Token-Anzahl für die OpenAI-API-Aufrufe
     TOKEN_LIMIT = 2_400_000
 
     raw_title = news_entry.get("titel")
@@ -30,12 +120,38 @@ def process_news_entry(news_entry, openai_api_key, logger: logging.Logger):
     manual_categories = news_entry.get("manual_inhaltskategorien", [])
     manual_audiences = news_entry.get("manual_zielgruppen", [])
 
+    # Erstellungsdatum parsen und sicherstellen, dass eine Zeitzone gesetzt ist
+    try:
+        erstellungsdatum: datetime = make_aware(
+            datetime.strptime(news_entry["erstellungsdatum"], "%d.%m.%Y %H:%M:%S")
+        )
+    except (TypeError, ValueError):
+        logger.error(
+            f"Erstellungsdatum ungültig, Eintrag wird übersprungen | {truncated_title}"
+        )
+        return
+
     # Quellen-Objekt erstellen
-    if news_entry["quelle_typ"] in [
-        "Rundmail",
-        "Sammel-Rundmail",
-        "Stellenangebote Sammel-Rundmail",
-    ]:
+    source_type_raw = news_entry.get("quelle_typ")
+    if not isinstance(source_type_raw, str):
+        logger.warning(
+            "Quelle ohne gültigen Typ, Eintrag wird übersprungen | %s",
+            truncated_title,
+        )
+        return
+
+    source_type = source_type_raw.strip()
+    if not source_type:
+        logger.warning(
+            "Quelle ohne gültigen Typ, Eintrag wird übersprungen | %s",
+            truncated_title,
+        )
+        return
+
+    source: Optional[Quelle] = None
+
+    # Rundmail-Quellen speziell behandeln
+    if source_type in RUNDMAIL_SOURCE_TYPES:
         rundmail_id = news_entry.get("rundmail_id")
         if rundmail_id is None:
             logger.warning(
@@ -43,8 +159,12 @@ def process_news_entry(news_entry, openai_api_key, logger: logging.Logger):
             )
             return
         # Nachschauen, ob bereits ein Quelle-Objekt mit dieser ID existiert, falls nicht, dann erstellen
-        quelle, created = Rundmail.objects.get_or_create(
-            name=news_entry["quelle_name"],
+        source_name_raw = news_entry.get("quelle_name", "")
+        source_name = (
+            source_name_raw.strip() if isinstance(source_name_raw, str) else ""
+        )
+        source, created = Rundmail.objects.get_or_create(
+            name=source_name,
             defaults={
                 "rundmail_id": rundmail_id,
             },
@@ -53,52 +173,68 @@ def process_news_entry(news_entry, openai_api_key, logger: logging.Logger):
         # Wenn das Quelle-Objekt neu erstellt wurde, die URL setzen
         if created:
             if news_entry["quelle_typ"] == "Rundmail":
-                quelle.url = news_entry["link"]
-            elif news_entry["quelle_typ"] == "Sammel-Rundmail":
-                quelle.url = news_entry["link"].split("#")[0]
-            elif news_entry["quelle_typ"] == "Stellenangebote Sammel-Rundmail":
-                quelle.url = news_entry["link"].split("#")[0]
-            quelle.save()
+                source.url = news_entry["link"]
+            elif news_entry["quelle_typ"] in {
+                "Sammel-Rundmail",
+                "Stellenangebote Sammel-Rundmail",
+            }:
+                source.url = news_entry["link"].split("#")[0]
 
-    elif news_entry["quelle_typ"] == "Interne Website":
-        quelle, _ = InterneWebsite.objects.get_or_create(
-            name=news_entry["quelle_name"],
-            defaults={
-                "url": "https://rptu.de/newsroom",
-            },
-        )
+            localized_names = _build_rundmail_localized_names(
+                source_type, erstellungsdatum
+            )
+            default_name = localized_names.get("de", source_name) or source_name
+            if default_name:
+                source.name = default_name
 
-    elif news_entry["quelle_typ"] == "Fachschaft":
-        quelle, _ = Fachschaft.objects.get_or_create(
-            name=news_entry["quelle_name"],
-            defaults={
-                "url": "https://wiwi.rptu.de/aktuelles/aktuelles-und-mitteilungen",
-            },
-        )
+            for language_suffix, value in localized_names.items():
+                if language_suffix == "de":
+                    if hasattr(source, "name_de"):
+                        setattr(source, "name_de", value)
+                    continue
+                field_name = f"name_{language_suffix}"
+                if hasattr(source, field_name):
+                    setattr(source, field_name, value)
 
-    elif news_entry["quelle_typ"] == "Email-Verteiler":
-        quelle, _ = EmailVerteiler.objects.get_or_create(name=news_entry["quelle_name"])
-
-    elif news_entry["quelle_typ"] == "Trusted Account":
-        quelle, created = TrustedAccountQuelle.objects.get_or_create(
-            name=news_entry["quelle_name"],
-            defaults={"url": None},
-        )
+            source.save()
 
     else:
-        logger.warning("Unbekannter Quellentyp, Eintrag wird übersprungen")
-        return
+        # Entsprechendes Model für den Quellentyp holen
+        source_model: Optional[type[Quelle]] = STATIC_SOURCE_MODELS.get(source_type)
+        if source_model is None:
+            logger.warning(
+                "Unbekannter Quellentyp '%s', Eintrag wird übersprungen | %s",
+                source_type,
+                truncated_title,
+            )
+            return
 
-    # Erstellungsdatum parsen und sicherstellen, dass eine Zeitzone gesetzt ist
-    try:
-        erstellungsdatum: datetime = make_aware(
-            datetime.strptime(news_entry["erstellungsdatum"], "%d.%m.%Y %H:%M:%S")
+        # Quellenobjekt anhand des Namens holen
+        source_name_raw = news_entry.get("quelle_name")
+        source_name = (
+            source_name_raw.strip() if isinstance(source_name_raw, str) else ""
         )
-    except ValueError:
-        logger.error(
-            f"Erstellungsdatum ungültig, Eintrag wird übersprungen | {truncated_title}"
-        )
-        return
+        source = source_model.objects.filter(name=source_name).first()
+        if source is None:
+            if source_model is TrustedAccountQuelle:
+                source = source_model.objects.create(name=source_name)
+                for language_suffix in ("de", "en", "es", "fr"):
+                    field_name = f"name_{language_suffix}"
+                    if hasattr(source, field_name):
+                        setattr(source, field_name, source_name)
+                source.save()
+                logger.info(
+                    "Trusted Account Quelle automatisch erstellt | %s",
+                    truncated_title,
+                )
+            else:
+                logger.error(
+                    "Quelle '%s' vom Typ '%s' nicht vorhanden. Bitte in categories.json konfigurieren | %s",
+                    source_name,
+                    source_type,
+                    truncated_title,
+                )
+                return
 
     # News-Objekt erstellen
     # Überprüfen, ob bereits ein News-Objekt mit diesem Titel existiert
@@ -107,7 +243,7 @@ def process_news_entry(news_entry, openai_api_key, logger: logging.Logger):
         erstellungsdatum=erstellungsdatum,
         defaults={
             "link": news_entry["link"],
-            "quelle": quelle,
+            "quelle": source,
             "quelle_typ": news_entry["quelle_typ"],
         },
     )

@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, List
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import QuerySet
@@ -9,11 +9,12 @@ from django.views.decorators.http import require_GET
 
 from ..forms import PreferencesForm
 from ..models import CalendarEvent, News, User
-from ..util.filter_objects import get_objects_with_emojis
+from ..util.filter_objects import get_objects_with_metadata
 from .utils import FilterParams, get_filtered_queryset, paginate_queryset
 
 
 def _build_active_filters(request: HttpRequest) -> FilterParams:
+    """Aktive Filter aus den GET-Parametern extrahieren."""
     return {
         "locations": request.GET.getlist("location"),
         "categories": request.GET.getlist("category"),
@@ -23,6 +24,7 @@ def _build_active_filters(request: HttpRequest) -> FilterParams:
 
 
 def _get_upcoming_events(request: HttpRequest) -> List[CalendarEvent]:
+    """Gibt die kommenden Kalenderereignisse zurück."""
     now = timezone.now()
 
     if request.user.is_authenticated:
@@ -38,17 +40,69 @@ def _get_upcoming_events(request: HttpRequest) -> List[CalendarEvent]:
 
 
 def _build_user_preferences(user: User) -> FilterParams:
+    """Erstellt die Filterpräferenzen basierend auf den Benutzereinstellungen."""
     preferences: dict[str, List[str]] = {
-        "locations": list(user.standorte.values_list("name", flat=True)),
-        "categories": list(user.inhaltskategorien.values_list("name", flat=True)),
-        "audiences": list(user.zielgruppen.values_list("name", flat=True)),
-        "sources": list(user.quellen.values_list("name", flat=True)),
+        "locations": [],
+        "categories": [],
+        "audiences": [],
+        "sources": [],
     }
 
-    if user.include_rundmail:
-        preferences["sources"].append("Rundmail")
-    if user.include_sammel_rundmail:
-        preferences["sources"].append("Sammel-Rundmail")
+    # Alle verfügbaren Filterobjekte laden
+    filter_items = get_objects_with_metadata()
+
+    def _identifier_set(items: List[dict[str, Any]]) -> set[str]:
+        return {
+            str(item["identifier"])
+            for item in items
+            if item.get("identifier") is not None
+        }
+
+    # Listen der Identifier für jeden Filtertyp erstellen
+    location_identifiers = _identifier_set(filter_items["locations"])
+    category_identifiers = _identifier_set(filter_items["categories"])
+    audience_identifiers = _identifier_set(filter_items["audiences"])
+    source_identifiers = _identifier_set(filter_items["sources"])
+
+    # Präferenzen basierend auf Benutzereinstellungen füllen
+    for location in user.standorte.all():
+        slug = getattr(location, "slug", None)
+        if (
+            slug
+            and slug in location_identifiers
+            and slug not in preferences["locations"]
+        ):
+            preferences["locations"].append(slug)
+
+    for category in user.inhaltskategorien.all():
+        slug = getattr(category, "slug", None)
+        if (
+            slug
+            and slug in category_identifiers
+            and slug not in preferences["categories"]
+        ):
+            preferences["categories"].append(slug)
+
+    for audience in user.zielgruppen.all():
+        slug = getattr(audience, "slug", None)
+        if (
+            slug
+            and slug in audience_identifiers
+            and slug not in preferences["audiences"]
+        ):
+            preferences["audiences"].append(slug)
+
+    for source in user.quellen.all():
+        slug = getattr(source, "slug", None)
+        if slug and slug in source_identifiers and slug not in preferences["sources"]:
+            preferences["sources"].append(slug)
+
+    if user.include_rundmail and "rundmail" in source_identifiers:
+        if "rundmail" not in preferences["sources"]:
+            preferences["sources"].append("rundmail")
+    if user.include_sammel_rundmail and "sammel_rundmail" in source_identifiers:
+        if "sammel_rundmail" not in preferences["sources"]:
+            preferences["sources"].append("sammel_rundmail")
 
     return preferences
 
@@ -68,7 +122,7 @@ def news_view(request: HttpRequest) -> HttpResponse:
     has_more = total_filtered_count > len(paginated_items)
 
     # Objekte, nach denen gefiltert werden kann
-    objects_to_filter = get_objects_with_emojis()
+    objects_to_filter = get_objects_with_metadata()
     locations = objects_to_filter["locations"]
     categories = objects_to_filter["categories"]
     audiences = objects_to_filter["audiences"]
@@ -129,7 +183,7 @@ def news_detail(request: HttpRequest, pk: int) -> HttpResponse:
         )
 
     #  Objekte, nach denen gefiltert werden kann
-    objects_to_filter = get_objects_with_emojis()
+    objects_to_filter = get_objects_with_metadata()
     locations = objects_to_filter["locations"]
     categories = objects_to_filter["categories"]
     audiences = objects_to_filter["audiences"]

@@ -7,6 +7,7 @@ from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.db.models import Q
 from django.utils import timezone
 from django.utils.safestring import mark_safe
+from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
 from .models import (
@@ -17,7 +18,7 @@ from .models import (
     User,
     Zielgruppe,
 )
-from .util.filter_objects import get_objects_with_emojis
+from .util.filter_objects import get_objects_with_metadata
 
 # Setup, um Formular-Komponenten in wiederverwendbarer Weise zu definieren
 EmojiFieldConfig = dict[str, Any]
@@ -40,6 +41,9 @@ EMOJI_FIELD_CONFIG: dict[str, EmojiFieldConfig] = {
         "queryset": lambda: Zielgruppe.objects.order_by("name"),
     },
 }
+
+
+NON_WORD_PREFIX_RE = re.compile(r"^\W+", flags=re.UNICODE)
 
 
 # Funktionen zum Aufbau von Emoji-Labels und Choices
@@ -78,6 +82,14 @@ def ensure_widget_has_class(field: forms.Field, css_class: str = "form-field") -
     if css_class not in classes:
         classes.append(css_class)
         field.widget.attrs["class"] = " ".join(classes)
+
+
+def get_localized_field_value(obj: Any, field_name: str) -> str:
+    """Gibt den Wert des angegebenen Feldes in der aktuellen Sprache zurück."""
+    language_code = get_language()
+    translated_attr = f"{field_name}_{language_code}"
+    translated_value = getattr(obj, translated_attr, None)
+    return str(translated_value)
 
 
 class UserCreationForm2(UserCreationForm):
@@ -156,7 +168,7 @@ class PreferencesForm(forms.ModelForm):
         self.ordered_sources: list[dict[str, str]] = []
 
         # Emojis holen
-        emoji_data = get_objects_with_emojis()
+        emoji_data = get_objects_with_metadata()
         emoji_mappings = {
             key: build_emoji_lookup(emoji_data, key)
             for key in ("categories", "audiences", "locations", "sources")
@@ -216,7 +228,9 @@ class PreferencesForm(forms.ModelForm):
 
         # Quellen-Optionen sortieren (Checkboxes + Rundmail-Optionen)
         # Sortierschlüssel vorbereiten
-        quelle_sort_lookup = {str(obj.pk): obj.name for obj in quellen_objs}
+        quelle_sort_lookup = {
+            str(obj.pk): get_localized_field_value(obj, "name") for obj in quellen_objs
+        }
 
         # Für alle Checkboxen im Quellen-Field
         for checkbox in self["quellen"]:  # type: ignore[misc]
@@ -228,14 +242,14 @@ class PreferencesForm(forms.ModelForm):
                 raw_value = checkbox.data.get("value", "")  # type: ignore[assignment]
             choice_label = str(checkbox.choice_label)
             # Sortierschlüssel bestimmen
-            sort_key = quelle_sort_lookup.get(str(raw_value), choice_label)
+            sort_source = quelle_sort_lookup.get(str(raw_value), choice_label)
             # Dictionary mit Label, ID, HTML-Input und Sortierschlüssel erstellen
             self.ordered_sources.append(
                 {
                     "label": choice_label,
                     "id": checkbox.id_for_label,
                     "input_html": mark_safe(checkbox.tag()),
-                    "sort_key": str(sort_key).lower(),
+                    "sort_key": sort_source,
                 }
             )
 
@@ -248,7 +262,7 @@ class PreferencesForm(forms.ModelForm):
                     "label": label,
                     "id": bound_field.id_for_label,
                     "input_html": mark_safe(bound_field.as_widget()),
-                    "sort_key": label.lower(),
+                    "sort_key": label,
                 }
             )
 
@@ -352,7 +366,7 @@ class TrustedNewsSubmissionForm(forms.Form):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         # Emoji-Daten holen
-        emoji_data = get_objects_with_emojis()
+        emoji_data = get_objects_with_metadata()
         emoji_mappings = {
             key: build_emoji_lookup(emoji_data, key)
             for key in ("categories", "audiences", "locations")

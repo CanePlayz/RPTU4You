@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 
 
 class Quelle(models.Model):
+    slug = models.SlugField(max_length=160, unique=True)
     name = models.CharField()
     url = models.URLField(blank=True, null=True)
 
@@ -81,6 +82,7 @@ class TrustedAccountQuelle(Quelle):
 
 
 class Standort(models.Model):
+    slug = models.SlugField(max_length=120, unique=True)
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
@@ -91,6 +93,7 @@ class Standort(models.Model):
 
 
 class InhaltsKategorie(models.Model):
+    slug = models.SlugField(max_length=120, unique=True)
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
@@ -101,6 +104,7 @@ class InhaltsKategorie(models.Model):
 
 
 class Zielgruppe(models.Model):
+    slug = models.SlugField(max_length=120, unique=True)
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
