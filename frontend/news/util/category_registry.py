@@ -95,6 +95,8 @@ def _get_names(category_type: CategoryType, language: LanguageCode) -> list[str]
     names: list[str] = []
     for entry in _get_entries(category_type):
         localized_name = entry.get("names", {}).get(language)
+        if not localized_name:
+            continue
         names.append(localized_name)
     return names
 
@@ -108,6 +110,8 @@ def _get_emoji_map(
     emoji_map: dict[str, str] = {}
     for entry in _get_entries(category_type):
         localized_name = entry.get("names", {}).get(language)
+        if not localized_name:
+            continue
         emoji = entry.get("emoji", "")
         emoji_map[localized_name] = emoji
     return emoji_map

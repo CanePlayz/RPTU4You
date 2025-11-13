@@ -1,11 +1,11 @@
 import re
-from typing import Any, Callable, Iterable, cast
+from typing import Any, Callable, Final, Iterable, cast
 
 from django import forms
 from django.conf import settings
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.db.models import Q
-from django.utils import timezone
+from django.utils import timezone, translation
 from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
@@ -18,7 +18,13 @@ from .models import (
     User,
     Zielgruppe,
 )
-from .util.filter_objects import get_objects_with_metadata
+from .util.category_registry import (
+    LanguageCode,
+    get_audience_category_emoji_map,
+    get_content_category_emoji_map,
+    get_location_emoji_map,
+    get_source_emoji_map,
+)
 
 # Setup, um Formular-Komponenten in wiederverwendbarer Weise zu definieren
 EmojiFieldConfig = dict[str, Any]
@@ -43,30 +49,29 @@ EMOJI_FIELD_CONFIG: dict[str, EmojiFieldConfig] = {
 }
 
 
-NON_WORD_PREFIX_RE = re.compile(r"^\W+", flags=re.UNICODE)
-
-
 # Funktionen zum Aufbau von Emoji-Labels und Choices
-def build_emoji_lookup(emoji_data: dict[str, Any], key: str) -> dict[str, str]:
-    """Erstellt ein Mapping von Objektname zu Emoji für die angegebene Emoji-Gruppe. Format: {"Objektname": "Emoji"}."""
+def load_emoji_mappings() -> dict[str, dict[str, str]]:
+    """Lädt die Emoji-Mappings für die angeforderten Kategorien über die Registry."""
+    language_code = cast(LanguageCode, translation.get_language()) or ""
     return {
-        entry.get("name", ""): entry.get("emoji", "")
-        for entry in emoji_data.get(key, [])
-        if entry.get("name")
+        "locations": get_location_emoji_map(language_code),
+        "categories": get_content_category_emoji_map(language_code),
+        "audiences": get_audience_category_emoji_map(language_code),
+        "sources": get_source_emoji_map(language_code),
     }
 
 
 def label_with_emoji(obj: Any, mapping: dict[str, str]) -> str:
-    """Gibt den Objektnamen mit vorangestelltem Emoji zurück, falls eines vorhanden ist."""
+    """Gibt den Objektnamen mit vorangestelltem Emoji zurück."""
     name = getattr(obj, "name", str(obj))
-    emoji = mapping.get(name, "")
+    emoji = mapping.get(name, "").strip()
     return f"{emoji} {name}" if emoji else name
 
 
 def build_emoji_choices(
     objs: Iterable[Any], mapping: dict[str, str]
 ) -> list[tuple[Any, str]]:
-    """Erzeugt Choice-Liste bestehend aus Tupeln aus Primärschlüssel und Emoji-Label."""
+    """Erzeugt Choice-Liste bestehend aus Tupeln aus Primärschlüssel und mit Emoji versehenen Label."""
     choices: list[tuple[Any, str]] = []
     for obj in objs:
         pk = getattr(obj, "pk", None)
@@ -76,6 +81,7 @@ def build_emoji_choices(
     return choices
 
 
+# Hilfsfunktionen für Formulare
 def ensure_widget_has_class(field: forms.Field, css_class: str = "form-field") -> None:
     """Sorgt dafür, dass die Widget-Attribute die gewünschte CSS-Klasse enthalten."""
     classes = field.widget.attrs.get("class", "").split()
@@ -167,12 +173,8 @@ class PreferencesForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.ordered_sources: list[dict[str, str]] = []
 
-        # Emojis holen
-        emoji_data = get_objects_with_metadata()
-        emoji_mappings = {
-            key: build_emoji_lookup(emoji_data, key)
-            for key in ("categories", "audiences", "locations", "sources")
-        }
+        # Emojis über die Category Registry holen
+        emoji_mappings = load_emoji_mappings()
 
         # Formularfelder konfigurieren
         for field_name in ("standorte", "inhaltskategorien", "zielgruppen"):
@@ -207,8 +209,8 @@ class PreferencesForm(forms.ModelForm):
         quellen_field.choices = build_emoji_choices(
             quellen_objs, emoji_mappings["sources"]
         )
-        # Weitere Label setzen
 
+        # Weitere Label setzen
         self.fields["quellen"].label = _("Quellen")
         self.fields["include_rundmail"].label = _("📧 Rundmails")
         self.fields["include_sammel_rundmail"].label = _("📧 Sammel-Rundmails")
@@ -234,14 +236,15 @@ class PreferencesForm(forms.ModelForm):
 
         # Für alle Checkboxen im Quellen-Field
         for checkbox in self["quellen"]:  # type: ignore[misc]
-            # Rohwert des Checkbox-Elements ermitteln
+            # Choice-Wert extrahieren
+            # Mithilfe des Raw-Value können wir in quelle_sort_lookup nach dem Sortierschlüssel für das zu dem Feld gehörenden Objekt suchen
             raw_value = getattr(checkbox, "choice_value", None)
             if raw_value is None:
                 raw_value = getattr(checkbox, "value", "")
             if raw_value in (None, "") and hasattr(checkbox, "data"):
                 raw_value = checkbox.data.get("value", "")  # type: ignore[assignment]
             choice_label = str(checkbox.choice_label)
-            # Sortierschlüssel bestimmen
+            # Sortierschlüssel aus quelle_sort_lookup holen
             sort_source = quelle_sort_lookup.get(str(raw_value), choice_label)
             # Dictionary mit Label, ID, HTML-Input und Sortierschlüssel erstellen
             self.ordered_sources.append(
@@ -262,7 +265,7 @@ class PreferencesForm(forms.ModelForm):
                     "label": label,
                     "id": bound_field.id_for_label,
                     "input_html": mark_safe(bound_field.as_widget()),
-                    "sort_key": label,
+                    "sort_key": label[2:],  # Emoji entfernen für Sortierung
                 }
             )
 
@@ -365,12 +368,8 @@ class TrustedNewsSubmissionForm(forms.Form):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        # Emoji-Daten holen
-        emoji_data = get_objects_with_metadata()
-        emoji_mappings = {
-            key: build_emoji_lookup(emoji_data, key)
-            for key in ("categories", "audiences", "locations")
-        }
+        # Emoji-Daten über die Category Registry holen
+        emoji_mappings = load_emoji_mappings()
 
         # Formularfelder mit Emoji-Labels und -Choices versehen
         for field_name in ("standorte", "inhaltskategorien", "zielgruppen"):

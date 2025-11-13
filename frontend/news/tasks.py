@@ -11,9 +11,12 @@ from .models import *
 from .my_logging import get_logger
 from .util.category_registry import get_audience_categories, get_content_categories
 from .util.close_db_connection import close_db_connection
-from .views.util.categorization.categorize import get_categorization_from_openai
-from .views.util.cleanup.cleanup import extract_parts, get_cleaned_text_from_openai
-from .views.util.translation.translate import translate_html
+from .views.processing.categorization.categorize import get_categorization_from_openai
+from .views.processing.cleanup.cleanup import (
+    extract_parts,
+    get_cleaned_text_from_openai,
+)
+from .views.processing.translation.translate import translate_html
 
 
 def add_missing_translations(
