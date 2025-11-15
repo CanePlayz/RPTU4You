@@ -10,33 +10,40 @@ body {
 /* Dezente Scrollbar */
 
 /* Firefox */
-.scrollable-column {
+.scrollable,
+.content-scroll {
     scrollbar-width: thin;
     scrollbar-color: #6b7280 #1f2937;
 }
 
-:root:not(.dark) .scrollable-column {
+:root:not(.dark) .scrollable,
+:root:not(.dark) .content-scroll {
     scrollbar-color: #c5c7ca #e5e7eb;
 }
 
 /* Chrome / Edge / Safari */
-.scrollable-column::-webkit-scrollbar {
+.scrollable::-webkit-scrollbar,
+.content-scroll::-webkit-scrollbar {
     width: 8px;
 }
 
-.scrollable-column::-webkit-scrollbar-track {
+.scrollable::-webkit-scrollbar-track,
+.content-scroll::-webkit-scrollbar-track {
     background: #1f2937;
 }
 
-.scrollable-column::-webkit-scrollbar-thumb {
+.scrollable::-webkit-scrollbar-thumb,
+.content-scroll::-webkit-scrollbar-thumb {
     background-color: #6b7280;
 }
 
-:root:not(.dark) .scrollable-column::-webkit-scrollbar-track {
+:root:not(.dark) .scrollable::-webkit-scrollbar-track,
+:root:not(.dark) .content-scroll::-webkit-scrollbar-track {
     background: #e5e7eb;
 }
 
-:root:not(.dark) .scrollable-column::-webkit-scrollbar-thumb {
+:root:not(.dark) .scrollable::-webkit-scrollbar-thumb,
+:root:not(.dark) .content-scroll::-webkit-scrollbar-thumb {
     background-color: #c5c7ca;
 }
 

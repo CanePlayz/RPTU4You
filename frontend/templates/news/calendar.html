@@ -1,6 +1,6 @@
 
 {% extends "base.html" %}
-{% load i18n %}
+{% load static i18n %}
 
 {% block title %}
 {% trans "Dein Kalender" %}
@@ -8,62 +8,94 @@
 
 {% block head-optional %}
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
-  <link href="{% static 'css/calendar.css' %}" rel="stylesheet">
 {% endblock %}
+
+{% block content_area_classes %}scrollable{% endblock %}
 
 {% block content %}
 
-<div class="flex">
-
-  <!-- Linker Bereich: Buttons -->
-
-  <div class="max-md:hidden w-64 p-6 flex flex-col h-[calc(100vh-72px)] items-start bg-white dark:bg-gray-900 rounded-lg shadow">
-    <!-- Termin erstellen Button -->
-    <div class="flex flex-col w-full">
-      <button id="openPopup" class="bg-[#2c3f51] dark:bg-gray-800 text-white dark:text-gray-100 rounded-lg px-4 py-3 w-full flex justify-start text-lg font-semibold hover:bg-[#39506a] dark:hover:bg-gray-700 cursor-pointer">
-      <span class="text-5xl mr-3">+</span>{% trans "Termin hinzufügen" %}
-      </button>
+<div class="calendar-page px-4 lg:px-10 py-4">
+  <section class="calendar-shell accent-card w-full">
+    <div class="calendar-shell__header">
+      <div>
+        <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{% trans "Kalender" %}</h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400">{% trans "Behalte all deine Uni-Termine im Blick" %}</p>
+      </div>
+      <div class="calendar-shell__actions">
+        <div class="calendar-action">
+          <span class="calendar-action-text">{% trans "Termin hinzufügen" %}</span>
+          <button
+            type="button"
+            class="calendar-icon-btn"
+            data-calendar-open
+            aria-label="{% trans 'Termin hinzufügen' %}"
+          >
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14" /><path d="M19 12H5" /></svg>
+          </button>
+        </div>
+        <div class="calendar-action">
+          <span class="calendar-action-text">{% trans "Kalender importieren" %}</span>
+          <button
+            type="button"
+            class="calendar-icon-btn"
+            onclick="document.getElementById('icsUpload').click();"
+            aria-label="{% trans 'Kalender importieren' %}"
+          >
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12" /><path d="M8 12l4 4 4-4" /><path d="M4 20h16" /></svg>
+          </button>
+        </div>
+        <div class="calendar-action">
+          <span class="calendar-action-text">{% trans "Kalender exportieren" %}</span>
+          <button
+            type="submit"
+            form="exportForm"
+            class="calendar-icon-btn"
+            aria-label="{% trans 'Kalender exportieren' %}"
+          >
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V8" /><path d="M16 12l-4-4-4 4" /><path d="M4 4h16" /></svg>
+          </button>
+        </div>
+      </div>
     </div>
-    <!-- Importieren und Exportieren Buttons -->
-    <div class="flex flex-col w-full gap-4 mt-auto">
-  <button onclick="document.getElementById('icsUpload').click();" class="bg-[#717f8b] dark:bg-gray-700 text-white dark:text-gray-100 rounded-lg px-4 py-2 shadow hover:bg-[#8a99a8] dark:hover:bg-gray-600 w-full cursor-pointer">{% trans "Kalender importieren" %}</button>
-  <button type="submit" form="exportForm" class="bg-[#717f8b] dark:bg-gray-700 text-white dark:text-gray-100 rounded-lg px-4 py-2 shadow hover:bg-[#8a99a8] dark:hover:bg-gray-600 w-full cursor-pointer">{% trans "Kalender exportieren" %}</button>
+
+    <div class="calendar-grid-wrapper">
+      <div id="calendar" class="calendar-grid"></div>
     </div>
+
     <!-- Versteckte Formulare für Import und Export -->
     <form id="icsForm" action="{% url 'import_ics' %}" method="post" enctype="multipart/form-data" class="hidden">
       {% csrf_token %}
       <input type="file" id="icsUpload" name="ics_file" accept=".ics" class="hidden" onchange="document.getElementById('icsForm').submit();">
     </form>
     <form action="{% url 'export_ics' %}" method="get" class="hidden" id="exportForm"></form>
-  </div>
+  </section>
+</div>
 
-  <!-- Rechter Bereich: Kalender -->
-
-  <div id="calendar" class="flex-1 h-[calc(100vh-72px)] p-4 w-full bg-white dark:bg-gray-900 rounded-lg shadow"></div>
-  <!-- Popup für Terminerstellung und -bearbeitung -->
-  <div id="eventPopup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 transition-opacity duration-200">
-    <div class="w-full max-w-md bg-white dark:bg-[#181818] rounded-2xl shadow-2xl p-6 relative animate-fadeIn">
+<!-- Popup für Terminerstellung und -bearbeitung -->
+  <div id="eventPopup" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-200">
+    <div class="flex h-full w-full items-center justify-center bg-black bg-opacity-40">
+      <div class="w-full max-w-md bg-white dark:bg-[#181818] rounded-2xl shadow-2xl p-6 relative animate-fadeIn">
       <!-- Kopfzeile des Popups mit Titel und Schließen-Button -->
       <div class="flex items-center mb-4">
-        <div class="w-2 h-8 bg-[#042c58] dark:bg-blue-500 rounded-r-xl mr-3"></div>
+        <div class="w-2 h-8 bg-[#fb923c] dark:bg-[#ea580c] rounded-r-xl mr-3"></div>
   <h3 id="eventPopupTitle" class="text-xl font-semibold text-gray-800 dark:text-gray-100">{% trans "Termin erstellen" %}</h3>
         <button type="button" id="closePopup" class="ml-auto text-gray-400 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white text-2xl font-bold cursor-pointer">&times;</button>
       </div>
       <!-- Formular für Termin-Daten -->
       <form id="eventForm" class="space-y-4">
         <!-- Titel des Termins -->
-  <input type="text" id="eventTitle" placeholder="{% trans 'Titel' %}" required class="block w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#181818] text-gray-800 dark:text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+  <input type="text" id="eventTitle" placeholder="{% trans 'Titel' %}" required class="block w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#181818] text-gray-800 dark:text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#fdba74] focus:outline-none">
         <!-- Ganztägig-Button und Beginn-Label -->
-          <button type="button" id="allDayBtn" class="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-100 rounded px-3 py-2 text-sm hover:bg-blue-100 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-700 mb-2 cursor-pointer">
+          <button type="button" id="allDayBtn" class="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-100 rounded px-3 py-2 text-sm hover:bg-[#fff7ed] dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-700 mb-2 cursor-pointer">
             {% trans "Ganztägig" %}
           </button>
         <!-- Startdatum und Startzeit -->
   <label for="eventStartDate" class="block w-full text-left text-sm font-medium text-gray-600 dark:text-gray-300 mb-2 ml-1 mt-2">{% trans "Beginn" %}</label>
         <div class="flex items-center space-x-2">
-          <input type="date" id="eventStartDate" required class="flex-1 border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#181818] text-gray-800 dark:text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none" placeholder="{% trans 'Startdatum' %}">
+          <input type="date" id="eventStartDate" required class="flex-1 border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#181818] text-gray-800 dark:text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#fdba74] focus:outline-none" placeholder="{% trans 'Startdatum' %}">
           <div class="relative w-32">
-            <input type="text" id="eventStartTime" required class="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#181818] text-gray-800 dark:text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none pr-8" placeholder="{% trans 'Startzeit' %}" autocomplete="off">
-            <button type="button" id="startTimePickerBtn" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 flex items-center justify-center cursor-pointer">
+            <input type="text" id="eventStartTime" required class="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#181818] text-gray-800 dark:text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#fdba74] focus:outline-none pr-8" placeholder="{% trans 'Startzeit' %}" autocomplete="off">
+            <button type="button" id="startTimePickerBtn" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-300 hover:text-[#fb923c] dark:hover:text-[#fdba74] flex items-center justify-center cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </button>
             <div id="startTimeDropdown" class="hidden absolute z-10 right-0 mt-1 w-32 max-h-48 overflow-y-auto bg-white dark:bg-[#181818] border border-gray-300 dark:border-gray-700 rounded shadow-lg"></div>
@@ -72,17 +104,17 @@
         <!-- Enddatum und Endzeit -->
   <label for="eventEndDate" class="block w-full text-left text-sm font-medium text-gray-600 dark:text-gray-300 mb-2 ml-1 mt-2">{% trans "Ende" %}</label>
         <div class="flex items-center space-x-2">
-          <input type="date" id="eventEndDate" class="flex-1 border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#181818] text-gray-800 dark:text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none" placeholder="{% trans 'Endedatum' %}">
+          <input type="date" id="eventEndDate" class="flex-1 border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#181818] text-gray-800 dark:text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#fdba74] focus:outline-none" placeholder="{% trans 'Endedatum' %}">
           <div class="relative w-32">
-            <input type="text" id="eventEndTime" class="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#181818] text-gray-800 dark:text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none pr-8" placeholder="{% trans 'Endzeit' %}" autocomplete="off">
-            <button type="button" id="endTimePickerBtn" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 flex items-center justify-center cursor-pointer">
+            <input type="text" id="eventEndTime" class="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#181818] text-gray-800 dark:text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#fdba74] focus:outline-none pr-8" placeholder="{% trans 'Endzeit' %}" autocomplete="off">
+            <button type="button" id="endTimePickerBtn" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-300 hover:text-[#fb923c] dark:hover:text-[#fdba74] flex items-center justify-center cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </button>
             <div id="endTimeDropdown" class="hidden absolute z-10 right-0 mt-1 w-32 max-h-48 overflow-y-auto bg-white dark:bg-[#181818] border border-gray-300 dark:border-gray-700 rounded shadow-lg"></div>
           </div>
         </div>
         <!-- Beschreibung des Termins -->
-  <textarea id="eventDescription" placeholder="{% trans 'Beschreibung' %}" class="block w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#181818] text-gray-800 dark:text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"></textarea>
+  <textarea id="eventDescription" placeholder="{% trans 'Beschreibung' %}" class="block w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#181818] text-gray-800 dark:text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#fdba74] focus:outline-none"></textarea>
         <!-- Button für weitere Optionen -->
         <button type="button" id="toggleRepeatOptions" class="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-100 rounded-lg px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-between mt-2 cursor-pointer">
           <span>{% trans "Weitere Optionen" %}</span>
@@ -107,18 +139,13 @@
         </div>
         <!-- Buttons zum Hinzufügen/Löschen -->
         <div class="flex space-x-2 mt-4">
-          <button type="submit" id="eventSubmitBtn" class="flex-1 bg-[#042c58] dark:bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600 dark:hover:bg-blue-400 transition cursor-pointer">{% trans "Hinzufügen" %}</button>
+          <button type="submit" id="eventSubmitBtn" class="flex-1 bg-[#c05621] dark:bg-[#fb923c] text-white rounded-lg px-4 py-2 hover:bg-[#ea580c] dark:hover:bg-[#fdba74] transition cursor-pointer">{% trans "Hinzufügen" %}</button>
           <button type="button" id="eventDeleteBtn" class="flex-1 hidden bg-red-500 text-white rounded-lg px-4 py-2 hover:bg-red-600 dark:hover:bg-red-400 transition cursor-pointer">{% trans "Löschen" %}</button>
         </div>
       </form>
+      </div>
     </div>
   </div>
-</div>
-<!-- Buttons für mobile version -->
-<div class="md:hidden flex w-auto gap-4 mt-auto">
-  <button onclick="document.getElementById('icsUpload').click();" class="bg-[#717f8b] text-sm dark:bg-gray-700 text-white dark:text-gray-100 rounded-lg px-4 py-2 shadow hover:bg-[#8a99a8] dark:hover:bg-gray-600 w-full">{% trans "Kalender importieren" %}</button>
-  <button type="submit" form="exportForm" class="bg-[#717f8b] text-sm dark:bg-gray-700 text-white dark:text-gray-100 rounded-lg px-4 py-2 shadow hover:bg-[#8a99a8] dark:hover:bg-gray-600 w-full">{% trans "Kalender exportieren" %}</button>
-</div>
 
 <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
 <input type="hidden" id="currentUserId" value="{{ request.user.id }}">
