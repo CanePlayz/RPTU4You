@@ -33,42 +33,19 @@ STATIC_SOURCE_MODELS = {
     "Trusted Account": TrustedAccountQuelle,
 }
 
-RUNDMAIL_TRANSLATION_FALLBACKS = {
-    "de": "📧 Rundmails",
-    "en": "📧 Circular mails",
-    "es": "📧 Correos circulares",
-    "fr": "📧 Circulaire",
+RUNDMAIL_BASE_NAMES = {
+    "de": "Rundmail",
+    "en": "Circular mail",
+    "es": "Correo circular",
+    "fr": "Circulaire",
 }
 
-SAMMEL_RUNDMAIL_TRANSLATION_FALLBACKS = {
-    "de": "📧 Sammel-Rundmails",
-    "en": "📧 Collective circular mails",
-    "es": "📧 Correos circulares colectivos",
-    "fr": "📧 Circulaire collective",
+SAMMEL_RUNDMAIL_BASE_NAMES = {
+    "de": "Sammel-Rundmail",
+    "en": "Collective circular mail",
+    "es": "Correo circular colectivo",
+    "fr": "Circulaire collective",
 }
-
-
-def _load_translation_map(msgid: str, fallbacks: dict[str, str]) -> dict[str, str]:
-    """Gibt eine Übersetzungskarte für die angegebenen Sprachen zurück."""
-    translation_map: dict[str, str] = {}
-    for language_code, fallback in fallbacks.items():
-        try:
-            with override(language_code):
-                translated = gettext(msgid)
-        except Exception:
-            translated = None
-
-        translation_map[language_code] = translated or fallback
-    return translation_map
-
-
-RUNDMAIL_BASE_NAMES = _load_translation_map(
-    "📧 Rundmails", RUNDMAIL_TRANSLATION_FALLBACKS
-)
-
-SAMMEL_RUNDMAIL_BASE_NAMES = _load_translation_map(
-    "📧 Sammel-Rundmails", SAMMEL_RUNDMAIL_TRANSLATION_FALLBACKS
-)
 
 JOB_SAMMEL_RUNDMAIL_BASE_NAMES = {
     "de": "Stellenangebote Sammel-Rundmail",
