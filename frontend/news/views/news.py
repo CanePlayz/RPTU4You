@@ -30,11 +30,11 @@ def _get_upcoming_events(request: HttpRequest) -> List[CalendarEvent]:
     if request.user.is_authenticated:
         user_events = CalendarEvent.objects.filter(start__gte=now, user=request.user)
         global_events = CalendarEvent.objects.filter(start__gte=now, is_global=True)
-        return list((user_events | global_events).distinct().order_by("start")[:3])
+        return list((user_events | global_events).distinct().order_by("start")[:4])
 
     return list(
         CalendarEvent.objects.filter(start__gte=now, is_global=True).order_by("start")[
-            :3
+            :4
         ]
     )
 

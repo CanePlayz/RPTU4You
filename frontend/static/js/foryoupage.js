@@ -1,5 +1,24 @@
 // Diese Datei erweitert die Listenlogik aus newsFeedCore.js um das AJAX-basierte Speichern der Nutzerpräferenzen
 
+// Funktion zum Ein- und Ausklappen von Filtersektionen (analog zur News-Seite)
+window.toggleFilter = function (name) {
+  var section = document.getElementById("filter-" + name);
+  var chevron = document.getElementById("chevron-" + name);
+  var trigger = document.querySelector('[data-filter-target="' + name + '"]');
+  if (!section) {
+    return;
+  }
+  var isHidden = section.classList.contains("hidden");
+  section.classList.toggle("hidden", !isHidden);
+  section.setAttribute("aria-hidden", isHidden ? "false" : "true");
+  if (chevron) {
+    chevron.classList.toggle("rotate-90", isHidden);
+  }
+  if (trigger) {
+    trigger.setAttribute("aria-expanded", isHidden ? "true" : "false");
+  }
+};
+
 document.addEventListener("DOMContentLoaded", function () {
   // Prüft, ob newsFeedCore.js geladen wurde und bricht andernfalls mit einer Fehlermeldung ab
   if (!window.NewsFeedCore || typeof window.NewsFeedCore.initNewsFeed !== "function") {
@@ -59,7 +78,72 @@ document.addEventListener("DOMContentLoaded", function () {
     },
   });
 
-  // Abbruch, wenn das Formular nicht existiert
+  // Logik für das Ein- und Ausklappen des Filter-Dropdowns auf Mobile
+  const toggle = document.getElementById("4youfilter-button");
+  const dropdown = document.getElementById("4youfilter");
+  const overlay = document.getElementById("foryou-filter-overlay");
+
+  if (dropdown) {
+    dropdown.setAttribute("aria-hidden", dropdown.classList.contains("max-md:hidden") ? "true" : "false");
+  }
+
+  if (!toggle || !dropdown) {
+    console.warn("foryoupage.js: Toggle oder Dropdown fehlt", { toggleFound: !!toggle, dropdownFound: !!dropdown });
+  }
+
+  function openFilter() {
+    dropdown.classList.remove("max-md:hidden");
+    dropdown.setAttribute("aria-hidden", "false");
+    if (overlay) {
+      overlay.classList.remove("hidden");
+    }
+    document.body.classList.add("overflow-hidden");
+    toggle.setAttribute("aria-expanded", "true");
+  }
+
+  function closeFilter() {
+    dropdown.classList.add("max-md:hidden");
+    dropdown.setAttribute("aria-hidden", "true");
+    if (overlay) {
+      overlay.classList.add("hidden");
+    }
+    document.body.classList.remove("overflow-hidden");
+    toggle.setAttribute("aria-expanded", "false");
+  }
+
+  if (toggle && dropdown) {
+    toggle.addEventListener("click", function (event) {
+      event.stopPropagation();
+      var filterIsHidden = dropdown.classList.contains("max-md:hidden");
+      if (filterIsHidden) {
+        openFilter();
+      } else {
+        closeFilter();
+      }
+    });
+
+    document.addEventListener("click", function (event) {
+      if (!dropdown.contains(event.target) && !toggle.contains(event.target)) {
+        closeFilter();
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        closeFilter();
+      }
+    });
+
+    if (overlay) {
+      overlay.addEventListener("click", function () {
+        closeFilter();
+      });
+    }
+  } else {
+    console.error("Filter-Button oder Filter-Dropdown nicht gefunden.");
+  }
+
+  // Abbruch, wenn das Formular nicht existiert (z. B. anonyme Nutzer)
   var preferencesForm = document.getElementById("preferences-form");
   if (!preferencesForm) {
     return;
@@ -67,6 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Referenzen auf alle relevanten Formular-Elemente erstellen
   var submitButton = document.getElementById("preferences-submit-btn");
+  var resetButton = document.getElementById("preferences-reset-btn");
   var feedbackBox = document.getElementById("preferences-feedback");
 
   // Funktion zur Anzeige von Feedback-Nachrichten
@@ -171,36 +256,10 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   });
 
-// Logik für das Ein- und Ausklappen des Filter-Dropdowns auf Mobile
-  const toggle = document.getElementById("4youfilter-button");
-  const dropdown = document.getElementById("4youfilter");
-  const news = document.getElementById("news");
-
-  if (!toggle || !dropdown) {
-    console.warn("news.js: Toggle oder Dropdown fehlt", { toggleFound: !!toggle, dropdownFound: !!dropdown });
-  }
-
-  if (toggle && dropdown) {
-    toggle.addEventListener("click", (event) => {
-      event.stopPropagation();
-      const filter_is_Hidden = dropdown.classList.contains("max-md:hidden");
-      if (filter_is_Hidden) {
-        dropdown.classList.remove("max-md:hidden");
-        news.classList.add("hidden")
-      } else {
-        dropdown.classList.add("max-md:hidden");
-        news.classList.remove("hidden");
-      }
+  if (resetButton && preferencesForm) {
+    resetButton.addEventListener("click", function () {
+      preferencesForm.reset();
+      updateFeedback("", false);
     });
-
-    // Schließt das Dropdown, wenn man außerhalb davon klickt
-    document.addEventListener("click", (event) => {
-      if (!dropdown.contains(event.target) && !toggle.contains(event.target)) {
-        dropdown.classList.add("max-md:hidden");
-        news.classList.remove("hidden")
-      }
-    });
-  } else {
-    console.error("Filter-Button oder Filter-Dropdown nicht gefunden.");
   }
 });

@@ -7,119 +7,191 @@
 {% endblock %}
 
 {% block content %}
-<div class="flex bg-gray-100 dark:bg-gray-900 min-h-[calc(100vh-72px)]">
+<div class="foryou-page">
+    <div class="columns-row px-4 py-6 md:px-6">
 
-    <!-- Linke Seite: Präferenzformular -->
+        <!-- Linke Seite: Präferenzpanel -->
 
-    <!-- Button für Präferenzformular auf Mobilgeräten -->
-    <button type="button" class="fixed right-0 top-1/2 md:hidden" data-dropdown-toggle="4youfilter" id="4youfilter-button">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
-        </svg>
-    </button>
-
-    <div id="preferences" class="max-md:hidden max-md:left-0 max-md:w-full md:w-80 pl-5 pr-2 sticky md:top-[72px] h-[calc(100vh-72px)] overflow-y-auto">
-        <form id="preferences-form" action="{% url 'preferences' %}" method="post" class="py-6 pr-2">
-            {% csrf_token %}
-            <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">{% trans "Deine Präferenzen" %}</h2>
-            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">{% trans "Passe deine Empfehlungen für die 4YouPage an." %}</p>
-
-            {% if preferences_form.non_field_errors %}
-                {% for error in preferences_form.non_field_errors %}
-                    <p class="form-error mb-1">{{ error }}</p>
-                {% endfor %}
-            {% endif %}
-
-            <div class="space-y-6">
-                <div>
-                    <label for="{{ preferences_form.standorte.id_for_label }}" class="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">{{ preferences_form.standorte.label }}</label>
-                    <div class="space-y-2 text-gray-800 dark:text-gray-100 cursor-pointer">
-                        {{ preferences_form.standorte }}
+        <div id="4youfilter" class="side-column md:overflow-visible max-md:hidden max-md:fixed max-md:inset-y-0 max-md:right-0 max-md:z-40 max-md:w-[min(24rem,100%)] max-md:max-w-full max-md:p-4">
+            <div class="accent-card scrollable-column filter-panel-card max-md:shadow-xl">
+                <div class="flex items-start justify-between gap-4 pb-1">
+                    <div class="space-y-1">
+                        <h2 class="accent-card-title text-xl md:text-2xl">{% trans "Deine Präferenzen" %}</h2>
+                        <p class="text-xs leading-relaxed text-gray-500 dark:text-gray-400 md:text-sm">{% trans "Passe deine Präferenzen an" %}</p>
                     </div>
-                    {% if preferences_form.standorte.errors %}
-                        {% for error in preferences_form.standorte.errors %}
-                            <p class="form-error">{{ error }}</p>
-                        {% endfor %}
-                    {% endif %}
+                    <button type="button" class="filter-close-btn" onclick="document.getElementById('4youfilter-button').click()" aria-label="{% trans 'Filter schließen' %}">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6 6 18" />
+                        </svg>
+                    </button>
                 </div>
 
-                <div>
-                    <label for="{{ preferences_form.inhaltskategorien.id_for_label }}" class="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">{{ preferences_form.inhaltskategorien.label }}</label>
-                    <div class="space-y-2 text-gray-800 dark:text-gray-100 cursor-pointer">
-                        {{ preferences_form.inhaltskategorien }}
-                    </div>
-                    {% if preferences_form.inhaltskategorien.errors %}
-                        {% for error in preferences_form.inhaltskategorien.errors %}
-                            <p class="form-error">{{ error }}</p>
-                        {% endfor %}
-                    {% endif %}
-                </div>
+                <form id="preferences-form" action="{% url 'preferences' %}" method="post" class="flex flex-col gap-4">
+                    {% csrf_token %}
 
-                <div>
-                    <label for="{{ preferences_form.zielgruppen.id_for_label }}" class="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">{{ preferences_form.zielgruppen.label }}</label>
-                    <div class="space-y-2 text-gray-800 dark:text-gray-100 cursor-pointer">
-                        {{ preferences_form.zielgruppen }}
-                    </div>
-                    {% if preferences_form.zielgruppen.errors %}
-                        {% for error in preferences_form.zielgruppen.errors %}
-                            <p class="form-error">{{ error }}</p>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-
-                <div>
-                    <label for="{{ preferences_form.quellen.auto_id }}" class="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">{{ preferences_form.quellen.label }}</label>
-                    <div id="{{ preferences_form.quellen.auto_id }}" class="text-gray-800 dark:text-gray-100">
-                        {% for option in preferences_form.ordered_sources %}
-                        <div>
-                            <label for="{{ option.id }}">
-                                {{ option.input_html|safe }} {{ option.label }}
-                            </label>
+                    {% if preferences_form.non_field_errors %}
+                        <div class="space-y-1">
+                            {% for error in preferences_form.non_field_errors %}
+                                <p class="form-error">{{ error }}</p>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
-                    </div>
-                    {% if preferences_form.quellen.errors %}
-                        {% for error in preferences_form.quellen.errors %}
-                            <p class="form-error">{{ error }}</p>
-                        {% endfor %}
                     {% endif %}
-                </div>
+
+
+                        <div class="space-y-3">
+                            <div class="filter-section">
+                                <button type="button" class="filter-toggle" data-filter-target="standorte" onclick="toggleFilter('standorte')" aria-controls="filter-standorte" aria-expanded="{% if preferences_form.standorte.value or preferences_form.standorte.errors %}true{% else %}false{% endif %}">
+                                    <span>{{ preferences_form.standorte.label }}</span>
+                                    <svg id="chevron-standorte" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="{% if preferences_form.standorte.value or preferences_form.standorte.errors %}rotate-90{% endif %}">
+                                        <path fill-rule="evenodd" d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <div id="filter-standorte" class="filter-options {% if not preferences_form.standorte.value and not preferences_form.standorte.errors %}hidden{% endif %}" aria-hidden="{% if preferences_form.standorte.value or preferences_form.standorte.errors %}false{% else %}true{% endif %}">
+                                    {% for checkbox in preferences_form.standorte %}
+                                    <label class="filter-checkbox" for="{{ checkbox.id_for_label }}">
+                                        {{ checkbox.tag }}
+                                        <span>{{ checkbox.choice_label|safe }}</span>
+                                    </label>
+                                    {% endfor %}
+                                </div>
+                                {% if preferences_form.standorte.errors %}
+                                <div class="mt-2 space-y-1">
+                                    {% for error in preferences_form.standorte.errors %}
+                                        <p class="form-error">{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="filter-section">
+                                <button type="button" class="filter-toggle" data-filter-target="kategorien" onclick="toggleFilter('kategorien')" aria-controls="filter-kategorien" aria-expanded="{% if preferences_form.inhaltskategorien.value or preferences_form.inhaltskategorien.errors %}true{% else %}false{% endif %}">
+                                    <span>{{ preferences_form.inhaltskategorien.label }}</span>
+                                    <svg id="chevron-kategorien" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="{% if preferences_form.inhaltskategorien.value or preferences_form.inhaltskategorien.errors %}rotate-90{% endif %}">
+                                        <path fill-rule="evenodd" d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <div id="filter-kategorien" class="filter-options {% if not preferences_form.inhaltskategorien.value and not preferences_form.inhaltskategorien.errors %}hidden{% endif %}" aria-hidden="{% if preferences_form.inhaltskategorien.value or preferences_form.inhaltskategorien.errors %}false{% else %}true{% endif %}">
+                                    {% for checkbox in preferences_form.inhaltskategorien %}
+                                    <label class="filter-checkbox" for="{{ checkbox.id_for_label }}">
+                                        {{ checkbox.tag }}
+                                        <span>{{ checkbox.choice_label|safe }}</span>
+                                    </label>
+                                    {% endfor %}
+                                </div>
+                                {% if preferences_form.inhaltskategorien.errors %}
+                                <div class="mt-2 space-y-1">
+                                    {% for error in preferences_form.inhaltskategorien.errors %}
+                                        <p class="form-error">{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="filter-section">
+                                <button type="button" class="filter-toggle" data-filter-target="zielgruppen" onclick="toggleFilter('zielgruppen')" aria-controls="filter-zielgruppen" aria-expanded="{% if preferences_form.zielgruppen.value or preferences_form.zielgruppen.errors %}true{% else %}false{% endif %}">
+                                    <span>{{ preferences_form.zielgruppen.label }}</span>
+                                    <svg id="chevron-zielgruppen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="{% if preferences_form.zielgruppen.value or preferences_form.zielgruppen.errors %}rotate-90{% endif %}">
+                                        <path fill-rule="evenodd" d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <div id="filter-zielgruppen" class="filter-options {% if not preferences_form.zielgruppen.value and not preferences_form.zielgruppen.errors %}hidden{% endif %}" aria-hidden="{% if preferences_form.zielgruppen.value or preferences_form.zielgruppen.errors %}false{% else %}true{% endif %}">
+                                    {% for checkbox in preferences_form.zielgruppen %}
+                                    <label class="filter-checkbox" for="{{ checkbox.id_for_label }}">
+                                        {{ checkbox.tag }}
+                                        <span>{{ checkbox.choice_label|safe }}</span>
+                                    </label>
+                                    {% endfor %}
+                                </div>
+                                {% if preferences_form.zielgruppen.errors %}
+                                <div class="mt-2 space-y-1">
+                                    {% for error in preferences_form.zielgruppen.errors %}
+                                        <p class="form-error">{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="filter-section">
+                                <button type="button" class="filter-toggle" data-filter-target="quellen" onclick="toggleFilter('quellen')" aria-controls="filter-quellen" aria-expanded="{% if preferences_form.quellen.value or preferences_form.quellen.errors %}true{% else %}false{% endif %}">
+                                    <span>{{ preferences_form.quellen.label }}</span>
+                                    <svg id="chevron-quellen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="{% if preferences_form.quellen.value or preferences_form.quellen.errors %}rotate-90{% endif %}">
+                                        <path fill-rule="evenodd" d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <div id="filter-quellen" class="filter-options {% if not preferences_form.quellen.value and not preferences_form.quellen.errors %}hidden{% endif %}" aria-hidden="{% if preferences_form.quellen.value or preferences_form.quellen.errors %}false{% else %}true{% endif %}">
+                                    {% for option in preferences_form.ordered_sources %}
+                                    <label class="filter-checkbox" for="{{ option.id }}">
+                                        {{ option.input_html|safe }}
+                                        <span>{{ option.label|safe }}</span>
+                                    </label>
+                                    {% endfor %}
+                                </div>
+                                {% if preferences_form.quellen.errors %}
+                                <div class="mt-2 space-y-1">
+                                    {% for error in preferences_form.quellen.errors %}
+                                        <p class="form-error">{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+
+
+                    <div class="filter-panel-actions">
+                        <button type="button" id="preferences-reset-btn" class="accent-outline-btn w-full">{% trans "Zurücksetzen" %}</button>
+                        <button type="submit" id="preferences-submit-btn" class="accent-solid-btn w-full">{% trans "Speichern" %}</button>
+                    </div>
+                </form>
             </div>
+        </div>
 
-            <p id="preferences-feedback" class="hidden text-sm mt-3"></p>
-            <button type="submit" id="preferences-submit-btn" class="max-md:left-1/2 mt-4 w-full rounded-md bg-[#042c58] text-white px-4 py-2 hover:bg-[#064694] cursor-pointer">{% trans "Speichern" %}</button>
-        </form>
-    </div>
+        <!-- Mitte: News -->
 
-    <!-- Mitte: News -->
-
-    <div id="news" class="flex-1 mt-3 px-8 overflow-y-auto">
-        <main id="main">
-            <div id="news-container">
+        <div id="news" class="middle-column scrollable-column">
+            <div id="news-container" class="flex flex-col gap-4">
                 {% include "news/partials/_news_list.html" with news_list=news_list has_more=has_more %}
             </div>
-        </main>
+        </div>
+
+        <!-- Rechte Seite: Terminkalender -->
+
+        <div id="calendar" class="side-column md:overflow-visible">
+            <div class="accent-card scrollable-column filter-panel-card">
+                <div class="space-y-1">
+                    <h2 class="accent-card-title text-xl md:text-2xl">{% trans "Nächste Termine" %}</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{% trans "Ein Blick in den Kalender" %}</p>
+                </div>
+                {% if upcoming_events %}
+                <div class="flex-1">
+                    <ul class="flex flex-col gap-3">
+                        {% for event in upcoming_events %}
+                        <li>
+                            <a href="{% url 'calendar_page' %}" class="accent-card-link">
+                                <p class="font-semibold text-gray-800 dark:text-gray-100">{{ event.title }}</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-300">{{ event.start|date:"d.m.Y H:i" }} &ndash; {{ event.end|date:"H:i" }}</p>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <a href="{% url 'calendar_page' %}" class="accent-link mt-3">{% trans "Alle Termine anzeigen" %}</a>
+                {% else %}
+                <div class="flex flex-1 flex-col items-center justify-center rounded-md bg-gray-100 px-4 py-6 text-center text-sm text-gray-500 dark:bg-gray-700 dark:text-gray-300">
+                    {% trans "Keine anstehenden Termine." %}
+                </div>
+                <a href="{% url 'calendar_page' %}" class="accent-link mt-3 self-center">{% trans "Zum Kalender" %}</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
 
-    <!-- Rechte Seite: Terminkalender -->
-
-    <div id="calendar" class="max-md:hidden w-80 pr-5 sticky top-[72px] h-[calc(100vh-72px)] overflow-auto">
-        <h2 class="text-xl font-bold my-4 text-gray-800 dark:text-gray-100">{% trans "Nächste Termine" %}</h2>
-        {% if upcoming_events %}
-        <a href="{% url 'calendar_page' %}">
-            <ul class="space-y-4">
-                {% for event in upcoming_events %}
-                <li class="bg-gray-50 dark:bg-gray-800 p-4 mr rounded-lg shadow">
-                    <p class="font-bold text-gray-800 dark:text-gray-100">{{ event.title }}</p>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ event.start|date:"d.m.Y H:i" }} - {{ event.end|date:"H:i" }}</p>
-                </li>
-                {% endfor %}
-            </ul>
-        </a>
-        {% else %}
-        <p class="text-gray-500 dark:text-gray-400 italic text-center">{% trans "Keine anstehenden Termine." %}</p>
-        {% endif %}
-    </div>
+    <button type="button" class="accent-fab" data-dropdown-toggle="4youfilter" id="4youfilter-button" aria-controls="4youfilter" aria-expanded="false">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-6 w-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h18M6 12h12m-9 7h6" />
+        </svg>
+    </button>
+    <div id="foryou-filter-overlay" class="fixed inset-0 z-30 hidden bg-gray-900/60 md:hidden"></div>
 </div>
 
 <script src="{% static 'js/newsFeedCore.js' %}"></script>

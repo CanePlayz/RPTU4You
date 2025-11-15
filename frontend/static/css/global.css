@@ -10,7 +10,7 @@ body {
 /* Dezente Scrollbar */
 
 /* Firefox */
-.scrollable-column, .content-area {
+.scrollable-column {
     scrollbar-width: thin;
     scrollbar-color: #6b7280 #1f2937;
 }
@@ -20,26 +20,23 @@ body {
 }
 
 /* Chrome / Edge / Safari */
-.scrollable-column::-webkit-scrollbar, .content-area::-webkit-scrollbar {
+.scrollable-column::-webkit-scrollbar {
     width: 8px;
 }
 
-.scrollable-column::-webkit-scrollbar-track, .content-area::-webkit-scrollbar-track {
+.scrollable-column::-webkit-scrollbar-track {
     background: #1f2937;
 }
 
-.scrollable-column::-webkit-scrollbar-thumb, .content-area::-webkit-scrollbar-thumb {
+.scrollable-column::-webkit-scrollbar-thumb {
     background-color: #6b7280;
-    border-radius: 6px;
 }
 
-:root:not(.dark) .scrollable-column::-webkit-scrollbar-track,
-.content-area::-webkit-scrollbar-track {
+:root:not(.dark) .scrollable-column::-webkit-scrollbar-track {
     background: #e5e7eb;
 }
 
-:root:not(.dark) .scrollable-column::-webkit-scrollbar-thumb,
-.content-area::-webkit-scrollbar-thumb {
+:root:not(.dark) .scrollable-column::-webkit-scrollbar-thumb {
     background-color: #c5c7ca;
 }
 

@@ -5,30 +5,30 @@
   <h2 class="font-bold text-2xl text-gray-800 dark:text-gray-100 my-6">{{ text.titel }}</h2>
   <!-- Informationen zu der Nachricht -->
   <div class="flex flex-wrap gap-4 text-sm mb-2">
-  <span class="bg-gray-200 dark:bg-gray-800 rounded px-2 py-1 text-gray-700 dark:text-gray-200"><strong>{% trans "Erstellt am:" %}</strong> {{ news.erstellungsdatum|date:"d.m.Y H:i" }}</span>
-  <span class="bg-gray-200 dark:bg-gray-800 rounded px-2 py-1 text-gray-700 dark:text-gray-200"><strong>{% trans "Quelle:" %}</strong> {{ news.quelle.name }}</span>
-  <span class="bg-gray-200 dark:bg-gray-800 rounded px-2 py-1 text-gray-700 dark:text-gray-200">
+  <span class="rounded bg-gray-50/80 px-2 py-1 text-gray-700 dark:bg-gray-700/70 dark:text-gray-200"><strong>{% trans "Erstellt am:" %}</strong> {{ news.erstellungsdatum|date:"d.m.Y H:i" }}</span>
+  <span class="rounded bg-gray-50/80 px-2 py-1 text-gray-700 dark:bg-gray-700/70 dark:text-gray-200"><strong>{% trans "Quelle:" %}</strong> {{ news.quelle.name }}</span>
+  <span class="rounded bg-gray-50/80 px-2 py-1 text-gray-700 dark:bg-gray-700/70 dark:text-gray-200">
     <strong>{% trans "Kategorien:" %}</strong>
     {% for cat in news.inhaltskategorien.all %}
       {{ cat.name|kategorie_emoji }}
     {% endfor %}
   </span>
-  <span class="bg-gray-200 dark:bg-gray-800 rounded px-2 py-1 text-gray-700 dark:text-gray-200">
+  <span class="rounded bg-gray-50/80 px-2 py-1 text-gray-700 dark:bg-gray-700/70 dark:text-gray-200">
     <strong>{% trans "Standorte:" %}</strong>
     {% for loc in news.standorte.all %}
       {{ loc.name|standort_emoji }}
     {% endfor %}
   </span>
-  <span class="bg-gray-200 dark:bg-gray-800 rounded px-2 py-1 text-gray-700 dark:text-gray-200">
+  <span class="rounded bg-gray-50/80 px-2 py-1 text-gray-700 dark:bg-gray-700/70 dark:text-gray-200">
     <strong>{% trans "Zielgruppen:" %}</strong>
     {% for aud in news.zielgruppen.all %}
       {{ aud.name|zielgruppe_emoji }}
     {% endfor %}
   </span>
   {% if news.link %}
-    <a href="{{ news.link }}" target="_blank" rel="noopener noreferrer" class="bg-[#042c58] dark:bg-gray-700 text-white dark:text-gray-100 rounded px-4 py-1 font-semibold hover:bg-[#064694] dark:hover:bg-gray-600 transition">{% trans "Zur Originalquelle" %}</a>
+    <a href="{{ news.link }}" target="_blank" rel="noopener noreferrer" class="accent-chip accent-chip--interactive">{% trans "Zur Originalquelle" %}</a>
   {% else %}
-    <span class="bg-[#042c58] dark:bg-gray-700 text-white dark:text-gray-100 rounded px-4 py-1 font-semibold">
+    <span class="accent-chip cursor-default">
       {% blocktrans with username=news.quelle.name %}Eingereicht von {{ username }}{% endblocktrans %}
     </span>
   {% endif %}
@@ -42,6 +42,6 @@
   {% endif %}
   <!-- Zurück zur Übersicht -->
   <div class="my-6">
-  <a href="#" id="back-to-list" class="text-[#042c58] dark:text-blue-500 hover:underline font-semibold">← {% trans "Zurück zur Übersicht" %}</a>
+  <a href="#" id="back-to-list" class="accent-link font-semibold hover:underline">← {% trans "Zurück zur Übersicht" %}</a>
   </div>
 </article>

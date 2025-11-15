@@ -3,17 +3,20 @@
 /* Dark-Klasse auf Vorfahren als Dark-Mode-Schalter behandeln */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Hier nach Tailwind-Klassen suchen */
+/* Templates & Python-Quellen angeben, damit die Klassen gefunden werden */
 @source "../templates/**/*.html";
 @source "../news/**/*.py";
 
+
+/* Komponenten-Layer: hier liegen alle relevanten Klassen */
 @layer components {
-	/* Hauptfenster */
+	/* Layout-Hülle & Navigation */
+	/* Hauptfenster mit kleinem Rahmen */
     .window {
 		@apply relative w-[95vw] h-[95vh] border-2 border-[#222] rounded-[40px] overflow-hidden flex flex-col min-h-0;
 	}
 
-	/* Navigationsleiste */
+	/* Obere Navigationsleiste */
 	.nav-bar {
 		@apply sticky top-0 z-10 bg-[#042c58] dark:bg-[#0a111a] w-full;
 	}
@@ -28,15 +31,15 @@
 		@apply overflow-y-auto;
 	}
 
-	/* 3-Spalten-Layout */
+	/* 3-Spalten-Layout und Scroll-Spalten */
 	.columns-row {
-		@apply flex flex-row flex-1 min-h-0 h-full;
+		@apply flex flex-col gap-6 md:flex-row flex-1 min-h-0 h-full;
 	}
 	.side-column {
-		@apply w-1/5 p-5;
+		@apply w-full p-0 md:flex md:flex-col md:flex-initial md:min-w-[18rem] md:max-w-[20rem] lg:min-w-[19rem] lg:max-w-[22rem] xl:min-w-[20rem] xl:max-w-[24rem] md:p-2 lg:p-3;
 	}
 	.middle-column {
-		@apply w-3/5 p-5;
+		@apply w-full md:flex-1 md:min-w-0 max-w-full pt-0 pb-0 md:pl-2 md:pr-2 md:mt-2 md:mb-2 lg:pl-3 lg:pr-3 lg:mt-3 lg:mb-3;
 	}
 	.scrollable-column {
 		@apply overflow-y-auto min-w-0 min-h-0;
@@ -46,18 +49,16 @@
 	.page-shell {
 		@apply bg-gray-100 dark:bg-gray-900 min-h-full grid place-items-center py-12;
 	}
-	/* Reserve für Scrolling auf Mobile mit Nav-Footer */
-	@media (max-width: 767px) {
-		.content-scroll { scroll-padding-bottom: 4rem; }
-	}
 
-	/* Karten und Formulare */
+	/* Akzent-Karten */
     .accent-card-title {
 		@apply text-2xl md:text-3xl font-semibold text-gray-800 dark:text-gray-100;
 	}
     .accent-card {
 		@apply bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md w-full p-6;
 	}
+
+	/* Formularelemente auf Karten-Seiten */
 	.form-label {
 		@apply block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2;
 	}
@@ -71,7 +72,7 @@
 		@apply mt-2 text-xs font-medium text-rose-500 dark:text-rose-300;
 	}
 
-	/* Footer */
+	/* Footer & Links im Footer */
 	.site-footer {
 		@apply bg-[#042c58] dark:bg-[#0a111a] text-gray-100 flex flex-col md:flex-row items-center justify-between gap-3 px-6 py-4 text-sm md:text-base;
 	}
@@ -79,6 +80,252 @@
 		@apply flex flex-col md:flex-row items-center gap-6 pl-2 md:pl-4;
 	}
 	.site-footer__link {
-		@apply text-gray-100 hover:text-white transition-colors duration-200;
+		@apply text-gray-100 transition-colors duration-200 hover:text-[#bfdbfe];
+	}
+
+	/* RPTU4You-Schriftzug in der Navbar mit Glow-Effekt */
+	.brand-link {
+		@apply relative inline-flex items-center font-bold whitespace-nowrap uppercase text-white transition-all duration-300 ease-out px-3 py-1 isolate;
+		text-shadow: 0 0 8px rgba(191, 219, 254, 0.35);
+	}
+
+	.brand-link::before,
+	.brand-link::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		border-radius: 9999px;
+		z-index: -1;
+		transition: transform 220ms ease, opacity 220ms ease, box-shadow 220ms ease;
+	}
+
+	.brand-link::before {
+		opacity: 0;
+		transform: scale(0.75);
+		background: radial-gradient(circle at 30% 30%, rgba(191, 219, 254, 0.45), rgba(37, 99, 235, 0.15) 55%, transparent 70%);
+	}
+
+	.brand-link::after {
+		opacity: 0;
+		transform: scaleX(0.6) scaleY(0.8);
+		background: linear-gradient(135deg, rgba(191, 219, 254, 0.35), rgba(59, 130, 246, 0.2));
+		box-shadow: 0 0 0 rgba(59, 130, 246, 0);
+	}
+
+	.brand-link:hover {
+		color: #e0f2fe;
+		transform: translateY(-2px);
+	}
+
+	.brand-link:hover::before,
+	.brand-link:hover::after {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	.brand-link:hover::after {
+		box-shadow: 0 10px 25px rgba(30, 64, 175, 0.35);
+	}
+
+	/* Seiten-spezifische Akzentbereiche (News vs. ForYou) */
+	/* accent-primary: Navbar, Filter-Icon, Outline wenn fokussiert */
+	/* accent-strong: Buttons im Filter-Panel & Quellen-Chip auf News-Detailseiten */
+	/* accent-outline: Outline beim Hovern über sämtliche Boxen */
+	/* accent-link: Links im Kalender-Bereich und auf News-Detailseiten */
+	.news-page {
+		@apply flex flex-col h-full min-h-0;
+		--accent-primary: #2563eb;
+		--accent-strong: #0c3a6e;
+		--accent-strong-hover: #1b5fab;
+		--accent-outline: #60a5fa;
+		--accent-link: #60a5fa;
+		--accent-link-hover: #2563eb;
+	}
+
+	.foryou-page {
+		@apply flex flex-col h-full min-h-0;
+		--accent-primary: #c084fc;
+		--accent-strong: #7c3aed;
+		--accent-strong-hover: #8b5cf6;
+		--accent-outline: #d8b4fe;
+		--accent-link: #d8b4fe;
+		--accent-link-hover: #8b5cf6;
+	}
+
+	/* Filter-Layouts (Desktop & mobil) */
+	.filter-panel-card {
+		@apply md:sticky md:top-6 flex flex-col gap-4 w-full max-md:w-full min-w-0 min-h-0 md:flex-1;
+		max-height: calc(100vh - 4rem);
+	}
+
+	@media (min-width: 768px) {
+		.filter-panel-card {
+			max-height: calc(100vh - 6rem);
+		}
+	}
+
+	/* Einzelne Filterabschnitte samt Toggle-Verhalten */
+	.filter-section {
+		@apply rounded-lg border border-gray-200/80 bg-gray-50/80 px-3 py-2.5 shadow-sm dark:border-gray-700/60 dark:bg-gray-700/60;
+	}
+
+	.filter-toggle {
+		@apply flex w-full items-center justify-between gap-2 py-1 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 transition-colors duration-150 dark:text-gray-300;
+	}
+
+	.filter-toggle:hover {
+		color: var(--accent-outline);
+	}
+
+	.filter-toggle svg {
+		@apply h-3 w-3 shrink-0 transition-transform duration-200;
+	}
+
+	.filter-options {
+		@apply mt-1 flex flex-col gap-0.5;
+	}
+
+	.filter-checkbox {
+		@apply flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-gray-700 transition-colors duration-150 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600;
+	}
+
+	.filter-checkbox span {
+		@apply text-sm leading-tight;
+	}
+
+	.filter-checkbox input[type="checkbox"] {
+		@apply h-4 w-4 rounded border-gray-300 focus:ring-0 dark:border-gray-500;
+		accent-color: var(--accent-outline);
+	}
+
+	.dark .filter-checkbox input[type="checkbox"] {
+		accent-color: var(--accent-outline);
+	}
+
+	/* Footer der Filterkarte mit Button-Grid */
+	.filter-panel-actions {
+		@apply grid grid-cols-1 gap-2 border-t border-gray-200 pt-4 dark:border-gray-700 sm:gap-3;
+	}
+
+	/* Schließen-Button für mobile Filter-Ansicht */
+	.filter-close-btn {
+		@apply md:hidden inline-flex h-9 w-9 items-center justify-center rounded-full border border-gray-300 text-gray-500 transition-colors duration-150 focus:outline-none dark:border-gray-600 dark:text-gray-300;
+	}
+
+	.filter-close-btn:hover {
+		color: var(--accent-outline);
+	}
+
+	.dark .filter-close-btn:hover {
+		color: var(--accent-outline);
+	}
+
+	.filter-close-btn:focus-visible {
+		outline: 2px solid var(--accent-outline);
+		outline-offset: 2px;
+	}
+
+	/* Buttons mit Akzentfarben (linkes Panel in News & ForYouPage) */
+	.accent-outline-btn {
+		@apply cursor-pointer rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 text-center whitespace-normal break-words transition-colors duration-150 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100;
+	}
+
+	.accent-outline-btn:hover {
+		color: var(--accent-outline);
+		border-color: var(--accent-outline);
+	}
+
+	.dark .accent-outline-btn:hover {
+		color: var(--accent-outline);
+		border-color: var(--accent-outline);
+	}
+
+	.accent-solid-btn {
+		@apply cursor-pointer rounded-md border px-3 py-2 text-sm text-white text-center whitespace-normal break-words transition-colors duration-150 border-gray-300 dark:border-gray-600;
+		background-color: var(--accent-strong);
+	}
+
+	.accent-solid-btn:hover {
+		background-color: var(--accent-strong-hover);
+		border-color: var(--accent-strong-hover);
+	}
+
+	.dark .accent-solid-btn:hover {
+		background-color: var(--accent-strong-hover);
+		border-color: var(--accent-strong-hover);
+	}
+
+	.accent-outline-btn:focus-visible,
+	.accent-solid-btn:focus-visible {
+		outline: 2px solid var(--accent-primary);
+		outline-offset: 2px;
+	}
+
+	/* Schwebender Filter-Button auf Mobilgeräten */
+	.accent-fab {
+		@apply fixed bottom-24 right-5 z-40 inline-flex items-center justify-center rounded-full p-4 text-white shadow-lg transition-transform duration-200 focus:outline-none md:hidden;
+		background-color: var(--accent-primary);
+	}
+
+	.accent-fab:hover {
+		transform: scale(1.05);
+	}
+
+	.accent-fab:focus-visible {
+		outline: 2px solid var(--accent-primary);
+		outline-offset: 2px;
+	}
+
+	/* Akzentverwendung auf Karten, Links & Chips */
+	.news-card {
+		@apply cursor-pointer space-y-3 transition-colors duration-200;
+	}
+
+	.news-card:hover {
+		background-color: var(--accent-outline)/10;
+		border-color: var(--accent-outline)
+	}
+
+	/* Karten als Links im Kalender-Bereich mit Hover-Outline */
+	.accent-card-link {
+		@apply block rounded-lg border border-gray-200/80 bg-gray-50/80 px-4 py-3 transition-colors duration-150 dark:border-gray-700/60 dark:bg-gray-700/60;
+	}
+
+	.accent-card-link:hover {
+		border-color: var(--accent-outline);
+	}
+
+	/* Links in Kalender-Box & News-Detailseiten */
+	.accent-link {
+		@apply inline-block text-sm font-medium transition-colors duration-150;
+		color: var(--accent-link);
+	}
+
+	.accent-link:hover {
+		color: var(--accent-link-hover);
+	}
+
+	/* Hinweise unter Formularen (z. B. Save-Status) */
+	.form-feedback {
+		@apply mt-3 text-sm;
+	}
+
+	/* Kleine Chips zur Hervorhebung von Links in News-Detailseiten */
+	.accent-chip {
+		@apply inline-flex items-center gap-2 rounded px-4 py-1 font-semibold text-white;
+		background-color: var(--accent-strong);
+	}
+
+	.accent-chip--interactive {
+		@apply cursor-pointer transition-colors duration-150;
+	}
+
+	.accent-chip--interactive:hover {
+		background-color: var(--accent-strong-hover);
+	}
+
+	.accent-chip--interactive:focus-visible {
+		outline: 2px solid var(--accent-primary);
+		outline-offset: 2px;
 	}
 }

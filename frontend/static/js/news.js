@@ -4,16 +4,18 @@
 window.toggleFilter = function (name) {
   var section = document.getElementById("filter-" + name);
   var chevron = document.getElementById("chevron-" + name);
-  if (!section || !chevron) {
+  var trigger = document.querySelector('[data-filter-target="' + name + '"]');
+  if (!section) {
     return;
   }
   var isHidden = section.classList.contains("hidden");
-  if (isHidden) {
-    section.classList.remove("hidden");
-    chevron.style.transform = "rotate(90deg)";
-  } else {
-    section.classList.add("hidden");
-    chevron.style.transform = "rotate(0deg)";
+  section.classList.toggle("hidden", !isHidden);
+  section.setAttribute("aria-hidden", isHidden ? "false" : "true");
+  if (chevron) {
+    chevron.classList.toggle("rotate-90", isHidden);
+  }
+  if (trigger) {
+    trigger.setAttribute("aria-expanded", isHidden ? "true" : "false");
   }
 };
 
@@ -126,32 +128,59 @@ document.addEventListener("DOMContentLoaded", function () {
   // Logik für das Ein- und Ausklappen des Filter-Dropdowns auf Mobile
   const toggle = document.getElementById("filter-button");
   const dropdown = document.getElementById("filter-dropdown");
-  const news = document.getElementById("news");
+  const overlay = document.getElementById("filter-overlay");
+
+  if (dropdown) {
+    dropdown.setAttribute("aria-hidden", dropdown.classList.contains("max-md:hidden") ? "true" : "false");
+  }
 
   if (!toggle || !dropdown) {
     console.warn("news.js: Toggle oder Dropdown fehlt", { toggleFound: !!toggle, dropdownFound: !!dropdown });
   }
 
   if (toggle && dropdown) {
+    const openFilter = () => {
+      dropdown.classList.remove("max-md:hidden");
+      dropdown.setAttribute("aria-hidden", "false");
+      if (overlay) {
+        overlay.classList.remove("hidden");
+      }
+      document.body.classList.add("overflow-hidden");
+      toggle.setAttribute("aria-expanded", "true");
+    };
+
+    const closeFilter = () => {
+      dropdown.classList.add("max-md:hidden");
+      dropdown.setAttribute("aria-hidden", "true");
+      if (overlay) {
+        overlay.classList.add("hidden");
+      }
+      document.body.classList.remove("overflow-hidden");
+      toggle.setAttribute("aria-expanded", "false");
+    };
+
     toggle.addEventListener("click", (event) => {
       event.stopPropagation();
-      const filter_is_Hidden = dropdown.classList.contains("max-md:hidden");
-      if (filter_is_Hidden) {
-        dropdown.classList.remove("max-md:hidden");
-        news.classList.add("hidden")
+      const filterIsHidden = dropdown.classList.contains("max-md:hidden");
+      if (filterIsHidden) {
+        openFilter();
       } else {
-        dropdown.classList.add("max-md:hidden");
-        news.classList.remove("hidden");
+        closeFilter();
       }
     });
 
     // Schließt das Dropdown, wenn man außerhalb davon klickt
     document.addEventListener("click", (event) => {
       if (!dropdown.contains(event.target) && !toggle.contains(event.target)) {
-        dropdown.classList.add("max-md:hidden");
-        news.classList.remove("hidden")
+        closeFilter();
       }
     });
+
+    if (overlay) {
+      overlay.addEventListener("click", () => {
+        closeFilter();
+      });
+    }
   } else {
     console.error("Filter-Button oder Filter-Dropdown nicht gefunden.");
   }
