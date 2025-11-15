@@ -8,6 +8,7 @@ from typing import Optional
 
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
+from django.utils.text import slugify
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext, override
 from django.views import View
@@ -157,6 +158,7 @@ def process_news_entry(news_entry, openai_api_key, logger: logging.Logger):
             }:
                 source.url = news_entry["link"].split("#")[0]
 
+            # Lokalisierte Namen setzen
             localized_names = _build_rundmail_localized_names(
                 source_type, erstellungsdatum
             )
@@ -170,6 +172,11 @@ def process_news_entry(news_entry, openai_api_key, logger: logging.Logger):
                         setattr(source, "name_de", value)
                     continue
                 field_name = f"name_{language_suffix}"
+                # Basierend auf dem englischen Namen einen Slug generieren
+                if language_suffix == "en":
+                    slug = slugify(value)
+                    if hasattr(source, "slug"):
+                        setattr(source, "slug", slug)
                 if hasattr(source, field_name):
                     setattr(source, field_name, value)
 
@@ -199,6 +206,7 @@ def process_news_entry(news_entry, openai_api_key, logger: logging.Logger):
                     field_name = f"name_{language_suffix}"
                     if hasattr(source, field_name):
                         setattr(source, field_name, source_name)
+                setattr(source, "slug", slugify(source_name))
                 source.save()
                 logger.info(
                     "Trusted Account Quelle automatisch erstellt | %s",
