@@ -22,7 +22,7 @@
 
 {% block content %}
 <div class="page-shell">
-    <div class="accent-card max-w-6xl">
+    <div class="accent-card max-w-6xl 2xl:max-w-7xl">
         {% include "partials/_messages.html" %}
         <h1 class="accent-card-title text-center mb-8">{% trans "Meine Präferenzen" %}</h1>
 
@@ -52,6 +52,17 @@
                     </div>
                 </div>
 
+                <!-- Zielgruppen -->
+                <div class="space-y-3">
+                    <label for="{{ form.zielgruppen.id_for_label }}" class="block text-lg font-bold text-gray-700 dark:text-white">{{ form.zielgruppen.label }}</label>
+                    <div class="status-card space-y-3">
+                        {{ form.zielgruppen }}
+                        {% if form.zielgruppen.errors %}
+                            <p class="form-error">{{ form.zielgruppen.errors|join:", " }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
                 <!-- Quellen -->
                 <div class="space-y-3">
                     <label for="{{ form.quellen.id_for_label }}" class="block text-lg font-bold text-gray-700 dark:text-white mb-2">{{ form.quellen.label }}</label>
@@ -67,17 +78,6 @@
                         </div>
                         {% if form.quellen.errors %}
                             <p class="form-error">{{ form.quellen.errors|join:", " }}</p>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <!-- Zielgruppen -->
-                <div class="space-y-3">
-                    <label for="{{ form.zielgruppen.id_for_label }}" class="block text-lg font-bold text-gray-700 dark:text-white">{{ form.zielgruppen.label }}</label>
-                    <div class="status-card space-y-3">
-                        {{ form.zielgruppen }}
-                        {% if form.zielgruppen.errors %}
-                            <p class="form-error">{{ form.zielgruppen.errors|join:", " }}</p>
                         {% endif %}
                     </div>
                 </div>
