@@ -14,14 +14,14 @@
 
 {% block content %}
 
-<div class="calendar-page px-4 lg:px-10 py-4">
-  <section class="calendar-shell accent-card w-full">
-    <div class="calendar-shell__header">
+<div class="page-shell calendar-page">
+  <section class="calendar-card accent-card">
+    <div class="calendar-card__header">
       <div>
         <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{% trans "Kalender" %}</h1>
         <p class="text-sm text-gray-500 dark:text-gray-400">{% trans "Behalte all deine Uni-Termine im Blick" %}</p>
       </div>
-      <div class="calendar-shell__actions">
+      <div class="calendar-card__actions">
         <div class="calendar-action">
           <span class="calendar-action-text">{% trans "Termin erstellen" %}</span>
           <button

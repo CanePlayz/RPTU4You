@@ -350,6 +350,11 @@
         center: "title",
         right: "dayGridMonth,timeGridWeek,timeGridDay"
       },
+      height: "auto",
+      contentHeight: "auto",
+      aspectRatio: 1.75,
+      expandRows: false,
+      handleWindowResize: true,
       locale,
       allDaySlot: false,
       editable: false,

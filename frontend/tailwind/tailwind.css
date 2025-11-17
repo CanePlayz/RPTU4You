@@ -55,7 +55,7 @@
 		@apply text-2xl md:text-3xl font-semibold text-gray-800 dark:text-gray-100;
 	}
     .accent-card {
-		@apply bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md w-full p-6;
+		@apply bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md p-6 mx-8;
 	}
 
 	/* Formularelemente auf Karten-Seiten */
@@ -153,8 +153,6 @@
 	}
 
 	.calendar-page {
-		@apply flex flex-col h-full min-h-0;
-		min-height: calc(100vh - 4rem);
 		--accent-primary: #fb923c;
 		--accent-strong: #c05621;
 		--accent-strong-hover: #ea580c;
@@ -341,17 +339,16 @@
 
 	/* Kalender-spezifische Styles */
 	/* Wrapper */
-	.calendar-shell {
-		@apply flex flex-col gap-4 h-full overflow-hidden;
-		min-height: calc(100vh - 8rem);
+	.calendar-card {
+		@apply flex flex-col gap-4;
 	}
 
 	/* Header mit Titel & Aktionen */
-	.calendar-shell__header {
+	.calendar-card__header {
 		@apply flex flex-col gap-4 md:flex-row md:items-center md:justify-between shrink-0;
 	}
 
-	.calendar-shell__actions {
+	.calendar-card__actions {
 		@apply flex flex-wrap items-center gap-4 justify-start md:justify-end;
 	}
 
@@ -390,11 +387,12 @@
 	}
 
 	.calendar-grid-wrapper {
-		@apply relative flex flex-1 pt-4;
+		@apply relative pt-4;
 	}
 
 	.calendar-grid {
-		@apply flex-1 min-h-0 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-auto h-full;
+		@apply rounded-2xl border border-gray-200 dark:border-gray-700 w-full;
+		min-height: 24rem;
 	}
 
 	.calendar-toggle-active {
@@ -428,11 +426,6 @@
 	.dark .calendar-dropdown-option-active {
 		background-color: rgba(234, 88, 12, 0.35);
 		color: #ffe4c7;
-	}
-
-	.calendar-grid .fc,
-	.calendar-grid {
-		height: 100%;
 	}
 
 	.calendar-grid .fc {
