@@ -70,7 +70,7 @@ def main():
     )
 
     logger.info("Scheduler läuft...")
-    scheduler.start()
+    # scheduler.start()
 
 
 if __name__ == "__main__":

@@ -23,12 +23,12 @@
       </div>
       <div class="calendar-shell__actions">
         <div class="calendar-action">
-          <span class="calendar-action-text">{% trans "Termin hinzufügen" %}</span>
+          <span class="calendar-action-text">{% trans "Termin erstellen" %}</span>
           <button
             type="button"
             class="calendar-icon-btn"
             data-calendar-open
-            aria-label="{% trans 'Termin hinzufügen' %}"
+            aria-label="{% trans 'Termin erstellen' %}"
           >
             <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14" /><path d="M19 12H5" /></svg>
           </button>
@@ -67,12 +67,12 @@
       {% csrf_token %}
       <input type="file" id="icsUpload" name="ics_file" accept=".ics" class="hidden" onchange="document.getElementById('icsForm').submit();">
     </form>
-    <form action="{% url 'export_ics' %}" method="get" class="hidden" id="exportForm"></form>
+    <form id="exportForm" action="{% url 'export_ics' %}" method="get" class="hidden"></form>
   </section>
 </div>
 
 <!-- Popup für Terminerstellung und -bearbeitung -->
-  <div id="eventPopup" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-200">
+  <div id="eventPopup" class="fixed inset-0 z-50 hidden transition-opacity duration-200">
     <div class="flex h-full w-full items-center justify-center bg-black bg-opacity-40">
       <div class="w-full max-w-md bg-white dark:bg-[#181818] rounded-2xl shadow-2xl p-6 relative animate-fadeIn">
       <!-- Kopfzeile des Popups mit Titel und Schließen-Button -->
