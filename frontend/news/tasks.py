@@ -86,12 +86,12 @@ def add_audiences_and_categories(
 def process_translation(
     news: News, sprachen, openai_api_key, token_limit, logger: logging.Logger
 ):
-    if news.is_cleaned_up:
-        add_missing_translations(sprachen, news, openai_api_key, token_limit)
-    else:
+    if not news.is_cleaned_up:
         logger.info(
             f"Überspringe Übersetzungen, Objekt noch nicht gecleant | {news.titel[:80]}"
         )
+        return
+    add_missing_translations(sprachen, news, openai_api_key, token_limit)
 
 
 @close_db_connection
@@ -100,9 +100,19 @@ def process_categorization(
 ):
     if not news.inhaltskategorien.exists():
         logger.info(f"Füge Kategorisierungen hinzu | {news.titel[:80]}")
+
+        if not news.is_cleaned_up:
+            logger.info(
+                f"Überspringe Kategorisierung, Objekt noch nicht gecleant | {news.titel[:80]}"
+            )
+            return
+
         try:
             german_text = Text.objects.get(news=news, sprache__name="Deutsch").text
         except Text.DoesNotExist:
+            logger.info(
+                f"Überspringe Kategorisierung, Objekt noch nicht gecleant | {news.titel[:80]}"
+            )
             return
         try:
             categories, audiences = get_categorization_from_openai(
@@ -123,6 +133,9 @@ def process_cleanup(news: News, openai_api_key, token_limit, logger: logging.Log
         try:
             german_text = Text.objects.get(news=news, sprache__name="Deutsch").text
         except Text.DoesNotExist:
+            logger.info(
+                f"Überspringe Cleanup, kein deutscher Text vorhanden | {news.titel[:80]}"
+            )
             return
         try:
             clean_response = get_cleaned_text_from_openai(
