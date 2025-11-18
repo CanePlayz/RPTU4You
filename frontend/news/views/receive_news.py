@@ -2,6 +2,7 @@ import gzip
 import json
 import logging
 import os
+import random
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from typing import Optional
@@ -131,6 +132,7 @@ def process_news_entry(news_entry, openai_api_key, logger: logging.Logger):
 
     # Rundmail-Quellen speziell behandeln
     if source_type in RUNDMAIL_SOURCE_TYPES:
+        # Rundmail-ID extrahieren
         rundmail_id = news_entry.get("rundmail_id")
         if rundmail_id is None:
             logger.warning(
@@ -142,17 +144,33 @@ def process_news_entry(news_entry, openai_api_key, logger: logging.Logger):
         source_name = (
             source_name_raw.strip() if isinstance(source_name_raw, str) else ""
         )
+
+        # Basierend auf dem englischen Namen einen Slug generieren
+        # Einzel-Rundmails haben keinen spezifischen Namen, daher wird eine Zufallszahl angehängt
+        localized_names = _build_rundmail_localized_names(source_type, erstellungsdatum)
+        english_name = localized_names.get("en", source_name)
+        if news_entry["quelle_typ"] == "Rundmail":
+            random_number = random.randint(1000, 10000000)
+            value_with_random = f"{english_name} {random_number}"
+            slug = slugify(value_with_random)
+        else:
+            slug = slugify(english_name)
+
+        # Objekt erstellen oder holen
         source, created = Rundmail.objects.get_or_create(
-            name=source_name,
+            rundmail_id=rundmail_id,
             defaults={
-                "rundmail_id": rundmail_id,
+                "name": source_name,
+                "slug": slug,
             },
         )
 
-        # Wenn das Quelle-Objekt neu erstellt wurde, die URL setzen
+        # Wenn das Quelle-Objekt neu erstellt wurde, die URL und lokalisierte Namen setzen
         if created:
+            # URL setzen
             if news_entry["quelle_typ"] == "Rundmail":
                 source.url = news_entry["link"]
+            # Bei Sammel-Rundmails das Fragment entfernen
             elif news_entry["quelle_typ"] in {
                 "Sammel-Rundmail",
                 "Stellenangebote Sammel-Rundmail",
@@ -160,24 +178,8 @@ def process_news_entry(news_entry, openai_api_key, logger: logging.Logger):
                 source.url = news_entry["link"].split("#")[0]
 
             # Lokalisierte Namen setzen
-            localized_names = _build_rundmail_localized_names(
-                source_type, erstellungsdatum
-            )
-            default_name = localized_names.get("de", source_name) or source_name
-            if default_name:
-                source.name = default_name
-
             for language_suffix, value in localized_names.items():
-                if language_suffix == "de":
-                    if hasattr(source, "name_de"):
-                        setattr(source, "name_de", value)
-                    continue
                 field_name = f"name_{language_suffix}"
-                # Basierend auf dem englischen Namen einen Slug generieren
-                if language_suffix == "en":
-                    slug = slugify(value)
-                    if hasattr(source, "slug"):
-                        setattr(source, "slug", slug)
                 if hasattr(source, field_name):
                     setattr(source, field_name, value)
 

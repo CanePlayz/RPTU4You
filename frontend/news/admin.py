@@ -16,7 +16,6 @@ admin.site.register(Standort)
 admin.site.register(InhaltsKategorie)
 admin.site.register(Zielgruppe)
 admin.site.register(Sprache)
-admin.site.register(Text)
 admin.site.register(OpenAITokenUsage)
 
 
@@ -136,7 +135,7 @@ class NewsAdmin(admin.ModelAdmin):
         "vollständig_übersetzt",
     ]
 
-    list_max_show_all = 1000
+    list_max_show_all = 5000
 
     @admin.display(boolean=True, description="Bereinigt?")
     def bereinigt(self, obj):
@@ -152,6 +151,31 @@ class NewsAdmin(admin.ModelAdmin):
         existing_langs = set(obj.texte.values_list("sprache__code", flat=True))
         missing = required_lang_codes - existing_langs
         return not missing
+
+
+@admin.register(Text)
+class TextAdmin(admin.ModelAdmin):
+    list_display = [
+        "news_titel",
+        "sprache",
+        "kurzer_inhalt",
+    ]
+
+    search_fields = [
+        "inhalt",
+        "news__titel",
+    ]
+
+    @admin.display(description="Kurzer Inhalt")
+    def kurzer_inhalt(self, obj):
+        preview = obj.inhalt.strip()
+        return (preview[:75] + "…") if len(preview) > 75 else preview
+
+    @admin.display(description="News-Titel")
+    def news_titel(self, obj):
+        return obj.news.titel
+
+    list_max_show_all = 20000
 
 
 # Kalender
