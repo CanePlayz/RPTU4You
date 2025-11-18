@@ -2,9 +2,9 @@
 {% now "Y" as current_year %}
 <footer class="site-footer">
     <nav class="site-footer__links" aria-label="{% trans 'Footer navigation' %}">
-        <a class="site-footer__link" href="{% url 'impressum' %}">{% trans "Impressum" %}</a>
+        <a class="site-footer__link" href="{% url 'imprint' %}">{% trans "Impressum" %}</a>
         <a class="site-footer__link" href="https://github.com/CanePlayz/RPTU4You" target="_blank" rel="noopener noreferrer">{% trans "GitHub" %}</a>
-        <a class="site-footer__link" href="{% url 'datenschutz' %}">{% trans "Datenschutz" %}</a>
+        <a class="site-footer__link" href="{% url 'privacy' %}">{% trans "Datenschutz" %}</a>
     </nav>
     <p class="text-xs md:text-sm text-gray-200 pr-2 md:pr-4">&copy; {{ current_year }} RPTU4You</p>
 </footer>
