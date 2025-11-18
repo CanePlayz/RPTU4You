@@ -1,3 +1,4 @@
+import os
 import time
 from datetime import datetime
 
@@ -11,6 +12,11 @@ from apscheduler.triggers.interval import IntervalTrigger
 from scraper.util.my_logging import get_logger
 
 logger = get_logger(__name__)
+
+
+def scrapers_disabled():
+    value = os.getenv("DISABLE_SCRAPERS", "").strip().lower()
+    return value in {"1", "true", "yes", "on"}
 
 
 def wait_for_django():
@@ -29,6 +35,10 @@ def wait_for_django():
 
 
 def main():
+    if scrapers_disabled():
+        logger.info("Scraper sind deaktiviert. Beende Scheduler.")
+        return
+
     scheduler = BlockingScheduler()
 
     wait_for_django()  # Warte auf Django, bevor der Scheduler startet

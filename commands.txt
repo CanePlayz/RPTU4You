@@ -11,13 +11,17 @@ Stoppen auf Server:
 /opt/RPTU4You$ sudo docker compose down
 
 Export von Server:
-ssh RPTU4You "docker exec rptu4you-db-1 pg_dump -U admin -d mydb" > "C:\Users\jjpfs\Backups\dbbackup$(Get-Date -Format 'yyyy-MM-dd_HH-mm').sql"
+ssh RPTU4You "docker exec rptu4you-db-1 pg_dump -U admin -d mydb" > "C:\Users\jjpfs\OneDrive\Informatik\RPTU4You\backups\dbbackup$(Get-Date -Format 'yyyy-MM-dd_HH-mm').sql"
+
+Import auf Server:
+ssh RPTU4You "docker exec rptu4you-db-1 psql -U admin -d mydb -c 'DROP SCHEMA public CASCADE;'"
+ssh RPTU4You "docker exec rptu4you-db-1 psql -U admin -d mydb -c 'CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO admin;'"
+Get-Content "C:\Users\jjpfs\OneDrive\Informatik\RPTU4You\backups\dbbackup2025-11-18_23-48.sql" -Raw | ssh RPTU4You "docker exec -i rptu4you-db-1 psql -U admin -d mydb"
 
 Lokaler Export:
+docker compose -f docker-compose-dev.yml exec db pg_dump -U admin -d mydb `
+  > "C:\Users\jjpfs\OneDrive\Informatik\RPTU4You\backups\dbbackup$(Get-Date -Format 'yyyy-MM-dd_HH-mm').sql"
 
 Lokaler Import:
 docker compose -f docker-compose-dev.yml exec db psql -U admin -d mydb -c "DROP SCHEMA public CASCADE;"
-docker compose -f docker-compose-dev.yml exec db psql -U admin -d mydb -c "CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO admin;" Get-Content "C:\Users\jjpfs\Backups\dbbackup2025-11-05_14-42.sql" | docker compose -f docker-compose-dev.yml exec -T db psql -U admin -d mydb
-
-Import auf Server:
-Get-Content "C:\Users\jjpfs\Backups\dbbackup2025-10-24_01-29.sql" -Raw | ssh RPTU4You "docker exec -i rptu4you-db-1 psql -U admin -d mydb"
+docker compose -f docker-compose-dev.yml exec db psql -U admin -d mydb -c "CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO admin;" Get-Content "C:\Users\jjpfs\OneDrive\Informatik\RPTU4You\backups\dbbackup2025-11-05_14-42.sql" | docker compose -f docker-compose-dev.yml exec -T db psql -U admin -d mydb
