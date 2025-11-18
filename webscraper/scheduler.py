@@ -37,7 +37,7 @@ def wait_for_django():
 def main():
     if scrapers_disabled():
         logger.info("Scraper sind deaktiviert. Beende Scheduler.")
-        return
+        exit(0)
 
     scheduler = BlockingScheduler()
 

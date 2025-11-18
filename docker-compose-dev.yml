@@ -91,6 +91,7 @@ services:
       dockerfile: webscraper/Dockerfile
     environment:
       - API_KEY=${API_KEY}
+      - DISABLE_SCRAPERS=${DISABLE_SCRAPERS}
       - IMAP_SERVER=${IMAP_SERVER}
       - IMAP_PORT=${IMAP_PORT}
       - IMAP_USERNAME=${IMAP_USERNAME}
