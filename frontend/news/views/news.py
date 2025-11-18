@@ -182,6 +182,9 @@ def news_detail(request: HttpRequest, pk: int) -> HttpResponse:
             {"news": news, "text": text},
         )
 
+    # Kommende Kalenderereignisse für die Seitenleiste
+    upcoming_events = _get_upcoming_events(request)
+
     #  Objekte, nach denen gefiltert werden kann
     objects_to_filter = get_objects_with_metadata()
     locations = objects_to_filter["locations"]
@@ -198,6 +201,7 @@ def news_detail(request: HttpRequest, pk: int) -> HttpResponse:
             "audiences": audiences,
             "sources": sources,
             "detail_news": news,
+            "upcoming_events": upcoming_events,
             "text": text,
         },
     )
