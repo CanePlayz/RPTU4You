@@ -1,5 +1,6 @@
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
+from django.shortcuts import redirect
 from django.urls import path
 from django.views.generic import TemplateView
 from news.views.account import (
@@ -51,11 +52,17 @@ urlpatterns = [
     path("calendar/export/", export_ics, name="export_ics"),
 ]
 
+
 # Sprachabhängige URLs
+def _root_redirect(request):
+    """Aufruf ohne Pfad leitet zu /news/ weiter."""
+    return redirect("news")
+
+
 urlpatterns += i18n_patterns(
     path("set-language/", set_language, name="set_language"),
     # News
-    path("", news_view, name="News"),
+    path("", _root_redirect, name="News"),
     path("news/", news_view, name="news"),
     path("news/partial/", news_partial, name="news_partial"),
     path("news/<int:pk>/", news_detail, name="news_detail"),
