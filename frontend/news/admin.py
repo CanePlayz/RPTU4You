@@ -168,8 +168,8 @@ class TextAdmin(admin.ModelAdmin):
 
     @admin.display(description="Kurzer Inhalt")
     def kurzer_inhalt(self, obj):
-        preview = obj.inhalt.strip()
-        return (preview[:75] + "…") if len(preview) > 75 else preview
+        preview = obj.text.strip()
+        return (preview[:75] + "...") if len(preview) > 75 else preview
 
     @admin.display(description="News-Titel")
     def news_titel(self, obj):
