@@ -9,177 +9,200 @@
 {% block page_class %}links-page{% endblock %}
 
 {% block content %}
-<div class="bg-gray-100 dark:bg-gray-900 min-h-[calc(100vh-72px)] py-8">
-  <!-- Haupt-Container: Card-Optik -->
-  <div class="w-full max-w-7xl bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 mt-1 mb-1 mx-auto">
-    <!-- Grid-Layout für die Link-Gruppen -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-      <!-- Link-Gruppe: Alltags-Links -->
-      <details class="group border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm dark:text-white bg-gray-50 dark:bg-gray-800">
-        <summary class="cursor-pointer p-4 font-semibold text-lg bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center group-open:bg-[#e6eef7] dark:group-open:bg-gray-700 transition">
-          <span class="inline-block transition-transform duration-200 mr-2 group-open:rotate-90">&gt;</span>
-            <span class="mr-2">{% ui_icon "links_alltags" %}</span>
-          {% trans "Alltags-Links" %}
-        </summary>
-        <ul class="p-4 space-y-2">
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.mensa-kl.de/">{% trans "Mensa Kaiserslautern" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://stw-vp.de/de/essen/speiseplan/">{% trans "Mensa Landau" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://qis.verw.uni-kl.de/qisserver/rds?state=user&type=0">{% trans "QIS" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://office.kis.uni-kl.de/">{% trans "KIS-Office" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://olat.vcrp.de/dmz/">{% trans "Open Olat" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://mail.uni-kl.de/">{% trans "Uni-Mail" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://kai.cs.uni-kl.de/">{% trans "KAI" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://rptu.de/fileadmin/prum/02_Downloads/Lageplan/RPTU_KL_Campusplan.pdf" target="_blank">{% trans "Campusplan Kaiserslautern" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://rptu.de/fileadmin/prum/02_Downloads/Lageplan/Landau/RPTU_L_Campusplan.pdf" target="_blank">{% trans "Campusplan Landau" %}</a></li>
-        </ul>
-      </details>
-    <!-- Link-Gruppe: Fachschaften Kaiserslautern -->
-      <details class="group border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm dark:text-white bg-gray-50 dark:bg-gray-800">
-        <summary class="cursor-pointer p-4 font-semibold text-lg bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center group-open:bg-[#e6eef7] dark:group-open:bg-gray-700 transition">
-          <span class="inline-block transition-transform duration-200 mr-2 group-open:rotate-90">&gt;</span>
-            <span class="mr-2">{% ui_icon "links_fachschaften" %}</span>
-          {% trans "Fachschaften Kaiserslautern" %}
-        </summary>
-        <ul class="p-4 space-y-2">
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.architektur.uni-kl.de/fachschaft/">{% trans "Architektur" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://bauing.rptu.de/fachschaft">{% trans "Bauingenieurwesen" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://bio.rptu.de/fachschaft">{% trans "Biologie" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://chem.rptu.de/fachschaft">{% trans "Chemie" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="http://www.fs.eit.uni-kl.de/">{% trans "Elektro- & Informationstechnik" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="http://www.fachschaft.informatik.uni-kl.de/">{% trans "Informatik" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="http://www.fs.mv.uni-kl.de/">{% trans "Maschinenbau & Verfahrenstechnik" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="http://fachschaft.mathematik.uni-kl.de/">{% trans "Mathematik" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="http://fachschaft.physik.uni-kl.de/">{% trans "Physik" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://ru.rptu.de/fachschaft-1/aktuelles">{% trans "Raum- & Umweltplanung" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="http://www.fs.sowi.uni-kl.de/">{% trans "Sozialwissenschaften" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://wiwi.rptu.de/fachschaft/aktuelles">{% trans "Wirtschaftswissenschaften" %}</a></li>
-        </ul>
-      </details>
-      <!-- Link-Gruppe: Fachschaften Landau -->
-      <details class="group border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm dark:text-white bg-gray-50 dark:bg-gray-800">
-        <summary class="cursor-pointer p-4 font-semibold text-lg bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center group-open:bg-[#e6eef7] dark:group-open:bg-gray-700 transition">
-          <span class="inline-block transition-transform duration-200 mr-2 group-open:rotate-90">&gt;</span>
-          <span class="mr-2">{% ui_icon "links_fachschaften" %}</span>
-          {% trans "Fachschaften Landau" %}
-        </summary>
-        <ul class="p-4 space-y-2">
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.instagram.com/fachschaft_aew_landau/">{% trans "Allgemeine Erziehungswissenschaften" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://ezw.rptu.de/institute/bppe/fachschaft-betriebspaedagogik">{% trans "Betriebspädagogik" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.instagram.com/biwi_unilandau/">{% trans "Bildungswissenschaften" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://hallo-ersties.asta-landau.de/?page_id=88">{% trans "Grundschulpädagogik" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://philosophie-landau.de/">{% trans "Philosophie" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://hallo-ersties.asta-landau.de/?page_id=110">{% trans "Sonderpädagogik" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.instagram.com/anglistik.landau/">{% trans "Anglistik" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.instagram.com/darstellendesspiel.landau/">{% trans "Darstellendes Spiel" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.instagram.com/fachschaft_ev.religion_ld/">{% trans "Evangelische Theologie" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://ksw.rptu.de/institute/institut-fuer-germanistik/studium-und-lehre/fachschaft">{% trans "Germanistik" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.instagram.com/fachschaftkaththeo_landau/">{% trans "Katholische Theologie" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.instagram.com/fs_kunst_landau/">{% trans "Kunst" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.instagram.com/fs_menschenrechtsbildung/">{% trans "Menschenrechtsbildung" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.instagram.com/teampowi/">{% trans "Politikwissenschaft" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.instagram.com/fs.romanistik/">{% trans "Romanistik" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.instagram.com/sokolandau/?r=nametag">{% trans "Sozial- & Kommunikationswissenschaft" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://fs-wunda-landau.weebly.com/">{% trans "Wirtschaft und Arbeit" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.instagram.com/fsv_biologie.ld/">{% trans "Biologie" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.instagram.com/geo.landau/">{% trans "Geographie" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.instagram.com/fachschaft.mathe.landau/">{% trans "Mathematik" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://psy.rptu.de/fachschaft">{% trans "Mensch und Umwelt" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://hallo-ersties.asta-landau.de/?page_id=103">{% trans "Physik" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://uwi-landau.de/">{% trans "Umweltwissenschaften" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.instagram.com/fachschaftsport_landau/?igshid=MzRlODBiNWFlZA">{% trans "Sport" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.instagram.com/psylandau/?hl=de">{% trans "Psychologie" %}</a></li>
-        </ul>
-      </details>
-      <!-- Link-Gruppe: AStA -->
-      <details class="group border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm dark:text-white bg-gray-50 dark:bg-gray-800">
-        <summary class="cursor-pointer p-4 font-semibold text-lg bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center group-open:bg-[#e6eef7] dark:group-open:bg-gray-700 transition">
-          <span class="inline-block transition-transform duration-200 mr-2 group-open:rotate-90">&gt;</span>
-          <span class="mr-2">{% ui_icon "links_asta" %}</span>
-          {% trans "AStA" %}
-        </summary>
-        <ul class="p-4 space-y-2">
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.asta.uni-kl.de/">{% trans "AStA Kaiserslautern" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://asta-landau.de/">{% trans "AStA Landau" %}</a></li>
-        </ul>
-      </details>
-      <!-- Link-Gruppe: Uni-Sport -->
-      <details class="group border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm dark:text-white bg-gray-50 dark:bg-gray-800">
-        <summary class="cursor-pointer p-4 font-semibold text-lg bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center group-open:bg-[#e6eef7] dark:group-open:bg-gray-700 transition">
-          <span class="inline-block transition-transform duration-200 mr-2 group-open:rotate-90">&gt;</span>
-          <span class="mr-2">{% ui_icon "links_sport" %}</span>
-          {% trans "Uni-Sport" %}
-        </summary>
-        <ul class="p-4 space-y-2">
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://zsgw.rptu.de/unisport/startseite">{% trans "Uni Sport allgemein" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.asta.uni-kl.de/">{% trans "Uni Sportangebot Kaiserslautern" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://zsgw.rptu.de/unisport/sportprogramm/sportprogramm-ld/sportangebot-a-z-ld">{% trans "Uni Sportangebot Landau" %}</a></li>
-        </ul>
-      </details>
-      <!-- Link-Gruppe: Studierendenparlament -->
-      <details class="group border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm dark:text-white bg-gray-50 dark:bg-gray-800">
-        <summary class="cursor-pointer p-4 font-semibold text-lg bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center group-open:bg-[#e6eef7] dark:group-open:bg-gray-700 transition">
-          <span class="inline-block transition-transform duration-200 mr-2 group-open:rotate-90">&gt;</span>
-          <span class="mr-2">{% ui_icon "links_stupa" %}</span>
-          {% trans "Studierendenparlament" %}
-        </summary>
-        <ul class="p-4 space-y-2">
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://www.stupa.uni-kl.de/home">{% trans "Studierendenparlament Kaiserslautern" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://stupa-landau.de/">{% trans "Studierendenparlament Landau" %}</a></li>
-        </ul>
-      </details>
-      <!-- Link-Gruppe: Hochschulgruppen -->
-      <details class="group border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm dark:text-white bg-gray-50 dark:bg-gray-800">
-        <summary class="cursor-pointer p-4 font-semibold text-lg bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center group-open:bg-[#e6eef7] dark:group-open:bg-gray-700 transition">
-          <span class="inline-block transition-transform duration-200 mr-2 group-open:rotate-90">&gt;</span>
-          <span class="mr-2">{% ui_icon "links_groups" %}</span>
-          {% trans "Hochschulgruppen" %}
-        </summary>
-        <ul class="p-4 space-y-2">
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://rptu.de/ueber-die-rptu/leben-und-kultur/studentische-gruppen">{% trans "Studentische Gruppen Übersicht" %}</a></li>
-        </ul>
-      </details>
-      <!-- Link-Gruppe: Zentrale Einrichtungen -->
-      <details class="group border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm dark:text-white bg-gray-50 dark:bg-gray-800">
-        <summary class="cursor-pointer p-4 font-semibold text-lg bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center group-open:bg-[#e6eef7] dark:group-open:bg-gray-700 transition">
-          <span class="inline-block transition-transform duration-200 mr-2 group-open:rotate-90">&gt;</span>
-          <span class="mr-2">{% ui_icon "links_institutions" %}</span>
-          {% trans "Zentrale Einrichtungen" %}
-        </summary>
-        <ul class="p-4 space-y-2">
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://rptu.de/campuskultur">{% trans "CampusKultur" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://rz.rptu.de/">{% trans "Regionales Hochschulrechenzentrum" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://ub.rptu.de/">{% trans "Universitätsbibliothek" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://rptu.de/ueber-die-rptu/organisation/zentrale-einrichtungen">{% trans "Weitere Einrichtungen Übersicht" %}</a></li>
-        </ul>
-      </details>
-      <!-- Link-Gruppe: Fachbereiche -->
-      <details class="group border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm dark:text-white bg-gray-50 dark:bg-gray-800">
-        <summary class="cursor-pointer p-4 font-semibold text-lg bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center group-open:bg-[#e6eef7] dark:group-open:bg-gray-700 transition">
-          <span class="inline-block transition-transform duration-200 mr-2 group-open:rotate-90">&gt;</span>
-          <span class="mr-2">{% ui_icon "links_departments" %}</span>
-          {% trans "Fachbereiche" %}
-        </summary>
-        <ul class="p-4 space-y-2">
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://rptu.de/ueber-die-rptu/organisation/fachbereiche">{% trans "Übersicht Fachbereiche" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://architektur.rptu.de/">{% trans "Architektur" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://bauing.rptu.de/">{% trans "Bauingenieurwesen" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://bio.rptu.de/">{% trans "Biologie" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://chem.rptu.de/">{% trans "Chemie" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://eit.rptu.de/">{% trans "Elektrotechnik und Informationstechnik" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://ezw.rptu.de/">{% trans "Erziehungswissenschaften" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://cs.rptu.de/">{% trans "Informatik" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://ksw.rptu.de/">{% trans "Kultur- und Sozialwissenschaften" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://mv.rptu.de/">{% trans "Maschinenbau und Verfahrenstechnik" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://math.rptu.de/">{% trans "Mathematik" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://nuw.rptu.de/">{% trans "Natur- und Umweltwissenschaften" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://physik.rptu.de/">{% trans "Physik" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://psy.rptu.de/">{% trans "Psychologie" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://ru.rptu.de/startseite">{% trans "Raum- und Umweltplanung" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://sowi.rptu.de/home">{% trans "Sozialwissenschaften" %}</a></li>
-          <li><a class="text-blue-700 dark:text-white hover:underline" href="https://wiwi.rptu.de/">{% trans "Wirtschaftswissenschaften" %}</a></li>
-        </ul>
-      </details>
+<div class="page-shell links-page content-scroll">
+  <div class="links-hero accent-card">
+    <div>
+      <p class="accent-card-title">{% trans "Wichtige Schnellzugriffe" %}</p>
+      <p class="links-hero__subtitle">{% trans "Auch wenn wir die News zusammenfassen – alle Uni-Websites können wir (noch) nicht ersetzen" %}</p>
     </div>
+    <div class="links-hero__grid">
+      <a class="links-chip" href="https://olat.vcrp.de/dmz/" target="_blank" rel="noopener">
+        {% trans "OpenOLAT" %}
+      </a>
+      <a class="links-chip" href="https://www.mensa-kl.de/" target="_blank" rel="noopener">
+        {% trans "Mensa Kaiserslautern" %}
+      </a>
+      <a class="links-chip" href="https://stw-vp.de/de/essen/speiseplan/" target="_blank" rel="noopener">
+        {% trans "Mensa Landau" %}
+      </a>
+      <a class="links-chip" href="https://office.kis.uni-kl.de/" target="_blank" rel="noopener">
+        {% trans "KIS-Office" %}
+      </a>
+      <a class="links-chip" href="https://qis.verw.uni-kl.de/qisserver/rds?state=user&type=0" target="_blank" rel="noopener">
+        {% trans "QIS" %}
+      </a>
+      <a class="links-chip" href="https://mail.uni-kl.de/" target="_blank" rel="noopener">
+        {% trans "Uni-Mail" %}
+      </a>
+    </div>
+  </div>
+
+  <div class="links-grid links-grid--compact">
+    <!-- Link-Gruppe: Alltags-Links -->
+    <details class="links-card group">
+      <summary class="links-card__summary">
+        <span class="links-card__chevron" aria-hidden="true"></span>
+        <span class="links-card__icon">{% ui_icon "links_alltags" %}</span>
+        {% trans "Alltags-Links" %}
+      </summary>
+      <ul class="links-card__list">
+        <li><a class="link-entry" href="https://olat.vcrp.de/dmz/" target="_blank" rel="noopener">{% trans "OpenOLAT" %}</a></li>
+        <li><a class="link-entry" href="https://www.mensa-kl.de/" target="_blank" rel="noopener">{% trans "Mensa Kaiserslautern" %}</a></li>
+        <li><a class="link-entry" href="https://stw-vp.de/de/essen/speiseplan/" target="_blank" rel="noopener">{% trans "Mensa Landau" %}</a></li>
+        <li><a class="link-entry" href="https://office.kis.uni-kl.de/" target="_blank" rel="noopener">{% trans "KIS-Office" %}</a></li>
+        <li><a class="link-entry" href="https://qis.verw.uni-kl.de/qisserver/rds?state=user&type=0" target="_blank" rel="noopener">{% trans "QIS" %}</a></li>
+        <li><a class="link-entry" href="https://mail.uni-kl.de/" target="_blank" rel="noopener">{% trans "Uni-Mail" %}</a></li>
+        <li><a class="link-entry" href="https://kai.cs.uni-kl.de/" target="_blank" rel="noopener">{% trans "KAI" %}</a></li>
+        <li><a class="link-entry" href="https://rptu.de/fileadmin/prum/02_Downloads/Lageplan/RPTU_KL_Campusplan.pdf" target="_blank" rel="noopener">{% trans "Campusplan Kaiserslautern" %}</a></li>
+        <li><a class="link-entry" href="https://rptu.de/fileadmin/prum/02_Downloads/Lageplan/Landau/RPTU_L_Campusplan.pdf" target="_blank" rel="noopener">{% trans "Campusplan Landau" %}</a></li>
+      </ul>
+    </details>
+    <!-- Link-Gruppe: UNISPORT -->
+    <details class="links-card group">
+      <summary class="links-card__summary">
+        <span class="links-card__chevron" aria-hidden="true"></span>
+        <span class="links-card__icon">{% ui_icon "links_sport" %}</span>
+        {% trans "UNISPORT" %}
+      </summary>
+      <ul class="links-card__list">
+        <li><a class="link-entry" href="https://zsgw.rptu.de/unisport/startseite" target="_blank" rel="noopener">{% trans "UNISPORT" %}</a></li>
+        <li><a class="link-entry" href="https://www.asta.uni-kl.de/" target="_blank" rel="noopener">{% trans "UNISPORT Angebot Kaiserslautern" %}</a></li>
+        <li><a class="link-entry" href="https://zsgw.rptu.de/unisport/sportprogramm/sportprogramm-ld/sportangebot-a-z-ld" target="_blank" rel="noopener">{% trans "UNISPORT Angebot Landau" %}</a></li>
+      </ul>
+    </details>
+    <!-- Link-Gruppe: Zentrale Einrichtungen -->
+    <details class="links-card group">
+      <summary class="links-card__summary">
+        <span class="links-card__chevron" aria-hidden="true"></span>
+        <span class="links-card__icon">{% ui_icon "links_institutions" %}</span>
+        {% trans "Zentrale Einrichtungen" %}
+      </summary>
+      <ul class="links-card__list">
+        <li><a class="link-entry" href="https://rptu.de/campuskultur" target="_blank" rel="noopener">{% trans "CampusKultur" %}</a></li>
+        <li><a class="link-entry" href="https://rz.rptu.de/" target="_blank" rel="noopener">{% trans "Regionales Hochschulrechenzentrum" %}</a></li>
+        <li><a class="link-entry" href="https://ub.rptu.de/" target="_blank" rel="noopener">{% trans "Universitätsbibliothek" %}</a></li>
+        <li><a class="link-entry" href="https://rptu.de/ueber-die-rptu/organisation/zentrale-einrichtungen" target="_blank" rel="noopener">{% trans "WÜbersicht weitere Einrichtungen" %}</a></li>
+      </ul>
+    </details>
+    <!-- Link-Gruppe: Fachschaften Kaiserslautern -->
+    <details class="links-card group">
+      <summary class="links-card__summary">
+        <span class="links-card__chevron" aria-hidden="true"></span>
+        <span class="links-card__icon">{% ui_icon "links_fachschaften" %}</span>
+        {% trans "Fachschaften KL" %}
+      </summary>
+      <ul class="links-card__list">
+        <li><a class="link-entry" href="https://www.architektur.uni-kl.de/fachschaft/" target="_blank" rel="noopener">{% trans "Architektur" %}</a></li>
+        <li><a class="link-entry" href="https://bauing.rptu.de/fachschaft" target="_blank" rel="noopener">{% trans "Bauingenieurwesen" %}</a></li>
+        <li><a class="link-entry" href="https://bio.rptu.de/fachschaft" target="_blank" rel="noopener">{% trans "Biologie" %}</a></li>
+        <li><a class="link-entry" href="https://chem.rptu.de/fachschaft" target="_blank" rel="noopener">{% trans "Chemie" %}</a></li>
+        <li><a class="link-entry" href="http://www.fs.eit.uni-kl.de/" target="_blank" rel="noopener">{% trans "Elektro- & Informationstechnik" %}</a></li>
+        <li><a class="link-entry" href="http://www.fachschaft.informatik.uni-kl.de/" target="_blank" rel="noopener">{% trans "Informatik" %}</a></li>
+        <li><a class="link-entry" href="http://www.fs.mv.uni-kl.de/" target="_blank" rel="noopener">{% trans "Maschinenbau & Verfahrenstechnik" %}</a></li>
+        <li><a class="link-entry" href="http://fachschaft.mathematik.uni-kl.de/" target="_blank" rel="noopener">{% trans "Mathematik" %}</a></li>
+        <li><a class="link-entry" href="http://fachschaft.physik.uni-kl.de/" target="_blank" rel="noopener">{% trans "Physik" %}</a></li>
+        <li><a class="link-entry" href="https://ru.rptu.de/fachschaft-1/aktuelles" target="_blank" rel="noopener">{% trans "Raum- & Umweltplanung" %}</a></li>
+        <li><a class="link-entry" href="http://www.fs.sowi.uni-kl.de/" target="_blank" rel="noopener">{% trans "Sozialwissenschaften" %}</a></li>
+        <li><a class="link-entry" href="https://wiwi.rptu.de/fachschaft/aktuelles" target="_blank" rel="noopener">{% trans "Wirtschaftswissenschaften" %}</a></li>
+      </ul>
+    </details>
+    <!-- Link-Gruppe: Fachschaften Landau -->
+    <details class="links-card group">
+      <summary class="links-card__summary">
+        <span class="links-card__chevron" aria-hidden="true"></span>
+        <span class="links-card__icon">{% ui_icon "links_fachschaften" %}</span>
+        {% trans "Fachschaften Landau" %}
+      </summary>
+      <ul class="links-card__list">
+        <li><a class="link-entry" href="https://www.instagram.com/fachschaft_aew_landau/" target="_blank" rel="noopener">{% trans "Allgemeine Erziehungswissenschaften" %}</a></li>
+        <li><a class="link-entry" href="https://www.instagram.com/anglistik.landau/" target="_blank" rel="noopener">{% trans "Anglistik" %}</a></li>
+        <li><a class="link-entry" href="https://ezw.rptu.de/institute/bppe/fachschaft-betriebspaedagogik" target="_blank" rel="noopener">{% trans "Betriebspädagogik" %}</a></li>
+        <li><a class="link-entry" href="https://www.instagram.com/biwi_unilandau/" target="_blank" rel="noopener">{% trans "Bildungswissenschaften" %}</a></li>
+        <li><a class="link-entry" href="https://www.instagram.com/fsv_biologie.ld/" target="_blank" rel="noopener">{% trans "Biologie" %}</a></li>
+        <li><a class="link-entry" href="https://www.instagram.com/darstellendesspiel.landau/" target="_blank" rel="noopener">{% trans "Darstellendes Spiel" %}</a></li>
+        <li><a class="link-entry" href="https://www.instagram.com/fachschaft_ev.religion_ld/" target="_blank" rel="noopener">{% trans "Evangelische Theologie" %}</a></li>
+        <li><a class="link-entry" href="https://www.instagram.com/geo.landau/" target="_blank" rel="noopener">{% trans "Geographie" %}</a></li>
+        <li><a class="link-entry" href="https://ksw.rptu.de/institute/institut-fuer-germanistik/studium-und-lehre/fachschaft" target="_blank" rel="noopener">{% trans "Germanistik" %}</a></li>
+        <li><a class="link-entry" href="https://hallo-ersties.asta-landau.de/?page_id=88" target="_blank" rel="noopener">{% trans "Grundschulpädagogik" %}</a></li>
+        <li><a class="link-entry" href="https://www.instagram.com/fachschaftkaththeo_landau/" target="_blank" rel="noopener">{% trans "Katholische Theologie" %}</a></li>
+        <li><a class="link-entry" href="https://www.instagram.com/fs_kunst_landau/" target="_blank" rel="noopener">{% trans "Kunst" %}</a></li>
+        <li><a class="link-entry" href="https://www.instagram.com/fachschaft.mathe.landau/" target="_blank" rel="noopener">{% trans "Mathematik" %}</a></li>
+        <li><a class="link-entry" href="https://psy.rptu.de/fachschaft" target="_blank" rel="noopener">{% trans "Mensch und Umwelt" %}</a></li>
+        <li><a class="link-entry" href="https://www.instagram.com/fs_menschenrechtsbildung/" target="_blank" rel="noopener">{% trans "Menschenrechtsbildung" %}</a></li>
+        <li><a class="link-entry" href="https://philosophie-landau.de/" target="_blank" rel="noopener">{% trans "Philosophie" %}</a></li>
+        <li><a class="link-entry" href="https://hallo-ersties.asta-landau.de/?page_id=103" target="_blank" rel="noopener">{% trans "Physik" %}</a></li>
+        <li><a class="link-entry" href="https://www.instagram.com/teampowi/" target="_blank" rel="noopener">{% trans "Politikwissenschaft" %}</a></li>
+        <li><a class="link-entry" href="https://www.instagram.com/psylandau/?hl=de" target="_blank" rel="noopener">{% trans "Psychologie" %}</a></li>
+        <li><a class="link-entry" href="https://www.instagram.com/fs.romanistik/" target="_blank" rel="noopener">{% trans "Romanistik" %}</a></li>
+        <li><a class="link-entry" href="https://hallo-ersties.asta-landau.de/?page_id=110" target="_blank" rel="noopener">{% trans "Sonderpädagogik" %}</a></li>
+        <li><a class="link-entry" href="https://www.instagram.com/sokolandau/?r=nametag" target="_blank" rel="noopener">{% trans "Sozial- & Kommunikationswissenschaft" %}</a></li>
+        <li><a class="link-entry" href="https://www.instagram.com/fachschaftsport_landau/?igshid=MzRlODBiNWFlZA" target="_blank" rel="noopener">{% trans "Sport" %}</a></li>
+        <li><a class="link-entry" href="https://uwi-landau.de/" target="_blank" rel="noopener">{% trans "Umweltwissenschaften" %}</a></li>
+        <li><a class="link-entry" href="https://fs-wunda-landau.weebly.com/" target="_blank" rel="noopener">{% trans "Wirtschaft und Arbeit" %}</a></li>
+      </ul>
+    </details>
+    <!-- Link-Gruppe: Fachbereiche -->
+    <details class="links-card group">
+      <summary class="links-card__summary">
+        <span class="links-card__chevron" aria-hidden="true"></span>
+        <span class="links-card__icon">{% ui_icon "links_departments" %}</span>
+        {% trans "Fachbereiche" %}
+      </summary>
+      <ul class="links-card__list">
+        <li><a class="link-entry" href="https://rptu.de/ueber-die-rptu/organisation/fachbereiche" target="_blank" rel="noopener">{% trans "Übersicht Fachbereiche" %}</a></li>
+        <li><a class="link-entry" href="https://architektur.rptu.de/" target="_blank" rel="noopener">{% trans "Architektur" %}</a></li>
+        <li><a class="link-entry" href="https://bauing.rptu.de/" target="_blank" rel="noopener">{% trans "Bauingenieurwesen" %}</a></li>
+        <li><a class="link-entry" href="https://bio.rptu.de/" target="_blank" rel="noopener">{% trans "Biologie" %}</a></li>
+        <li><a class="link-entry" href="https://chem.rptu.de/" target="_blank" rel="noopener">{% trans "Chemie" %}</a></li>
+        <li><a class="link-entry" href="https://eit.rptu.de/" target="_blank" rel="noopener">{% trans "Elektrotechnik und Informationstechnik" %}</a></li>
+        <li><a class="link-entry" href="https://ezw.rptu.de/" target="_blank" rel="noopener">{% trans "Erziehungswissenschaften" %}</a></li>
+        <li><a class="link-entry" href="https://cs.rptu.de/" target="_blank" rel="noopener">{% trans "Informatik" %}</a></li>
+        <li><a class="link-entry" href="https://ksw.rptu.de/" target="_blank" rel="noopener">{% trans "Kultur- und Sozialwissenschaften" %}</a></li>
+        <li><a class="link-entry" href="https://mv.rptu.de/" target="_blank" rel="noopener">{% trans "Maschinenbau und Verfahrenstechnik" %}</a></li>
+        <li><a class="link-entry" href="https://math.rptu.de/" target="_blank" rel="noopener">{% trans "Mathematik" %}</a></li>
+        <li><a class="link-entry" href="https://nuw.rptu.de/" target="_blank" rel="noopener">{% trans "Natur- und Umweltwissenschaften" %}</a></li>
+        <li><a class="link-entry" href="https://physik.rptu.de/" target="_blank" rel="noopener">{% trans "Physik" %}</a></li>
+        <li><a class="link-entry" href="https://psy.rptu.de/" target="_blank" rel="noopener">{% trans "Psychologie" %}</a></li>
+        <li><a class="link-entry" href="https://ru.rptu.de/startseite" target="_blank" rel="noopener">{% trans "Raum- und Umweltplanung" %}</a></li>
+        <li><a class="link-entry" href="https://sowi.rptu.de/home" target="_blank" rel="noopener">{% trans "Sozialwissenschaften" %}</a></li>
+        <li><a class="link-entry" href="https://wiwi.rptu.de/" target="_blank" rel="noopener">{% trans "Wirtschaftswissenschaften" %}</a></li>
+      </ul>
+    </details>
+    <!-- Link-Gruppe: AStA -->
+    <details class="links-card group">
+      <summary class="links-card__summary">
+        <span class="links-card__chevron" aria-hidden="true"></span>
+        <span class="links-card__icon">{% ui_icon "links_asta" %}</span>
+        {% trans "AStA" %}
+      </summary>
+      <ul class="links-card__list">
+        <li><a class="link-entry" href="https://www.asta.uni-kl.de/" target="_blank" rel="noopener">{% trans "AStA Kaiserslautern" %}</a></li>
+        <li><a class="link-entry" href="https://asta-landau.de/" target="_blank" rel="noopener">{% trans "AStA Landau" %}</a></li>
+      </ul>
+    </details>
+    <!-- Link-Gruppe: Studierendenparlament -->
+    <details class="links-card group">
+      <summary class="links-card__summary">
+        <span class="links-card__chevron" aria-hidden="true"></span>
+        <span class="links-card__icon">{% ui_icon "links_stupa" %}</span>
+        {% trans "Studierendenparlament" %}
+      </summary>
+      <ul class="links-card__list">
+        <li><a class="link-entry" href="https://www.stupa.uni-kl.de/home" target="_blank" rel="noopener">{% trans "Studierendenparlament Kaiserslautern" %}</a></li>
+        <li><a class="link-entry" href="https://stupa-landau.de/" target="_blank" rel="noopener">{% trans "Studierendenparlament Landau" %}</a></li>
+      </ul>
+    </details>
+    <!-- Link-Gruppe: Hochschulgruppen -->
+    <details class="links-card group">
+      <summary class="links-card__summary">
+        <span class="links-card__chevron" aria-hidden="true"></span>
+        <span class="links-card__icon">{% ui_icon "links_groups" %}</span>
+        {% trans "Hochschulgruppen" %}
+      </summary>
+      <ul class="links-card__list">
+        <li><a class="link-entry" href="https://rptu.de/ueber-die-rptu/leben-und-kultur/studentische-gruppen" target="_blank" rel="noopener">{% trans "Übersicht Studentische Gruppen" %}</a></li>
+      </ul>
+    </details>
   </div>
 </div>
 {% endblock %}

@@ -442,6 +442,41 @@ body {
         --accent-link-hover: #fb923c;
     }
 
+    /* -- Uni-Links -- */
+    /* Große Hero-Karte oben auf der Seite */
+    .links-hero {
+        @apply w-full flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-3xl p-6;
+        box-shadow: var(--shadow-soft);
+        background-color: var(--links-hero-bg);
+        border: 1px solid var(--links-hero-border);
+        color: var(--links-hero-text);
+    }
+
+    .links-hero__subtitle {
+        color: var(--links-hero-text);
+        font-size: 0.95rem;
+    }
+
+    .links-hero__grid {
+        @apply grid w-full gap-3 md:max-w-xl;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+
+    .links-chip {
+        @apply inline-flex items-center justify-center rounded-xl px-3 py-2 text-sm font-semibold transition-colors duration-150;
+        background-color: var(--links-chip-bg);
+        border: 1px solid var(--links-chip-border);
+        color: var(--links-chip-text);
+    }
+
+    .links-chip:hover,
+    .links-chip:focus-visible {
+        background-color: var(--links-chip-hover-bg);
+        color: var(--links-chip-hover-text);
+        border-color: transparent;
+    }
+
+    /* Seiten-spezifische Akzentfarben für Uni-Links */
     body.links-page, .links-page {
         @apply flex flex-col h-full min-h-0;
         --accent-primary: #0ea5a4;
@@ -450,6 +485,135 @@ body {
         --accent-outline: #5eead4;
         --accent-link: #5eead4;
         --accent-link-hover: #0ea5a4;
+        --links-hero-bg: #c8f2e7;
+        --links-hero-border: #6ee7c6;
+        --links-hero-text: #064e3b;
+        --links-chip-bg: #ffffff;
+        --links-chip-border: #99f6e4;
+        --links-chip-text: #065f46;
+        --links-chip-hover-bg: #0ea5a4;
+        --links-chip-hover-text: #ffffff;
+        --links-card-bg: var(--surface-card);
+        --links-card-border: var(--surface-border);
+        --links-card-divider: rgba(15, 23, 42, 0.08);
+        --links-link-bg: var(--surface-card-muted);
+        --links-link-hover-bg: #0ea5a4;
+        scrollbar-gutter: stable both-edges;
+    }
+
+    .dark body.links-page, .dark .links-page {
+        --accent-primary: #2dd4bf;
+        --accent-strong: #0d9488;
+        --accent-strong-hover: #14b8a6;
+        --accent-outline: #5eead4;
+        --accent-link: #5eead4;
+        --accent-link-hover: #2dd4bf;
+        --links-hero-bg: rgba(5, 28, 32, 0.92);
+        --links-hero-border: rgba(94, 234, 212, 0.35);
+        --links-hero-text: #e0fffb;
+        --links-chip-bg: rgba(6, 95, 89, 0.35);
+        --links-chip-border: rgba(94, 234, 212, 0.6);
+        --links-chip-text: #5eead4;
+        --links-chip-hover-bg: rgba(94, 234, 212, 0.2);
+        --links-chip-hover-text: #ffffff;
+        --links-card-bg: var(--surface-card);
+        --links-card-border: var(--surface-border);
+        --links-card-divider: rgba(255, 255, 255, 0.12);
+        --links-link-bg: rgba(15, 23, 42, 0.7);
+        --links-link-hover-bg: #2dd4bf;
+    }
+
+    /* Kartenraster und Interaktionen */
+    .links-grid {
+        @apply grid w-full gap-5;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        align-items: start;
+        margin-top: 1.75rem;
+    }
+
+    .links-grid--compact {
+        @apply mx-auto;
+        max-width: 1150px;
+    }
+
+    @media (min-width: 1024px) {
+        .links-grid--compact {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    .links-card {
+        @apply rounded-2xl border transition duration-150 overflow-hidden;
+        background-color: var(--links-card-bg);
+        border-color: var(--links-card-border);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .links-card:hover {
+        border-color: var(--accent-outline);
+        box-shadow: none;
+    }
+
+    .links-card[open] {
+        border-color: var(--accent-outline);
+        background-color: var(--surface-card-muted);
+    }
+
+    .links-card__summary {
+        @apply flex items-center gap-3 px-5 py-4 text-lg font-semibold cursor-pointer select-none;
+        color: var(--text-primary);
+        list-style: none;
+    }
+
+    .links-card__icon {
+        @apply text-xl;
+        color: var(--accent-primary);
+    }
+
+    .links-card__chevron {
+        @apply inline-flex h-6 w-6 items-center justify-center text-base font-bold transition-transform duration-200;
+        color: var(--text-secondary);
+    }
+
+    .links-card__chevron::before {
+        content: "›";
+    }
+
+    .links-card[open] .links-card__chevron {
+        transform: rotate(90deg);
+        color: var(--accent-primary);
+    }
+
+    .links-card__list {
+        @apply flex flex-col gap-2 px-5 pb-5 border-t pt-4;
+        border-color: var(--links-card-divider);
+    }
+
+    .link-entry {
+        @apply flex items-center justify-between rounded-xl px-3 py-2 text-sm font-medium transition-all duration-150;
+        background-color: var(--links-link-bg);
+        color: var(--text-secondary);
+        border: 1px solid transparent;
+    }
+
+    .link-entry::after {
+        content: "↗";
+        font-size: 0.8rem;
+        color: var(--accent-primary);
+        transition: transform 150ms ease;
+    }
+
+    .link-entry:hover,
+    .link-entry:focus-visible {
+        background-color: var(--links-link-hover-bg);
+        color: #fff;
+        border-color: transparent;
+    }
+
+    .link-entry:hover::after,
+    .link-entry:focus-visible::after {
+        transform: translateX(4px);
+        color: #fff;
     }
 
     /* Outline-Farbe für Fokus-Ring auf anderen Seiten */
