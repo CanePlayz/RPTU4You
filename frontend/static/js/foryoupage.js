@@ -156,6 +156,8 @@ document.addEventListener("DOMContentLoaded", function () {
   var feedbackMessageEl = feedbackBox ? feedbackBox.querySelector(".alert-banner__message") : null;
   var feedbackDotEl = feedbackBox ? feedbackBox.querySelector(".alert-banner__dot") : null;
   var ALERT_VARIANTS = ["success", "error", "info", "warning"];
+  var feedbackSpaceReserved = feedbackBox ? !feedbackBox.hasAttribute("hidden") : false;
+  var lastFeedbackHeight = 0;
 
   var preferencesEndpoint = (function deriveEndpoint() {
     if (!preferencesForm) {
@@ -211,17 +213,30 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         feedbackBox.textContent = "";
       }
-      feedbackBox.setAttribute("hidden", "hidden");
+      if (!feedbackSpaceReserved) {
+        feedbackBox.setAttribute("hidden", "hidden");
+      } else {
+        feedbackBox.setAttribute("aria-hidden", "true");
+        feedbackBox.style.visibility = "hidden";
+        if (lastFeedbackHeight) {
+          feedbackBox.style.minHeight = lastFeedbackHeight + "px";
+        }
+      }
       return;
     }
 
     feedbackBox.removeAttribute("hidden");
+    feedbackBox.removeAttribute("aria-hidden");
+    feedbackBox.style.visibility = "visible";
+    feedbackBox.style.minHeight = "";
+    feedbackSpaceReserved = true;
     if (feedbackMessageEl) {
       feedbackMessageEl.textContent = message;
     } else {
       feedbackBox.textContent = message;
     }
     applyVariantClasses(resolveVariant(status));
+    lastFeedbackHeight = feedbackBox.offsetHeight;
   }
 
   // Liest den CSRF-Token aus dem Cookie
@@ -245,6 +260,38 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  function readCheckedValues(section) {
+    var nodes = section ? section.querySelectorAll('input[type="checkbox"]:checked') : [];
+    return Array.prototype.map.call(nodes, function (checkbox) {
+      return checkbox.value || checkbox.id || checkbox.name;
+    });
+  }
+
+  // Synchronisiert den Ein-/Ausklappzustand einer Sektion anhand der aktuell gewählten Werte
+  function syncFilterSection(name) {
+    var section = document.getElementById("filter-" + name);
+    if (!section) {
+      return;
+    }
+    var chevron = document.getElementById("chevron-" + name);
+    var trigger = document.querySelector('[data-filter-target="' + name + '"]');
+    var checkedValues = readCheckedValues(section);
+    var anyChecked = checkedValues.length > 0;
+    section.classList.toggle("hidden", !anyChecked);
+    section.setAttribute("aria-hidden", anyChecked ? "false" : "true");
+    if (chevron) {
+      chevron.classList.toggle("rotate-90", anyChecked);
+    }
+    if (trigger) {
+      trigger.setAttribute("aria-expanded", anyChecked ? "true" : "false");
+    }
+  }
+
+  // Synchronisiert alle relevanten Sektionen nach Änderungen
+  function syncAllFilterSections() {
+    ["standorte", "kategorien", "zielgruppen", "quellen"].forEach(syncFilterSection);
+  }
+
   // Sendet das Formular per fetch, reagiert auf Erfolg und Fehler und synchronisiert anschließend den News-Feed
   preferencesForm.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -253,7 +300,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (submitButton) {
       submitButton.disabled = true;
     }
-    updateFeedback("Speichere Präferenzen...", "info");
+    updateFeedback("", null);
 
     var formData = new FormData(preferencesForm);
 
@@ -301,6 +348,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         // Erfolgreiche Antwort vom Server
         updateFeedback(data.message || "Präferenzen gespeichert", false);
+        // Aktualisiere den Ein-/Ausklappzustand basierend auf den aktuellen Auswahlwerten
+        syncAllFilterSections();
         if (manager && typeof manager.reloadList === "function") {
           return manager.reloadList({ resetOffset: true, scrollY: 0 });
         }
@@ -333,7 +382,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
       resetButton.disabled = true;
-      updateFeedback("Setze Präferenzen zurück...", "info");
+      updateFeedback("", null);
       var formData = new FormData(preferencesForm);
       formData.set("action", "reset");
 
@@ -357,6 +406,7 @@ document.addEventListener("DOMContentLoaded", function () {
           updateFeedback(data.message || "Präferenzen zurückgesetzt", false);
           // Formular zurücksetzen und News-Feed neu laden
           clearPreferenceSelections();
+          syncAllFilterSections();
           if (manager && typeof manager.reloadList === "function") {
             return manager.reloadList({ resetOffset: true, scrollY: 0 });
           }
