@@ -3,8 +3,10 @@
 {% load static i18n %}
 
 {% block title %}
-{% trans "Dein Kalender" %}
+    {% trans "Dein Kalender" %}
 {% endblock %}
+
+{% block page_class %}calendar-page{% endblock %}
 
 {% block head-optional %}
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">

@@ -116,13 +116,6 @@
     return "";
   }
 
-  const getTranslation = (key, fallback = "") => {
-    if (!dom.translationsEl || !dom.translationsEl.dataset) {
-      return fallback;
-    }
-    return dom.translationsEl.dataset[key] || fallback;
-  };
-
   // Exponiert Initialisierung für unterschiedliche Locales
   window.initCalendar = function initCalendar(locale = "de") {
     const calendarEl = document.getElementById("calendar");
@@ -175,6 +168,30 @@
       confirmCancelBtn: document.getElementById("calendarConfirmCancel"),
       confirmCloseBtn: document.getElementById("calendarConfirmClose"),
       translationsEl: document.getElementById("calendarTranslations")
+    };
+
+    const hasDomTranslationEl = Boolean(dom.translationsEl);
+    let translationDatasetCache = null;
+    let translationDatasetInitialized = false;
+    const resolveTranslationDataset = () => {
+      if (!translationDatasetInitialized) {
+        translationDatasetInitialized = true;
+        const sourceEl = document.getElementById("calendarTranslations");
+        if (!sourceEl || !sourceEl.dataset) {
+          translationDatasetCache = null;
+        } else {
+          translationDatasetCache = sourceEl.dataset;
+        }
+      }
+      return translationDatasetCache;
+    };
+
+    const getTranslation = (key, fallback = "") => {
+      const dataset = resolveTranslationDataset();
+      if (!dataset) {
+        return fallback;
+      }
+      return dataset[key] || fallback;
     };
 
     // (Popup uses native inputs; no localization helpers required here)

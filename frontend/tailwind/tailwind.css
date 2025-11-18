@@ -8,24 +8,242 @@
 @source "../news/**/*.py";
 
 
+:root {
+    color-scheme: light;
+    --surface-nav: #0b1f3f;
+    --surface-footer: #0b1f3f;
+    --surface-page: #e8efff;
+    --surface-content: #f6f7ff;
+    --surface-card: #ffffff;
+    --surface-card-muted: #f5f6fb;
+    --surface-card-muted-strong: #e5ecff;
+    --surface-border: #d9e2f3;
+    --surface-border-strong: #b8c4da;
+    --surface-hover: #e2eaff;
+    --surface-hover-strong: #d4def7;
+    --text-primary: #0f1f3d;
+    --text-secondary: #2f3e60;
+    --text-muted: #56617e;
+    --shadow-soft: 0 12px 25px rgba(15, 23, 42, 0.08);
+    --surface-fab-shadow: 0 12px 25px rgba(37, 99, 235, 0.25);
+    --calendar-harness-bg: rgba(231, 236, 248, 0.95);
+    --calendar-day-today: rgba(226, 107, 30, 0.16);
+    --calendar-global-event-bg: rgba(37, 99, 235, 0.1);
+    --calendar-global-event-color: #102a56;
+    --calendar-toast-border: #f4b791;
+    --calendar-toast-bg: #fff5ed;
+    --calendar-toast-success-border: #059669;
+    --calendar-toast-success-bg: #d1fae5;
+    --calendar-toast-error-border: #dc2626;
+    --calendar-toast-error-bg: #fee2e2;
+    --calendar-toast-info-border: #2563eb;
+    --calendar-toast-info-bg: #dbeafe;
+    --calendar-toast-warning-border: #c2410c;
+    --calendar-toast-warning-bg: #ffedd5;
+    --calendar-flyout-border: rgba(15, 23, 42, 0.09);
+    --calendar-flyout-shadow: 0 8px 22px rgba(2, 6, 23, 0.14);
+        --calendar-flyout-title: #e26b1e;
+    --calendar-flyout-desc: #374151;
+    --calendar-action-border: rgba(226, 107, 30, 0.45);
+    --calendar-action-bg: rgba(255, 232, 214, 0.75);
+        --calendar-icon-btn-bg: rgba(226, 107, 30, 0.08);
+        --calendar-icon-btn-color: #e26b1e;
+    --calendar-icon-btn-border: #d1601a;
+    --calendar-event-bg-color: rgba(243, 186, 148, 0.82);
+    --calendar-event-border-color: rgba(243, 186, 148, 0.82);
+    --calendar-toast-icon-default: #f7934c;
+    --calendar-toast-icon-success: #10b981;
+    --calendar-toast-icon-error: #ef4444;
+    --calendar-toast-icon-info: #3b82f6;
+    --calendar-toast-icon-warning: #f7934c;
+    --calendar-panel-bg: #fffdfa;
+    --calendar-panel-accent: #e26b1e;
+    --calendar-panel-title: #1f2937;
+    --calendar-confirm-close-color: #9ca3af;
+    --calendar-confirm-close-hover: #374151;
+    --calendar-confirm-message: #4b5563;
+    --calendar-modal-close-color: #9ca3af;
+    --calendar-modal-close-hover: #374151;
+    --calendar-secondary-btn-border: #d1d5db;
+    --calendar-secondary-btn-bg: #ffffff;
+    --calendar-secondary-btn-text: #374151;
+    --calendar-secondary-btn-hover-border: #9ca3af;
+    --calendar-secondary-btn-hover-text: #111827;
+    --calendar-notice-border: #fde68a;
+    --calendar-notice-bg: #fffbeb;
+    --calendar-notice-text: #b45309;
+    --calendar-field-label: #4b5563;
+    --calendar-input-border: #d1d5db;
+    --calendar-input-bg: #ffffff;
+    --calendar-input-text: #1f2937;
+    --calendar-input-focus-ring: #fdba74;
+    --calendar-all-day-border: #d1d5db;
+    --calendar-all-day-bg: #f3f4f6;
+    --calendar-all-day-text: #374151;
+    --calendar-all-day-hover-bg: #fff7ed;
+    --calendar-section-toggle-border: #e5e7eb;
+    --calendar-section-toggle-bg: #f3f4f6;
+    --calendar-section-toggle-text: #374151;
+    --calendar-section-toggle-hover-bg: #e5e7eb;
+    --calendar-checkbox-text: #374151;
+    --calendar-checkbox-border: #d1d5db;
+    --calendar-primary-btn-bg: #d1601a;
+    --calendar-primary-btn-hover: #e26b1e;
+    --calendar-danger-btn-bg: #ef4444;
+    --calendar-danger-btn-hover: #dc2626;
+    --calendar-time-trigger-text: #6b7280;
+    --calendar-time-trigger-hover: #fb923c;
+    --calendar-time-dropdown-border: #d1d5db;
+    --calendar-time-dropdown-bg: #ffffff;
+    --calendar-dropdown-text: #0f172a;
+    --calendar-dropdown-hover-bg: rgba(226, 107, 30, 0.18);
+    --calendar-dropdown-hover-text: #8b4214;
+    --calendar-toggle-active-bg: rgba(226, 107, 30, 0.16);
+    --calendar-toggle-active-border: rgba(226, 107, 30, 0.4);
+    --calendar-toggle-active-color: #7c2f10;
+    --calendar-nav-btn-bg: #f8fafc;
+    --calendar-nav-btn-border: #d7def0;
+    --calendar-nav-btn-text: #0f172a;
+    --calendar-nav-btn-hover-bg: #e2eaff;
+    --calendar-nav-btn-hover-text: #0f172a;
+    --calendar-nav-btn-active-bg: #ffd8b4;
+    --calendar-nav-btn-active-text: #7c2d12;
+    --calendar-nav-btn-active-border: #f5b98e;
+}
+
+.dark {
+    color-scheme: dark;
+    --surface-nav: #0a111a;
+    --surface-footer: #0a111a;
+    --surface-page: #030712;
+    --surface-content: theme('colors.gray.900');
+    --surface-card: theme('colors.gray.800');
+    --surface-card-muted: rgba(55, 65, 81, 0.7);
+    --surface-card-muted-strong: #374151;
+    --surface-border: #2f384a;
+    --surface-border-strong: rgba(255, 255, 255, 0.16);
+    --surface-hover: rgba(148, 163, 184, 0.12);
+    --surface-hover-strong: rgba(148, 163, 184, 0.22);
+    --text-primary: #f8fafc;
+    --text-secondary: #d2d8f5;
+    --text-muted: #a9b7d8;
+    --shadow-soft: 0 18px 35px rgba(0, 0, 0, 0.55);
+    --surface-fab-shadow: 0 14px 28px rgba(0, 0, 0, 0.55);
+    --calendar-harness-bg: rgba(15, 23, 42, 0.82);
+    --calendar-day-today: rgba(199, 130, 56, 0.372);
+    --calendar-global-event-bg: rgba(253, 186, 116, 0.65);
+    --calendar-global-event-color: #fff7ed;
+    --calendar-toast-border: #f2b47e;
+    --calendar-toast-bg: #141c2a;
+    --calendar-toast-success-border: #34d399;
+    --calendar-toast-success-bg: #134436;
+    --calendar-toast-error-border: #f87171;
+    --calendar-toast-error-bg: #3b1f23;
+    --calendar-toast-info-border: #60a5fa;
+    --calendar-toast-info-bg: #1c2845;
+    --calendar-toast-warning-border: #fb923c;
+    --calendar-toast-warning-bg: #3b2416;
+    --calendar-flyout-border: rgba(255, 255, 255, 0.12);
+    --calendar-flyout-shadow: 0 8px 22px rgba(2, 6, 23, 0.42);
+    --calendar-flyout-title: #fdba74;
+    --calendar-flyout-desc: #e6eef8;
+    --calendar-action-border: rgba(253, 186, 116, 0.65);
+    --calendar-action-bg: rgba(253, 186, 116, 0.15);
+    --calendar-icon-btn-border: #c05621;
+    --calendar-icon-btn-bg: rgba(255, 255, 255, 0.08);
+    --calendar-icon-btn-color: #fed7aa;
+    --calendar-event-bg-color: rgba(253, 187, 116, 0.822);
+    --calendar-event-border-color: rgba(253, 187, 116, 0.822);
+    --calendar-toast-icon-default: #fb923c;
+    --calendar-toast-icon-success: #10b981;
+    --calendar-toast-icon-error: #ef4444;
+    --calendar-toast-icon-info: #3b82f6;
+    --calendar-toast-icon-warning: #fb923c;
+    --calendar-panel-bg: #181818;
+    --calendar-panel-accent: #ea580c;
+    --calendar-panel-title: #f3f4f6;
+    --calendar-confirm-close-color: #9ca3af;
+    --calendar-confirm-close-hover: #ffffff;
+    --calendar-confirm-message: #d1d5db;
+    --calendar-modal-close-color: #d1d5db;
+    --calendar-modal-close-hover: #ffffff;
+    --calendar-secondary-btn-border: #4b5563;
+    --calendar-secondary-btn-bg: transparent;
+    --calendar-secondary-btn-text: #e5e7eb;
+    --calendar-secondary-btn-hover-border: #9ca3af;
+    --calendar-secondary-btn-hover-text: #e5e7eb;
+    --calendar-notice-border: #b45309;
+    --calendar-notice-bg: rgba(120, 53, 15, 0.3);
+    --calendar-notice-text: #fde68a;
+    --calendar-field-label: #d1d5db;
+    --calendar-input-border: #374151;
+    --calendar-input-bg: #181818;
+    --calendar-input-text: #f3f4f6;
+    --calendar-input-focus-ring: #fdba74;
+    --calendar-all-day-border: #374151;
+    --calendar-all-day-bg: #374151;
+    --calendar-all-day-text: #f3f4f6;
+    --calendar-all-day-hover-bg: #4b5563;
+    --calendar-section-toggle-border: #374151;
+    --calendar-section-toggle-bg: #374151;
+    --calendar-section-toggle-text: #f3f4f6;
+    --calendar-section-toggle-hover-bg: #4b5563;
+    --calendar-checkbox-text: #f3f4f6;
+    --calendar-checkbox-border: #4b5563;
+    --calendar-primary-btn-bg: #fb923c;
+    --calendar-primary-btn-hover: #fdba74;
+    --calendar-danger-btn-bg: #ef4444;
+    --calendar-danger-btn-hover: #f87171;
+    --calendar-time-trigger-text: #d1d5db;
+    --calendar-time-trigger-hover: #fdba74;
+    --calendar-time-dropdown-border: #374151;
+    --calendar-time-dropdown-bg: #181818;
+    --calendar-dropdown-text: #e2e8f0;
+    --calendar-dropdown-hover-bg: rgba(234, 88, 12, 0.35);
+    --calendar-dropdown-hover-text: #ffe4c7;
+    --calendar-toggle-active-bg: rgba(234, 88, 12, 0.25);
+    --calendar-toggle-active-border: rgba(253, 186, 116, 0.4);
+    --calendar-toggle-active-color: #fed7aa;
+    --calendar-nav-btn-bg: #1f2735;
+    --calendar-nav-btn-border: #2b3646;
+    --calendar-nav-btn-text: #e2e8f0;
+    --calendar-nav-btn-hover-bg: #293347;
+    --calendar-nav-btn-hover-text: #f8fafc;
+    --calendar-nav-btn-active-bg: #cc6b2d;
+    --calendar-nav-btn-active-text: #fff4e9;
+    --calendar-nav-btn-active-border: #d47a40;
+}
+
+body {
+    background-color: var(--surface-page);
+    color: var(--text-primary);
+}
+
+
 /* Komponenten-Layer: hier liegen alle relevanten Klassen */
 @layer components {
     /* -- Layout-Hülle & Navigation -- */
     /* Hauptfenster mit kleinem Rahmen */
     .window {
-        @apply relative w-[95vw] h-[95vh] border-2 border-[#222] rounded-[40px] overflow-hidden flex flex-col min-h-0;
+        @apply relative w-[95vw] h-[95vh] border-2 rounded-[40px] overflow-hidden flex flex-col min-h-0;
+        border-color: var(--surface-border-strong);
+        background-color: var(--surface-content);
     }
-
 
     /* -- Obere Navigationsleiste -- */
     .nav-bar {
-        @apply sticky top-0 z-10 bg-[#042c58] dark:bg-[#0a111a] w-full;
+        @apply sticky top-0 z-10 w-full;
+        background-color: var(--surface-nav);
+        border-bottom: 1px solid var(--surface-border-strong);
+        color: #f8fafc;
     }
 
     /* -- Content-Area -- */
     /* Standard: NICHT scrollen (3-Spalten-Layouts) */
     .content-area {
-        @apply bg-gray-100 dark:bg-gray-900 flex-1 min-h-0 overflow-hidden;
+        @apply flex-1 min-h-0 overflow-hidden;
+        background-color: var(--surface-content);
+        color: var(--text-primary);
     }
     /* Opt-in: Ganze Seite scrollen (Seiten mit Karte) */
     .content-scroll {
@@ -49,26 +267,40 @@
     /* -- Karten-Layout -- */
     /* Seitenhülle für Karten-Seiten */
     .page-shell {
-        @apply bg-gray-100 dark:bg-gray-900 min-h-full grid place-items-center py-12 px-8;
+        @apply min-h-full grid place-items-center py-12 px-8;
+        background-color: var(--surface-content);
     }
 
     /* Akzent-Karten */
     .accent-card-title {
-        @apply text-2xl md:text-3xl font-semibold text-gray-800 dark:text-gray-100;
+        @apply text-2xl md:text-3xl font-semibold;
+        color: var(--text-primary);
     }
     .accent-card {
-        @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md p-6 w-full;
+        @apply border rounded-lg p-6 w-full;
+        background-color: var(--surface-card);
+        border-color: var(--surface-border);
+        color: var(--text-primary);
+        box-shadow: var(--shadow-soft);
+        transition: border-color 150ms ease, background-color 150ms ease;
     }
 
     /* Formularelemente auf Karten-Seiten */
     .form-label {
-        @apply block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2;
+        @apply block text-sm font-medium mb-2;
+        color: var(--text-secondary);
     }
     .form-field {
-        @apply bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-md w-full p-3;
+        @apply border rounded-lg shadow-md w-full p-3;
+        background-color: var(--surface-card-muted-strong);
+        border-color: var(--surface-border);
+        color: var(--text-primary);
     }
     .status-card {
-        @apply bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-md w-full p-4;
+        @apply border rounded-lg shadow-md w-full p-4;
+        background-color: var(--surface-card-muted-strong);
+        border-color: var(--surface-border);
+        color: var(--text-secondary);
     }
     .form-error {
         @apply mt-2 text-xs font-medium text-rose-500 dark:text-rose-300;
@@ -76,13 +308,23 @@
 
     /* -- Footer & Links im Footer -- */
     .site-footer {
-        @apply bg-[#042c58] dark:bg-[#0a111a] text-gray-100 flex flex-col md:flex-row items-center justify-between gap-3 px-6 py-4 text-sm md:text-base;
+        @apply flex flex-col md:flex-row items-center justify-between gap-3 px-6 py-4 text-sm md:text-base;
+        background-color: var(--surface-footer);
+        color: #f1f5f9;
+        border-top: 1px solid var(--surface-border-strong);
     }
     .site-footer__links {
         @apply flex flex-col md:flex-row items-center gap-6 pl-2 md:pl-4;
     }
     .site-footer__link {
-        @apply text-gray-100 transition-colors duration-200 hover:text-[#bfdbfe];
+        @apply transition-colors duration-200;
+        color: inherit;
+        opacity: 0.9;
+    }
+
+    .site-footer__link:hover {
+        color: #bfdbfe;
+        opacity: 1;
     }
 
     /* -- RPTU4You-Schriftzug in der Navbar mit Glow-Effekt -- */
@@ -129,6 +371,13 @@
         box-shadow: 0 10px 25px rgba(30, 64, 175, 0.35);
     }
 
+    /* Dark-Mode für Dropdown-Menü in der Navbar */
+    .dark .dropdown-menu a:hover,
+    .dark .dropdown-menu a:focus-visible {
+        background-color: rgba(59, 130, 246, 0.25) !important;
+        color: #f8fafc !important;
+    }
+
     /* Seiten-spezifische Fokus-Ringe */
     a:focus-visible,
     button:focus-visible,
@@ -148,6 +397,15 @@
     /* accent-link: Links im Kalender-Bereich und auf News-Detailseiten */
     body.news-page, .news-page {
         @apply flex flex-col h-full min-h-0;
+        --accent-primary: #0f3c91;
+        --accent-strong: #244c99;
+        --accent-strong-hover: #1a3f8a;
+        --accent-outline: #3d63d8;
+        --accent-link: #1d4ed8;
+        --accent-link-hover: #14389d;
+    }
+
+    .dark body.news-page, .dark .news-page {
         --accent-primary: #2563eb;
         --accent-strong: #0c3a6e;
         --accent-strong-hover: #1b5fab;
@@ -158,12 +416,30 @@
 
     body.foryou-page, .foryou-page {
         @apply flex flex-col h-full min-h-0;
+        --accent-primary: #7642cf;
+        --accent-strong: #4d2a90;
+        --accent-strong-hover: #5a35a5;
+        --accent-outline: #6530d4;
+        --accent-link: #6f3ce2;
+        --accent-link-hover: #4c23a5;
+    }
+
+    .dark body.foryou-page, .dark .foryou-page {
         --accent-primary: #c084fc;
         --accent-strong: #7c3aed;
         --accent-strong-hover: #8b5cf6;
         --accent-outline: #d8b4fe;
         --accent-link: #d8b4fe;
         --accent-link-hover: #8b5cf6;
+    }
+
+    body.calendar-page, .calendar-page {
+        --accent-primary: #fb923c;
+        --accent-strong: #c05621;
+        --accent-strong-hover: #ea580c;
+        --accent-outline: #fdba74;
+        --accent-link: #fdba74;
+        --accent-link-hover: #fb923c;
     }
 
     body.links-page, .links-page {
@@ -195,11 +471,21 @@
 
     /* Einzelne Filterabschnitte samt Toggle-Verhalten */
     .filter-section {
-        @apply rounded-lg border border-gray-200/80 bg-gray-50/80 px-3 py-2.5 shadow-sm dark:border-gray-700/60 dark:bg-gray-700/60;
+        @apply rounded-lg border px-3 py-2.5;
+        background-color: var(--surface-card-muted);
+        border-color: var(--surface-border);
+        box-shadow: var(--shadow-soft);
+        transition: box-shadow 180ms ease, border-color 150ms ease;
+    }
+
+    .filter-section:hover {
+        box-shadow: none;
+        border-color: var(--accent-outline);
     }
 
     .filter-toggle {
-        @apply flex w-full items-center justify-between gap-2 py-1 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 transition-colors duration-150 dark:text-gray-300;
+        @apply flex w-full items-center justify-between gap-2 py-1 text-left text-xs font-semibold uppercase tracking-wide transition-colors duration-150;
+        color: var(--text-muted);
     }
 
     .filter-toggle:hover {
@@ -215,7 +501,9 @@
     }
 
     .filter-checkbox {
-        @apply flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-gray-700 transition-colors duration-150 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600;
+        @apply flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs transition-colors duration-150;
+        color: var(--text-secondary);
+        background-color: transparent;
     }
 
     .filter-checkbox span {
@@ -223,30 +511,33 @@
     }
 
     .filter-checkbox input[type="checkbox"] {
-        @apply h-4 w-4 rounded border-gray-300 focus:ring-0 dark:border-gray-500;
+        @apply h-4 w-4 rounded focus:ring-0;
+        border-color: var(--surface-border);
+        background-color: var(--surface-card);
         accent-color: var(--accent-outline);
     }
 
-    .dark .filter-checkbox input[type="checkbox"] {
-        accent-color: var(--accent-outline);
+    .filter-checkbox:hover {
+        background-color: var(--surface-hover);
     }
 
     /* Footer der Filterkarte mit Button-Grid */
     .filter-panel-actions {
-        @apply grid grid-cols-1 gap-2 border-t border-gray-200 pt-4 dark:border-gray-700 sm:gap-3;
+        @apply grid grid-cols-1 gap-2 pt-4 sm:gap-3;
+        border-top: 1px solid var(--surface-border);
     }
 
     /* Schließen-Button für mobile Filter-Ansicht */
     .filter-close-btn {
-        @apply md:hidden inline-flex h-9 w-9 items-center justify-center rounded-full border border-gray-300 text-gray-500 transition-colors duration-150 focus:outline-none dark:border-gray-600 dark:text-gray-300;
+        @apply md:hidden inline-flex h-9 w-9 items-center justify-center rounded-full border transition-colors duration-150 focus:outline-none;
+        border-color: var(--surface-border);
+        color: var(--text-muted);
+        background-color: var(--surface-card);
     }
 
     .filter-close-btn:hover {
         color: var(--accent-outline);
-    }
-
-    .dark .filter-close-btn:hover {
-        color: var(--accent-outline);
+        background-color: var(--surface-hover);
     }
 
     .filter-close-btn:focus-visible {
@@ -256,30 +547,25 @@
 
     /* Buttons mit Akzentfarben (linkes Panel in News & ForYouPage) */
     .accent-outline-btn {
-        @apply cursor-pointer rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 text-center whitespace-normal wrap-break-word transition-colors duration-150 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100;
+        @apply cursor-pointer rounded-md border px-3 py-2 text-sm text-center whitespace-normal wrap-break-word transition-colors duration-150;
+        border-color: var(--surface-border);
+        color: var(--text-secondary);
+        background-color: var(--surface-card);
     }
 
     .accent-outline-btn:hover {
         color: var(--accent-outline);
         border-color: var(--accent-outline);
-    }
-
-    .dark .accent-outline-btn:hover {
-        color: var(--accent-outline);
-        border-color: var(--accent-outline);
+        background-color: var(--surface-hover);
     }
 
     .accent-solid-btn {
-        @apply cursor-pointer rounded-md border px-3 py-2 text-sm text-white text-center whitespace-normal wrap-break-word transition-colors duration-150 border-gray-300 dark:border-gray-600;
+        @apply cursor-pointer rounded-md border px-3 py-2 text-sm text-white text-center whitespace-normal wrap-break-word transition-colors duration-150;
+        border-color: var(--surface-border);
         background-color: var(--accent-strong);
     }
 
     .accent-solid-btn:hover {
-        background-color: var(--accent-strong-hover);
-        border-color: var(--accent-strong-hover);
-    }
-
-    .dark .accent-solid-btn:hover {
         background-color: var(--accent-strong-hover);
         border-color: var(--accent-strong-hover);
     }
@@ -289,6 +575,7 @@
     .accent-fab {
         @apply fixed bottom-24 right-5 z-40 inline-flex items-center justify-center rounded-full p-4 text-white shadow-lg transition-transform duration-200 focus:outline-none md:hidden;
         background-color: var(--accent-primary);
+        box-shadow: var(--surface-fab-shadow);
     }
 
     .accent-fab:hover {
@@ -299,19 +586,29 @@
     /* Akzentverwendung auf Karten, Links & Chips*/
     .news-card {
         @apply cursor-pointer space-y-3 transition-colors duration-200;
+        transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, box-shadow;
+        box-shadow: var(--shadow-soft);
     }
 
     .news-card:hover {
-        border-color: var(--accent-outline)
+        border-color: var(--accent-outline);
+        box-shadow: none;
     }
 
     /* Karten als Links im Kalender-Bereich mit Hover-Outline */
     .accent-card-link {
-        @apply block rounded-lg border border-gray-200/80 bg-gray-50/80 px-4 py-3 transition-colors duration-150 dark:border-gray-700/60 dark:bg-gray-700/60;
+        @apply block rounded-lg border px-4 py-3 transition-colors duration-150;
+        background-color: var(--surface-card-muted);
+        border-color: var(--surface-border);
+        color: var(--text-primary);
+        box-shadow: var(--shadow-soft);
+        transition: box-shadow 180ms ease, border-color 150ms ease, background-color 150ms ease;
     }
 
     .accent-card-link:hover {
         border-color: var(--accent-outline);
+        background-color: var(--surface-hover);
+        box-shadow: none;
     }
 
     /* Links in Kalender-Box & News-Detailseiten */
@@ -389,17 +686,7 @@
 
 
     /* -- Kalender -- */
-    /* Farben Kalender */
-    body.calendar-page, .calendar-page {
-        --accent-primary: #fb923c;
-        --accent-strong: #c05621;
-        --accent-strong-hover: #ea580c;
-        --accent-outline: #fdba74;
-        --accent-link: #fdba74;
-        --accent-link-hover: #fb923c;
-    }
-
-    /* Kalender-Karte & Aktionen */
+    /* - Kalender-Karte & Aktionen - */
     .calendar-card {
         @apply flex flex-col gap-4;
     }
@@ -418,8 +705,8 @@
         @apply inline-flex items-center border px-4 py-1 shadow-md;
         gap: 0.65rem;
         border-radius: 0.75rem;
-        border-color: rgba(253, 186, 116, 0.65);
-        background: rgba(253, 186, 116, 0.15);
+        border-color: var(--calendar-action-border);
+        background: var(--calendar-action-bg);
     }
 
     /* Text in einer Aktion */
@@ -432,12 +719,15 @@
     /* Icon innerhalb einer Aktion */
     .calendar-icon-btn {
         @apply inline-flex h-10 w-10 items-center justify-center rounded-2xl border text-white transition-all duration-200;
-        border-color: #c05621;
+        border-color: var(--calendar-icon-btn-border);
+        background-color: var(--calendar-icon-btn-bg);
+        color: var(--calendar-icon-btn-color);
     }
 
     .calendar-icon-btn svg {
         width: 1.15rem;
         height: 1.15rem;
+        color: inherit;
     }
 
     /* - Kalender-Grid - */
@@ -448,11 +738,45 @@
 
     /* Hintergrundkarte */
     .fc-view-harness {
-        background: rgba(182, 175, 175, 0.9);
+        background: var(--calendar-harness-bg);
     }
 
-    .dark .fc-view-harness {
-        background: rgba(15, 23, 42, 0.82);
+    /* Navigationsbuttons von FullCalendar */
+    .fc .fc-button {
+        @apply inline-flex items-center justify-center min-h-[2.5rem] px-4 text-sm font-semibold transition-colors duration-150 shadow-sm;
+        background-color: var(--calendar-nav-btn-bg) !important;
+        border-color: var(--calendar-nav-btn-border) !important;
+        color: var(--calendar-nav-btn-text) !important;
+        border-radius: 0.75rem !important;
+        line-height: 1 !important;
+    }
+
+    .fc .fc-button:hover,
+    .fc .fc-button:focus-visible {
+        background-color: var(--calendar-nav-btn-hover-bg) !important;
+        color: var(--calendar-nav-btn-hover-text) !important;
+    }
+
+    .fc .fc-button.fc-button-active,
+    .fc .fc-button:active {
+        background-color: var(--calendar-nav-btn-active-bg) !important;
+        border-color: var(--calendar-nav-btn-active-border) !important;
+        color: var(--calendar-nav-btn-active-text) !important;
+        box-shadow: none !important;
+    }
+
+    .fc .fc-button-group > .fc-button {
+        border-radius: 0 !important;
+    }
+
+    .fc .fc-button-group > .fc-button:first-child {
+        border-top-left-radius: 0.75rem !important;
+        border-bottom-left-radius: 0.75rem !important;
+    }
+
+    .fc .fc-button-group > .fc-button:last-child {
+        border-top-right-radius: 0.75rem !important;
+        border-bottom-right-radius: 0.75rem !important;
     }
 
     /* Entferne den Fokus-Ring von FullCalendar-Buttons nach einem Klick */
@@ -463,18 +787,13 @@
 
     /* Highlight-Farbe heutiger Tag */
     .fc-day-today {
-        background-color: rgba(199, 130, 56, 0.372) !important;
+        background-color: var(--calendar-day-today) !important;
     }
 
     /* Hintergrund-Akzentfarbe für globale Events (nur in der Monatsübersicht) */
     .fc .fc-event.global-event.fc-daygrid-event, .fc .fc-event.global-event.fc-daygrid-event:hover {
-        background-color: rgba(253, 230, 138, 0.65) !important;
-        color: #7c2d12;
-    }
-
-    .dark .fc .fc-event.global-event.fc-daygrid-event, .dark .fc .fc-event.global-event.fc-daygrid-event:hover {
-        background-color: rgba(253, 186, 116, 0.65) !important;
-        color: #fff7ed;
+        background-color: var(--calendar-global-event-bg) !important;
+        color: var(--calendar-global-event-color);
     }
 
     /* Text-Truncation mit "..." für Event-Titel im Kalender */
@@ -492,8 +811,8 @@
 
     /* Akzentfarbe für Events im Kalender (Wochenansicht) */
     .fc {
-        --fc-event-bg-color: rgba(253, 187, 116, 0.822);
-        --fc-event-border-color: rgba(253, 187, 116, 0.822);
+        --fc-event-bg-color: var(--calendar-event-bg-color);
+        --fc-event-border-color: var(--calendar-event-border-color);
     }
 
     /* Flyout für Events, das vollständigen Titel und Beschreibung beim Hovern zeigt */
@@ -501,12 +820,12 @@
         position: absolute;
         z-index: 9999;
         max-width: 24rem;
-        background: #ffffff;
-        color: #0f172a;
-        border: 1px solid rgba(15, 23, 42, 0.09);
+        background: var(--surface-card);
+        color: var(--calendar-flyout-title);
+        border: 1px solid var(--calendar-flyout-border);
         border-radius: 0.5rem;
         padding: 0.6rem 0.9rem;
-        box-shadow: 0 8px 22px rgba(2,6,23,0.14);
+        box-shadow: var(--calendar-flyout-shadow);
         font-size: 0.95rem;
         line-height: 1.25;
         display: block;
@@ -519,38 +838,26 @@
     .calendar-event-flyout__title {
         font-weight: 700;
         margin-bottom: 0.25rem;
-        color: #0f172a;
-    }
-    .dark .calendar-event-flyout__title {
-        color: #fdba74;
+        color: var(--calendar-flyout-title);
     }
     .calendar-event-flyout__desc {
-        color: #374151;
+        color: var(--calendar-flyout-desc);
         font-size: 0.9rem;
         max-height: 10rem;
         overflow: auto;
     }
-    .dark .calendar-event-flyout {
-        background: #0b1220;
-        color: #e6eef8;
-        border-color: rgba(255,255,255,0.12);
-        box-shadow: 0 8px 22px rgba(2,6,23,0.42);
-    }
 
     /* - Kalender-Toast & Hinweise - */
     .calendar-toast {
-        @apply fixed top-6 right-6 z-50 flex min-w-[18rem] max-w-md items-start gap-3 rounded-2xl border px-4 py-3 shadow-2xl bg-white text-gray-800 transition duration-200;
-        border-color: rgba(234, 88, 12, 0.35);
-        background: rgba(253, 237, 213, 0.98);
-    }
-
-    .dark .calendar-toast {
-        @apply bg-[#0b1220] text-gray-100;
-        border-color: rgba(253, 186, 116, 0.45);
+        @apply fixed top-6 right-6 z-50 flex min-w-[18rem] max-w-md items-start gap-3 rounded-2xl border px-4 py-3 shadow-2xl transition duration-200;
+        border-color: var(--calendar-toast-border);
+        background: var(--calendar-toast-bg);
+        color: var(--text-primary);
     }
 
     .calendar-toast__icon {
-        @apply mt-1 h-3.5 w-3.5 rounded-full bg-orange-400;
+        @apply mt-1 h-3.5 w-3.5 rounded-full;
+        background-color: var(--calendar-toast-icon-default);
     }
 
     .calendar-toast__content {
@@ -558,52 +865,59 @@
     }
 
     .calendar-toast__title {
-        @apply text-sm font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-200;
+        @apply text-sm font-semibold uppercase tracking-wide;
+        color: var(--text-secondary);
     }
 
     .calendar-toast__message {
-        @apply text-sm text-gray-700 dark:text-gray-100;
+        @apply text-sm;
+        color: var(--text-primary);
         white-space: pre-line;
     }
 
     .calendar-toast__close {
-        @apply ml-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-transparent text-2xl leading-none text-gray-400 transition duration-150 hover:text-gray-700 focus:outline-none dark:text-gray-300 dark:hover:text-white;
+        @apply ml-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-transparent text-2xl leading-none transition duration-150 focus:outline-none;
+        color: var(--text-muted);
     }
 
-    .calendar-toast--success {
-        border-color: rgba(16, 185, 129, 0.45);
-        background: rgba(16, 185, 129, 0.09);
+    .calendar-toast__close:hover {
+        color: var(--text-secondary);
+    }
+
+    .calendar-toast.calendar-toast--success {
+        border-color: var(--calendar-toast-success-border);
+        background: var(--calendar-toast-success-bg);
     }
 
     .calendar-toast--success .calendar-toast__icon {
-        @apply bg-emerald-500;
+        background-color: var(--calendar-toast-icon-success);
     }
 
-    .calendar-toast--error {
-        border-color: rgba(239, 68, 68, 0.45);
-        background: rgba(248, 113, 113, 0.12);
+    .calendar-toast.calendar-toast--error {
+        border-color: var(--calendar-toast-error-border);
+        background: var(--calendar-toast-error-bg);
     }
 
     .calendar-toast--error .calendar-toast__icon {
-        @apply bg-red-500;
+        background-color: var(--calendar-toast-icon-error);
     }
 
-    .calendar-toast--info {
-        border-color: rgba(59, 130, 246, 0.45);
-        background: rgba(191, 219, 254, 0.25);
+    .calendar-toast.calendar-toast--info {
+        border-color: var(--calendar-toast-info-border);
+        background: var(--calendar-toast-info-bg);
     }
 
     .calendar-toast--info .calendar-toast__icon {
-        @apply bg-blue-500;
+        background-color: var(--calendar-toast-icon-info);
     }
 
-    .calendar-toast--warning {
-        border-color: rgba(251, 146, 60, 0.6);
-        background: rgba(253, 186, 116, 0.3);
+    .calendar-toast.calendar-toast--warning {
+        border-color: var(--calendar-toast-warning-border);
+        background: var(--calendar-toast-warning-bg);
     }
 
     .calendar-toast--warning .calendar-toast__icon {
-        @apply bg-orange-400;
+        background-color: var(--calendar-toast-icon-warning);
     }
 
     /* - Kalender-Bestätigungsdialog - */
@@ -616,7 +930,8 @@
     }
 
     .calendar-confirm__panel {
-        @apply relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl dark:bg-[#181818];
+        @apply relative w-full max-w-sm rounded-2xl p-6 shadow-2xl;
+        background-color: var(--calendar-panel-bg);
     }
 
     .calendar-confirm__header {
@@ -624,19 +939,27 @@
     }
 
     .calendar-confirm__accent {
-        @apply h-8 w-2 rounded-r-xl bg-[#fb923c] dark:bg-[#ea580c];
+        @apply h-8 w-2 rounded-r-xl;
+        background-color: var(--calendar-panel-accent);
     }
 
     .calendar-confirm__title {
-        @apply text-lg font-semibold text-gray-800 dark:text-gray-100;
+        @apply text-lg font-semibold;
+        color: var(--calendar-panel-title);
     }
 
     .calendar-confirm__close {
-        @apply ml-auto inline-flex h-9 w-9 items-center justify-center rounded-full text-2xl text-gray-400 transition hover:text-gray-700 focus:outline-none dark:text-gray-400 dark:hover:text-white;
+        @apply ml-auto inline-flex h-9 w-9 items-center justify-center rounded-full text-2xl transition focus:outline-none;
+        color: var(--calendar-confirm-close-color);
+    }
+
+    .calendar-confirm__close:hover {
+        color: var(--calendar-confirm-close-hover);
     }
 
     .calendar-confirm__message {
-        @apply text-sm text-gray-600 dark:text-gray-300;
+        @apply text-sm;
+        color: var(--calendar-confirm-message);
         white-space: pre-line;
     }
 
@@ -645,7 +968,15 @@
     }
 
     .calendar-secondary-btn {
-        @apply inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors duration-150 hover:border-gray-400 hover:text-gray-900 dark:border-gray-600 dark:bg-transparent dark:text-gray-200 dark:hover:border-gray-400;
+        @apply inline-flex items-center justify-center rounded-xl border px-4 py-2 text-sm font-semibold transition-colors duration-150;
+        border-color: var(--calendar-secondary-btn-border);
+        background-color: var(--calendar-secondary-btn-bg);
+        color: var(--calendar-secondary-btn-text);
+    }
+
+    .calendar-secondary-btn:hover {
+        border-color: var(--calendar-secondary-btn-hover-border);
+        color: var(--calendar-secondary-btn-hover-text);
     }
 
     /* - Kalender-Popup - */
@@ -658,7 +989,8 @@
     }
 
     .calendar-modal__panel {
-        @apply relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl dark:bg-[#181818];
+        @apply relative w-full max-w-md rounded-2xl p-6 shadow-2xl;
+        background-color: var(--calendar-panel-bg);
     }
 
     .calendar-modal__header {
@@ -666,15 +998,22 @@
     }
 
     .calendar-modal__accent {
-        @apply mr-3 h-8 w-2 rounded-r-xl bg-[#fb923c] dark:bg-[#ea580c];
+        @apply mr-3 h-8 w-2 rounded-r-xl;
+        background-color: var(--calendar-panel-accent);
     }
 
     .calendar-modal__title {
-        @apply text-xl font-semibold text-gray-800 dark:text-gray-100;
+        @apply text-xl font-semibold;
+        color: var(--calendar-panel-title);
     }
 
     .calendar-modal__close {
-        @apply ml-auto text-2xl font-bold text-gray-400 transition hover:text-gray-700 dark:text-gray-300 dark:hover:text-white inline-flex items-center justify-center w-9 h-9 p-2 rounded focus:outline-none;
+        @apply ml-auto text-2xl font-bold transition inline-flex items-center justify-center w-9 h-9 p-2 rounded focus:outline-none;
+        color: var(--calendar-modal-close-color);
+    }
+
+    .calendar-modal__close:hover {
+        color: var(--calendar-modal-close-hover);
     }
 
     /* Formularfelder im Kalender-Popup */
@@ -699,7 +1038,10 @@
     }
 
     .calendar-form__notice {
-        @apply rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-700 dark:border-amber-700 dark:bg-amber-900/30 dark:text-amber-200;
+        @apply rounded-lg border px-3 py-2 text-sm;
+        border-color: var(--calendar-notice-border);
+        background-color: var(--calendar-notice-bg);
+        color: var(--calendar-notice-text);
     }
 
     .calendar-form__stack {
@@ -711,7 +1053,8 @@
     }
 
     .calendar-field-label {
-        @apply ml-1 mt-2 block text-left text-sm font-medium text-gray-600 dark:text-gray-300;
+        @apply ml-1 mt-2 block text-left text-sm font-medium;
+        color: var(--calendar-field-label);
     }
 
     .calendar-fieldset__inputs {
@@ -719,7 +1062,11 @@
     }
 
     .calendar-input {
-        @apply block w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#fdba74] dark:border-gray-700 dark:bg-[#181818] dark:text-gray-100;
+        @apply block w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2;
+        border-color: var(--calendar-input-border);
+        background-color: var(--calendar-input-bg);
+        color: var(--calendar-input-text);
+        --tw-ring-color: var(--calendar-input-focus-ring);
     }
 
     /* Vordefinierten Fokus-Stil entfernen (ersetzt durch benutzerdefinierten Stil weiter oben) */
@@ -734,19 +1081,41 @@
     }
 
     .calendar-textarea {
-        @apply min-h-24 rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#fdba74] dark:border-gray-700 dark:bg-[#181818] dark:text-gray-100;
+        @apply min-h-24 rounded-lg border px-4 py-2 focus:outline-none focus:ring-2;
+        border-color: var(--calendar-input-border);
+        background-color: var(--calendar-input-bg);
+        color: var(--calendar-input-text);
+        --tw-ring-color: var(--calendar-input-focus-ring);
     }
 
     .calendar-select {
-        @apply w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#fdba74] dark:border-gray-700 dark:bg-[#181818] dark:text-gray-100;
+        @apply w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2;
+        border-color: var(--calendar-input-border);
+        background-color: var(--calendar-input-bg);
+        color: var(--calendar-input-text);
+        --tw-ring-color: var(--calendar-input-focus-ring);
     }
 
     .calendar-all-day-btn {
-        @apply w-full rounded border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-700 transition hover:bg-[#fff7ed] dark:border-gray-700 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600;
+        @apply w-full rounded border px-3 py-2 text-sm transition;
+        border-color: var(--calendar-all-day-border);
+        background-color: var(--calendar-all-day-bg);
+        color: var(--calendar-all-day-text);
+    }
+
+    .calendar-all-day-btn:hover {
+        background-color: var(--calendar-all-day-hover-bg);
     }
 
     .calendar-section-toggle {
-        @apply mt-2 flex w-full items-center justify-between rounded-lg border border-gray-200 bg-gray-100 px-4 py-2 text-gray-700 transition hover:bg-gray-200 dark:border-gray-700 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600;
+        @apply mt-2 flex w-full items-center justify-between rounded-lg border px-4 py-2 transition;
+        border-color: var(--calendar-section-toggle-border);
+        background-color: var(--calendar-section-toggle-bg);
+        color: var(--calendar-section-toggle-text);
+    }
+
+    .calendar-section-toggle:hover {
+        background-color: var(--calendar-section-toggle-hover-bg);
     }
 
     .calendar-section-toggle svg {
@@ -758,11 +1127,13 @@
     }
 
     .calendar-form__checkbox {
-        @apply flex items-center gap-2 text-gray-700 dark:text-gray-100;
+        @apply flex items-center gap-2;
+        color: var(--calendar-checkbox-text);
     }
 
     .calendar-checkbox {
-        @apply h-4 w-4 rounded border-gray-300 text-[#fb923c] focus:ring-0 dark:border-gray-600;
+        @apply h-4 w-4 rounded focus:ring-0;
+        border-color: var(--calendar-checkbox-border);
         accent-color: var(--accent-outline);
     }
 
@@ -771,11 +1142,21 @@
     }
 
     .calendar-primary-btn {
-        @apply flex-1 rounded-lg bg-[#c05621] px-4 py-2 text-white transition hover:bg-[#ea580c] dark:bg-[#fb923c] dark:hover:bg-[#fdba74];
+        @apply flex-1 rounded-lg px-4 py-2 text-white transition;
+        background-color: var(--calendar-primary-btn-bg);
+    }
+
+    .calendar-primary-btn:hover {
+        background-color: var(--calendar-primary-btn-hover);
     }
 
     .calendar-danger-btn {
-        @apply flex-1 rounded-lg bg-red-500 px-4 py-2 text-white transition hover:bg-red-600 dark:hover:bg-red-400;
+        @apply flex-1 rounded-lg px-4 py-2 text-white transition;
+        background-color: var(--calendar-danger-btn-bg);
+    }
+
+    .calendar-danger-btn:hover {
+        background-color: var(--calendar-danger-btn-hover);
     }
 
     .calendar-time-input {
@@ -783,7 +1164,12 @@
     }
 
     .calendar-time-input__trigger {
-        @apply absolute right-2 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center text-gray-500 transition hover:text-[#fb923c] dark:text-gray-300 dark:hover:text-[#fdba74];
+        @apply absolute right-2 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center transition;
+        color: var(--calendar-time-trigger-text);
+    }
+
+    .calendar-time-input__trigger:hover {
+        color: var(--calendar-time-trigger-hover);
     }
 
     .calendar-time-input__trigger svg {
@@ -793,41 +1179,28 @@
     }
 
     .calendar-time-input__dropdown {
-        @apply absolute right-0 z-10 mt-1 max-h-48 w-32 overflow-y-auto rounded border border-gray-300 bg-white shadow-lg dark:border-gray-700 dark:bg-[#181818];
+        @apply absolute right-0 z-10 mt-1 max-h-48 w-32 overflow-y-auto rounded border shadow-lg;
+        border-color: var(--calendar-time-dropdown-border);
+        background-color: var(--calendar-time-dropdown-bg);
     }
 
     /* Eine Option in der Zeit-Auswahl */
     .calendar-dropdown-option {
-        @apply w-full cursor-pointer rounded-md px-2 py-1 text-sm text-[#0f172a];
+        @apply w-full cursor-pointer rounded-md px-2 py-1 text-sm;
+        color: var(--calendar-dropdown-text);
     }
 
     .calendar-dropdown-option:hover,
     .calendar-dropdown-option-active {
-        background-color: rgba(253, 186, 116, 0.2);
-        color: #7c2d12;
-    }
-
-    .dark .calendar-dropdown-option {
-        color: #e2e8f0;
-    }
-
-    .dark .calendar-dropdown-option:hover,
-    .dark .calendar-dropdown-option-active {
-        background-color: rgba(234, 88, 12, 0.35);
-        color: #ffe4c7;
+        background-color: var(--calendar-dropdown-hover-bg);
+        color: var(--calendar-dropdown-hover-text);
     }
 
     /* Aktivierte Toggles im Pop-Up */
     .calendar-toggle-active {
-        background-color: rgba(251, 146, 60, 0.15) !important;
-        border-color: rgba(251, 146, 60, 0.4) !important;
-        color: #9a3412 !important;
-    }
-
-    .dark .calendar-toggle-active {
-        background-color: rgba(234, 88, 12, 0.25) !important;
-        border-color: rgba(253, 186, 116, 0.4) !important;
-        color: #fed7aa !important;
+        background-color: var(--calendar-toggle-active-bg) !important;
+        border-color: var(--calendar-toggle-active-border) !important;
+        color: var(--calendar-toggle-active-color) !important;
     }
 
     /* Deaktivierte Formularfelder im Pop-Up */
