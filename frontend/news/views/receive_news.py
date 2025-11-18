@@ -29,6 +29,7 @@ RUNDMAIL_SOURCE_TYPES = {
 
 STATIC_SOURCE_MODELS = {
     "Interne Website": InterneWebsite,
+    "Externe Website": ExterneWebsite,
     "Fachschaft": Fachschaft,
     "Email-Verteiler": EmailVerteiler,
     "Trusted Account": TrustedAccountQuelle,
@@ -199,7 +200,9 @@ def process_news_entry(news_entry, openai_api_key, logger: logging.Logger):
             source_name_raw.strip() if isinstance(source_name_raw, str) else ""
         )
         source = source_model.objects.filter(name=source_name).first()
+        # Wenn kein Quellenobjekt gefunden wurde
         if source is None:
+            # Für TrustedAccountQuelle automatisch erstellen
             if source_model is TrustedAccountQuelle:
                 source = source_model.objects.create(name=source_name)
                 for language_suffix in ("de", "en", "es", "fr"):
@@ -212,6 +215,7 @@ def process_news_entry(news_entry, openai_api_key, logger: logging.Logger):
                     "Trusted Account Quelle automatisch erstellt | %s",
                     truncated_title,
                 )
+            # Ansonsten loggen und Eintrag überspringen
             else:
                 logger.error(
                     "Quelle '%s' vom Typ '%s' nicht vorhanden. Bitte in categories.json konfigurieren | %s",

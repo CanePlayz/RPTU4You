@@ -148,7 +148,7 @@ def get_objects_with_metadata() -> dict[str, list[dict[str, Any]]]:
     # Quellen mit Emojis und Metadaten versehen und sortieren
     sources_with_emojis = _sort_items(
         [
-            _build_named_object_item(source, source_emojis, "quellen")
+            _build_named_object_item(source, source_emojis, "quelle")
             for source in objects["sources"]
             if not isinstance(source, Rundmail)
         ]

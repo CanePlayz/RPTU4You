@@ -61,6 +61,9 @@ urlpatterns += i18n_patterns(
     path("news/<int:pk>/", news_detail, name="news_detail"),
     path("for-you/", foryoupage, name="foryoupage"),
     path("for-you/partial/", foryoupage_partial, name="foryoupage_partial"),
+    # Backwards-Kompatibilität, alter Pfad konnte nicht ausfinden gemacht werden
+    path("foryoupage/", foryoupage),
+    path("foryoupage/partial/", foryoupage_partial),
     # User
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),

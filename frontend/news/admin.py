@@ -11,6 +11,7 @@ admin.site.register(Rundmail)
 admin.site.register(InterneWebsite)
 admin.site.register(ExterneWebsite)
 admin.site.register(EmailVerteiler)
+admin.site.register(TrustedAccountQuelle)
 admin.site.register(Standort)
 admin.site.register(InhaltsKategorie)
 admin.site.register(Zielgruppe)
@@ -154,7 +155,7 @@ class NewsAdmin(admin.ModelAdmin):
 
 
 # Kalender
-# Brauchen wir um im Admin Table Serientermine zu erstellen
+# Brauchen wir um im Admin-Table Serientermine zu erstellen
 class CalendarEventAdmin(admin.ModelAdmin):
 
     list_display = (
