@@ -23,10 +23,13 @@
 {% block content %}
 <div class="page-shell">
     <div class="accent-card max-w-6xl 2xl:max-w-7xl">
-        {% include "partials/_messages.html" %}
+            <div id="preferences-messages">
+                {% include "partials/_messages.html" %}
+            </div>
+            <div id="preferences-feedback" class="hidden text-sm mt-2"></div>
         <h1 class="accent-card-title text-center mb-8">{% trans "Meine Präferenzen" %}</h1>
 
-        <form method="post" class="space-y-8">
+        <form method="post" id="preferences-form" class="space-y-8">
             {% csrf_token %}
             <!-- Grid mit 4 Spalten -->
             <div class="grid gap-6 lg:gap-8 md:grid-cols-2 xl:grid-cols-4">
@@ -83,8 +86,9 @@
                 </div>
             </div>
 
-            <div class="flex justify-center">
-                <button type="submit" class="bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-6 py-2 hover:bg-blue-600 dark:hover:bg-blue-400 cursor-pointer">{% trans "Speichern" %}</button>
+            <div class="flex justify-center gap-4">
+                <button type="submit" name="action" value="reset" id="preferences-reset-btn" class="accent-outline-btn rounded-md px-6 py-2">{% trans "Zurücksetzen" %}</button>
+                <button type="submit" id="preferences-submit-btn" class="bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-6 py-2 hover:bg-blue-600 dark:hover:bg-blue-400 cursor-pointer">{% trans "Speichern" %}</button>
             </div>
         </form>
     </div>

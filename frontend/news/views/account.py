@@ -157,11 +157,33 @@ def account_view(request: HttpRequest) -> HttpResponse:
 @login_required
 def update_preferences(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
+        action = request.POST.get("action")
+        # Zurücksetzen der Präferenzen
+        if action == "reset":
+            user = cast(User, request.user)
+            # Many-to-Many-Felder leeren
+            user.standorte.clear()
+            user.inhaltskategorien.clear()
+            user.quellen.clear()
+            user.zielgruppen.clear()
+            # Andere Präferenzfelder auf Standardwerte zurücksetzen
+            user.include_rundmail = False
+            user.include_sammel_rundmail = False
+            user.save()
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                return JsonResponse(
+                    {
+                        "success": True,
+                        "message": _("Deine Präferenzen wurden zurückgesetzt."),
+                    }
+                )
+            messages.success(request, _("Deine Präferenzen wurden zurückgesetzt."))
+            return redirect("preferences")
+
         form = PreferencesForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            messages.success(request, _("Deine Präferenzen wurden gespeichert."))
-            # AJAX-Anfrage über ForYouPage
+            # Bei AJAX-Anfragen (ForYouPage) keine persistente Django-Message setzen, stattdessen direkt JSON zurückgeben, damit das Feedback von der ForYouPage nicht in /preferences/landet
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return JsonResponse(
                     {
@@ -169,7 +191,8 @@ def update_preferences(request: HttpRequest) -> HttpResponse:
                         "message": _("Deine Präferenzen wurden gespeichert."),
                     }
                 )
-            # Nicht-AJAX-Anfragen bleiben auf der Einstellungsseite
+            # Nicht-AJAX-Anfragen: persistente Message und Redirect zur Einstellungsseite
+            messages.success(request, _("Deine Präferenzen wurden gespeichert."))
             return redirect("preferences")
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return JsonResponse({"success": False, "errors": form.errors}, status=400)

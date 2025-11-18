@@ -32,9 +32,9 @@ document.addEventListener("DOMContentLoaded", function () {
     return match ? "/" + match[1] : "";
   }
 
-  // Basis-URL der ForYouPage inklusive Sprachpräfix, etwa /de/foryoupage/
+  // Basis-URL der ForYouPage inklusive Sprachpräfix, etwa /de/for-you/
   function forYouBasePath() {
-    return (getLocalePrefix() + "/foryoupage/").replace(/\/{2,}/g, "/");
+    return (getLocalePrefix() + "/for-you/").replace(/\/{2,}/g, "/");
   }
 
   // Basis-URL für die News-Detailseite inklusive Sprachpräfix, etwa /de/news/
@@ -258,8 +258,46 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (resetButton && preferencesForm) {
     resetButton.addEventListener("click", function () {
-      preferencesForm.reset();
-      updateFeedback("", false);
+      // AJAX-basiertes Zurücksetzen der Präferenzen
+      if (resetButton.disabled) return;
+      resetButton.disabled = true;
+      updateFeedback("Setze Präferenzen zurück...", false);
+      var formData = new FormData(preferencesForm);
+      formData.set("action", "reset");
+
+      fetch(preferencesForm.action, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+          "X-CSRFToken": getCsrfToken(),
+        },
+      })
+        .then(function (response) {
+          if (!response.ok) return response.json().catch(function () { throw new Error("REQUEST_FAILED"); });
+          return response.json();
+        })
+        .then(function (data) {
+          if (!data || data.success !== true) {
+            updateFeedback("Zurücksetzen fehlgeschlagen", true);
+            return;
+          }
+          updateFeedback(data.message || "Präferenzen zurückgesetzt", false);
+          // Formular zurücksetzen und News-Liste neu laden
+          preferencesForm.reset();
+          if (manager && typeof manager.reloadList === "function") {
+            return manager.reloadList({ resetOffset: true, scrollY: 0 });
+          }
+          window.location.reload();
+        })
+        .catch(function (err) {
+          console.error("Fehler beim Zurücksetzen der Präferenzen:", err);
+          updateFeedback("Zurücksetzen fehlgeschlagen", true);
+          window.location.reload();
+        })
+        .finally(function () {
+          resetButton.disabled = false;
+        });
     });
   }
 });
