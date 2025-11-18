@@ -75,14 +75,14 @@ document.addEventListener("DOMContentLoaded", () => {
             if (this.checked) {
                 document.documentElement.classList.add('dark');
                 localStorage.setItem('theme', 'dark');
-                document.cookie = 'theme=dark;path=/;max-age=' + (60*60*24*365);
+                document.cookie = 'theme=dark;path=/;max-age=' + (60 * 60 * 24 * 365);
                 if (dot) dot.style.transform = 'translateX(24px)';
                 if (sunIcon) sunIcon.classList.add('hidden');
                 if (moonIcon) moonIcon.classList.remove('hidden');
             } else {
                 document.documentElement.classList.remove('dark');
                 localStorage.setItem('theme', 'light');
-                document.cookie = 'theme=light;path=/;max-age=' + (60*60*24*365);
+                document.cookie = 'theme=light;path=/;max-age=' + (60 * 60 * 24 * 365);
                 if (dot) dot.style.transform = 'translateX(0)';
                 if (sunIcon) sunIcon.classList.remove('hidden');
                 if (moonIcon) moonIcon.classList.add('hidden');
