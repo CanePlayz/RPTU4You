@@ -30,6 +30,8 @@
 
                 <form id="news-filter-form" method="get" class="flex flex-col gap-4">
                         <div class="space-y-3">
+
+                            <!-- Standorte -->
                             <div class="filter-section">
                                 <button type="button" class="filter-toggle" data-filter-target="standorte" onclick="toggleFilter('standorte')" aria-controls="filter-standorte" aria-expanded="{% if active_filters.locations %}true{% else %}false{% endif %}">
                                     <span>{% trans "Standorte" %}</span>
@@ -51,6 +53,7 @@
                                 </div>
                             </div>
 
+                            <!-- Inhaltskategorien -->
                             <div class="filter-section">
                                 <button type="button" class="filter-toggle" data-filter-target="kategorien" onclick="toggleFilter('kategorien')" aria-controls="filter-kategorien" aria-expanded="{% if active_filters.categories %}true{% else %}false{% endif %}">
                                     <span>{% trans "Kategorien" %}</span>
@@ -72,6 +75,7 @@
                                 </div>
                             </div>
 
+                            <!-- Zielgruppen -->
                             <div class="filter-section">
                                 <button type="button" class="filter-toggle" data-filter-target="zielgruppen" onclick="toggleFilter('zielgruppen')" aria-controls="filter-zielgruppen" aria-expanded="{% if active_filters.audiences %}true{% else %}false{% endif %}">
                                     <span>{% trans "Zielgruppen" %}</span>
@@ -93,6 +97,7 @@
                                 </div>
                             </div>
 
+                            <!-- Quellen -->
                             <div class="filter-section">
                                 <button type="button" class="filter-toggle" data-filter-target="quellen" onclick="toggleFilter('quellen')" aria-controls="filter-quellen" aria-expanded="{% if active_filters.sources %}true{% else %}false{% endif %}">
                                     <span>{% trans "Quellen" %}</span>

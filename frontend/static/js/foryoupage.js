@@ -153,28 +153,96 @@ document.addEventListener("DOMContentLoaded", function () {
   var submitButton = document.getElementById("preferences-submit-btn");
   var resetButton = document.getElementById("preferences-reset-btn");
   var feedbackBox = document.getElementById("preferences-feedback");
+  var feedbackMessageEl = feedbackBox ? feedbackBox.querySelector(".alert-banner__message") : null;
+  var feedbackDotEl = feedbackBox ? feedbackBox.querySelector(".alert-banner__dot") : null;
+  var ALERT_VARIANTS = ["success", "error", "info", "warning"];
+
+  var preferencesEndpoint = (function deriveEndpoint() {
+    if (!preferencesForm) {
+      return "";
+    }
+    var raw = preferencesForm.getAttribute("action") || "";
+    if (!raw) {
+      var fallback = (window.location.origin || "") + (getLocalePrefix() + "/preferences/").replace(/\/{2,}/g, "/");
+      return fallback;
+    }
+    var anchor = document.createElement("a");
+    anchor.href = raw;
+    return anchor.href;
+  })();
+
+  function resolveVariant(status) {
+    if (typeof status === "string" && ALERT_VARIANTS.includes(status)) {
+      return status;
+    }
+    if (status === true) {
+      return "error";
+    }
+    if (status === false) {
+      return "success";
+    }
+    return "info";
+  }
+
+  function applyVariantClasses(variant) {
+    if (!feedbackBox) {
+      return;
+    }
+    ALERT_VARIANTS.forEach(function (state) {
+      feedbackBox.classList.remove("alert-banner--" + state);
+      if (feedbackDotEl) {
+        feedbackDotEl.classList.remove("alert-dot--" + state);
+      }
+    });
+    feedbackBox.classList.add("alert-banner--" + variant);
+    if (feedbackDotEl) {
+      feedbackDotEl.classList.add("alert-dot--" + variant);
+    }
+  }
 
   // Funktion zur Anzeige von Feedback-Nachrichten
-  function updateFeedback(message, isError) {
+  function updateFeedback(message, status) {
     if (!feedbackBox) {
       return;
     }
     if (!message) {
-      feedbackBox.textContent = "";
-      feedbackBox.classList.add("hidden");
-      feedbackBox.classList.remove("text-green-600", "text-red-600");
+      if (feedbackMessageEl) {
+        feedbackMessageEl.textContent = "";
+      } else {
+        feedbackBox.textContent = "";
+      }
+      feedbackBox.setAttribute("hidden", "hidden");
       return;
     }
-    feedbackBox.textContent = message;
-    feedbackBox.classList.remove("hidden");
-    feedbackBox.classList.toggle("text-red-600", Boolean(isError));
-    feedbackBox.classList.toggle("text-green-600", !isError);
+
+    feedbackBox.removeAttribute("hidden");
+    if (feedbackMessageEl) {
+      feedbackMessageEl.textContent = message;
+    } else {
+      feedbackBox.textContent = message;
+    }
+    applyVariantClasses(resolveVariant(status));
   }
 
   // Liest den CSRF-Token aus dem Cookie
   function getCsrfToken() {
     var match = document.cookie.match(/csrftoken=([^;]+)/);
     return match ? decodeURIComponent(match[1]) : "";
+  }
+
+  // Setzt sämtliche Präferenz-Checkboxen zurück, damit der UI-Status nach einem Server-Reset passt
+  function clearPreferenceSelections() {
+    if (!preferencesForm) {
+      return;
+    }
+    var checkboxes = preferencesForm.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(function (checkbox) {
+      if (checkbox.name === "csrfmiddlewaretoken") {
+        return;
+      }
+      checkbox.checked = false;
+      checkbox.removeAttribute("checked");
+    });
   }
 
   // Sendet das Formular per fetch, reagiert auf Erfolg und Fehler und synchronisiert anschließend den News-Feed
@@ -185,12 +253,12 @@ document.addEventListener("DOMContentLoaded", function () {
     if (submitButton) {
       submitButton.disabled = true;
     }
-    updateFeedback("Speichere Präferenzen...", false);
+    updateFeedback("Speichere Präferenzen...", "info");
 
     var formData = new FormData(preferencesForm);
 
     // Sendet die Daten per fetch an den Server
-    fetch(preferencesForm.action, {
+    fetch(preferencesEndpoint, {
       method: "POST",
       body: formData,
       headers: {
@@ -257,15 +325,19 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   if (resetButton && preferencesForm) {
-    resetButton.addEventListener("click", function () {
-      // AJAX-basiertes Zurücksetzen der Präferenzen
-      if (resetButton.disabled) return;
+    resetButton.addEventListener("click", function (event) {
+      // Eigene Behandlung, damit das Formular nicht zusätzlich den Submit-Handler auslöst
+      event.preventDefault();
+      event.stopPropagation();
+      if (resetButton.disabled) {
+        return;
+      }
       resetButton.disabled = true;
-      updateFeedback("Setze Präferenzen zurück...", false);
+      updateFeedback("Setze Präferenzen zurück...", "info");
       var formData = new FormData(preferencesForm);
       formData.set("action", "reset");
 
-      fetch(preferencesForm.action, {
+      fetch(preferencesEndpoint, {
         method: "POST",
         body: formData,
         headers: {
@@ -283,8 +355,8 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
           }
           updateFeedback(data.message || "Präferenzen zurückgesetzt", false);
-          // Formular zurücksetzen und News-Liste neu laden
-          preferencesForm.reset();
+          // Formular zurücksetzen und News-Feed neu laden
+          clearPreferenceSelections();
           if (manager && typeof manager.reloadList === "function") {
             return manager.reloadList({ resetOffset: true, scrollY: 0 });
           }

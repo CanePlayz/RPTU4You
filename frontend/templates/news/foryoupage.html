@@ -38,8 +38,14 @@
                     </div>
                 {% endif %}
 
+                <div id="preferences-feedback" hidden class="alert-banner" role="status" aria-live="polite">
+                    <span class="alert-banner__dot"></span>
+                    <span class="alert-banner__message"></span>
+                </div>
 
                     <div class="space-y-3">
+
+                        <!-- Standorte -->
                         <div class="filter-section">
                             <button type="button" class="filter-toggle" data-filter-target="standorte" onclick="toggleFilter('standorte')" aria-controls="filter-standorte" aria-expanded="{% if preferences_form.standorte.value or preferences_form.standorte.errors %}true{% else %}false{% endif %}">
                                 <span>{{ preferences_form.standorte.label }}</span>
@@ -64,6 +70,7 @@
                             {% endif %}
                         </div>
 
+                        <!-- Inhaltskategorien -->
                         <div class="filter-section">
                             <button type="button" class="filter-toggle" data-filter-target="kategorien" onclick="toggleFilter('kategorien')" aria-controls="filter-kategorien" aria-expanded="{% if preferences_form.inhaltskategorien.value or preferences_form.inhaltskategorien.errors %}true{% else %}false{% endif %}">
                                 <span>{{ preferences_form.inhaltskategorien.label }}</span>
@@ -88,6 +95,7 @@
                             {% endif %}
                         </div>
 
+                        <!-- Zielgruppen -->
                         <div class="filter-section">
                             <button type="button" class="filter-toggle" data-filter-target="zielgruppen" onclick="toggleFilter('zielgruppen')" aria-controls="filter-zielgruppen" aria-expanded="{% if preferences_form.zielgruppen.value or preferences_form.zielgruppen.errors %}true{% else %}false{% endif %}">
                                 <span>{{ preferences_form.zielgruppen.label }}</span>
@@ -112,6 +120,7 @@
                             {% endif %}
                         </div>
 
+                        <!-- Quellen -->
                         <div class="filter-section">
                             <button type="button" class="filter-toggle" data-filter-target="quellen" onclick="toggleFilter('quellen')" aria-controls="filter-quellen" aria-expanded="{% if preferences_form.quellen.value or preferences_form.quellen.errors %}true{% else %}false{% endif %}">
                                 <span>{{ preferences_form.quellen.label }}</span>
@@ -137,10 +146,8 @@
                         </div>
                     </div>
 
-
-
                 <div class="filter-panel-actions">
-                    <button type="button" id="preferences-reset-btn" class="accent-outline-btn w-full">{% trans "Zurücksetzen" %}</button>
+                    <button type="submit" name="action" value="reset" id="preferences-reset-btn" class="accent-outline-btn w-full">{% trans "Zurücksetzen" %}</button>
                     <button type="submit" id="preferences-submit-btn" class="accent-solid-btn w-full">{% trans "Speichern" %}</button>
                 </div>
             </form>

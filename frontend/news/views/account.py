@@ -157,10 +157,10 @@ def account_view(request: HttpRequest) -> HttpResponse:
 @login_required
 def update_preferences(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
+        user = cast(User, request.user)
         action = request.POST.get("action")
         # Zurücksetzen der Präferenzen
         if action == "reset":
-            user = cast(User, request.user)
             # Many-to-Many-Felder leeren
             user.standorte.clear()
             user.inhaltskategorien.clear()
@@ -180,6 +180,7 @@ def update_preferences(request: HttpRequest) -> HttpResponse:
             messages.success(request, _("Deine Präferenzen wurden zurückgesetzt."))
             return redirect("preferences")
 
+        # Speichern der Präferenzen
         form = PreferencesForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
