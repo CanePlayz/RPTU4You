@@ -10,489 +10,834 @@
 
 /* Komponenten-Layer: hier liegen alle relevanten Klassen */
 @layer components {
-	/* Layout-Hülle & Navigation */
-	/* Hauptfenster mit kleinem Rahmen */
+    /* -- Layout-Hülle & Navigation -- */
+    /* Hauptfenster mit kleinem Rahmen */
     .window {
-		@apply relative w-[95vw] h-[95vh] border-2 border-[#222] rounded-[40px] overflow-hidden flex flex-col min-h-0;
-	}
+        @apply relative w-[95vw] h-[95vh] border-2 border-[#222] rounded-[40px] overflow-hidden flex flex-col min-h-0;
+    }
 
-	/* Obere Navigationsleiste */
-	.nav-bar {
-		@apply sticky top-0 z-10 bg-[#042c58] dark:bg-[#0a111a] w-full;
-	}
 
-	/* Content-Area */
-	/* Standard: NICHT scrollen (3-Spalten-Layouts) */
-	.content-area {
-		@apply bg-gray-100 dark:bg-gray-900 flex-1 min-h-0 overflow-hidden;
-	}
-	/* Opt-in: Ganze Seite scrollen (Seiten mit Karte) */
-	.content-scroll {
-		@apply overflow-y-auto min-w-0 min-h-0;
-	}
+    /* -- Obere Navigationsleiste -- */
+    .nav-bar {
+        @apply sticky top-0 z-10 bg-[#042c58] dark:bg-[#0a111a] w-full;
+    }
 
-	/* 3-Spalten-Layout und Scroll-Spalten */
-	.columns-row {
-		@apply flex flex-col gap-6 md:flex-row flex-1 min-h-0 h-full;
-	}
-	.side-column {
-		@apply w-full p-0 md:flex md:flex-col md:flex-initial md:min-w-[18rem] md:max-w-[20rem] lg:min-w-76 lg:max-w-88 xl:min-w-[20rem] xl:max-w-[24rem] md:p-2 lg:p-3;
-	}
-	.middle-column {
-		@apply w-full md:flex-1 md:min-w-0 max-w-full pt-0 pb-0 md:pl-2 md:pr-2 md:mt-2 md:mb-2 lg:pl-3 lg:pr-3 lg:mt-3 lg:mb-3;
-	}
-	.scrollable {
-		@apply overflow-y-auto min-w-0 min-h-0;
-	}
+    /* -- Content-Area -- */
+    /* Standard: NICHT scrollen (3-Spalten-Layouts) */
+    .content-area {
+        @apply bg-gray-100 dark:bg-gray-900 flex-1 min-h-0 overflow-hidden;
+    }
+    /* Opt-in: Ganze Seite scrollen (Seiten mit Karte) */
+    .content-scroll {
+        @apply overflow-y-auto min-w-0 min-h-0;
+    }
 
-	/* Karten-Layout */
-	.page-shell {
-		@apply bg-gray-100 dark:bg-gray-900 min-h-full grid place-items-center py-12 px-8;
-	}
+    /* 3-Spalten-Layout und Scroll-Spalten */
+    .columns-row {
+        @apply flex flex-col gap-6 md:flex-row flex-1 min-h-0 h-full;
+    }
+    .side-column {
+        @apply w-full p-0 md:flex md:flex-col md:flex-initial md:min-w-[18rem] md:max-w-[20rem] lg:min-w-76 lg:max-w-88 xl:min-w-[20rem] xl:max-w-[24rem] md:p-2 lg:p-3;
+    }
+    .middle-column {
+        @apply w-full md:flex-1 md:min-w-0 max-w-full pt-0 pb-0 md:pl-2 md:pr-2 md:mt-2 md:mb-2 lg:pl-3 lg:pr-3 lg:mt-3 lg:mb-3;
+    }
+    .scrollable {
+        @apply overflow-y-auto min-w-0 min-h-0;
+    }
 
-	/* Akzent-Karten */
+    /* -- Karten-Layout -- */
+    /* Seitenhülle für Karten-Seiten */
+    .page-shell {
+        @apply bg-gray-100 dark:bg-gray-900 min-h-full grid place-items-center py-12 px-8;
+    }
+
+    /* Akzent-Karten */
     .accent-card-title {
-		@apply text-2xl md:text-3xl font-semibold text-gray-800 dark:text-gray-100;
-	}
+        @apply text-2xl md:text-3xl font-semibold text-gray-800 dark:text-gray-100;
+    }
     .accent-card {
-		@apply bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md p-6 w-full;
-	}
-
-	/* Formularelemente auf Karten-Seiten */
-	.form-label {
-		@apply block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2;
-	}
-	.form-field {
-		@apply bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-md w-full p-3;
-	}
-	.status-card {
-		@apply bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-md w-full p-4;
-	}
-	.form-error {
-		@apply mt-2 text-xs font-medium text-rose-500 dark:text-rose-300;
-	}
-
-	/* Footer & Links im Footer */
-	.site-footer {
-		@apply bg-[#042c58] dark:bg-[#0a111a] text-gray-100 flex flex-col md:flex-row items-center justify-between gap-3 px-6 py-4 text-sm md:text-base;
-	}
-	.site-footer__links {
-		@apply flex flex-col md:flex-row items-center gap-6 pl-2 md:pl-4;
-	}
-	.site-footer__link {
-		@apply text-gray-100 transition-colors duration-200 hover:text-[#bfdbfe];
-	}
-
-	/* RPTU4You-Schriftzug in der Navbar mit Glow-Effekt */
-	.brand-link {
-		@apply relative inline-flex items-center font-bold whitespace-nowrap uppercase text-white transition-all duration-300 ease-out px-3 py-1 isolate;
-		text-shadow: 0 0 8px rgba(191, 219, 254, 0.35);
-	}
-
-	.brand-link::before,
-	.brand-link::after {
-		content: "";
-		position: absolute;
-		inset: 0;
-		border-radius: 9999px;
-		z-index: -1;
-		transition: transform 220ms ease, opacity 220ms ease, box-shadow 220ms ease;
-	}
-
-	.brand-link::before {
-		opacity: 0;
-		transform: scale(0.75);
-		background: radial-gradient(circle at 30% 30%, rgba(191, 219, 254, 0.45), rgba(37, 99, 235, 0.15) 55%, transparent 70%);
-	}
-
-	.brand-link::after {
-		opacity: 0;
-		transform: scaleX(0.6) scaleY(0.8);
-		background: linear-gradient(135deg, rgba(191, 219, 254, 0.35), rgba(59, 130, 246, 0.2));
-		box-shadow: 0 0 0 rgba(59, 130, 246, 0);
-	}
-
-	.brand-link:hover {
-		color: #e0f2fe;
-		transform: translateY(-2px);
-	}
-
-	.brand-link:hover::before,
-	.brand-link:hover::after {
-		opacity: 1;
-		transform: scale(1);
-	}
-
-	.brand-link:hover::after {
-		box-shadow: 0 10px 25px rgba(30, 64, 175, 0.35);
-	}
-
-	/* Seiten-spezifische Akzentbereiche (News vs. ForYou) */
-	/* accent-primary: Navbar, Filter-Icon, Outline wenn fokussiert */
-	/* accent-strong: Buttons im Filter-Panel & Quellen-Chip auf News-Detailseiten */
-	/* accent-outline: Outline beim Hovern über sämtliche Boxen */
-	/* accent-link: Links im Kalender-Bereich und auf News-Detailseiten */
-	.news-page {
-		@apply flex flex-col h-full min-h-0;
-		--accent-primary: #2563eb;
-		--accent-strong: #0c3a6e;
-		--accent-strong-hover: #1b5fab;
-		--accent-outline: #60a5fa;
-		--accent-link: #60a5fa;
-		--accent-link-hover: #2563eb;
-	}
-
-	.foryou-page {
-		@apply flex flex-col h-full min-h-0;
-		--accent-primary: #c084fc;
-		--accent-strong: #7c3aed;
-		--accent-strong-hover: #8b5cf6;
-		--accent-outline: #d8b4fe;
-		--accent-link: #d8b4fe;
-		--accent-link-hover: #8b5cf6;
-	}
-
-	.calendar-page {
-		--accent-primary: #fb923c;
-		--accent-strong: #c05621;
-		--accent-strong-hover: #ea580c;
-		--accent-outline: #fdba74;
-		--accent-link: #fdba74;
-		--accent-link-hover: #fb923c;
-	}
-
-	/* Filter-Layouts (Desktop & mobil) */
-	.filter-panel-card {
-		@apply md:sticky md:top-6 flex flex-col gap-4 w-full max-md:w-full min-w-0 min-h-0 md:flex-1;
-		max-height: calc(100vh - 4rem);
-	}
-
-	@media (min-width: 768px) {
-		.filter-panel-card {
-			max-height: calc(100vh - 6rem);
-		}
-	}
-
-	/* Einzelne Filterabschnitte samt Toggle-Verhalten */
-	.filter-section {
-		@apply rounded-lg border border-gray-200/80 bg-gray-50/80 px-3 py-2.5 shadow-sm dark:border-gray-700/60 dark:bg-gray-700/60;
-	}
-
-	.filter-toggle {
-		@apply flex w-full items-center justify-between gap-2 py-1 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 transition-colors duration-150 dark:text-gray-300;
-	}
-
-	.filter-toggle:hover {
-		color: var(--accent-outline);
-	}
-
-	.filter-toggle svg {
-		@apply h-3 w-3 shrink-0 transition-transform duration-200;
-	}
-
-	.filter-options {
-		@apply mt-1 flex flex-col gap-0.5;
-	}
-
-	.filter-checkbox {
-		@apply flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-gray-700 transition-colors duration-150 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600;
-	}
-
-	.filter-checkbox span {
-		@apply text-sm leading-tight;
-	}
-
-	.filter-checkbox input[type="checkbox"] {
-		@apply h-4 w-4 rounded border-gray-300 focus:ring-0 dark:border-gray-500;
-		accent-color: var(--accent-outline);
-	}
-
-	.dark .filter-checkbox input[type="checkbox"] {
-		accent-color: var(--accent-outline);
-	}
-
-	/* Footer der Filterkarte mit Button-Grid */
-	.filter-panel-actions {
-		@apply grid grid-cols-1 gap-2 border-t border-gray-200 pt-4 dark:border-gray-700 sm:gap-3;
-	}
-
-	/* Schließen-Button für mobile Filter-Ansicht */
-	.filter-close-btn {
-		@apply md:hidden inline-flex h-9 w-9 items-center justify-center rounded-full border border-gray-300 text-gray-500 transition-colors duration-150 focus:outline-none dark:border-gray-600 dark:text-gray-300;
-	}
-
-	.filter-close-btn:hover {
-		color: var(--accent-outline);
-	}
-
-	.dark .filter-close-btn:hover {
-		color: var(--accent-outline);
-	}
-
-	.filter-close-btn:focus-visible {
-		outline: 2px solid var(--accent-outline);
-		outline-offset: 2px;
-	}
-
-	/* Buttons mit Akzentfarben (linkes Panel in News & ForYouPage) */
-	.accent-outline-btn {
-		@apply cursor-pointer rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 text-center whitespace-normal wrap-break-word transition-colors duration-150 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100;
-	}
-
-	.accent-outline-btn:hover {
-		color: var(--accent-outline);
-		border-color: var(--accent-outline);
-	}
-
-	.dark .accent-outline-btn:hover {
-		color: var(--accent-outline);
-		border-color: var(--accent-outline);
-	}
-
-	.accent-solid-btn {
-		@apply cursor-pointer rounded-md border px-3 py-2 text-sm text-white text-center whitespace-normal wrap-break-word transition-colors duration-150 border-gray-300 dark:border-gray-600;
-		background-color: var(--accent-strong);
-	}
-
-	.accent-solid-btn:hover {
-		background-color: var(--accent-strong-hover);
-		border-color: var(--accent-strong-hover);
-	}
-
-	.dark .accent-solid-btn:hover {
-		background-color: var(--accent-strong-hover);
-		border-color: var(--accent-strong-hover);
-	}
-
-	.accent-outline-btn:focus-visible,
-	.accent-solid-btn:focus-visible {
-		outline: 2px solid var(--accent-primary);
-		outline-offset: 2px;
-	}
-
-	/* Schwebender Filter-Button auf Mobilgeräten */
-	.accent-fab {
-		@apply fixed bottom-24 right-5 z-40 inline-flex items-center justify-center rounded-full p-4 text-white shadow-lg transition-transform duration-200 focus:outline-none md:hidden;
-		background-color: var(--accent-primary);
-	}
-
-	.accent-fab:hover {
-		transform: scale(1.05);
-	}
-
-	.accent-fab:focus-visible {
-		outline: 2px solid var(--accent-primary);
-		outline-offset: 2px;
-	}
-
-	/* Akzentverwendung auf Karten, Links & Chips */
-	.news-card {
-		@apply cursor-pointer space-y-3 transition-colors duration-200;
-	}
-
-	.news-card:hover {
-		border-color: var(--accent-outline)
-	}
-
-	/* Karten als Links im Kalender-Bereich mit Hover-Outline */
-	.accent-card-link {
-		@apply block rounded-lg border border-gray-200/80 bg-gray-50/80 px-4 py-3 transition-colors duration-150 dark:border-gray-700/60 dark:bg-gray-700/60;
-	}
-
-	.accent-card-link:hover {
-		border-color: var(--accent-outline);
-	}
-
-	/* Links in Kalender-Box & News-Detailseiten */
-	.accent-link {
-		@apply inline-block text-sm font-medium transition-colors duration-150;
-		color: var(--accent-link);
-	}
-
-	.accent-link:hover {
-		color: var(--accent-link-hover);
-	}
-
-	/* Hinweise unter Formularen (z. B. Save-Status) */
-	.form-feedback {
-		@apply mt-3 text-sm;
-	}
-
-	/* Kleine Chips zur Hervorhebung von Links in News-Detailseiten */
-	.accent-chip {
-		@apply inline-flex items-center gap-2 rounded px-4 py-1 font-semibold text-white;
-		background-color: var(--accent-strong);
-	}
-
-	.accent-chip--interactive {
-		@apply cursor-pointer transition-colors duration-150;
-	}
-
-	.accent-chip--interactive:hover {
-		background-color: var(--accent-strong-hover);
-	}
-
-	.accent-chip--interactive:focus-visible {
-		outline: 2px solid var(--accent-primary);
-		outline-offset: 2px;
-	}
-
-	/* Kalender-spezifische Styles */
-	/* Wrapper */
-	.calendar-card {
-		@apply flex flex-col gap-4;
-	}
-
-	/* Header mit Titel & Aktionen */
-	.calendar-card__header {
-		@apply flex flex-col gap-4 md:flex-row md:items-center md:justify-between shrink-0;
-	}
-
-	.calendar-card__actions {
-		@apply flex flex-wrap items-center gap-4 justify-start md:justify-end;
-	}
-
-	/* Eine Aktion */
-	.calendar-action {
-		@apply inline-flex items-center border px-4 py-1 shadow-md;
-		gap: 0.65rem;
-		border-radius: 0.75rem;
-		border-color: rgba(253, 186, 116, 0.65);
-		background: rgba(253, 186, 116, 0.15);
-	}
-
-	/* Text in einer Aktion */
-	.calendar-action-text {
-		@apply text-sm font-semibold;
-		color: #fb923c;
-		white-space: nowrap;
-	}
-
-	/* Icon in einer Aktion	 */
-	.calendar-icon-btn {
-		@apply inline-flex items-center justify-center rounded-2xl border text-white transition-all duration-200;
-		width: 2.4rem;
-		height: 2.4rem;
-		border-color: #c05621;
-	}
-
-	.calendar-icon-btn svg {
-		width: 1.15rem;
-		height: 1.15rem;
-	}
-
-	.calendar-icon-btn:focus-visible {
-		outline: 2px solid #fb923c;
-		outline-offset: 3px;
-	}
-
-	.calendar-grid-wrapper {
-		@apply relative pt-4;
-	}
-
-	.calendar-grid {
-		@apply rounded-2xl border border-gray-200 dark:border-gray-700 w-full;
-	}
-
-	.calendar-toggle-active {
-		background-color: rgba(251, 146, 60, 0.15) !important;
-		border-color: rgba(251, 146, 60, 0.4) !important;
-		color: #9a3412 !important;
-	}
-
-	.dark .calendar-toggle-active {
-		background-color: rgba(234, 88, 12, 0.25) !important;
-		border-color: rgba(253, 186, 116, 0.4) !important;
-		color: #fed7aa !important;
-	}
-
-	.calendar-dropdown-option {
-		@apply w-full text-sm cursor-pointer rounded-md px-2 py-1;
-		color: #0f172a;
-	}
-
-	.calendar-dropdown-option:hover,
-	.calendar-dropdown-option-active {
-		background-color: rgba(253, 186, 116, 0.2);
-		color: #7c2d12;
-	}
-
-	.dark .calendar-dropdown-option {
-		color: #e2e8f0;
-	}
-
-	.dark .calendar-dropdown-option:hover,
-	.dark .calendar-dropdown-option-active {
-		background-color: rgba(234, 88, 12, 0.35);
-		color: #ffe4c7;
-	}
-
-	.calendar-grid .fc {
-		background: transparent;
-	}
-
-	.calendar-grid .fc .fc-toolbar.fc-header-toolbar {
-		margin-bottom: 1.25rem;
-		gap: 1rem;
-	}
-
-	.calendar-grid .fc .fc-toolbar-chunk {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-	}
-
-	.calendar-grid .fc .fc-daygrid-event,
-	.calendar-grid .fc .fc-timegrid-event {
-		background-color: rgba(251, 146, 60, 0.18) !important;
-		border: 1px solid rgba(251, 146, 60, 0.45) !important;
-		color: #1c1917 !important;
-	}
-
-	.dark .calendar-grid .fc .fc-daygrid-event,
-	.dark .calendar-grid .fc .fc-timegrid-event {
-		background-color: rgba(251, 146, 60, 0.25) !important;
-		border-color: rgba(251, 146, 60, 0.6) !important;
-		color: #fff7ed !important;
-	}
-
-	.calendar-grid .fc .fc-daygrid-event-dot {
-		border-color: #fb923c;
-	}
-
-	.dark .calendar-grid .fc .fc-daygrid-event-dot {
-		border-color: #fdba74;
-	}
-
-	.calendar-grid .fc .fc-daygrid-event:hover,
-	.calendar-grid .fc .fc-timegrid-event:hover {
-		background-color: rgba(251, 146, 60, 0.28) !important;
-		border-color: rgba(251, 146, 60, 0.7) !important;
-	}
-
-	.fc-event.global-event {
-		background-color: #fde68a !important;
-		color: #7c2d12 !important;
-		border-left: 5px solid #fb923c !important;
-		font-style: italic;
-	}
-
-	.dark .fc-event.global-event {
-		background-color: #374151 !important;
-		color: #fff !important;
-	}
-
-	.dark .calendar-grid .fc .fc-col-header-cell,
-	.dark .calendar-grid .fc .fc-day-header,
-	.dark .calendar-grid .fc .fc-col-header-cell-cushion,
-	.dark .calendar-grid .fc-event .fc-event-time,
-	.dark .calendar-grid .fc .fc-toolbar-title,
-	.dark .calendar-grid .fc .fc-day-today,
-	.dark .calendar-grid .fc-daygrid-day-number {
-		color: #fff !important;
-	}
-
-	.dark .calendar-grid .fc .fc-day-today {
-		background-color: #1e293b !important;
-	}
+        @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md p-6 w-full;
+    }
+
+    /* Formularelemente auf Karten-Seiten */
+    .form-label {
+        @apply block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2;
+    }
+    .form-field {
+        @apply bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-md w-full p-3;
+    }
+    .status-card {
+        @apply bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-md w-full p-4;
+    }
+    .form-error {
+        @apply mt-2 text-xs font-medium text-rose-500 dark:text-rose-300;
+    }
+
+    /* -- Footer & Links im Footer -- */
+    .site-footer {
+        @apply bg-[#042c58] dark:bg-[#0a111a] text-gray-100 flex flex-col md:flex-row items-center justify-between gap-3 px-6 py-4 text-sm md:text-base;
+    }
+    .site-footer__links {
+        @apply flex flex-col md:flex-row items-center gap-6 pl-2 md:pl-4;
+    }
+    .site-footer__link {
+        @apply text-gray-100 transition-colors duration-200 hover:text-[#bfdbfe];
+    }
+
+    /* -- RPTU4You-Schriftzug in der Navbar mit Glow-Effekt -- */
+    .brand-link {
+        @apply relative inline-flex items-center font-bold whitespace-nowrap uppercase text-white transition-all duration-300 ease-out px-3 py-1 isolate;
+        text-shadow: 0 0 8px rgba(191, 219, 254, 0.35);
+    }
+
+    .brand-link::before,
+    .brand-link::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 9999px;
+        z-index: -1;
+        transition: transform 220ms ease, opacity 220ms ease, box-shadow 220ms ease;
+    }
+
+    .brand-link::before {
+        opacity: 0;
+        transform: scale(0.75);
+        background: radial-gradient(circle at 30% 30%, rgba(191, 219, 254, 0.45), rgba(37, 99, 235, 0.15) 55%, transparent 70%);
+    }
+
+    .brand-link::after {
+        opacity: 0;
+        transform: scaleX(0.6) scaleY(0.8);
+        background: linear-gradient(135deg, rgba(191, 219, 254, 0.35), rgba(59, 130, 246, 0.2));
+        box-shadow: 0 0 0 rgba(59, 130, 246, 0);
+    }
+
+    .brand-link:hover {
+        color: #e0f2fe;
+        transform: translateY(-2px);
+    }
+
+    .brand-link:hover::before,
+    .brand-link:hover::after {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .brand-link:hover::after {
+        box-shadow: 0 10px 25px rgba(30, 64, 175, 0.35);
+    }
+
+    /* Seiten-spezifische Fokus-Ringe */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible,
+    [tabindex]:focus-visible {
+        outline: 2px solid var(--accent-outline) !important;
+        outline-offset: 2px;
+    }
+
+    /* -- Latest News & ForYouPage -- */
+    /* Seiten-spezifische Akzentbereiche (News vs. ForYou) */
+    /* accent-primary: Navbar, Filter-Icon, Outline wenn fokussiert */
+    /* accent-strong: Buttons im Filter-Panel & Quellen-Chip auf News-Detailseiten */
+    /* accent-outline: Outline beim Hovern über sämtliche Boxen */
+    /* accent-link: Links im Kalender-Bereich und auf News-Detailseiten */
+    body.news-page, .news-page {
+        @apply flex flex-col h-full min-h-0;
+        --accent-primary: #2563eb;
+        --accent-strong: #0c3a6e;
+        --accent-strong-hover: #1b5fab;
+        --accent-outline: #60a5fa;
+        --accent-link: #60a5fa;
+        --accent-link-hover: #2563eb;
+    }
+
+    body.foryou-page, .foryou-page {
+        @apply flex flex-col h-full min-h-0;
+        --accent-primary: #c084fc;
+        --accent-strong: #7c3aed;
+        --accent-strong-hover: #8b5cf6;
+        --accent-outline: #d8b4fe;
+        --accent-link: #d8b4fe;
+        --accent-link-hover: #8b5cf6;
+    }
+
+    body.links-page, .links-page {
+        @apply flex flex-col h-full min-h-0;
+        --accent-primary: #0ea5a4;
+        --accent-strong: #065f59;
+        --accent-strong-hover: #0f766e;
+        --accent-outline: #5eead4;
+        --accent-link: #5eead4;
+        --accent-link-hover: #0ea5a4;
+    }
+
+    /* Outline-Farbe für Fokus-Ring auf anderen Seiten */
+    :root {
+        --accent-outline: #60a5fa;
+    }
+
+    /* Filter-Layouts (Desktop & mobil) */
+    .filter-panel-card {
+        @apply md:sticky md:top-6 flex flex-col gap-4 w-full max-md:w-full min-w-0 min-h-0 md:flex-1;
+        max-height: calc(100vh - 4rem);
+    }
+
+    @media (min-width: 768px) {
+        .filter-panel-card {
+            max-height: calc(100vh - 6rem);
+        }
+    }
+
+    /* Einzelne Filterabschnitte samt Toggle-Verhalten */
+    .filter-section {
+        @apply rounded-lg border border-gray-200/80 bg-gray-50/80 px-3 py-2.5 shadow-sm dark:border-gray-700/60 dark:bg-gray-700/60;
+    }
+
+    .filter-toggle {
+        @apply flex w-full items-center justify-between gap-2 py-1 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 transition-colors duration-150 dark:text-gray-300;
+    }
+
+    .filter-toggle:hover {
+        color: var(--accent-outline);
+    }
+
+    .filter-toggle svg {
+        @apply h-3 w-3 shrink-0 transition-transform duration-200;
+    }
+
+    .filter-options {
+        @apply mt-1 flex flex-col gap-0.5;
+    }
+
+    .filter-checkbox {
+        @apply flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-gray-700 transition-colors duration-150 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600;
+    }
+
+    .filter-checkbox span {
+        @apply text-sm leading-tight;
+    }
+
+    .filter-checkbox input[type="checkbox"] {
+        @apply h-4 w-4 rounded border-gray-300 focus:ring-0 dark:border-gray-500;
+        accent-color: var(--accent-outline);
+    }
+
+    .dark .filter-checkbox input[type="checkbox"] {
+        accent-color: var(--accent-outline);
+    }
+
+    /* Footer der Filterkarte mit Button-Grid */
+    .filter-panel-actions {
+        @apply grid grid-cols-1 gap-2 border-t border-gray-200 pt-4 dark:border-gray-700 sm:gap-3;
+    }
+
+    /* Schließen-Button für mobile Filter-Ansicht */
+    .filter-close-btn {
+        @apply md:hidden inline-flex h-9 w-9 items-center justify-center rounded-full border border-gray-300 text-gray-500 transition-colors duration-150 focus:outline-none dark:border-gray-600 dark:text-gray-300;
+    }
+
+    .filter-close-btn:hover {
+        color: var(--accent-outline);
+    }
+
+    .dark .filter-close-btn:hover {
+        color: var(--accent-outline);
+    }
+
+    .filter-close-btn:focus-visible {
+        outline: 2px solid var(--accent-outline);
+        outline-offset: 2px;
+    }
+
+    /* Buttons mit Akzentfarben (linkes Panel in News & ForYouPage) */
+    .accent-outline-btn {
+        @apply cursor-pointer rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 text-center whitespace-normal wrap-break-word transition-colors duration-150 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100;
+    }
+
+    .accent-outline-btn:hover {
+        color: var(--accent-outline);
+        border-color: var(--accent-outline);
+    }
+
+    .dark .accent-outline-btn:hover {
+        color: var(--accent-outline);
+        border-color: var(--accent-outline);
+    }
+
+    .accent-solid-btn {
+        @apply cursor-pointer rounded-md border px-3 py-2 text-sm text-white text-center whitespace-normal wrap-break-word transition-colors duration-150 border-gray-300 dark:border-gray-600;
+        background-color: var(--accent-strong);
+    }
+
+    .accent-solid-btn:hover {
+        background-color: var(--accent-strong-hover);
+        border-color: var(--accent-strong-hover);
+    }
+
+    .dark .accent-solid-btn:hover {
+        background-color: var(--accent-strong-hover);
+        border-color: var(--accent-strong-hover);
+    }
+
+
+    /* Schwebender Filter-Button auf Mobilgeräten */
+    .accent-fab {
+        @apply fixed bottom-24 right-5 z-40 inline-flex items-center justify-center rounded-full p-4 text-white shadow-lg transition-transform duration-200 focus:outline-none md:hidden;
+        background-color: var(--accent-primary);
+    }
+
+    .accent-fab:hover {
+        transform: scale(1.05);
+    }
+
+
+    /* Akzentverwendung auf Karten, Links & Chips*/
+    .news-card {
+        @apply cursor-pointer space-y-3 transition-colors duration-200;
+    }
+
+    .news-card:hover {
+        border-color: var(--accent-outline)
+    }
+
+    /* Karten als Links im Kalender-Bereich mit Hover-Outline */
+    .accent-card-link {
+        @apply block rounded-lg border border-gray-200/80 bg-gray-50/80 px-4 py-3 transition-colors duration-150 dark:border-gray-700/60 dark:bg-gray-700/60;
+    }
+
+    .accent-card-link:hover {
+        border-color: var(--accent-outline);
+    }
+
+    /* Links in Kalender-Box & News-Detailseiten */
+    .accent-link {
+        @apply inline-block text-sm font-medium transition-colors duration-150;
+        color: var(--accent-link);
+    }
+
+    .accent-link:hover {
+        color: var(--accent-link-hover);
+    }
+
+    /* Hinweise zu Formularen (z. B. Erfolgsmeldung) */
+    .form-feedback {
+        @apply mt-3 text-sm;
+    }
+
+    .alert-banner {
+        @apply flex items-center gap-3 rounded-lg border px-4 py-3 text-sm leading-relaxed;
+    }
+
+    .alert-banner__dot {
+        @apply h-2.5 w-2.5 shrink-0 rounded-full;
+    }
+
+    .alert-banner__message {
+        @apply flex-1 leading-relaxed;
+    }
+
+    .alert-banner--info {
+        @apply bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-700 text-blue-800 dark:text-blue-200;
+    }
+
+    .alert-banner--success {
+        @apply bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700 text-green-800 dark:text-green-200;
+    }
+
+    .alert-banner--warning {
+        @apply bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-700 text-amber-800 dark:text-amber-200;
+    }
+
+    .alert-banner--error {
+        @apply bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-700 text-red-800 dark:text-red-200;
+    }
+
+    .alert-dot--info {
+        @apply bg-blue-500 dark:bg-blue-400;
+    }
+
+    .alert-dot--success {
+        @apply bg-green-500 dark:bg-green-400;
+    }
+
+    .alert-dot--warning {
+        @apply bg-amber-500 dark:bg-amber-400;
+    }
+
+    .alert-dot--error {
+        @apply bg-red-500 dark:bg-red-400;
+    }
+
+    /* Kleine Chips zur Hervorhebung von Links in News-Detailseiten */
+    .accent-chip {
+        @apply inline-flex items-center gap-2 rounded px-4 py-1 font-semibold text-white;
+        background-color: var(--accent-strong);
+    }
+
+    .accent-chip--interactive {
+        @apply cursor-pointer transition-colors duration-150;
+    }
+
+    .accent-chip--interactive:hover {
+        background-color: var(--accent-strong-hover);
+    }
+
+
+    /* -- Kalender -- */
+    /* Farben Kalender */
+    body.calendar-page, .calendar-page {
+        --accent-primary: #fb923c;
+        --accent-strong: #c05621;
+        --accent-strong-hover: #ea580c;
+        --accent-outline: #fdba74;
+        --accent-link: #fdba74;
+        --accent-link-hover: #fb923c;
+    }
+
+    /* Kalender-Karte & Aktionen */
+    .calendar-card {
+        @apply flex flex-col gap-4;
+    }
+
+    /* Header mit Titel & Aktionen */
+    .calendar-card__header {
+        @apply flex flex-col gap-4 md:flex-row md:items-center md:justify-between shrink-0;
+    }
+
+    .calendar-card__actions {
+        @apply flex flex-wrap items-center justify-start gap-4 md:justify-end;
+    }
+
+    /* Eine Aktion im Header */
+    .calendar-action {
+        @apply inline-flex items-center border px-4 py-1 shadow-md;
+        gap: 0.65rem;
+        border-radius: 0.75rem;
+        border-color: rgba(253, 186, 116, 0.65);
+        background: rgba(253, 186, 116, 0.15);
+    }
+
+    /* Text in einer Aktion */
+    .calendar-action-text {
+        @apply text-sm font-semibold;
+        color: var(--accent-primary);
+        white-space: nowrap;
+    }
+
+    /* Icon innerhalb einer Aktion */
+    .calendar-icon-btn {
+        @apply inline-flex h-10 w-10 items-center justify-center rounded-2xl border text-white transition-all duration-200;
+        border-color: #c05621;
+    }
+
+    .calendar-icon-btn svg {
+        width: 1.15rem;
+        height: 1.15rem;
+    }
+
+    /* - Kalender-Grid - */
+    /* Wrapper mit Padding oben */
+    .calendar-grid-wrapper {
+        @apply relative pt-4;
+    }
+
+    /* Hintergrundkarte */
+    .fc-view-harness {
+        background: rgba(182, 175, 175, 0.9);
+    }
+
+    .dark .fc-view-harness {
+        background: rgba(15, 23, 42, 0.82);
+    }
+
+    /* Entferne den Fokus-Ring von FullCalendar-Buttons nach einem Klick */
+    .fc .fc-button:focus {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Highlight-Farbe heutiger Tag */
+    .fc-day-today {
+        background-color: rgba(199, 130, 56, 0.372) !important;
+    }
+
+    /* Hintergrund-Akzentfarbe für globale Events (nur in der Monatsübersicht) */
+    .fc .fc-event.global-event.fc-daygrid-event, .fc .fc-event.global-event.fc-daygrid-event:hover {
+        background-color: rgba(253, 230, 138, 0.65) !important;
+        color: #7c2d12;
+    }
+
+    .dark .fc .fc-event.global-event.fc-daygrid-event, .dark .fc .fc-event.global-event.fc-daygrid-event:hover {
+        background-color: rgba(253, 186, 116, 0.65) !important;
+        color: #fff7ed;
+    }
+
+    /* Text-Truncation mit "..." für Event-Titel im Kalender */
+    .fc .fc-daygrid-event .fc-event-title {
+        display: block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    /* Akzentfarbe für Dots bei Events */
+    .fc .fc-daygrid-event-dot {
+        border-color: var(--accent-primary) !important;
+    }
+
+    /* Akzentfarbe für Events im Kalender (Wochenansicht) */
+    .fc {
+        --fc-event-bg-color: rgba(253, 187, 116, 0.822);
+        --fc-event-border-color: rgba(253, 187, 116, 0.822);
+    }
+
+    /* Flyout für Events, das vollständigen Titel und Beschreibung beim Hovern zeigt */
+    .calendar-event-flyout {
+        position: absolute;
+        z-index: 9999;
+        max-width: 24rem;
+        background: #ffffff;
+        color: #0f172a;
+        border: 1px solid rgba(15, 23, 42, 0.09);
+        border-radius: 0.5rem;
+        padding: 0.6rem 0.9rem;
+        box-shadow: 0 8px 22px rgba(2,6,23,0.14);
+        font-size: 0.95rem;
+        line-height: 1.25;
+        display: block;
+        overflow: hidden;
+        word-break: break-word;
+    }
+    .calendar-event-flyout.hidden {
+        display: none;
+    }
+    .calendar-event-flyout__title {
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+        color: #0f172a;
+    }
+    .dark .calendar-event-flyout__title {
+        color: #fdba74;
+    }
+    .calendar-event-flyout__desc {
+        color: #374151;
+        font-size: 0.9rem;
+        max-height: 10rem;
+        overflow: auto;
+    }
+    .dark .calendar-event-flyout {
+        background: #0b1220;
+        color: #e6eef8;
+        border-color: rgba(255,255,255,0.12);
+        box-shadow: 0 8px 22px rgba(2,6,23,0.42);
+    }
+
+    /* - Kalender-Toast & Hinweise - */
+    .calendar-toast {
+        @apply fixed top-6 right-6 z-50 flex min-w-[18rem] max-w-md items-start gap-3 rounded-2xl border px-4 py-3 shadow-2xl bg-white text-gray-800 transition duration-200;
+        border-color: rgba(234, 88, 12, 0.35);
+        background: rgba(253, 237, 213, 0.98);
+    }
+
+    .dark .calendar-toast {
+        @apply bg-[#0b1220] text-gray-100;
+        border-color: rgba(253, 186, 116, 0.45);
+    }
+
+    .calendar-toast__icon {
+        @apply mt-1 h-3.5 w-3.5 rounded-full bg-orange-400;
+    }
+
+    .calendar-toast__content {
+        @apply flex-1 space-y-0.5;
+    }
+
+    .calendar-toast__title {
+        @apply text-sm font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-200;
+    }
+
+    .calendar-toast__message {
+        @apply text-sm text-gray-700 dark:text-gray-100;
+        white-space: pre-line;
+    }
+
+    .calendar-toast__close {
+        @apply ml-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-transparent text-2xl leading-none text-gray-400 transition duration-150 hover:text-gray-700 focus:outline-none dark:text-gray-300 dark:hover:text-white;
+    }
+
+    .calendar-toast--success {
+        border-color: rgba(16, 185, 129, 0.45);
+        background: rgba(16, 185, 129, 0.09);
+    }
+
+    .calendar-toast--success .calendar-toast__icon {
+        @apply bg-emerald-500;
+    }
+
+    .calendar-toast--error {
+        border-color: rgba(239, 68, 68, 0.45);
+        background: rgba(248, 113, 113, 0.12);
+    }
+
+    .calendar-toast--error .calendar-toast__icon {
+        @apply bg-red-500;
+    }
+
+    .calendar-toast--info {
+        border-color: rgba(59, 130, 246, 0.45);
+        background: rgba(191, 219, 254, 0.25);
+    }
+
+    .calendar-toast--info .calendar-toast__icon {
+        @apply bg-blue-500;
+    }
+
+    .calendar-toast--warning {
+        border-color: rgba(251, 146, 60, 0.6);
+        background: rgba(253, 186, 116, 0.3);
+    }
+
+    .calendar-toast--warning .calendar-toast__icon {
+        @apply bg-orange-400;
+    }
+
+    /* - Kalender-Bestätigungsdialog - */
+    .calendar-confirm {
+        @apply fixed inset-0 z-[60] transition-opacity duration-200;
+    }
+
+    .calendar-confirm__overlay {
+        @apply flex h-full w-full items-center justify-center bg-black/50 px-4;
+    }
+
+    .calendar-confirm__panel {
+        @apply relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl dark:bg-[#181818];
+    }
+
+    .calendar-confirm__header {
+        @apply mb-3 flex items-center gap-3;
+    }
+
+    .calendar-confirm__accent {
+        @apply h-8 w-2 rounded-r-xl bg-[#fb923c] dark:bg-[#ea580c];
+    }
+
+    .calendar-confirm__title {
+        @apply text-lg font-semibold text-gray-800 dark:text-gray-100;
+    }
+
+    .calendar-confirm__close {
+        @apply ml-auto inline-flex h-9 w-9 items-center justify-center rounded-full text-2xl text-gray-400 transition hover:text-gray-700 focus:outline-none dark:text-gray-400 dark:hover:text-white;
+    }
+
+    .calendar-confirm__message {
+        @apply text-sm text-gray-600 dark:text-gray-300;
+        white-space: pre-line;
+    }
+
+    .calendar-confirm__actions {
+        @apply mt-5 flex justify-end gap-3;
+    }
+
+    .calendar-secondary-btn {
+        @apply inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors duration-150 hover:border-gray-400 hover:text-gray-900 dark:border-gray-600 dark:bg-transparent dark:text-gray-200 dark:hover:border-gray-400;
+    }
+
+    /* - Kalender-Popup - */
+    .calendar-modal {
+        @apply fixed inset-0 z-50 transition-opacity duration-200;
+    }
+
+    .calendar-modal__overlay {
+        @apply flex h-full w-full items-center justify-center bg-black/40;
+    }
+
+    .calendar-modal__panel {
+        @apply relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl dark:bg-[#181818];
+    }
+
+    .calendar-modal__header {
+        @apply mb-4 flex items-center;
+    }
+
+    .calendar-modal__accent {
+        @apply mr-3 h-8 w-2 rounded-r-xl bg-[#fb923c] dark:bg-[#ea580c];
+    }
+
+    .calendar-modal__title {
+        @apply text-xl font-semibold text-gray-800 dark:text-gray-100;
+    }
+
+    .calendar-modal__close {
+        @apply ml-auto text-2xl font-bold text-gray-400 transition hover:text-gray-700 dark:text-gray-300 dark:hover:text-white inline-flex items-center justify-center w-9 h-9 p-2 rounded focus:outline-none;
+    }
+
+    /* Formularfelder im Kalender-Popup */
+    .calendar-form {
+        @apply space-y-4;
+    }
+
+    .calendar-form__row {
+        @apply flex flex-col gap-4 md:flex-row;
+    }
+
+    .calendar-form__field {
+        @apply flex flex-col gap-0 w-full;
+    }
+
+    .calendar-form__field--full {
+        @apply w-full;
+    }
+
+    .calendar-form__field--inline {
+        @apply flex flex-col gap-2 md:flex-row md:items-end md:justify-between;
+    }
+
+    .calendar-form__notice {
+        @apply rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-700 dark:border-amber-700 dark:bg-amber-900/30 dark:text-amber-200;
+    }
+
+    .calendar-form__stack {
+        @apply space-y-2;
+    }
+
+    .calendar-form__field--inline .calendar-all-day-btn {
+        @apply md:w-auto;
+    }
+
+    .calendar-field-label {
+        @apply ml-1 mt-2 block text-left text-sm font-medium text-gray-600 dark:text-gray-300;
+    }
+
+    .calendar-fieldset__inputs {
+        @apply flex items-center gap-2;
+    }
+
+    .calendar-input {
+        @apply block w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#fdba74] dark:border-gray-700 dark:bg-[#181818] dark:text-gray-100;
+    }
+
+    /* Vordefinierten Fokus-Stil entfernen (ersetzt durch benutzerdefinierten Stil weiter oben) */
+    .calendar-input:focus-visible,
+    .calendar-select:focus-visible,
+    .calendar-textarea:focus-visible {
+        outline: none !important;
+    }
+
+    .calendar-input--time {
+        @apply pr-9;
+    }
+
+    .calendar-textarea {
+        @apply min-h-24 rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#fdba74] dark:border-gray-700 dark:bg-[#181818] dark:text-gray-100;
+    }
+
+    .calendar-select {
+        @apply w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#fdba74] dark:border-gray-700 dark:bg-[#181818] dark:text-gray-100;
+    }
+
+    .calendar-all-day-btn {
+        @apply w-full rounded border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-700 transition hover:bg-[#fff7ed] dark:border-gray-700 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600;
+    }
+
+    .calendar-section-toggle {
+        @apply mt-2 flex w-full items-center justify-between rounded-lg border border-gray-200 bg-gray-100 px-4 py-2 text-gray-700 transition hover:bg-gray-200 dark:border-gray-700 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600;
+    }
+
+    .calendar-section-toggle svg {
+        @apply h-5 w-5;
+    }
+
+    .calendar-form__options {
+        @apply mt-2 space-y-2;
+    }
+
+    .calendar-form__checkbox {
+        @apply flex items-center gap-2 text-gray-700 dark:text-gray-100;
+    }
+
+    .calendar-checkbox {
+        @apply h-4 w-4 rounded border-gray-300 text-[#fb923c] focus:ring-0 dark:border-gray-600;
+        accent-color: var(--accent-outline);
+    }
+
+    .calendar-form__actions {
+        @apply mt-4 flex gap-2;
+    }
+
+    .calendar-primary-btn {
+        @apply flex-1 rounded-lg bg-[#c05621] px-4 py-2 text-white transition hover:bg-[#ea580c] dark:bg-[#fb923c] dark:hover:bg-[#fdba74];
+    }
+
+    .calendar-danger-btn {
+        @apply flex-1 rounded-lg bg-red-500 px-4 py-2 text-white transition hover:bg-red-600 dark:hover:bg-red-400;
+    }
+
+    .calendar-time-input {
+        @apply relative w-32;
+    }
+
+    .calendar-time-input__trigger {
+        @apply absolute right-2 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center text-gray-500 transition hover:text-[#fb923c] dark:text-gray-300 dark:hover:text-[#fdba74];
+    }
+
+    .calendar-time-input__trigger svg {
+        @apply h-5 w-5;
+        stroke: currentColor;
+        fill: none;
+    }
+
+    .calendar-time-input__dropdown {
+        @apply absolute right-0 z-10 mt-1 max-h-48 w-32 overflow-y-auto rounded border border-gray-300 bg-white shadow-lg dark:border-gray-700 dark:bg-[#181818];
+    }
+
+    /* Eine Option in der Zeit-Auswahl */
+    .calendar-dropdown-option {
+        @apply w-full cursor-pointer rounded-md px-2 py-1 text-sm text-[#0f172a];
+    }
+
+    .calendar-dropdown-option:hover,
+    .calendar-dropdown-option-active {
+        background-color: rgba(253, 186, 116, 0.2);
+        color: #7c2d12;
+    }
+
+    .dark .calendar-dropdown-option {
+        color: #e2e8f0;
+    }
+
+    .dark .calendar-dropdown-option:hover,
+    .dark .calendar-dropdown-option-active {
+        background-color: rgba(234, 88, 12, 0.35);
+        color: #ffe4c7;
+    }
+
+    /* Aktivierte Toggles im Pop-Up */
+    .calendar-toggle-active {
+        background-color: rgba(251, 146, 60, 0.15) !important;
+        border-color: rgba(251, 146, 60, 0.4) !important;
+        color: #9a3412 !important;
+    }
+
+    .dark .calendar-toggle-active {
+        background-color: rgba(234, 88, 12, 0.25) !important;
+        border-color: rgba(253, 186, 116, 0.4) !important;
+        color: #fed7aa !important;
+    }
+
+    /* Deaktivierte Formularfelder im Pop-Up */
+    .calendar-field-disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    .calendar-toggle-disabled {
+        pointer-events: none;
+        opacity: 0.6;
+    }
 }

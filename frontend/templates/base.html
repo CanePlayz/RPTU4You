@@ -35,7 +35,7 @@
     {% endblock %}
 </head>
 
-<body class="">
+<body class="{% block page_class %}{% endblock %}">
     <div id="window" class="window">
         <!-- Navigation -->
         {% include "partials/navbar.html" %}
