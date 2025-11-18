@@ -45,10 +45,20 @@ def _build_named_object_item(
     slug_value = str(getattr(obj, "slug"))
     filter_field = f"{relation_prefix}__slug"
 
+    # Emoji aus der Emoji-Map abrufen
+    emoji = emoji_map.get(display_name, "")
+
+    # Zusätzliche Behandlung für TrustedAccountQuelle
+    if not emoji:
+        from ..models import TrustedAccountQuelle
+
+        if isinstance(obj, TrustedAccountQuelle):
+            emoji = "👤"
+
     return {
         "identifier": slug_value,
         "name": display_name,
-        "emoji": emoji_map.get(display_name, ""),
+        "emoji": emoji,
         "filter_field": filter_field,
         "filter_value": slug_value,
     }

@@ -11,9 +11,14 @@ from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
 from .models import (
+    EmailVerteiler,
+    ExterneWebsite,
+    Fachschaft,
     InhaltsKategorie,
+    InterneWebsite,
     Rundmail,
     Standort,
+    TrustedAccountQuelle,
     TrustedUserApplication,
     User,
     Zielgruppe,
@@ -77,7 +82,20 @@ def build_emoji_choices(
         pk = getattr(obj, "pk", None)
         if pk is None:
             continue
-        choices.append((pk, label_with_emoji(obj, mapping)))
+        # Label mit Emoji erstellen
+        label = label_with_emoji(obj, mapping)
+        # Zusätzliche Behandlung für TrustedAccountQuelle
+        if mapping.get(getattr(obj, "name", ""), "") == "":
+            try:
+                from .models import TrustedAccountQuelle
+
+                if isinstance(obj, TrustedAccountQuelle):
+                    name = getattr(obj, "name", str(obj))
+                    label = f"👤 {name}"
+            except Exception:
+                pass
+
+        choices.append((pk, label))
     return choices
 
 
@@ -198,13 +216,20 @@ class PreferencesForm(forms.ModelForm):
         )
         # Rundmails und Sammel-Rundmails aus dem Quellen-Queryset entfernen
         quellen_field = cast(forms.ModelMultipleChoiceField, self.fields["quellen"])
-        quellen_queryset = quellen_field.queryset.exclude(rundmail_filter).order_by(
-            "name"
-        )  # type: ignore[attr-defined]
-        quellen_field.queryset = quellen_queryset
-        quellen_objs = [
-            obj for obj in quellen_queryset if not isinstance(obj, Rundmail)
-        ]
+
+        # Quellen-Objekte werden so gesammelt, damit die einzelnen Modelltypen erhalten bleiben und TrustedAccountQuelle das passende Emoji erhalten kann
+        quellen_objs = []
+        quellen_objs.extend(list(Fachschaft.objects.all()))
+        quellen_objs.extend(list(InterneWebsite.objects.all()))
+        quellen_objs.extend(list(ExterneWebsite.objects.all()))
+        quellen_objs.extend(list(EmailVerteiler.objects.all()))
+        quellen_objs.extend(list(TrustedAccountQuelle.objects.all()))
+
+        # Basis-Queryset ohne Rundmail-Objekte erstellen
+        base_queryset = quellen_field.queryset.exclude(rundmail_filter).order_by("name")
+        quellen_field.queryset = base_queryset
+
+        # Quellen-Field mit Emoji-Labels und Checkbox-Widget konfigurieren
         quellen_field.widget = forms.CheckboxSelectMultiple()
         quellen_field.choices = build_emoji_choices(
             quellen_objs, emoji_mappings["sources"]
