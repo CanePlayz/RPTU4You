@@ -67,7 +67,7 @@ def set_language(request: HttpRequest) -> HttpResponse:
             request.user.preferred_language = language
             request.user.save()
 
-    # Parse the current URL
+    # Aktuelle URL analysieren
     current_url = request.META.get("HTTP_REFERER", "/")
     parsed_url = urlparse(current_url)
 
@@ -76,7 +76,7 @@ def set_language(request: HttpRequest) -> HttpResponse:
     ):
         parsed_url = urlparse("/")
 
-    # Replace the language prefix in the path
+    # Pfad anpassen
     path = parsed_url.path or "/"
     current_language = get_language_from_path(path)
     if current_language:
@@ -84,7 +84,7 @@ def set_language(request: HttpRequest) -> HttpResponse:
     else:
         path = f"/{language}{path}" if not path.startswith(f"/{language}") else path
 
-    # Rebuild the URL with the updated path
+    # Umgeleitete URL zusammenbauen
     updated_url = urlunparse(
         (
             parsed_url.scheme,

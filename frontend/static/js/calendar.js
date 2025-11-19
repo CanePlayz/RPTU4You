@@ -193,9 +193,6 @@
       }
       return dataset[key] || fallback;
     };
-
-    // (Popup uses native inputs; no localization helpers required here)
-
     // Zentraler UI-Zustand für Modal/All-Day/ID-Verwaltung
     const state = {
       isAllDay: false,
@@ -444,7 +441,7 @@
       dom.eventStartDate.addEventListener("change", updateRepeatUntilMin);
     }
 
-    // popup inputs remain standard HTML date/time inputs
+    // Popup-Eingaben bleiben normale HTML-Datum-und-Zeit-Felder
 
     if (dom.toggleRepeatOptions && dom.repeatOptions) {
       dom.toggleRepeatOptions.addEventListener("click", () => {
@@ -595,7 +592,7 @@
       }
 
       if (dom.eventDeleteBtn) {
-        // Ensure we compare IDs as strings to avoid type-mismatch (number vs string)
+        // IDs werden als Strings verglichen, damit kein Typkonflikt zwischen Zahl und String entsteht
         const eventUserId = eventData?.user_id == null ? null : String(eventData.user_id);
         const currentUserId = dom.currentUserId == null ? "" : String(dom.currentUserId);
         const isOwnEvent = !readOnlyMode && state.editMode && eventUserId && (eventUserId === currentUserId);
@@ -723,7 +720,7 @@
               <div class="calendar-event-flyout__desc">${escapeHtml(description)}</div>
             `;
             flyoutEl.classList.remove("hidden");
-            // reset positioning so measurements work
+            // Position zurücksetzen, damit die Größenmessung korrekt funktioniert
             flyoutEl.style.left = "0px";
             flyoutEl.style.top = "0px";
             flyoutEl.style.display = "block";

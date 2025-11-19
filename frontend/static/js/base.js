@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (languageButton && languageDropdown) {
         languageButton.addEventListener('click', (event) => {
-            event.stopPropagation(); // Prevent click from propagating to document
+            event.stopPropagation(); // Verhindert, dass der Klick bis zum Dokument weitergereicht wird
             const isHidden = languageDropdown.classList.contains('hidden');
             if (isHidden) {
                 languageDropdown.classList.remove('hidden');
@@ -68,12 +68,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (moonIcon) moonIcon.classList.add('hidden');
     }
     if (dot) {
-        // Disable transition for initial position to avoid visible jump
+        // Deaktiviert die Transition für die Startposition, damit es kein sichtbares Springen gibt
         dot.style.transition = 'none';
-        void dot.offsetWidth; // force reflow
+        void dot.offsetWidth; // erzwingt ein Reflow
         dot.style.transition = '';
     }
-    // Toggle event
+    // Umschalt-Ereignis
     if (darkmodeToggle) {
         darkmodeToggle.addEventListener('change', function () {
             if (this.checked) {
