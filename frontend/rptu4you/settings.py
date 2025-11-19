@@ -41,7 +41,9 @@ def _env_int(name: str, default: int) -> int:
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-(7bb#)z*@+%@6do94)7104yy6zkbs)rm#9n7cc(4ejof)0bf0#"
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+if not SECRET_KEY:
+    raise RuntimeError("DJANGO_SECRET_KEY environment variable is required")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = _env_bool("DJANGO_DEBUG", default=True)
@@ -132,9 +134,9 @@ WSGI_APPLICATION = "rptu4you.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "mydb",
-        "USER": "admin",
-        "PASSWORD": "password",
+        "NAME": os.getenv("POSTGRES_DB", "mydb"),
+        "USER": os.getenv("POSTGRES_DB_USER", "admin"),
+        "PASSWORD": os.getenv("POSTGRES_DB_PASSWORD", "password"),
         "HOST": "db",
         "PORT": "5432",
     }
