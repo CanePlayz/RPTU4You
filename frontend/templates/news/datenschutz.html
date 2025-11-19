@@ -24,7 +24,7 @@
                     <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">{% trans "Besuch der Website ohne Anmeldung" %}</h2>
                     <p>
                         {% blocktrans trimmed %}
-                        Beim Aufruf der Website setzt RPTU4You einen CSRF-Cookie, um Cross-Site-Request-Forgery-Angriffe zu verhindern und die Integrität der Anwendung sicherzustellen. Der Cookie wird als zufällig generierte Zeichenfolge gespeichert und ermöglicht keine Identifikation einzelner Nutzerinnen oder Nutzer.
+                        Beim Aufruf der Website setzt RPTU4You einen CSRF-Cookie, um Cross-Site-Request-Forgery-Angriffe zu verhindern und die Integrität der Anwendung sicherzustellen. Zusätzlich wird ein Theme-Cookie (zur Speicherung der Helligkeitspräferenz) verwendet. Die Cookies werden als zufällig generierte oder technisch notwendige Werte gespeichert und ermöglichen keine Identifikation einzelner Nutzerinnen oder Nutzer.
                         {% endblocktrans %}
                     </p>
                     <p>
@@ -43,7 +43,7 @@
                     </p>
                     <p>
                         {% blocktrans trimmed %}
-                        Nach erfolgreicher Anmeldung setzt RPTU4You einen Session-Cookie, um den Login-Zustand aufrechtzuerhalten. Dieser Cookie verfällt automatisch am ersten Tag des Folgemonats oder sobald Sie sich aktiv abmelden.
+                        Nach erfolgreicher Anmeldung setzt RPTU4You einen Session-Cookie, um den Login-Zustand aufrechtzuerhalten. Dieser Cookie verfällt automatisch nach spätestens zwei Wochen. Auch hier werden ein Theme-Cookie und ein CSRF-Cookie verwendet.
                         {% endblocktrans %}
                     </p>
                 </div>
@@ -66,7 +66,7 @@
                     </p>
                     <p>
                         {% blocktrans trimmed %}
-                        Kalenderdateien, die über die Funktion "Kalender importieren" hochgeladen werden, werden in der Datenbank von RPTU4You abgelegt, damit sie dauerhaft in der Anwendung zur Verfügung stehen.
+                        Kalenderdateien, die über die Funktion "Kalender importieren" hochgeladen werden, werden beim Import einmalig in Kalendertermine umgewandelt; die ursprüngliche Datei selbst wird danach nicht dauerhaft auf dem Server gespeichert.
                         {% endblocktrans %}
                     </p>
                 </div>
