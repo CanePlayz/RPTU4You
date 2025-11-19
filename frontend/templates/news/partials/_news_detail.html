@@ -1,47 +1,118 @@
 {% load i18n %}
 {% load emojis %}
-<article class="max-w-[800px] mx-auto flex flex-col gap-2">
-  <!-- Titel -->
-  <h2 class="font-bold text-2xl text-gray-800 dark:text-gray-100 my-6">{{ text.titel }}</h2>
-  <!-- Informationen zu der Nachricht -->
-  <div class="flex flex-wrap gap-4 text-sm mb-2">
-  <span class="rounded bg-gray-50/80 px-2 py-1 text-gray-700 dark:bg-gray-700/70 dark:text-gray-200"><strong>{% trans "Erstellt am:" %}</strong> {{ news.erstellungsdatum|date:"d.m.Y H:i" }}</span>
-  <span class="rounded bg-gray-50/80 px-2 py-1 text-gray-700 dark:bg-gray-700/70 dark:text-gray-200"><strong>{% trans "Quelle:" %}</strong> {{ news.quelle.name }}</span>
-  <span class="rounded bg-gray-50/80 px-2 py-1 text-gray-700 dark:bg-gray-700/70 dark:text-gray-200">
-    <strong>{% trans "Kategorien:" %}</strong>
-    {% for cat in news.inhaltskategorien.all %}
-      {{ cat.name|kategorie_emoji }}
-    {% endfor %}
-  </span>
-  <span class="rounded bg-gray-50/80 px-2 py-1 text-gray-700 dark:bg-gray-700/70 dark:text-gray-200">
-    <strong>{% trans "Standorte:" %}</strong>
-    {% for loc in news.standorte.all %}
-      {{ loc.name|standort_emoji }}
-    {% endfor %}
-  </span>
-  <span class="rounded bg-gray-50/80 px-2 py-1 text-gray-700 dark:bg-gray-700/70 dark:text-gray-200">
-    <strong>{% trans "Zielgruppen:" %}</strong>
-    {% for aud in news.zielgruppen.all %}
-      {{ aud.name|zielgruppe_emoji }}
-    {% endfor %}
-  </span>
-  {% if news.link %}
-    <a href="{{ news.link }}" target="_blank" rel="noopener noreferrer" class="accent-chip accent-chip--interactive">{% trans "Zur Originalquelle" %}</a>
-  {% else %}
-    <span class="accent-chip cursor-default">
-      {% blocktrans with username=news.quelle.name %}Eingereicht von {{ username }}{% endblocktrans %}
-    </span>
-  {% endif %}
+<article class="news-detail-card accent-card">
+  {% get_current_language as LANGUAGE_CODE %}
+
+  <!-- Header mit Titel -->
+  <header class="news-detail-header">
+    <h2 class="news-detail-title">{{ text.titel|default:news.titel }}</h2>
+  </header>
+
+  <div class="news-detail-meta-grid">
+    <div class="news-detail-meta-item">
+      <span class="news-detail-meta-label">{% trans "Erstellt am" %}</span>
+      <!-- Datum und Uhrzeit formatieren je nach Sprache -->
+      {% with timestamp=news.erstellungsdatum %}
+        {% if LANGUAGE_CODE == "de" %}
+          <span class="news-detail-meta-value">{{ timestamp|date:"d.m.Y · H:i" }} {% trans "Uhr" %}</span>
+        {% elif LANGUAGE_CODE == "en" %}
+          <span class="news-detail-meta-value">{{ timestamp|date:"M j, Y · h:i A" }}</span>
+        {% elif LANGUAGE_CODE == "es" %}
+          <span class="news-detail-meta-value">{{ timestamp|date:"j \\d\\e F \\d\\e Y · H:i" }}</span>
+        {% elif LANGUAGE_CODE == "fr" %}
+          <span class="news-detail-meta-value">{{ timestamp|date:"j F Y · H\\h i" }}</span>
+        {% else %}
+          <span class="news-detail-meta-value">{{ timestamp|date:"M j, Y · H:i" }}</span>
+        {% endif %}
+      {% endwith %}
+    </div>
+    <!-- Quelle mit Link, wenn vorhanden -->
+    {% if news.link %}
+      <a href="{{ news.link }}" target="_blank" rel="noopener noreferrer" class="news-detail-meta-item news-detail-meta-item--link" title="{% trans "Öffnet die Originalquelle" %}">
+        <span class="news-detail-meta-label">{% trans "Quelle" %}</span>
+        <span class="news-detail-meta-value">{{ news.quelle.name }}</span>
+        <span class="news-detail-meta-icon" aria-hidden="true">
+          <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/external-link.svg" width="18" height="18" alt="" loading="lazy" decoding="async">
+        </span>
+      </a>
+    <!-- Ohne Link nur Quelle anzeigen -->
+    {% else %}
+      <div class="news-detail-meta-item">
+        <span class="news-detail-meta-label">{% trans "Quelle" %}</span>
+        <span class="news-detail-meta-value">
+          {% blocktrans with username=news.quelle.name %}Eingereicht von {{ username }}{% endblocktrans %}
+        </span>
+      </div>
+    {% endif %}
   </div>
-  <hr class="my-4 border-gray-300 dark:border-gray-700">
-  <!-- Text der Nachricht -->
-  {% if text %}
-    <div class="text-gray-700 dark:text-gray-200">{{ text.text|safe }}</div>
-  {% else %}
-  <p class="italic text-gray-500 dark:text-gray-400">{% trans "Kein Text in der gewählten Sprache verfügbar." %}</p>
-  {% endif %}
-  <!-- Zurück zur Übersicht -->
-  <div class="my-6">
-  <a href="#" id="back-to-list" class="accent-link font-semibold hover:underline">← {% trans "Zurück zur Übersicht" %}</a>
-  </div>
+
+  <div class="news-detail-divider" aria-hidden="true"></div>
+
+  <!-- Chips für Kategorien, Standorte und Zielgruppen -->
+  <section class="news-detail-chip-section" aria-label="{% trans "Metadaten der Nachricht" %}">
+    <div class="news-detail-chip-grid">
+      <div class="news-detail-chip-group">
+        <span class="news-detail-chip-label">{% trans "Kategorien" %}</span>
+        <div class="news-detail-chip-stack">
+        {% with categories=news.inhaltskategorien.all %}
+          {% if categories|length %}
+            {% for cat in categories %}
+              {% with cat_emoji=cat.name|kategorie_emoji %}
+                <span class="news-detail-chip" title="{{ cat.name }}" aria-label="{{ cat.name }}">{{ cat_emoji|default:cat.name }}</span>
+              {% endwith %}
+            {% endfor %}
+          {% else %}
+            <span class="news-detail-chip news-detail-chip--empty">{% trans "Keine Kategorien hinterlegt" %}</span>
+          {% endif %}
+        {% endwith %}
+        </div>
+      </div>
+
+      <div class="news-detail-chip-group">
+        <span class="news-detail-chip-label">{% trans "Standorte" %}</span>
+        <div class="news-detail-chip-stack">
+        {% with locations=news.standorte.all %}
+          {% if locations|length %}
+            {% for loc in locations %}
+              <span class="news-detail-chip" title="{{ loc.name }}" aria-label="{{ loc.name }}">{{ loc.name|standort_emoji }}</span>
+            {% endfor %}
+          {% else %}
+            <span class="news-detail-chip news-detail-chip--empty">{% trans "Keine Standorte hinterlegt" %}</span>
+          {% endif %}
+        {% endwith %}
+        </div>
+      </div>
+
+      <div class="news-detail-chip-group">
+        <span class="news-detail-chip-label">{% trans "Zielgruppen" %}</span>
+        <div class="news-detail-chip-stack">
+        {% with audiences=news.zielgruppen.all %}
+          {% if audiences|length %}
+            {% for aud in audiences %}
+              {% with aud_emoji=aud.name|zielgruppe_emoji %}
+                <span class="news-detail-chip" title="{{ aud.name }}" aria-label="{{ aud.name }}">{{ aud_emoji|default:aud.name }}</span>
+              {% endwith %}
+            {% endfor %}
+          {% else %}
+            <span class="news-detail-chip news-detail-chip--empty">{% trans "Keine Zielgruppe hinterlegt" %}</span>
+          {% endif %}
+        {% endwith %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hauptinhalt der Nachricht -->
+  <section class="news-detail-content">
+    {% if text %}
+      <div class="news-detail-body">{{ text.text|safe }}</div>
+    {% else %}
+      <p class="news-detail-empty-text">{% trans "Kein Text in der gewählten Sprache verfügbar." %}</p>
+    {% endif %}
+  </section>
+
+  <!-- Footer mit Zurück-Button -->
+  <footer class="news-detail-footer">
+    <a href="#" id="back-to-list" class="news-detail-primary-btn">← {% trans "Zurück zur Übersicht" %}</a>
+  </footer>
 </article>

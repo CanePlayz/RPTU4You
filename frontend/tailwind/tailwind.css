@@ -849,6 +849,165 @@ body {
     }
 
 
+    /* -- News-Detail-Karte & Inhalt -- */
+    /* Karte an Layout anpassen und mittig halten */
+    .news-detail-card {
+        @apply mx-auto flex w-full max-w-4xl flex-col gap-6;
+    }
+
+    /* Überschrift */
+    .news-detail-header {
+        @apply flex flex-col gap-2;
+    }
+
+    .news-detail-title {
+        @apply text-3xl font-bold leading-tight;
+        color: var(--text-primary);
+    }
+
+    /* Gitter für Metadaten (Datum, Quelle) */
+    .news-detail-meta-grid {
+        @apply grid gap-3 md:grid-cols-2;
+    }
+
+    .news-detail-meta-item {
+        @apply flex flex-col gap-1 rounded-2xl border px-4 py-3;
+        border-color: var(--surface-border);
+        background-color: var(--surface-card-muted);
+    }
+
+    .news-detail-meta-item--link {
+        @apply relative transition-colors duration-150 focus-visible:outline-none;
+        padding-right: 3.5rem;
+    }
+
+    .news-detail-meta-item--link:hover,
+    .news-detail-meta-item--link:focus-visible {
+        border-color: var(--accent-strong);
+        color: inherit;
+    }
+
+    .news-detail-meta-icon {
+        @apply pointer-events-none absolute flex h-8 w-8 items-center justify-center rounded-full border text-xs;
+        top: 0.65rem;
+        right: 0.75rem;
+        border-color: var(--surface-border-strong);
+        color: var(--accent-strong);
+        background-color: var(--surface-card);
+    }
+
+    .dark .news-detail-meta-item {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-color: var(--surface-border-strong);
+    }
+
+    .news-detail-meta-label {
+        @apply text-xs font-semibold uppercase tracking-wide;
+        color: var(--text-muted);
+    }
+
+    .news-detail-meta-value {
+        @apply text-base font-semibold;
+        color: var(--text-primary);
+    }
+
+    .news-detail-meta-link:hover,
+    .news-detail-meta-link:focus-visible {
+        color: var(--accent-strong-hover);
+        text-decoration: underline;
+    }
+
+    .news-detail-divider {
+        @apply h-px w-full;
+        background-color: var(--surface-border);
+    }
+
+    /* Sektion für Kategorien/Standorte/Zielgruppen */
+    .news-detail-chip-section {
+        @apply flex flex-col gap-4;
+    }
+
+    .news-detail-chip-grid {
+        @apply grid gap-4 lg:grid-cols-3;
+    }
+
+    .news-detail-chip-group {
+        @apply flex flex-col gap-2;
+    }
+
+    .news-detail-chip-label {
+        @apply text-sm font-semibold uppercase tracking-wide;
+        color: var(--text-muted);
+    }
+
+    .news-detail-chip-stack {
+        @apply flex flex-wrap gap-2;
+    }
+
+    .news-detail-chip {
+        @apply inline-flex cursor-default items-center gap-1 rounded-full border px-3 py-1 text-sm font-medium;
+        border-color: var(--surface-border-strong);
+        background-color: var(--surface-card-muted-strong);
+        color: var(--text-secondary);
+    }
+
+    .dark .news-detail-chip {
+        background-color: rgba(255, 255, 255, 0.04);
+        border-color: var(--surface-border);
+        color: var(--text-muted);
+    }
+
+    .news-detail-chip--empty {
+        @apply italic;
+    }
+
+    /* Karte für den News-Text */
+    .news-detail-content {
+        @apply rounded-3xl border px-5 py-6;
+        border-color: var(--surface-border);
+        background-color: var(--surface-card-muted);
+    }
+
+    .dark .news-detail-content {
+        background-color: rgba(255, 255, 255, 0.02);
+        border-color: var(--surface-border-strong);
+    }
+
+    .news-detail-body {
+        @apply leading-relaxed;
+        color: var(--text-secondary);
+    }
+
+    .news-detail-empty-text {
+        @apply text-sm italic;
+        color: var(--text-muted);
+    }
+
+    /* Footer  */
+    .news-detail-footer {
+        @apply flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between;
+        border-color: var(--surface-border);
+    }
+
+    .news-detail-primary-btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-2 text-sm font-semibold text-white transition-colors duration-150;
+        background-color: var(--accent-strong);
+        box-shadow: var(--surface-fab-shadow);
+        transition: box-shadow 180ms ease, background-color 150ms ease;
+    }
+
+    .news-detail-primary-btn:hover,
+    .news-detail-primary-btn:focus-visible {
+        background-color: var(--accent-strong-hover);
+        box-shadow: none;
+    }
+
+
+    .news-detail-info-chip {
+        @apply inline-flex items-center gap-2 rounded-2xl bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700 dark:bg-gray-800 dark:text-gray-200;
+    }
+
+
     /* -- Kalender -- */
     /* - Kalender-Karte & Aktionen - */
     .calendar-card {
