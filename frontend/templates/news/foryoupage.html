@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block title %}
-    {% trans "4YouPage" %}
+{% trans "4YouPage" %}
 {% endblock %}
 
 {% block page_class %}foryou-page{% endblock %}
@@ -32,11 +32,11 @@
                 {% csrf_token %}
 
                 {% if preferences_form.non_field_errors %}
-                    <div class="space-y-1">
-                        {% for error in preferences_form.non_field_errors %}
-                            <p class="form-error">{{ error }}</p>
-                        {% endfor %}
-                    </div>
+                <div class="space-y-1">
+                    {% for error in preferences_form.non_field_errors %}
+                    <p class="form-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
                 {% endif %}
 
                 <div id="preferences-feedback" hidden class="alert-banner" role="status" aria-live="polite">
@@ -44,120 +44,120 @@
                     <span class="alert-banner__message"></span>
                 </div>
 
-                    <div class="space-y-3">
+                <div class="space-y-3">
 
-                        <!-- Standorte -->
-                        <div class="filter-section">
-                            <button type="button" class="filter-toggle" data-filter-target="standorte" onclick="toggleFilter('standorte')" aria-controls="filter-standorte" aria-expanded="{% if preferences_form.standorte.value or preferences_form.standorte.errors %}true{% else %}false{% endif %}">
-                                <span class="flex items-center gap-2">
-                                    <span class="inline-flex h-1.5 w-6 rounded-full bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-outline)] opacity-80" aria-hidden="true"></span>
-                                    <span>{{ preferences_form.standorte.label }}</span>
-                                </span>
-                                <svg id="chevron-standorte" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="{% if preferences_form.standorte.value or preferences_form.standorte.errors %}rotate-90{% endif %}">
-                                    <path fill-rule="evenodd" d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                            <div id="filter-standorte" class="filter-options {% if not preferences_form.standorte.value and not preferences_form.standorte.errors %}hidden{% endif %}" aria-hidden="{% if preferences_form.standorte.value or preferences_form.standorte.errors %}false{% else %}true{% endif %}">
-                                {% for checkbox in preferences_form.standorte %}
-                                <label class="filter-checkbox" for="{{ checkbox.id_for_label }}">
-                                    {{ checkbox.tag }}
-                                    <span>{{ checkbox.choice_label|safe }}</span>
-                                </label>
-                                {% endfor %}
-                            </div>
-                            {% if preferences_form.standorte.errors %}
-                            <div class="mt-2 space-y-1">
-                                {% for error in preferences_form.standorte.errors %}
-                                    <p class="form-error">{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
+                    <!-- Standorte -->
+                    <div class="filter-section">
+                        <button type="button" class="filter-toggle" data-filter-target="standorte" onclick="toggleFilter('standorte')" aria-controls="filter-standorte" aria-expanded="{% if preferences_form.standorte.value or preferences_form.standorte.errors %}true{% else %}false{% endif %}">
+                            <span class="flex items-center gap-2">
+                                <span class="inline-flex h-1.5 w-6 rounded-full bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-outline)] opacity-80" aria-hidden="true"></span>
+                                <span>{{ preferences_form.standorte.label }}</span>
+                            </span>
+                            <svg id="chevron-standorte" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="{% if preferences_form.standorte.value or preferences_form.standorte.errors %}rotate-90{% endif %}">
+                                <path fill-rule="evenodd" d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <div id="filter-standorte" class="filter-options {% if not preferences_form.standorte.value and not preferences_form.standorte.errors %}hidden{% endif %}" aria-hidden="{% if preferences_form.standorte.value or preferences_form.standorte.errors %}false{% else %}true{% endif %}">
+                            {% for checkbox in preferences_form.standorte %}
+                            <label class="filter-checkbox" for="{{ checkbox.id_for_label }}">
+                                {{ checkbox.tag }}
+                                <span>{{ checkbox.choice_label|safe }}</span>
+                            </label>
+                            {% endfor %}
                         </div>
-
-                        <!-- Inhaltskategorien -->
-                        <div class="filter-section">
-                            <button type="button" class="filter-toggle" data-filter-target="kategorien" onclick="toggleFilter('kategorien')" aria-controls="filter-kategorien" aria-expanded="{% if preferences_form.inhaltskategorien.value or preferences_form.inhaltskategorien.errors %}true{% else %}false{% endif %}">
-                                <span class="flex items-center gap-2">
-                                    <span class="inline-flex h-1.5 w-6 rounded-full bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-outline)] opacity-80" aria-hidden="true"></span>
-                                    <span>{{ preferences_form.inhaltskategorien.label }}</span>
-                                </span>
-                                <svg id="chevron-kategorien" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="{% if preferences_form.inhaltskategorien.value or preferences_form.inhaltskategorien.errors %}rotate-90{% endif %}">
-                                    <path fill-rule="evenodd" d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                            <div id="filter-kategorien" class="filter-options {% if not preferences_form.inhaltskategorien.value and not preferences_form.inhaltskategorien.errors %}hidden{% endif %}" aria-hidden="{% if preferences_form.inhaltskategorien.value or preferences_form.inhaltskategorien.errors %}false{% else %}true{% endif %}">
-                                {% for checkbox in preferences_form.inhaltskategorien %}
-                                <label class="filter-checkbox" for="{{ checkbox.id_for_label }}">
-                                    {{ checkbox.tag }}
-                                    <span>{{ checkbox.choice_label|safe }}</span>
-                                </label>
-                                {% endfor %}
-                            </div>
-                            {% if preferences_form.inhaltskategorien.errors %}
-                            <div class="mt-2 space-y-1">
-                                {% for error in preferences_form.inhaltskategorien.errors %}
-                                    <p class="form-error">{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
+                        {% if preferences_form.standorte.errors %}
+                        <div class="mt-2 space-y-1">
+                            {% for error in preferences_form.standorte.errors %}
+                            <p class="form-error">{{ error }}</p>
+                            {% endfor %}
                         </div>
-
-                        <!-- Zielgruppen -->
-                        <div class="filter-section">
-                            <button type="button" class="filter-toggle" data-filter-target="zielgruppen" onclick="toggleFilter('zielgruppen')" aria-controls="filter-zielgruppen" aria-expanded="{% if preferences_form.zielgruppen.value or preferences_form.zielgruppen.errors %}true{% else %}false{% endif %}">
-                                <span class="flex items-center gap-2">
-                                    <span class="inline-flex h-1.5 w-6 rounded-full bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-outline)] opacity-80" aria-hidden="true"></span>
-                                    <span>{{ preferences_form.zielgruppen.label }}</span>
-                                </span>
-                                <svg id="chevron-zielgruppen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="{% if preferences_form.zielgruppen.value or preferences_form.zielgruppen.errors %}rotate-90{% endif %}">
-                                    <path fill-rule="evenodd" d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                            <div id="filter-zielgruppen" class="filter-options {% if not preferences_form.zielgruppen.value and not preferences_form.zielgruppen.errors %}hidden{% endif %}" aria-hidden="{% if preferences_form.zielgruppen.value or preferences_form.zielgruppen.errors %}false{% else %}true{% endif %}">
-                                {% for checkbox in preferences_form.zielgruppen %}
-                                <label class="filter-checkbox" for="{{ checkbox.id_for_label }}">
-                                    {{ checkbox.tag }}
-                                    <span>{{ checkbox.choice_label|safe }}</span>
-                                </label>
-                                {% endfor %}
-                            </div>
-                            {% if preferences_form.zielgruppen.errors %}
-                            <div class="mt-2 space-y-1">
-                                {% for error in preferences_form.zielgruppen.errors %}
-                                    <p class="form-error">{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Quellen -->
-                        <div class="filter-section">
-                            <button type="button" class="filter-toggle" data-filter-target="quellen" onclick="toggleFilter('quellen')" aria-controls="filter-quellen" aria-expanded="{% if preferences_form.quellen.value or preferences_form.quellen.errors %}true{% else %}false{% endif %}">
-                                <span class="flex items-center gap-2">
-                                    <span class="inline-flex h-1.5 w-6 rounded-full bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-outline)] opacity-80" aria-hidden="true"></span>
-                                    <span>{{ preferences_form.quellen.label }}</span>
-                                </span>
-                                <svg id="chevron-quellen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="{% if preferences_form.quellen.value or preferences_form.quellen.errors %}rotate-90{% endif %}">
-                                    <path fill-rule="evenodd" d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                            <div id="filter-quellen" class="filter-options {% if not preferences_form.quellen.value and not preferences_form.quellen.errors %}hidden{% endif %}" aria-hidden="{% if preferences_form.quellen.value or preferences_form.quellen.errors %}false{% else %}true{% endif %}">
-                                {% for option in preferences_form.ordered_sources %}
-                                <label class="filter-checkbox" for="{{ option.id }}">
-                                    {{ option.input_html|safe }}
-                                    <span>{{ option.label|safe }}</span>
-                                </label>
-                                {% endfor %}
-                            </div>
-                            {% if preferences_form.quellen.errors %}
-                            <div class="mt-2 space-y-1">
-                                {% for error in preferences_form.quellen.errors %}
-                                    <p class="form-error">{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
+                        {% endif %}
                     </div>
+
+                    <!-- Inhaltskategorien -->
+                    <div class="filter-section">
+                        <button type="button" class="filter-toggle" data-filter-target="kategorien" onclick="toggleFilter('kategorien')" aria-controls="filter-kategorien" aria-expanded="{% if preferences_form.inhaltskategorien.value or preferences_form.inhaltskategorien.errors %}true{% else %}false{% endif %}">
+                            <span class="flex items-center gap-2">
+                                <span class="inline-flex h-1.5 w-6 rounded-full bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-outline)] opacity-80" aria-hidden="true"></span>
+                                <span>{{ preferences_form.inhaltskategorien.label }}</span>
+                            </span>
+                            <svg id="chevron-kategorien" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="{% if preferences_form.inhaltskategorien.value or preferences_form.inhaltskategorien.errors %}rotate-90{% endif %}">
+                                <path fill-rule="evenodd" d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <div id="filter-kategorien" class="filter-options {% if not preferences_form.inhaltskategorien.value and not preferences_form.inhaltskategorien.errors %}hidden{% endif %}" aria-hidden="{% if preferences_form.inhaltskategorien.value or preferences_form.inhaltskategorien.errors %}false{% else %}true{% endif %}">
+                            {% for checkbox in preferences_form.inhaltskategorien %}
+                            <label class="filter-checkbox" for="{{ checkbox.id_for_label }}">
+                                {{ checkbox.tag }}
+                                <span>{{ checkbox.choice_label|safe }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                        {% if preferences_form.inhaltskategorien.errors %}
+                        <div class="mt-2 space-y-1">
+                            {% for error in preferences_form.inhaltskategorien.errors %}
+                            <p class="form-error">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Zielgruppen -->
+                    <div class="filter-section">
+                        <button type="button" class="filter-toggle" data-filter-target="zielgruppen" onclick="toggleFilter('zielgruppen')" aria-controls="filter-zielgruppen" aria-expanded="{% if preferences_form.zielgruppen.value or preferences_form.zielgruppen.errors %}true{% else %}false{% endif %}">
+                            <span class="flex items-center gap-2">
+                                <span class="inline-flex h-1.5 w-6 rounded-full bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-outline)] opacity-80" aria-hidden="true"></span>
+                                <span>{{ preferences_form.zielgruppen.label }}</span>
+                            </span>
+                            <svg id="chevron-zielgruppen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="{% if preferences_form.zielgruppen.value or preferences_form.zielgruppen.errors %}rotate-90{% endif %}">
+                                <path fill-rule="evenodd" d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <div id="filter-zielgruppen" class="filter-options {% if not preferences_form.zielgruppen.value and not preferences_form.zielgruppen.errors %}hidden{% endif %}" aria-hidden="{% if preferences_form.zielgruppen.value or preferences_form.zielgruppen.errors %}false{% else %}true{% endif %}">
+                            {% for checkbox in preferences_form.zielgruppen %}
+                            <label class="filter-checkbox" for="{{ checkbox.id_for_label }}">
+                                {{ checkbox.tag }}
+                                <span>{{ checkbox.choice_label|safe }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                        {% if preferences_form.zielgruppen.errors %}
+                        <div class="mt-2 space-y-1">
+                            {% for error in preferences_form.zielgruppen.errors %}
+                            <p class="form-error">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Quellen -->
+                    <div class="filter-section">
+                        <button type="button" class="filter-toggle" data-filter-target="quellen" onclick="toggleFilter('quellen')" aria-controls="filter-quellen" aria-expanded="{% if preferences_form.quellen.value or preferences_form.quellen.errors %}true{% else %}false{% endif %}">
+                            <span class="flex items-center gap-2">
+                                <span class="inline-flex h-1.5 w-6 rounded-full bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-outline)] opacity-80" aria-hidden="true"></span>
+                                <span>{{ preferences_form.quellen.label }}</span>
+                            </span>
+                            <svg id="chevron-quellen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="{% if preferences_form.quellen.value or preferences_form.quellen.errors %}rotate-90{% endif %}">
+                                <path fill-rule="evenodd" d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <div id="filter-quellen" class="filter-options {% if not preferences_form.quellen.value and not preferences_form.quellen.errors %}hidden{% endif %}" aria-hidden="{% if preferences_form.quellen.value or preferences_form.quellen.errors %}false{% else %}true{% endif %}">
+                            {% for option in preferences_form.ordered_sources %}
+                            <label class="filter-checkbox" for="{{ option.id }}">
+                                {{ option.input_html|safe }}
+                                <span>{{ option.label|safe }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                        {% if preferences_form.quellen.errors %}
+                        <div class="mt-2 space-y-1">
+                            {% for error in preferences_form.quellen.errors %}
+                            <p class="form-error">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
 
                 <div class="filter-panel-actions">
                     <button type="submit" name="action" value="reset" id="preferences-reset-btn" class="accent-outline-btn w-full">{% trans "Zurücksetzen" %}</button>

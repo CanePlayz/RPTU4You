@@ -1,35 +1,35 @@
 {% if messages %}
 <div class="mb-4 space-y-3">
     {% for message in messages %}
-        {% if message.tags == "success" %}
-            {% with banner_class="alert-banner alert-banner--success" dot_class="alert-banner__dot alert-dot--success" %}
-                <div class="{{ banner_class }}">
-                    <span class="{{ dot_class }}"></span>
-                    <span class="alert-banner__message">{{ message }}</span>
-                </div>
-            {% endwith %}
-        {% elif message.tags == "warning" %}
-            {% with banner_class="alert-banner alert-banner--warning" dot_class="alert-banner__dot alert-dot--warning" %}
-                <div class="{{ banner_class }}">
-                    <span class="{{ dot_class }}"></span>
-                    <span class="alert-banner__message">{{ message }}</span>
-                </div>
-            {% endwith %}
-        {% elif message.tags == "error" %}
-            {% with banner_class="alert-banner alert-banner--error" dot_class="alert-banner__dot alert-dot--error" %}
-                <div class="{{ banner_class }}">
-                    <span class="{{ dot_class }}"></span>
-                    <span class="alert-banner__message">{{ message }}</span>
-                </div>
-            {% endwith %}
-        {% else %}
-            {% with banner_class="alert-banner alert-banner--info" dot_class="alert-banner__dot alert-dot--info" %}
-                <div class="{{ banner_class }}">
-                    <span class="{{ dot_class }}"></span>
-                    <span class="alert-banner__message">{{ message }}</span>
-                </div>
-            {% endwith %}
-        {% endif %}
+    {% if message.tags == "success" %}
+    {% with banner_class="alert-banner alert-banner--success" dot_class="alert-banner__dot alert-dot--success" %}
+    <div class="{{ banner_class }}">
+        <span class="{{ dot_class }}"></span>
+        <span class="alert-banner__message">{{ message }}</span>
+    </div>
+    {% endwith %}
+    {% elif message.tags == "warning" %}
+    {% with banner_class="alert-banner alert-banner--warning" dot_class="alert-banner__dot alert-dot--warning" %}
+    <div class="{{ banner_class }}">
+        <span class="{{ dot_class }}"></span>
+        <span class="alert-banner__message">{{ message }}</span>
+    </div>
+    {% endwith %}
+    {% elif message.tags == "error" %}
+    {% with banner_class="alert-banner alert-banner--error" dot_class="alert-banner__dot alert-dot--error" %}
+    <div class="{{ banner_class }}">
+        <span class="{{ dot_class }}"></span>
+        <span class="alert-banner__message">{{ message }}</span>
+    </div>
+    {% endwith %}
+    {% else %}
+    {% with banner_class="alert-banner alert-banner--info" dot_class="alert-banner__dot alert-dot--info" %}
+    <div class="{{ banner_class }}">
+        <span class="{{ dot_class }}"></span>
+        <span class="alert-banner__message">{{ message }}</span>
+    </div>
+    {% endwith %}
+    {% endif %}
     {% endfor %}
 </div>
 {% endif %}

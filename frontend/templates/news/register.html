@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block title %}
-    {% trans "Registrieren" %}
+{% trans "Registrieren" %}
 {% endblock %}
 
 {% block content_area_classes %}scrollable{% endblock %}
@@ -20,7 +20,7 @@
                 <label for="{{ form.username.id_for_label }}" class="form-label">{{ form.username.label }}</label>
                 {{ form.username }}
                 {% if form.username.errors %}
-                    <p class="form-error">{{ form.username.errors|join:", " }}</p>
+                <p class="form-error">{{ form.username.errors|join:", " }}</p>
                 {% endif %}
             </div>
             <!-- Info-Block zu Passwort-Anforderungen -->
@@ -37,21 +37,21 @@
             </div>
             <!-- Passwort-Felder -->
             {% for field in form %}
-                {% if field.name != 'username' %}
-                <div>
-                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.errors %}
-                        <p class="form-error">{{ field.errors|join:", " }}</p>
-                    {% endif %}
-                </div>
+            {% if field.name != 'username' %}
+            <div>
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <p class="form-error">{{ field.errors|join:", " }}</p>
                 {% endif %}
+            </div>
+            {% endif %}
             {% endfor %}
             <!-- Absenden-Button -->
             <button type="submit" class="w-full bg-[#042c58] dark:bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-[#064694] dark:hover:bg-blue-400 cursor-pointer">{% trans "Registrieren" %}</button>
         </form>
         <!-- Link zur Login-Seite für bereits registrierte Nutzer -->
-    <p class="text-sm text-center mt-4 text-gray-700 dark:text-gray-200">{% trans "Bereits registriert?" %} <a href="{% url 'login' %}" class="text-[#042c58] dark:text-blue-400 hover:underline">{% trans "Jetzt anmelden" %}</a></p>
+        <p class="text-sm text-center mt-4 text-gray-700 dark:text-gray-200">{% trans "Bereits registriert?" %} <a href="{% url 'login' %}" class="text-[#042c58] dark:text-blue-400 hover:underline">{% trans "Jetzt anmelden" %}</a></p>
     </div>
 </div>
 {% endblock %}

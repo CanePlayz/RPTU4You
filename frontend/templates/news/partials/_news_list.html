@@ -1,13 +1,13 @@
 {% load i18n %}
 <!-- News in einer Liste anzeigen -->
 {% for news in news_list %}
-  {% include "news/partials/_news_card.html" with news=news %}
+{% include "news/partials/_news_card.html" with news=news %}
 {% empty %}
-  <div id="no-news-banner" class="w-full bg-red-700 text-white font-semibold text-center py-3 rounded-lg shadow mb-6 mt-2">{% trans "Keine News gefunden." %}</div>
+<div id="no-news-banner" class="w-full bg-red-700 text-white font-semibold text-center py-3 rounded-lg shadow mb-6 mt-2">{% trans "Keine News gefunden." %}</div>
 {% endfor %}
 <!-- Falls noch mehr News geladen werden könnten, "Mehr laden"-Button anzeigen -->
 {% if has_more %}
-  <div class="flex justify-center w-full">
+<div class="flex justify-center w-full">
     <button id="load-more" class="accent-outline-btn mt-4 mb-6">{% trans "Mehr laden" %}</button>
-  </div>
+</div>
 {% endif %}
