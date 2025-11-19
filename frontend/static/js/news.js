@@ -80,6 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log("news.js: Initialisiere NewsFeedCore");
   window.NewsFeedCore.initNewsFeed({
     containerSelector: "#news-container",
+    scrollContainerSelector: "#news",
     loadMoreSelector: "#load-more",
     limit: 20,
     initialOffset: 20,

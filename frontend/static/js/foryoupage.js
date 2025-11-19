@@ -45,6 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initialisierung der Core-Logik ohne sichtbare Filter
   var manager = window.NewsFeedCore.initNewsFeed({
     containerSelector: "#news-container",
+    scrollContainerSelector: "#news",
     loadMoreSelector: "#load-more",
     limit: 20,
     initialOffset: 20,

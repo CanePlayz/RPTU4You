@@ -48,6 +48,14 @@
       return null;
     }
 
+    var scrollContainer = null;
+    if (config.scrollContainerSelector) {
+      scrollContainer = document.querySelector(config.scrollContainerSelector);
+      if (!scrollContainer) {
+        console.warn("scrollContainerSelector lieferte kein Element", config.scrollContainerSelector);
+      }
+    }
+
     // Variablen mit sinnvollen Default-Werten initialisieren
     var limit = typeof config.limit === "number" ? config.limit : 20;
     var initialOffset = typeof config.initialOffset === "number" ? config.initialOffset : limit;
@@ -64,6 +72,29 @@
         base += "/";
       }
       return base.replace(/\/{2,}/g, "/");
+    }
+
+    function getScrollPosition() {
+      if (scrollContainer) {
+        return scrollContainer.scrollTop;
+      }
+      return typeof global.scrollY === "number" ? global.scrollY : global.pageYOffset || 0;
+    }
+
+    function scrollToPosition(y) {
+      if (scrollContainer) {
+        if (typeof scrollContainer.scrollTo === "function") {
+          scrollContainer.scrollTo(0, y);
+        } else {
+          scrollContainer.scrollTop = y;
+        }
+      } else {
+        global.scrollTo(0, y);
+      }
+    }
+
+    function resetScrollPosition() {
+      scrollToPosition(0);
     }
 
     // Funktionen aus der Config extrahieren, damit sie leichter nutzbar sind
@@ -165,7 +196,7 @@
             // Aktuellen Zustand mit erweitertem HTML und neuem Offset sichern
             saveListState(currentKey(), {
               htmlCache: container.innerHTML,
-              scrollY: global.scrollY,
+              scrollY: getScrollPosition(),
               offset: offset,
             });
             bindLoadMoreButton();
@@ -187,9 +218,9 @@
         offset = initialOffset;
       }
       if (typeof settings.scrollY === "number") {
-        global.scrollTo(0, settings.scrollY);
+        scrollToPosition(settings.scrollY);
       } else {
-        global.scrollTo(0, 0);
+        resetScrollPosition();
       }
       bindLoadMoreButton();
       showLoadMoreButton();
@@ -210,7 +241,7 @@
           var key = canonicalKey(urlObj.pathname, urlObj.search);
           saveListState(key, {
             htmlCache: container.innerHTML,
-            scrollY: settings.scrollY || 0,
+            scrollY: typeof settings.scrollY === "number" ? settings.scrollY : getScrollPosition(),
             offset: offset,
           });
           showLoadMoreButton();
@@ -227,7 +258,7 @@
     function saveCurrentState() {
       saveListState(currentKey(), {
         htmlCache: container.innerHTML,
-        scrollY: global.scrollY,
+        scrollY: getScrollPosition(),
         offset: offset,
       });
     }
@@ -316,7 +347,7 @@
             .then(function (html) {
               container.innerHTML = html;
               hideLoadMoreButton();
-              global.scrollTo(0, 0);
+              resetScrollPosition();
             })
             .catch(function (error) {
               console.error("Fehler beim Laden der Detailansicht:", error);
@@ -362,7 +393,7 @@
             .then(function (html) {
               container.innerHTML = html;
               hideLoadMoreButton();
-              global.scrollTo(0, 0);
+              resetScrollPosition();
             })
             .catch(function (error) {
               console.error("Fehler beim Laden der Detailansicht:", error);
@@ -415,7 +446,7 @@
     var initKey = currentKey();
     saveListState(initKey, {
       htmlCache: container.innerHTML,
-      scrollY: global.scrollY,
+      scrollY: getScrollPosition(),
       offset: offset,
     });
 
