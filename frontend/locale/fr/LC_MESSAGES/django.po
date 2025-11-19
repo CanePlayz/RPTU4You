@@ -1,18 +1,13 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
+# French translations for RPTU4You
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: RPTU4You\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-11-19 03:35+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2025-11-19 00:00+0000\n"
+"Last-Translator: RPTU4You Team <support@example.com>\n"
+"Language-Team: French <LL@li.org>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,248 +15,248 @@ msgstr ""
 #: .\news\forms.py:40 .\templates\news\news.html:40
 #: .\templates\news\partials\_news_detail.html:72
 msgid "Standorte"
-msgstr ""
+msgstr "Emplacements"
 
 #: .\news\forms.py:45 .\templates\news\news.html:65
 #: .\templates\news\partials\_news_detail.html:55
 msgid "Kategorien"
-msgstr ""
+msgstr "Catégories"
 
 #: .\news\forms.py:50 .\templates\news\news.html:90
 #: .\templates\news\partials\_news_detail.html:87
 msgid "Zielgruppen"
-msgstr ""
+msgstr "Publics cibles"
 
 #: .\news\forms.py:135
 msgid "Benutzername"
-msgstr ""
+msgstr "Nom d'utilisateur"
 
 #: .\news\forms.py:149
 msgid "Bitte gib einen gültigen Benutzernamen ein."
-msgstr ""
+msgstr "Veuillez entrer un nom d'utilisateur valide."
 
 #: .\news\forms.py:153
 msgid "Dieser Benutzername wird bereits von dir verwendet."
-msgstr ""
+msgstr "Vous utilisez déjà ce nom d'utilisateur."
 
 #: .\news\forms.py:160
 msgid "Dieser Benutzername ist bereits vergeben."
-msgstr ""
+msgstr "Ce nom d'utilisateur est déjà pris."
 
 #: .\news\forms.py:239 .\templates\news\news.html:115
 msgid "Quellen"
-msgstr ""
+msgstr "Sources"
 
 #: .\news\forms.py:240
 msgid "📧 Rundmails"
-msgstr ""
+msgstr "📧 Circulaires"
 
 #: .\news\forms.py:241
 msgid "📧 Sammel-Rundmails"
-msgstr ""
+msgstr "📧 Circulaires collectives"
 
 #: .\news\forms.py:321
 msgid "Bevorzugte Sprache ändern"
-msgstr ""
+msgstr "Changer la langue préférée"
 
 #: .\news\forms.py:351
 msgid "Warum möchtest du als Trusted Account News einreichen?"
-msgstr ""
+msgstr "Pourquoi voulez-vous soumettre des actualités en tant que compte de confiance ?"
 
 #: .\news\forms.py:358 .\templates\news\calendar.html:106
 msgid "Titel"
-msgstr ""
+msgstr "Titre"
 
 #: .\news\forms.py:367
 msgid "Text"
-msgstr ""
+msgstr "Texte"
 
 #: .\news\forms.py:376
 msgid "Optionale Quelle (Link)"
-msgstr ""
+msgstr "Source optionnelle (lien)"
 
 #: .\news\forms.py:417
 msgid "Bitte wähle mindestens eine Kategorie aus."
-msgstr ""
+msgstr "Veuillez sélectionner au moins une catégorie."
 
 #: .\news\forms.py:424
 msgid "Bitte wähle mindestens eine Zielgruppe aus."
-msgstr ""
+msgstr "Veuillez sélectionner au moins un public cible."
 
 #: .\news\forms.py:431
 msgid "Bitte wähle mindestens einen Standort aus."
-msgstr ""
+msgstr "Veuillez sélectionner au moins un emplacement."
 
 #: .\news\models.py:220
 msgid "Rundmails einbeziehen"
-msgstr ""
+msgstr "Inclure les circulaires"
 
 #: .\news\models.py:224
 msgid "Sammel-Rundmails einbeziehen"
-msgstr ""
+msgstr "Inclure les circulaires collectives"
 
 #: .\news\models.py:230 .\templates\news\account.html:44
 msgid "Bevorzugte Sprache"
-msgstr ""
+msgstr "Langue préférée"
 
 #: .\news\models.py:246
 msgid "Ausstehend"
-msgstr ""
+msgstr "En attente"
 
 #: .\news\models.py:247
 msgid "Genehmigt"
-msgstr ""
+msgstr "Approuvé"
 
 #: .\news\models.py:248
 msgid "Abgelehnt"
-msgstr ""
+msgstr "Rejeté"
 
 #: .\news\views\account.py:48
 msgid "Bitte gib sowohl deinen Benutzernamen als auch dein Passwort ein."
-msgstr ""
+msgstr "Veuillez entrer votre nom d'utilisateur et votre mot de passe."
 
 #: .\news\views\account.py:55
 msgid "Ungültige Anmeldedaten."
-msgstr ""
+msgstr "Identifiants de connexion invalides."
 
 #: .\news\views\account.py:73
 msgid "Registrierung erfolgreich! Bitte melde dich an."
-msgstr ""
+msgstr "Inscription réussie ! Veuillez vous connecter."
 
 #: .\news\views\account.py:87
 msgid "Ungültiger Benutzer."
-msgstr ""
+msgstr "Utilisateur invalide."
 
 #: .\news\views\account.py:108
 msgid "Dein Passwort wurde erfolgreich geändert!"
-msgstr ""
+msgstr "Votre mot de passe a été changé avec succès !"
 
 #: .\news\views\account.py:115
 msgid "Das alte Passwort war falsch. Bitte neu eingeben."
-msgstr ""
+msgstr "L'ancien mot de passe est incorrect. Veuillez le saisir à nouveau."
 
 #: .\news\views\account.py:126
 msgid "Dein Benutzername wurde geändert!"
-msgstr ""
+msgstr "Votre nom d'utilisateur a été modifié !"
 
 #: .\news\views\account.py:139
 msgid "Deine bevorzugte Sprache wurde gespeichert."
-msgstr ""
+msgstr "Votre langue préférée a été enregistrée."
 
 #: .\news\views\account.py:177 .\news\views\account.py:180
 msgid "Deine Präferenzen wurden zurückgesetzt."
-msgstr ""
+msgstr "Vos préférences ont été réinitialisées."
 
 #: .\news\views\account.py:192 .\news\views\account.py:196
 msgid "Deine Präferenzen wurden gespeichert."
-msgstr ""
+msgstr "Vos préférences ont été enregistrées."
 
 #: .\news\views\calendar.py:46
 msgid "Ungültige JSON-Daten."
-msgstr ""
+msgstr "Données JSON invalides."
 
 #: .\news\views\calendar.py:52
 #, python-format
 msgid "%(field)s ist erforderlich."
-msgstr ""
+msgstr "%(field)s est obligatoire."
 
 #: .\news\views\calendar.py:62
 #, python-format
 msgid "%(field)s hat ein ungültiges Format."
-msgstr ""
+msgstr "%(field)s a un format invalide."
 
 #: .\news\views\calendar.py:78
 msgid "Der Startzeitpunkt darf nicht in der Vergangenheit liegen."
-msgstr ""
+msgstr "L'heure de début ne doit pas être dans le passé."
 
 #: .\news\views\calendar.py:96 .\news\views\calendar.py:187
 msgid "Unbekannter Wiederholungstyp."
-msgstr ""
+msgstr "Type de récurrence inconnu."
 
 #: .\news\views\calendar.py:105
 msgid "Maximal 50 Termine pro Serie erlaubt."
-msgstr ""
+msgstr "Maximum 50 événements par série autorisés."
 
 #: .\news\views\calendar.py:111
 msgid "Wiederholungsende muss nach dem Startzeitpunkt liegen."
-msgstr ""
+msgstr "La fin de la récurrence doit être après l'heure de début."
 
 #: .\news\views\calendar.py:174
 msgid "Nicht authentifiziert."
-msgstr ""
+msgstr "Non authentifié."
 
 #: .\news\views\calendar.py:192
 msgid "Titel und Startzeit sind erforderlich."
-msgstr ""
+msgstr "Le titre et l'heure de début sont obligatoires."
 
 #: .\news\views\calendar.py:211 .\news\views\calendar.py:349
 #: .\news\views\calendar.py:409
 msgid "Der Endzeitpunkt darf nicht vor dem Startzeitpunkt liegen."
-msgstr ""
+msgstr "L'heure de fin ne doit pas être avant l'heure de début."
 
 #: .\news\views\calendar.py:264
 #, python-format
 msgid "Fehler bei der Event-Erstellung: %(error)s"
-msgstr ""
+msgstr "Erreur lors de la création de l'événement : %(error)s"
 
 #: .\news\views\calendar.py:270
 msgid "Event erfolgreich gespeichert."
-msgstr ""
+msgstr "Événement enregistré avec succès."
 
 #: .\news\views\calendar.py:288 .\news\views\calendar.py:426
 msgid "Keine Berechtigung."
-msgstr ""
+msgstr "Aucune autorisation."
 
 #: .\news\views\calendar.py:292
 msgid "Globale Termine können nicht bearbeitet werden."
-msgstr ""
+msgstr "Les événements globaux ne peuvent pas être modifiés."
 
 #: .\news\views\calendar.py:312
 msgid "Keine Events in der Serie gefunden."
-msgstr ""
+msgstr "Aucun événement trouvé dans la série."
 
 #: .\news\views\calendar.py:377
 msgid "Event-Serie erfolgreich aktualisiert."
-msgstr ""
+msgstr "Série d'événements mise à jour avec succès."
 
 #: .\news\views\calendar.py:420
 msgid "Event erfolgreich aktualisiert."
-msgstr ""
+msgstr "Événement mis à jour avec succès."
 
 #: .\news\views\calendar.py:431
 msgid "Globale Termine können nicht gelöscht werden."
-msgstr ""
+msgstr "Les événements globaux ne peuvent pas être supprimés."
 
 #: .\news\views\calendar.py:507
 #, python-format
 msgid "Fehler beim Exportieren: %(error)s"
-msgstr ""
+msgstr "Erreur lors de l'exportation : %(error)s"
 
 #: .\news\views\calendar.py:523
 msgid "Ohne Titel"
-msgstr ""
+msgstr "Sans titre"
 
 #: .\news\views\calendar.py:621
 msgid ""
 "Beim Import wurden aus Wiederholungen nur die ersten 50 Termine angelegt."
-msgstr ""
+msgstr "Lors de l'importation, seules les 50 premières occurrences de chaque récurrence ont été créées."
 
 #: .\news\views\calendar.py:635
 msgid "ICS-Datei erfolgreich importiert."
-msgstr ""
+msgstr "Fichier ICS importé avec succès."
 
 #: .\news\views\calendar.py:639
 #, python-format
 msgid "Fehler beim Importieren: %(error)s"
-msgstr ""
+msgstr "Erreur lors de l'importation : %(error)s"
 
 #: .\news\views\system.py:24
 msgid "Unauthorized"
-msgstr ""
+msgstr "Non autorisé"
 
 #: .\news\views\system.py:34
 msgid "No news available"
-msgstr ""
+msgstr "Aucune actualité disponible"
 
 #: .\news\views\trusted.py:39
 #, python-format
@@ -272,310 +267,310 @@ msgid ""
 "%(motivation)s\n"
 "\n"
 "Bitte überprüfe die Bewerbung im Admin-Panel."
-msgstr ""
+msgstr "L'utilisateur %(username)s a postulé en tant qu'utilisateur de confiance.\n\nMotivation :\n%(motivation)s\n\nVeuillez examiner la demande dans le panneau d'administration."
 
 #: .\news\views\trusted.py:50
 msgid "Neue Trusted-User-Bewerbung eingegangen"
-msgstr ""
+msgstr "Nouvelle demande d'utilisateur de confiance reçue"
 
 #: .\news\views\trusted.py:136 .\news\views\trusted.py:149
 msgid ""
 "Beim Einreichen ist ein Fehler aufgetreten. Bitte versuche es später erneut."
-msgstr ""
+msgstr "Une erreur s'est produite lors de la soumission. Veuillez réessayer plus tard."
 
 #: .\news\views\trusted.py:155
 msgid "Deine News wurde eingereicht und wird verarbeitet."
-msgstr ""
+msgstr "Votre actualité a été soumise et est en cours de traitement."
 
 #: .\rptu4you\settings.py:179 .\templates\partials\navbar.html:32
 msgid "Deutsch"
-msgstr ""
+msgstr "Allemand"
 
 #: .\rptu4you\settings.py:180
 msgid "Englisch"
-msgstr ""
+msgstr "Anglais"
 
 #: .\rptu4you\settings.py:181
 msgid "Spanisch"
-msgstr ""
+msgstr "Espagnol"
 
 #: .\rptu4you\settings.py:182
 msgid "Französisch"
-msgstr ""
+msgstr "Français"
 
 #: .\templates\base.html:31
 msgid "No Title"
-msgstr ""
+msgstr "Sans titre"
 
 #: .\templates\news\account.html:5 .\templates\news\account.html:14
 #: .\templates\partials\navbar.html:91
 msgid "Account"
-msgstr ""
+msgstr "Compte"
 
 #: .\templates\news\account.html:20 .\templates\news\account.html:38
 msgid "Benutzername ändern"
-msgstr ""
+msgstr "Modifier le nom d'utilisateur"
 
 #: .\templates\news\account.html:30
 msgid "Neuer Benutzername"
-msgstr ""
+msgstr "Nouveau nom d'utilisateur"
 
 #: .\templates\news\account.html:49
 msgid "Sprache auswählen"
-msgstr ""
+msgstr "Sélectionner la langue"
 
 #: .\templates\news\account.html:57
 msgid "Sprache speichern"
-msgstr ""
+msgstr "Enregistrer la langue"
 
 #: .\templates\news\account.html:64 .\templates\news\account.html:111
 msgid "Passwort ändern"
-msgstr ""
+msgstr "Modifier le mot de passe"
 
 #: .\templates\news\account.html:75 .\templates\news\register.html:29
 msgid "Passwort-Anforderungen"
-msgstr ""
+msgstr "Exigences du mot de passe"
 
 #: .\templates\news\account.html:78 .\templates\news\register.html:32
 msgid "Mindestens 8 Zeichen lang"
-msgstr ""
+msgstr "Au moins 8 caractères"
 
 #: .\templates\news\account.html:79 .\templates\news\register.html:33
 msgid "Keine Ähnlichkeit zu persönlichen Informationen"
-msgstr ""
+msgstr "Pas de similitude avec les informations personnelles"
 
 #: .\templates\news\account.html:80 .\templates\news\register.html:34
 msgid "Nicht nur Ziffern"
-msgstr ""
+msgstr "Pas uniquement des chiffres"
 
 #: .\templates\news\account.html:81 .\templates\news\register.html:35
 msgid "Nicht allgemein üblich"
-msgstr ""
+msgstr "Pas un mot de passe courant"
 
 #: .\templates\news\account.html:85
 msgid "Aktuelles Passwort"
-msgstr ""
+msgstr "Mot de passe actuel"
 
 #: .\templates\news\account.html:94
 msgid "Neues Passwort"
-msgstr ""
+msgstr "Nouveau mot de passe"
 
 #: .\templates\news\account.html:103
 msgid "Neues Passwort wiederholen"
-msgstr ""
+msgstr "Répéter le nouveau mot de passe"
 
 #: .\templates\news\calendar.html:6
 msgid "Dein Kalender"
-msgstr ""
+msgstr "Votre calendrier"
 
 #: .\templates\news\calendar.html:23 .\templates\partials\navbar.html:14
 msgid "Kalender"
-msgstr ""
+msgstr "Calendrier"
 
 #: .\templates\news\calendar.html:24
 msgid "Behalte all deine Uni-Termine im Blick"
-msgstr ""
+msgstr "Gardez tous vos rendez-vous universitaires en vue"
 
 #: .\templates\news\calendar.html:26
 msgid "Kalenderaktionen"
-msgstr ""
+msgstr "Actions du calendrier"
 
 #: .\templates\news\calendar.html:28 .\templates\news\calendar.html:33
 #: .\templates\news\calendar.html:91
 msgid "Termin erstellen"
-msgstr ""
+msgstr "Créer un événement"
 
 #: .\templates\news\calendar.html:39 .\templates\news\calendar.html:44
 msgid "Kalender importieren"
-msgstr ""
+msgstr "Importer le calendrier"
 
 #: .\templates\news\calendar.html:50 .\templates\news\calendar.html:55
 msgid "Kalender exportieren"
-msgstr ""
+msgstr "Exporter le calendrier"
 
 #: .\templates\news\calendar.html:96
 msgid "Popup schließen"
-msgstr ""
+msgstr "Fermer la fenêtre"
 
 #: .\templates\news\calendar.html:102
 msgid "Dieser öffentliche Termin kann nur angezeigt werden."
-msgstr ""
+msgstr "Cet événement public ne peut être que consulté."
 
 #: .\templates\news\calendar.html:115
 msgid "Terminoptionen"
-msgstr ""
+msgstr "Options de l'événement"
 
 #: .\templates\news\calendar.html:117
 msgid "Ganztägig"
-msgstr ""
+msgstr "Toute la journée"
 
 #: .\templates\news\calendar.html:123
 msgid "Beginn (Datum)"
-msgstr ""
+msgstr "Début (date)"
 
 #: .\templates\news\calendar.html:132
 msgid "Beginn (Zeit)"
-msgstr ""
+msgstr "Début (heure)"
 
 #: .\templates\news\calendar.html:145 .\templates\news\calendar.html:178
 msgid "Zeit auswählen"
-msgstr ""
+msgstr "Sélectionner l'heure"
 
 #: .\templates\news\calendar.html:158
 msgid "Ende (Datum)"
-msgstr ""
+msgstr "Fin (date)"
 
 #: .\templates\news\calendar.html:166
 msgid "Ende (Zeit)"
-msgstr ""
+msgstr "Fin (heure)"
 
 #: .\templates\news\calendar.html:190
 msgid "Beschreibung"
-msgstr ""
+msgstr "Description"
 
 #: .\templates\news\calendar.html:197
 msgid "Weitere Optionen"
-msgstr ""
+msgstr "Plus d'options"
 
 #: .\templates\news\calendar.html:204
 msgid "Wiederholung"
-msgstr ""
+msgstr "Récurrence"
 
 #: .\templates\news\calendar.html:206
 msgid "Keine Wiederholung"
-msgstr ""
+msgstr "Aucune récurrence"
 
 #: .\templates\news\calendar.html:207
 msgid "Täglich"
-msgstr ""
+msgstr "Quotidien"
 
 #: .\templates\news\calendar.html:208
 msgid "Wöchentlich"
-msgstr ""
+msgstr "Hebdomadaire"
 
 #: .\templates\news\calendar.html:209
 msgid "Monatlich"
-msgstr ""
+msgstr "Mensuel"
 
 #: .\templates\news\calendar.html:210
 msgid "Jährlich"
-msgstr ""
+msgstr "Annuel"
 
 #: .\templates\news\calendar.html:214
 msgid "Wiederholen bis"
-msgstr ""
+msgstr "Répéter jusqu'au"
 
 #: .\templates\news\calendar.html:225
 msgid "Alle Termine dieser Serie bearbeiten/löschen"
-msgstr ""
+msgstr "Modifier/Supprimer tous les événements de cette série"
 
 #: .\templates\news\calendar.html:229
 msgid "Hinzufügen"
-msgstr ""
+msgstr "Ajouter"
 
 #: .\templates\news\calendar.html:230
 msgid "Löschen"
-msgstr ""
+msgstr "Supprimer"
 
 #: .\templates\news\calendar.html:248
 msgid "Hinweis"
-msgstr ""
+msgstr "Remarque"
 
 #: .\templates\news\calendar.html:255
 msgid "Hinweis schließen"
-msgstr ""
+msgstr "Fermer la remarque"
 
 #: .\templates\news\calendar.html:272
 msgid "Bist du sicher?"
-msgstr ""
+msgstr "Êtes-vous sûr ?"
 
 #: .\templates\news\calendar.html:277
 msgid "Bestätigungsdialog schließen"
-msgstr ""
+msgstr "Fermer la boîte de confirmation"
 
 #: .\templates\news\calendar.html:282
 msgid "Abbrechen"
-msgstr ""
+msgstr "Annuler"
 
 #: .\templates\news\calendar.html:283
 msgid "Bestätigen"
-msgstr ""
+msgstr "Confirmer"
 
 #: .\templates\news\calendar.html:294
 msgid "Nur Anzeige"
-msgstr ""
+msgstr "Affichage uniquement"
 
 #: .\templates\news\calendar.html:295
 msgid "Öffentliche Termine können nicht bearbeitet werden."
-msgstr ""
+msgstr "Les événements publics ne peuvent pas être modifiés."
 
 #: .\templates\news\calendar.html:296
 msgid "Bitte Eingaben prüfen"
-msgstr ""
+msgstr "Veuillez vérifier les entrées"
 
 #: .\templates\news\calendar.html:297
 msgid "Termin erstellt"
-msgstr ""
+msgstr "Événement créé"
 
 #: .\templates\news\calendar.html:298
 msgid "Termin aktualisiert"
-msgstr ""
+msgstr "Événement mis à jour"
 
 #: .\templates\news\calendar.html:299
 msgid "Fehler"
-msgstr ""
+msgstr "Erreur"
 
 #: .\templates\news\calendar.html:300
 msgid "Unbekannter Fehler."
-msgstr ""
+msgstr "Erreur inconnue."
 
 #: .\templates\news\calendar.html:301
 msgid "Netzwerkfehler"
-msgstr ""
+msgstr "Erreur réseau"
 
 #: .\templates\news\calendar.html:302
 msgid "Event konnte nicht gespeichert werden. Bitte versuche es erneut."
-msgstr ""
+msgstr "L'événement n'a pas pu être enregistré. Veuillez réessayer."
 
 #: .\templates\news\calendar.html:303
 msgid "Termin gelöscht"
-msgstr ""
+msgstr "Événement supprimé"
 
 #: .\templates\news\calendar.html:304
 msgid "Event wurde gelöscht."
-msgstr ""
+msgstr "L'événement a été supprimé."
 
 #: .\templates\news\calendar.html:305
 msgid "Löschen fehlgeschlagen"
-msgstr ""
+msgstr "Échec de la suppression"
 
 #: .\templates\news\calendar.html:306
 msgid "Unbekannter Fehler beim Löschen."
-msgstr ""
+msgstr "Erreur inconnue lors de la suppression."
 
 #: .\templates\news\calendar.html:307
 msgid "Event konnte nicht gelöscht werden. Bitte versuche es erneut."
-msgstr ""
+msgstr "L'événement n'a pas pu être supprimé. Veuillez réessayer."
 
 #: .\templates\news\datenschutz.html:4 .\templates\news\datenschutz.html:12
 #: .\templates\partials\footer.html:6
 msgid "Datenschutz"
-msgstr ""
+msgstr "Politique de confidentialité"
 
 #: .\templates\news\datenschutz.html:15
 msgid "Vorwort"
-msgstr ""
+msgstr "Introduction"
 
 #: .\templates\news\datenschutz.html:17
 msgid ""
 "In dieser Datenschutzerklärung informiert RPTU4You darüber, welche "
 "personenbezogenen Daten bei der Nutzung der Website verarbeitet werden und "
 "welche Cookies hierbei zum Einsatz kommen."
-msgstr ""
+msgstr "Cette politique de confidentialité explique quelles données personnelles sont traitées lors de l'utilisation du site Web et quels cookies sont utilisés."
 
 #: .\templates\news\datenschutz.html:24
 msgid "Besuch der Website ohne Anmeldung"
-msgstr ""
+msgstr "Visite du site sans connexion"
 
 #: .\templates\news\datenschutz.html:26
 msgid ""
@@ -585,18 +580,18 @@ msgid ""
 "Helligkeitspräferenz) verwendet. Die Cookies werden als zufällig generierte "
 "oder technisch notwendige Werte gespeichert und ermöglichen keine "
 "Identifikation einzelner Nutzerinnen oder Nutzer."
-msgstr ""
+msgstr "Lors de l'accès au site, un cookie CSRF est défini pour empêcher les attaques de falsification de requête intersite et garantir l'intégrité de l'application. Un cookie de thème (pour stocker la préférence de luminosité) est également utilisé. Les cookies sont stockés sous forme de valeurs générées aléatoirement ou techniquement nécessaires et ne permettent pas l'identification des utilisateurs individuels."
 
 #: .\templates\news\datenschutz.html:31
 msgid ""
 "Filtereinstellungen, die unter \"Latest News\" gewählt und über \"Filter "
 "anwenden\" bestätigt werden, werden ausschließlich temporär im jeweils "
 "aktiven Browser gehalten und nach dem Verlassen der Seite gelöscht."
-msgstr ""
+msgstr "Les paramètres de filtrage sélectionnés sous « Dernières actualités » et confirmés via « Appliquer les filtres » sont conservés temporairement uniquement dans le navigateur actif et sont supprimés après avoir quitté la page."
 
 #: .\templates\news\datenschutz.html:38
 msgid "Registrierung und Authentifizierung"
-msgstr ""
+msgstr "Inscription et authentification"
 
 #: .\templates\news\datenschutz.html:40
 msgid ""
@@ -606,7 +601,7 @@ msgid ""
 "ursprünglichen Passworts ist nicht möglich. Zusätzlich wird dem Konto eine "
 "interne Identifikationsnummer zugewiesen, die keine Rückschlüsse auf "
 "persönliche Daten zulässt."
-msgstr ""
+msgstr "L'inscription nécessite un nom d'utilisateur et un mot de passe. Le nom d'utilisateur est stocké dans le compte. Le mot de passe n'est stocké que sous forme hachée ; la récupération du mot de passe original n'est pas possible. Un identifiant interne est également attribué qui ne révèle pas de données personnelles."
 
 #: .\templates\news\datenschutz.html:45
 msgid ""
@@ -614,11 +609,11 @@ msgid ""
 "Login-Zustand aufrechtzuerhalten. Dieser Cookie verfällt automatisch nach "
 "spätestens zwei Wochen. Auch hier werden ein Theme-Cookie und ein CSRF-"
 "Cookie verwendet."
-msgstr ""
+msgstr "Après une connexion réussie, un cookie de session est défini pour maintenir l'état de connexion. Il expire après au maximum deux semaines. Un cookie de thème et un cookie CSRF sont également utilisés."
 
 #: .\templates\news\datenschutz.html:52
 msgid "Trusted Accounts"
-msgstr ""
+msgstr "Comptes de confiance"
 
 #: .\templates\news\datenschutz.html:54
 msgid ""
@@ -627,18 +622,18 @@ msgid ""
 "gespeichert, um die Entscheidung der zuständigen Mitarbeitenden "
 "nachvollziehbar zu dokumentieren. Die Daten bleiben unabhängig vom Ergebnis "
 "des Antrags erhalten."
-msgstr ""
+msgstr "La demande d'un compte de confiance nécessite une justification. Cette justification est stockée avec le compte utilisateur pour documenter la décision de manière transparente. Les données restent stockées quel que soit le résultat de la demande."
 
 #: .\templates\news\datenschutz.html:61
 msgid "Kalenderfunktionen"
-msgstr ""
+msgstr "Fonctionnalités du calendrier"
 
 #: .\templates\news\datenschutz.html:63
 msgid ""
 "Nach der Anmeldung können Nutzerinnen und Nutzer eigene Termine anlegen. Die "
 "Termininhalte werden gespeichert, um sie im persönlichen Kalender sowie auf "
 "der 4YouPage anzuzeigen."
-msgstr ""
+msgstr "Après la connexion, les utilisateurs peuvent créer leurs propres événements. Les détails des événements sont stockés pour les afficher dans le calendrier personnel et sur la 4YouPage."
 
 #: .\templates\news\datenschutz.html:68
 msgid ""
@@ -646,11 +641,11 @@ msgid ""
 "werden, werden beim Import einmalig in Kalendertermine umgewandelt; die "
 "ursprüngliche Datei selbst wird danach nicht dauerhaft auf dem Server "
 "gespeichert."
-msgstr ""
+msgstr "Les fichiers de calendrier téléchargés via « Importer le calendrier » sont convertis en événements de calendrier une fois lors de l'importation ; le fichier original n'est pas stocké de manière permanente."
 
 #: .\templates\news\datenschutz.html:75
 msgid "Präferenzeinstellungen"
-msgstr ""
+msgstr "Paramètres de préférence"
 
 #: .\templates\news\datenschutz.html:77
 msgid ""
@@ -658,18 +653,18 @@ msgid ""
 "Standorte, Zielgruppen und Quellen hinterlegt werden. Die Einstellungen "
 "werden dem Benutzerkonto zugeordnet und bleiben bis zu einer Änderung durch "
 "die Nutzerin oder den Nutzer bestehen."
-msgstr ""
+msgstr "Dans les préférences, vous pouvez stocker des filtres individuels pour les catégories d'actualités, les emplacements, les publics cibles et les sources. Les paramètres sont liés au compte utilisateur et persistent jusqu'à ce qu'ils soient modifiés."
 
 #: .\templates\news\datenschutz.html:82
 msgid ""
 "Die Filter können jederzeit über die 4YouPage oder den Menüpunkt "
 "\"Präferenzen\" angepasst werden. Änderungen wirken sich unmittelbar auf die "
 "dargestellten Inhalte aus."
-msgstr ""
+msgstr "Les filtres peuvent être ajustés à tout moment via la 4YouPage ou le menu « Préférences ». Les modifications affectent immédiatement le contenu affiché."
 
 #: .\templates\news\datenschutz.html:89
 msgid "Datensicherheit und Weitergabe"
-msgstr ""
+msgstr "Sécurité des données et divulgation"
 
 #: .\templates\news\datenschutz.html:91
 msgid ""
@@ -677,7 +672,7 @@ msgid ""
 "Daten vor unberechtigtem Zugriff zu schützen. Eine Weitergabe "
 "personenbezogener Daten an Dritte findet nicht statt, es sei denn, "
 "gesetzliche Vorgaben verpflichten RPTU4You hierzu."
-msgstr ""
+msgstr "RPTU4You met en œuvre des mesures organisationnelles et techniques pour protéger les données stockées contre les accès non autorisés. Les données personnelles ne sont pas partagées avec des tiers, sauf si la loi l'exige."
 
 #: .\templates\news\datenschutz.html:96
 msgid ""
@@ -685,629 +680,629 @@ msgid ""
 "gespeicherten Daten verlangen und die Berichtigung oder Löschung "
 "veranlassen, sofern keine entgegenstehenden gesetzlichen "
 "Aufbewahrungspflichten bestehen."
-msgstr ""
+msgstr "Les utilisateurs peuvent demander des informations sur leurs données personnelles stockées à tout moment et demander leur correction ou leur suppression, à condition qu'aucune obligation légale de conservation ne l'empêche."
 
 #: .\templates\news\datenschutz.html:103 .\templates\news\impressum.html:29
 msgid "Kontakt"
-msgstr ""
+msgstr "Contact"
 
 #: .\templates\news\datenschutz.html:105
 msgid ""
 "Für datenschutzbezogene Anliegen steht Ihnen das RPTU4You-Team unter der im "
 "Impressum genannten Kontaktadresse zur Verfügung."
-msgstr ""
+msgstr "Pour les questions relatives à la protection des données, veuillez contacter l'équipe RPTU4You à l'adresse indiquée dans les mentions légales."
 
 #: .\templates\news\foryoupage.html:6 .\templates\partials\navbar.html:13
 msgid "4YouPage"
-msgstr ""
+msgstr "4YouPage"
 
 #: .\templates\news\foryoupage.html:21
 msgid "Deine Präferenzen"
-msgstr ""
+msgstr "Vos préférences"
 
 #: .\templates\news\foryoupage.html:22
 msgid "Passe deine Präferenzen an"
-msgstr ""
+msgstr "Ajustez vos préférences"
 
 #: .\templates\news\foryoupage.html:24 .\templates\news\news.html:25
 msgid "Filter schließen"
-msgstr ""
+msgstr "Fermer les filtres"
 
 #: .\templates\news\foryoupage.html:163 .\templates\news\preferences.html:90
 msgid "Zurücksetzen"
-msgstr ""
+msgstr "Réinitialiser"
 
 #: .\templates\news\foryoupage.html:164 .\templates\news\preferences.html:91
 msgid "Speichern"
-msgstr ""
+msgstr "Enregistrer"
 
 #: .\templates\news\foryoupage.html:184 .\templates\news\news.html:163
 msgid "Nächste Termine"
-msgstr ""
+msgstr "Événements à venir"
 
 #: .\templates\news\foryoupage.html:185 .\templates\news\news.html:164
 msgid "Ein Blick in den Kalender"
-msgstr ""
+msgstr "Un aperçu du calendrier"
 
 #: .\templates\news\foryoupage.html:203 .\templates\news\news.html:182
 msgid "Alle Termine anzeigen"
-msgstr ""
+msgstr "Afficher tous les événements"
 
 #: .\templates\news\foryoupage.html:206 .\templates\news\news.html:185
 msgid "Keine anstehenden Termine."
-msgstr ""
+msgstr "Aucun événement à venir."
 
 #: .\templates\news\foryoupage.html:208 .\templates\news\news.html:187
 msgid "Zum Kalender"
-msgstr ""
+msgstr "Vers le calendrier"
 
 #: .\templates\news\impressum.html:5 .\templates\news\impressum.html:15
 #: .\templates\partials\footer.html:5
 msgid "Impressum"
-msgstr ""
+msgstr "Mentions légales"
 
 #: .\templates\news\impressum.html:17
 msgid "Nachfolgende Angaben dienen als fiktive Platzhalter."
-msgstr ""
+msgstr "Les détails suivants servent d'espaces réservés fictifs."
 
 #: .\templates\news\impressum.html:30
 msgid "Telefon"
-msgstr ""
+msgstr "Téléphone"
 
 #: .\templates\news\impressum.html:34
 msgid "Vertretungsberechtigt"
-msgstr ""
+msgstr "Représentant autorisé"
 
 #: .\templates\news\impressum.html:35
 msgid "USt-IdNr."
-msgstr ""
+msgstr "N° TVA"
 
 #: .\templates\news\impressum.html:39
 msgid "Inhaltlich Verantwortliche"
-msgstr ""
+msgstr "Responsable du contenu"
 
 #: .\templates\news\impressum.html:39
 msgid "erreichbar unter"
-msgstr ""
+msgstr "joignable à"
 
 #: .\templates\news\links.html:6 .\templates\partials\navbar.html:15
 msgid "Uni-Links"
-msgstr ""
+msgstr "Liens universitaires"
 
 #: .\templates\news\links.html:15
 msgid "Wichtige Schnellzugriffe"
-msgstr ""
+msgstr "Liens rapides importants"
 
 #: .\templates\news\links.html:16
 msgid ""
 "Auch wenn wir die News zusammenfassen – alle Uni-Websites können wir (noch) "
 "nicht ersetzen"
-msgstr ""
+msgstr "Même si nous agrégeons les actualités – nous ne pouvons pas (encore) remplacer tous les sites Web universitaires"
 
 #: .\templates\news\links.html:20 .\templates\news\links.html:49
 msgid "OpenOLAT"
-msgstr ""
+msgstr "OpenOLAT"
 
 #: .\templates\news\links.html:23 .\templates\news\links.html:50
 msgid "Mensa Kaiserslautern"
-msgstr ""
+msgstr "Restaurant universitaire Kaiserslautern"
 
 #: .\templates\news\links.html:26 .\templates\news\links.html:51
 msgid "Mensa Landau"
-msgstr ""
+msgstr "Restaurant universitaire Landau"
 
 #: .\templates\news\links.html:29 .\templates\news\links.html:52
 msgid "KIS-Office"
-msgstr ""
+msgstr "KIS Office"
 
 #: .\templates\news\links.html:32 .\templates\news\links.html:53
 msgid "QIS"
-msgstr ""
+msgstr "QIS"
 
 #: .\templates\news\links.html:35 .\templates\news\links.html:54
 msgid "Uni-Mail"
-msgstr ""
+msgstr "E-mail universitaire"
 
 #: .\templates\news\links.html:46
 msgid "Alltags-Links"
-msgstr ""
+msgstr "Liens quotidiens"
 
 #: .\templates\news\links.html:55
 msgid "KAI"
-msgstr ""
+msgstr "KAI"
 
 #: .\templates\news\links.html:56
 msgid "Campusplan Kaiserslautern"
-msgstr ""
+msgstr "Plan du campus Kaiserslautern"
 
 #: .\templates\news\links.html:57
 msgid "Campusplan Landau"
-msgstr ""
+msgstr "Plan du campus Landau"
 
 #: .\templates\news\links.html:65 .\templates\news\links.html:68
 msgid "UNISPORT"
-msgstr ""
+msgstr "UNISPORT"
 
 #: .\templates\news\links.html:69
 msgid "UNISPORT Angebot Kaiserslautern"
-msgstr ""
+msgstr "Cours UNISPORT Kaiserslautern"
 
 #: .\templates\news\links.html:70
 msgid "UNISPORT Angebot Landau"
-msgstr ""
+msgstr "Cours UNISPORT Landau"
 
 #: .\templates\news\links.html:78
 msgid "Zentrale Einrichtungen"
-msgstr ""
+msgstr "Installations centrales"
 
 #: .\templates\news\links.html:81
 msgid "CampusKultur"
-msgstr ""
+msgstr "Culture du Campus"
 
 #: .\templates\news\links.html:82
 msgid "Regionales Hochschulrechenzentrum"
-msgstr ""
+msgstr "Centre informatique universitaire régional"
 
 #: .\templates\news\links.html:83
 msgid "Universitätsbibliothek"
-msgstr ""
+msgstr "Bibliothèque universitaire"
 
 #: .\templates\news\links.html:84
 msgid "WÜbersicht weitere Einrichtungen"
-msgstr ""
+msgstr "Aperçu d'autres installations"
 
 #: .\templates\news\links.html:92
 msgid "Fachschaften KL"
-msgstr ""
+msgstr "Associations étudiantes KL"
 
 #: .\templates\news\links.html:95 .\templates\news\links.html:153
 msgid "Architektur"
-msgstr ""
+msgstr "Architecture"
 
 #: .\templates\news\links.html:96 .\templates\news\links.html:154
 msgid "Bauingenieurwesen"
-msgstr ""
+msgstr "Génie civil"
 
 #: .\templates\news\links.html:97 .\templates\news\links.html:121
 #: .\templates\news\links.html:155
 msgid "Biologie"
-msgstr ""
+msgstr "Biologie"
 
 #: .\templates\news\links.html:98 .\templates\news\links.html:156
 msgid "Chemie"
-msgstr ""
+msgstr "Chimie"
 
 #: .\templates\news\links.html:99
 msgid "Elektro- & Informationstechnik"
-msgstr ""
+msgstr "Génie électrique et technologie de l'information"
 
 #: .\templates\news\links.html:100 .\templates\news\links.html:159
 msgid "Informatik"
-msgstr ""
+msgstr "Informatique"
 
 #: .\templates\news\links.html:101
 msgid "Maschinenbau & Verfahrenstechnik"
-msgstr ""
+msgstr "Génie mécanique et génie des procédés"
 
 #: .\templates\news\links.html:102 .\templates\news\links.html:129
 #: .\templates\news\links.html:162
 msgid "Mathematik"
-msgstr ""
+msgstr "Mathématiques"
 
 #: .\templates\news\links.html:103 .\templates\news\links.html:133
 #: .\templates\news\links.html:164
 msgid "Physik"
-msgstr ""
+msgstr "Physique"
 
 #: .\templates\news\links.html:104
 msgid "Raum- & Umweltplanung"
-msgstr ""
+msgstr "Aménagement spatial et environnemental"
 
 #: .\templates\news\links.html:105 .\templates\news\links.html:167
 msgid "Sozialwissenschaften"
-msgstr ""
+msgstr "Sciences sociales"
 
 #: .\templates\news\links.html:106 .\templates\news\links.html:168
 msgid "Wirtschaftswissenschaften"
-msgstr ""
+msgstr "Sciences économiques"
 
 #: .\templates\news\links.html:114
 msgid "Fachschaften Landau"
-msgstr ""
+msgstr "Associations étudiantes Landau"
 
 #: .\templates\news\links.html:117
 msgid "Allgemeine Erziehungswissenschaften"
-msgstr ""
+msgstr "Sciences de l'éducation générale"
 
 #: .\templates\news\links.html:118
 msgid "Anglistik"
-msgstr ""
+msgstr "Études anglaises"
 
 #: .\templates\news\links.html:119
 msgid "Betriebspädagogik"
-msgstr ""
+msgstr "Pédagogie d'entreprise"
 
 #: .\templates\news\links.html:120
 msgid "Bildungswissenschaften"
-msgstr ""
+msgstr "Sciences de l'éducation"
 
 #: .\templates\news\links.html:122
 msgid "Darstellendes Spiel"
-msgstr ""
+msgstr "Arts de la scène"
 
 #: .\templates\news\links.html:123
 msgid "Evangelische Theologie"
-msgstr ""
+msgstr "Théologie protestante"
 
 #: .\templates\news\links.html:124
 msgid "Geographie"
-msgstr ""
+msgstr "Géographie"
 
 #: .\templates\news\links.html:125
 msgid "Germanistik"
-msgstr ""
+msgstr "Études germaniques"
 
 #: .\templates\news\links.html:126
 msgid "Grundschulpädagogik"
-msgstr ""
+msgstr "Pédagogie de l'école primaire"
 
 #: .\templates\news\links.html:127
 msgid "Katholische Theologie"
-msgstr ""
+msgstr "Théologie catholique"
 
 #: .\templates\news\links.html:128
 msgid "Kunst"
-msgstr ""
+msgstr "Art"
 
 #: .\templates\news\links.html:130
 msgid "Mensch und Umwelt"
-msgstr ""
+msgstr "Homme et environnement"
 
 #: .\templates\news\links.html:131
 msgid "Menschenrechtsbildung"
-msgstr ""
+msgstr "Éducation aux droits de l'homme"
 
 #: .\templates\news\links.html:132
 msgid "Philosophie"
-msgstr ""
+msgstr "Philosophie"
 
 #: .\templates\news\links.html:134
 msgid "Politikwissenschaft"
-msgstr ""
+msgstr "Sciences politiques"
 
 #: .\templates\news\links.html:135 .\templates\news\links.html:165
 msgid "Psychologie"
-msgstr ""
+msgstr "Psychologie"
 
 #: .\templates\news\links.html:136
 msgid "Romanistik"
-msgstr ""
+msgstr "Études romanes"
 
 #: .\templates\news\links.html:137
 msgid "Sonderpädagogik"
-msgstr ""
+msgstr "Éducation spécialisée"
 
 #: .\templates\news\links.html:138
 msgid "Sozial- & Kommunikationswissenschaft"
-msgstr ""
+msgstr "Sciences sociales et de la communication"
 
 #: .\templates\news\links.html:139
 msgid "Sport"
-msgstr ""
+msgstr "Sport"
 
 #: .\templates\news\links.html:140
 msgid "Umweltwissenschaften"
-msgstr ""
+msgstr "Sciences de l'environnement"
 
 #: .\templates\news\links.html:141
 msgid "Wirtschaft und Arbeit"
-msgstr ""
+msgstr "Économie et travail"
 
 #: .\templates\news\links.html:149
 msgid "Fachbereiche"
-msgstr ""
+msgstr "Facultés"
 
 #: .\templates\news\links.html:152
 msgid "Übersicht Fachbereiche"
-msgstr ""
+msgstr "Aperçu des facultés"
 
 #: .\templates\news\links.html:157
 msgid "Elektrotechnik und Informationstechnik"
-msgstr ""
+msgstr "Génie électrique et technologie de l'information"
 
 #: .\templates\news\links.html:158
 msgid "Erziehungswissenschaften"
-msgstr ""
+msgstr "Sciences de l'éducation"
 
 #: .\templates\news\links.html:160
 msgid "Kultur- und Sozialwissenschaften"
-msgstr ""
+msgstr "Sciences culturelles et sociales"
 
 #: .\templates\news\links.html:161
 msgid "Maschinenbau und Verfahrenstechnik"
-msgstr ""
+msgstr "Génie mécanique et génie des procédés"
 
 #: .\templates\news\links.html:163
 msgid "Natur- und Umweltwissenschaften"
-msgstr ""
+msgstr "Sciences naturelles et environnementales"
 
 #: .\templates\news\links.html:166
 msgid "Raum- und Umweltplanung"
-msgstr ""
+msgstr "Aménagement spatial et environnemental"
 
 #: .\templates\news\links.html:176
 msgid "AStA"
-msgstr ""
+msgstr "AStA"
 
 #: .\templates\news\links.html:179
 msgid "AStA Kaiserslautern"
-msgstr ""
+msgstr "AStA Kaiserslautern"
 
 #: .\templates\news\links.html:180
 msgid "AStA Landau"
-msgstr ""
+msgstr "AStA Landau"
 
 #: .\templates\news\links.html:188
 msgid "Studierendenparlament"
-msgstr ""
+msgstr "Parlement étudiant"
 
 #: .\templates\news\links.html:191
 msgid "Studierendenparlament Kaiserslautern"
-msgstr ""
+msgstr "Parlement étudiant Kaiserslautern"
 
 #: .\templates\news\links.html:192
 msgid "Studierendenparlament Landau"
-msgstr ""
+msgstr "Parlement étudiant Landau"
 
 #: .\templates\news\links.html:200
 msgid "Hochschulgruppen"
-msgstr ""
+msgstr "Groupes universitaires"
 
 #: .\templates\news\links.html:203
 msgid "Übersicht Studentische Gruppen"
-msgstr ""
+msgstr "Aperçu des groupes étudiants"
 
 #: .\templates\news\login.html:5 .\templates\news\login.html:13
 #: .\templates\news\login.html:32 .\templates\partials\navbar.html:99
 msgid "Anmelden"
-msgstr ""
+msgstr "Se connecter"
 
 #: .\templates\news\login.html:23
 msgid "Benutzername:"
-msgstr ""
+msgstr "Nom d'utilisateur :"
 
 #: .\templates\news\login.html:28
 msgid "Passwort:"
-msgstr ""
+msgstr "Mot de passe :"
 
 #: .\templates\news\login.html:35
 msgid "Noch keinen Account?"
-msgstr ""
+msgstr "Pas encore de compte ?"
 
 #: .\templates\news\login.html:35
 msgid "Jetzt registrieren"
-msgstr ""
+msgstr "S'inscrire maintenant"
 
 #: .\templates\news\news.html:6
 msgid "Alle News"
-msgstr ""
+msgstr "Toutes les actualités"
 
 #: .\templates\news\news.html:22
 msgid "Filter"
-msgstr ""
+msgstr "Filtres"
 
 #: .\templates\news\news.html:23
 msgid "Verfeinere die News-Auswahl"
-msgstr ""
+msgstr "Affiner la sélection d'actualités"
 
 #: .\templates\news\news.html:137
 msgid "Alles auswählen"
-msgstr ""
+msgstr "Tout sélectionner"
 
 #: .\templates\news\news.html:138
 msgid "Alles abwählen"
-msgstr ""
+msgstr "Tout désélectionner"
 
 #: .\templates\news\news.html:139
 msgid "Filter anwenden"
-msgstr ""
+msgstr "Appliquer les filtres"
 
 #: .\templates\news\partials\_news_detail.html:13
 msgid "Erstellt am"
-msgstr ""
+msgstr "Créé le"
 
 #: .\templates\news\partials\_news_detail.html:17
 msgid "Uhr"
-msgstr ""
+msgstr "h"
 
 #: .\templates\news\partials\_news_detail.html:31
 msgid "Öffnet die Originalquelle"
-msgstr ""
+msgstr "Ouvre la source originale"
 
 #: .\templates\news\partials\_news_detail.html:32
 #: .\templates\news\partials\_news_detail.html:41
 msgid "Quelle"
-msgstr ""
+msgstr "Source"
 
 #: .\templates\news\partials\_news_detail.html:43
 #, python-format
 msgid "Eingereicht von %(username)s"
-msgstr ""
+msgstr "Soumis par %(username)s"
 
 #: .\templates\news\partials\_news_detail.html:52
 msgid "Metadaten der Nachricht"
-msgstr ""
+msgstr "Métadonnées du message"
 
 #: .\templates\news\partials\_news_detail.html:65
 msgid "Keine Kategorien hinterlegt"
-msgstr ""
+msgstr "Aucune catégorie disponible"
 
 #: .\templates\news\partials\_news_detail.html:80
 msgid "Keine Standorte hinterlegt"
-msgstr ""
+msgstr "Aucun emplacement disponible"
 
 #: .\templates\news\partials\_news_detail.html:97
 msgid "Keine Zielgruppe hinterlegt"
-msgstr ""
+msgstr "Aucun public cible disponible"
 
 #: .\templates\news\partials\_news_detail.html:110
 msgid "Kein Text in der gewählten Sprache verfügbar."
-msgstr ""
+msgstr "Aucun texte disponible dans la langue sélectionnée."
 
 #: .\templates\news\partials\_news_detail.html:116
 msgid "Zurück zur Übersicht"
-msgstr ""
+msgstr "Retour à l'aperçu"
 
 #: .\templates\news\partials\_news_list.html:6
 msgid "Keine News gefunden."
-msgstr ""
+msgstr "Aucune actualité trouvée."
 
 #: .\templates\news\partials\_news_list.html:11
 msgid "Mehr laden"
-msgstr ""
+msgstr "Charger plus"
 
 #: .\templates\news\preferences.html:5 .\templates\partials\navbar.html:92
 msgid "Präferenzen"
-msgstr ""
+msgstr "Préférences"
 
 #: .\templates\news\preferences.html:30
 msgid "Meine Präferenzen"
-msgstr ""
+msgstr "Mes préférences"
 
 #: .\templates\news\register.html:5 .\templates\news\register.html:13
 #: .\templates\news\register.html:51 .\templates\partials\navbar.html:102
 msgid "Registrieren"
-msgstr ""
+msgstr "S'inscrire"
 
 #: .\templates\news\register.html:54
 msgid "Bereits registriert?"
-msgstr ""
+msgstr "Déjà inscrit ?"
 
 #: .\templates\news\register.html:54
 msgid "Jetzt anmelden"
-msgstr ""
+msgstr "Se connecter maintenant"
 
 #: .\templates\news\trusted_application.html:5
 #: .\templates\news\trusted_application_status.html:5
 msgid "Bewerbung Trusted Account"
-msgstr ""
+msgstr "Demande de compte de confiance"
 
 #: .\templates\news\trusted_application.html:14
 msgid "Bewirb dich als Trusted Account"
-msgstr ""
+msgstr "Postuler en tant que compte de confiance"
 
 #: .\templates\news\trusted_application.html:16
 msgid ""
 "Trusted Accounts können News direkt über RPTU4You einreichen. Verrate uns "
 "bitte kurz, warum du Zugriff erhalten solltest."
-msgstr ""
+msgstr "Les comptes de confiance peuvent soumettre des actualités directement via RPTU4You. Veuillez nous dire brièvement pourquoi vous devriez recevoir l'accès."
 
 #: .\templates\news\trusted_application.html:19
 msgid ""
 "Nach dem Absenden deines Antrags kannst du auf dieser Seite den Status "
 "deiner Bewerbung einsehen."
-msgstr ""
+msgstr "Après avoir soumis votre demande, vous pouvez consulter son statut sur cette page."
 
 #: .\templates\news\trusted_application.html:24
 msgid "Letzter Antrag"
-msgstr ""
+msgstr "Dernière demande"
 
 #: .\templates\news\trusted_application.html:26
 #, python-format
 msgid "Status: <strong>%(status)s</strong> (%(date)s)"
-msgstr ""
+msgstr "Statut : <strong>%(status)s</strong> (%(date)s)"
 
 #: .\templates\news\trusted_application.html:32
 msgid ""
 "Du kannst dich erneut bewerben. Bitte beschreibe diesmal <strong>genauer</"
 "strong>, warum du News einreichen möchtest."
-msgstr ""
+msgstr "Vous pouvez postuler à nouveau. Veuillez décrire <strong>plus précisément</strong> cette fois pourquoi vous souhaitez soumettre des actualités."
 
 #: .\templates\news\trusted_application.html:51
 msgid "Bewerbung abschicken"
-msgstr ""
+msgstr "Envoyer la demande"
 
 #: .\templates\news\trusted_application_status.html:14
 msgid "Bewerbung in Bearbeitung"
-msgstr ""
+msgstr "Demande en cours de traitement"
 
 #: .\templates\news\trusted_application_status.html:15
 msgid "Vielen Dank für deine Bewerbung als Trusted Account."
-msgstr ""
+msgstr "Merci pour votre demande de compte de confiance."
 
 #: .\templates\news\trusted_application_status.html:17
 msgid ""
 "Wir prüfen deine Angaben und melden uns schnellstmöglich. Bis dahin kannst "
 "du wie gewohnt News lesen und deine Präferenzen anpassen."
-msgstr ""
+msgstr "Nous examinons vos informations et vous contacterons dès que possible. En attendant, vous pouvez lire les actualités et ajuster vos préférences comme d'habitude."
 
 #: .\templates\news\trusted_application_status.html:23
 #, python-format
 msgid "Eingereicht am %(date)s"
-msgstr ""
+msgstr "Soumis le %(date)s"
 
 #: .\templates\news\trusted_application_status.html:28
 #, python-format
 msgid "Status: <strong>%(status)s</strong>"
-msgstr ""
+msgstr "Statut : <strong>%(status)s</strong>"
 
 #: .\templates\news\trusted_submission.html:5
 #: .\templates\news\trusted_submission.html:13
 #: .\templates\news\trusted_submission.html:82
 #: .\templates\partials\navbar.html:93
 msgid "News einreichen"
-msgstr ""
+msgstr "Soumettre des actualités"
 
 #: .\templates\news\trusted_submission.html:15
 msgid ""
 "Reiche hier deine News ein. Wir kümmern uns automatisch um das Aufbereiten, "
 "Übersetzen und Kategorisieren."
-msgstr ""
+msgstr "Soumettez vos actualités ici. Nous nous occupons automatiquement du formatage, de la traduction et de la catégorisation."
 
 #: .\templates\partials\footer.html:4
 msgid "Footer navigation"
-msgstr ""
+msgstr "Navigation du pied de page"
 
 #: .\templates\partials\footer.html:7
 msgid "GitHub"
-msgstr ""
+msgstr "GitHub"
 
 #: .\templates\partials\navbar.html:12
 msgid "Latest News"
-msgstr ""
+msgstr "Dernières actualités"
 
 #: .\templates\partials\navbar.html:23
 msgid "Aktuelle Sprache"
-msgstr ""
+msgstr "Langue actuelle"
 
 #: .\templates\partials\navbar.html:31
 msgid "Deutsche Flagge"
-msgstr ""
+msgstr "Drapeau allemand"
 
 #: .\templates\partials\navbar.html:39
 msgid "Englische Flagge"
-msgstr ""
+msgstr "Drapeau anglais"
 
 #: .\templates\partials\navbar.html:40
 msgid "English"
-msgstr ""
+msgstr "English"
 
 #: .\templates\partials\navbar.html:47
 msgid "Spanische Flagge"
-msgstr ""
+msgstr "Drapeau espagnol"
 
 #: .\templates\partials\navbar.html:48
 msgid "Español"
-msgstr ""
+msgstr "Español"
 
 #: .\templates\partials\navbar.html:55
 msgid "Französische Flagge"
-msgstr ""
+msgstr "Drapeau français"
 
 #: .\templates\partials\navbar.html:56
 msgid "Français"
-msgstr ""
+msgstr "Français"
 
 #: .\templates\partials\navbar.html:94
 msgid "Abmelden"
-msgstr ""
+msgstr "Se déconnecter"
