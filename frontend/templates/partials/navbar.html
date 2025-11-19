@@ -23,38 +23,30 @@
             <img src="{% static 'images/flaggen/'|add:request.LANGUAGE_CODE|add:'.png' %}" class="w-full h-full rounded" alt="{% trans 'Aktuelle Sprache' %}">
           </button>
           <!-- Sprachen Dropdown -->
-          <div class="z-50 hidden absolute top-16 right-0 w-48 text-base list-none bg-[#042c58] divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-[#0a111a]" id="language-dropdown-menu">
-            <ul class="py-2 font-medium" role="none">
+          <div class="z-50 hidden absolute top-16 right-0 w-48 text-base list-none bg-[#042c58] divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-[#0a111a] dropdown-menu" id="language-dropdown-menu">
+            <ul class="py-2" role="none">
               <li>
-                <a href="{% url 'set_language' %}?language=de" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">
-                  <div class="inline-flex items-center">
-                    <img src="{% static 'images/flaggen/de.png' %}" class="w-5 h-5 rounded-full me-2" alt="{% trans 'Deutsche Flagge' %}">
-                    {% trans "Deutsch" %}
-                  </div>
+                <a href="{% url 'set_language' %}?language=de" class="flex items-center px-4 py-2 text-sm font-medium text-gray-100 transition-colors hover:text-black hover:bg-gray-100 dark:text-white dark:hover:bg-gray-600 dark:hover:text-white">
+                  <img src="{% static 'images/flaggen/de.png' %}" class="w-5 h-5 rounded-full me-2" alt="{% trans 'Deutsche Flagge' %}">
+                  <span class="flex-1">{% trans "Deutsch" %}</span>
                 </a>
               </li>
               <li>
-                <a href="{% url 'set_language' %}?language=en" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">
-                  <div class="inline-flex items-center">
-                    <img src="{% static 'images/flaggen/en.png' %}" class="w-5 h-5 rounded-full me-2" alt="{% trans 'Englische Flagge' %}">
-                    {% trans "English" %}
-                  </div>
+                <a href="{% url 'set_language' %}?language=en" class="flex items-center px-4 py-2 text-sm font-medium text-gray-100 transition-colors hover:text-black hover:bg-gray-100 dark:text-white dark:hover:bg-gray-600 dark:hover:text-white">
+                  <img src="{% static 'images/flaggen/en.png' %}" class="w-5 h-5 rounded-full me-2" alt="{% trans 'Englische Flagge' %}">
+                  <span class="flex-1">{% trans "English" %}</span>
                 </a>
               </li>
               <li>
-                <a href="{% url 'set_language' %}?language=es" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">
-                  <div class="inline-flex items-center">
-                    <img src="{% static 'images/flaggen/es.png' %}" class="w-5 h-5 rounded-full me-2" alt="{% trans 'Spanische Flagge' %}">
-                    {% trans "Español" %}
-                  </div>
+                <a href="{% url 'set_language' %}?language=es" class="flex items-center px-4 py-2 text-sm font-medium text-gray-100 transition-colors hover:text-black hover:bg-gray-100 dark:text-white dark:hover:bg-gray-600 dark:hover:text-white">
+                  <img src="{% static 'images/flaggen/es.png' %}" class="w-5 h-5 rounded-full me-2" alt="{% trans 'Spanische Flagge' %}">
+                  <span class="flex-1">{% trans "Español" %}</span>
                 </a>
               </li>
               <li>
-                <a href="{% url 'set_language' %}?language=fr" class="block px-4 py-2 text-sm text-gray-100 hover:text-black hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white">
-                  <div class="inline-flex items-center">
-                    <img src="{% static 'images/flaggen/fr.png' %}" class="w-5 h-5 rounded-full me-2" alt="{% trans 'Französische Flagge' %}">
-                    {% trans "Français" %}
-                  </div>
+                <a href="{% url 'set_language' %}?language=fr" class="flex items-center px-4 py-2 text-sm font-medium text-gray-100 transition-colors hover:text-black hover:bg-gray-100 dark:text-white dark:hover:bg-gray-600 dark:hover:text-white">
+                  <img src="{% static 'images/flaggen/fr.png' %}" class="w-5 h-5 rounded-full me-2" alt="{% trans 'Französische Flagge' %}">
+                  <span class="flex-1">{% trans "Français" %}</span>
                 </a>
               </li>
             </ul>

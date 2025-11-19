@@ -1,19 +1,23 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const toggle = document.querySelector(".profile-icon");
-    const menu = document.querySelector(".dropdown-menu");
+    const profileToggle = document.getElementById("user-menu-button");
+    const profileMenu = document.getElementById("user-dropdown");
 
-    // Dropdown-Menu anzeigen/verbergen, wenn auf das Bild geklickt wird
-    toggle.addEventListener("click", (event) => {
-        event.stopPropagation(); // Prevent click from propagating to document
-        menu.style.display = menu.style.display === "block" ? "none" : "block";
-    });
+    if (profileToggle && profileMenu) {
+        // Dropdown-Menu anzeigen/verbergen, wenn auf das Bild geklickt wird
+        profileToggle.addEventListener("click", (event) => {
+            event.stopPropagation();
+            profileMenu.style.display = profileMenu.style.display === "block" ? "none" : "block";
+        });
 
-    // Schließt das Menü, wenn man außerhalb des Dropdowns klickt
-    document.addEventListener("click", (event) => {
-        if (!menu.contains(event.target) && !toggle.contains(event.target)) {
-            menu.style.display = "none";
-        }
-    });
+        // Schließt das Menü, wenn man außerhalb des Dropdowns klickt
+        document.addEventListener("click", (event) => {
+            if (!profileMenu.contains(event.target) && !profileToggle.contains(event.target)) {
+                profileMenu.style.display = "none";
+            }
+        });
+    } else {
+        console.error("Profile dropdown elements not found");
+    }
 
     const languageButton = document.querySelector('[data-dropdown-toggle="language-dropdown-menu"]');
     const languageDropdown = document.getElementById('language-dropdown-menu');
