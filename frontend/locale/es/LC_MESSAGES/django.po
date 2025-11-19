@@ -3,258 +3,266 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-12 03:12+0100\n"
-"PO-Revision-Date: 2025-11-12 03:00+0100\n"
+"POT-Creation-Date: 2025-11-19 03:09+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Spanish <es@li.org>\n"
-"Language: es\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-#: .\news\forms.py:28 .\templates\news\news.html:29
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
+"1 : 2;\n"
+#: .\news\forms.py:40 .\templates\news\news.html:40
+#: .\templates\news\partials\_news_detail.html:72
 msgid "Standorte"
-msgstr "Ubicaciones"
+msgstr ""
 
-#: .\news\forms.py:33 .\templates\news\news.html:46
+#: .\news\forms.py:45 .\templates\news\news.html:65
+#: .\templates\news\partials\_news_detail.html:55
 msgid "Kategorien"
-msgstr "Categorías"
+msgstr ""
 
-#: .\news\forms.py:38 .\templates\news\news.html:63
+#: .\news\forms.py:50 .\templates\news\news.html:90
+#: .\templates\news\partials\_news_detail.html:87
 msgid "Zielgruppen"
-msgstr "Grupos destinatarios"
+msgstr ""
 
-#: .\news\forms.py:99
+#: .\news\forms.py:135
 msgid "Benutzername"
-msgstr "Nombre de usuario"
+msgstr ""
 
-#: .\news\forms.py:113
+#: .\news\forms.py:149
 msgid "Bitte gib einen gültigen Benutzernamen ein."
-msgstr "Por favor, introduce un nombre de usuario válido."
+msgstr ""
 
-#: .\news\forms.py:117
+#: .\news\forms.py:153
 msgid "Dieser Benutzername wird bereits von dir verwendet."
-msgstr "Ya estás usando este nombre de usuario."
+msgstr ""
 
-#: .\news\forms.py:124
+#: .\news\forms.py:160
 msgid "Dieser Benutzername ist bereits vergeben."
-msgstr "Este nombre de usuario ya está en uso."
+msgstr ""
 
-#: .\news\forms.py:200 .\templates\news\news.html:80
+#: .\news\forms.py:239 .\templates\news\news.html:115
 msgid "Quellen"
-msgstr "Fuentes"
+msgstr ""
 
-#: .\news\forms.py:201
+#: .\news\forms.py:240
 msgid "📧 Rundmails"
-msgstr "📧 Correos circulares"
+msgstr ""
 
-#: .\news\forms.py:202
+#: .\news\forms.py:241
 msgid "📧 Sammel-Rundmails"
-msgstr "📧 Correos circulares colectivos"
+msgstr ""
 
-#: .\news\forms.py:279
+#: .\news\forms.py:321
 msgid "Bevorzugte Sprache ändern"
-msgstr "Cambiar idioma preferido"
+msgstr ""
 
-#: .\news\forms.py:309
+#: .\news\forms.py:351
 msgid "Warum möchtest du als Trusted Account News einreichen?"
-msgstr "¿Por qué te gustaría enviar noticias como cuenta de confianza?"
+msgstr ""
 
-#: .\news\forms.py:316 .\templates\news\calendar.html:55
+#: .\news\forms.py:358 .\templates\news\calendar.html:106
 msgid "Titel"
-msgstr "Título"
+msgstr ""
 
-#: .\news\forms.py:325
+#: .\news\forms.py:367
 msgid "Text"
-msgstr "Texto"
+msgstr ""
 
-#: .\news\forms.py:334
+#: .\news\forms.py:376
 msgid "Optionale Quelle (Link)"
-msgstr "Fuente opcional (enlace)"
+msgstr ""
 
-#: .\news\forms.py:379
+#: .\news\forms.py:417
 msgid "Bitte wähle mindestens eine Kategorie aus."
-msgstr "Por favor, selecciona al menos una categoría."
+msgstr ""
 
-#: .\news\forms.py:386
+#: .\news\forms.py:424
 msgid "Bitte wähle mindestens eine Zielgruppe aus."
-msgstr "Por favor, selecciona al menos un grupo destinatario."
+msgstr ""
 
-#: .\news\forms.py:393
+#: .\news\forms.py:431
 msgid "Bitte wähle mindestens einen Standort aus."
-msgstr "Por favor, selecciona al menos una ubicación."
+msgstr ""
 
-#: .\news\models.py:195
+#: .\news\models.py:220
 msgid "Rundmails einbeziehen"
-msgstr "Incluir correos circulares"
+msgstr ""
 
-#: .\news\models.py:199
+#: .\news\models.py:224
 msgid "Sammel-Rundmails einbeziehen"
-msgstr "Incluir correos circulares colectivos"
+msgstr ""
 
-#: .\news\models.py:205 .\templates\news\account.html:44
+#: .\news\models.py:230 .\templates\news\account.html:44
 msgid "Bevorzugte Sprache"
-msgstr "Idioma preferido"
+msgstr ""
 
-#: .\news\models.py:221
+#: .\news\models.py:246
 msgid "Ausstehend"
-msgstr "Pendiente"
+msgstr ""
 
-#: .\news\models.py:222
+#: .\news\models.py:247
 msgid "Genehmigt"
-msgstr "Aprobado"
+msgstr ""
 
-#: .\news\models.py:223
+#: .\news\models.py:248
 msgid "Abgelehnt"
-msgstr "Rechazado"
+msgstr ""
 
 #: .\news\views\account.py:48
 msgid "Bitte gib sowohl deinen Benutzernamen als auch dein Passwort ein."
-msgstr "Por favor, introduce tu nombre de usuario y contraseña."
+msgstr ""
 
 #: .\news\views\account.py:55
 msgid "Ungültige Anmeldedaten."
-msgstr "Credenciales inválidas."
+msgstr ""
 
 #: .\news\views\account.py:73
 msgid "Registrierung erfolgreich! Bitte melde dich an."
-msgstr "¡Registro exitoso! Por favor, inicia sesión."
+msgstr ""
 
 #: .\news\views\account.py:87
 msgid "Ungültiger Benutzer."
-msgstr "Usuario inválido."
+msgstr ""
 
 #: .\news\views\account.py:108
 msgid "Dein Passwort wurde erfolgreich geändert!"
-msgstr "¡Tu contraseña ha sido cambiada exitosamente!"
+msgstr ""
 
 #: .\news\views\account.py:115
 msgid "Das alte Passwort war falsch. Bitte neu eingeben."
-msgstr "La contraseña anterior era incorrecta. Por favor, ingrésala nuevamente."
+msgstr ""
 
 #: .\news\views\account.py:126
 msgid "Dein Benutzername wurde geändert!"
-msgstr "¡Tu nombre de usuario ha sido cambiado!"
+msgstr ""
 
 #: .\news\views\account.py:139
 msgid "Deine bevorzugte Sprache wurde gespeichert."
-msgstr "Tu idioma preferido ha sido guardado."
+msgstr ""
 
-#: .\news\views\account.py:163 .\news\views\account.py:169
+#: .\news\views\account.py:177 .\news\views\account.py:180
+msgid "Deine Präferenzen wurden zurückgesetzt."
+msgstr ""
+
+#: .\news\views\account.py:192 .\news\views\account.py:196
 msgid "Deine Präferenzen wurden gespeichert."
-msgstr "Tus preferencias han sido guardadas."
+msgstr ""
 
 #: .\news\views\calendar.py:46
 msgid "Ungültige JSON-Daten."
-msgstr "Datos JSON inválidos."
+msgstr ""
 
 #: .\news\views\calendar.py:52
 #, python-format
 msgid "%(field)s ist erforderlich."
-msgstr "%(field)s es obligatorio."
+msgstr ""
 
 #: .\news\views\calendar.py:62
 #, python-format
 msgid "%(field)s hat ein ungültiges Format."
-msgstr "%(field)s tiene un formato inválido."
+msgstr ""
 
 #: .\news\views\calendar.py:78
 msgid "Der Startzeitpunkt darf nicht in der Vergangenheit liegen."
-msgstr "La hora de inicio no puede estar en el pasado."
+msgstr ""
 
 #: .\news\views\calendar.py:96 .\news\views\calendar.py:187
 msgid "Unbekannter Wiederholungstyp."
-msgstr "Tipo de repetición desconocido."
+msgstr ""
 
 #: .\news\views\calendar.py:105
 msgid "Maximal 50 Termine pro Serie erlaubt."
-msgstr "Máximo 50 eventos por serie permitidos."
+msgstr ""
 
 #: .\news\views\calendar.py:111
 msgid "Wiederholungsende muss nach dem Startzeitpunkt liegen."
-msgstr "El final de la repetición debe ser posterior a la hora de inicio."
+msgstr ""
 
 #: .\news\views\calendar.py:174
 msgid "Nicht authentifiziert."
-msgstr "No autenticado."
+msgstr ""
 
 #: .\news\views\calendar.py:192
 msgid "Titel und Startzeit sind erforderlich."
-msgstr "El título y la hora de inicio son obligatorios."
+msgstr ""
 
 #: .\news\views\calendar.py:211 .\news\views\calendar.py:349
 #: .\news\views\calendar.py:409
 msgid "Der Endzeitpunkt darf nicht vor dem Startzeitpunkt liegen."
-msgstr "La hora de fin no puede ser anterior a la hora de inicio."
+msgstr ""
 
 #: .\news\views\calendar.py:264
 #, python-format
 msgid "Fehler bei der Event-Erstellung: %(error)s"
-msgstr "Error al crear el evento: %(error)s"
+msgstr ""
 
 #: .\news\views\calendar.py:270
 msgid "Event erfolgreich gespeichert."
-msgstr "Evento guardado exitosamente."
+msgstr ""
 
 #: .\news\views\calendar.py:288 .\news\views\calendar.py:426
 msgid "Keine Berechtigung."
-msgstr "Sin permiso."
+msgstr ""
 
 #: .\news\views\calendar.py:292
 msgid "Globale Termine können nicht bearbeitet werden."
-msgstr "Los eventos globales no se pueden editar."
+msgstr ""
 
 #: .\news\views\calendar.py:312
 msgid "Keine Events in der Serie gefunden."
-msgstr "No se encontraron eventos en la serie."
+msgstr ""
 
 #: .\news\views\calendar.py:377
 msgid "Event-Serie erfolgreich aktualisiert."
-msgstr "Serie de eventos actualizada exitosamente."
+msgstr ""
 
 #: .\news\views\calendar.py:420
 msgid "Event erfolgreich aktualisiert."
-msgstr "Evento actualizado exitosamente."
+msgstr ""
 
 #: .\news\views\calendar.py:431
 msgid "Globale Termine können nicht gelöscht werden."
-msgstr "Los eventos globales no se pueden eliminar."
+msgstr ""
 
 #: .\news\views\calendar.py:507
 #, python-format
 msgid "Fehler beim Exportieren: %(error)s"
-msgstr "Error al exportar: %(error)s"
+msgstr ""
 
 #: .\news\views\calendar.py:523
 msgid "Ohne Titel"
-msgstr "Sin título"
+msgstr ""
 
 #: .\news\views\calendar.py:621
 msgid ""
 "Beim Import wurden aus Wiederholungen nur die ersten 50 Termine angelegt."
-msgstr "Durante la importación, solo se crearon los primeros 50 eventos de las repeticiones."
+msgstr ""
 
 #: .\news\views\calendar.py:635
 msgid "ICS-Datei erfolgreich importiert."
-msgstr "Archivo ICS importado exitosamente."
+msgstr ""
 
 #: .\news\views\calendar.py:639
 #, python-format
 msgid "Fehler beim Importieren: %(error)s"
-msgstr "Error al importar: %(error)s"
+msgstr ""
 
 #: .\news\views\system.py:24
 msgid "Unauthorized"
-msgstr "No autorizado"
+msgstr ""
 
 #: .\news\views\system.py:34
 msgid "No news available"
-msgstr "No hay noticias disponibles"
+msgstr ""
 
 #: .\news\views\trusted.py:39
 #, python-format
@@ -266,203 +274,298 @@ msgid ""
 "\n"
 "Bitte überprüfe die Bewerbung im Admin-Panel."
 msgstr ""
-"El usuario %(username)s ha solicitado ser Usuario de Confianza.\n"
-"\n"
-"Motivación:\n"
-"%(motivation)s\n"
-"\n"
-"Por favor, revisa la solicitud en el panel de administración."
 
 #: .\news\views\trusted.py:50
 msgid "Neue Trusted-User-Bewerbung eingegangen"
-msgstr "Nueva solicitud de Usuario de Confianza recibida"
+msgstr ""
 
 #: .\news\views\trusted.py:136 .\news\views\trusted.py:149
 msgid ""
 "Beim Einreichen ist ein Fehler aufgetreten. Bitte versuche es später erneut."
-msgstr "Se produjo un error al enviar. Por favor, inténtalo de nuevo más tarde."
+msgstr ""
 
 #: .\news\views\trusted.py:155
 msgid "Deine News wurde eingereicht und wird verarbeitet."
-msgstr "Tu noticia ha sido enviada y está siendo procesada."
+msgstr ""
 
-#: .\rptu4you\settings.py:258 .\templates\partials\navbar.html:32
+#: .\rptu4you\settings.py:179 .\templates\partials\navbar.html:32
 msgid "Deutsch"
-msgstr "Alemán"
+msgstr ""
 
-#: .\rptu4you\settings.py:259
+#: .\rptu4you\settings.py:180
 msgid "Englisch"
-msgstr "Inglés"
+msgstr ""
 
-#: .\rptu4you\settings.py:260
+#: .\rptu4you\settings.py:181
 msgid "Spanisch"
-msgstr "Español"
+msgstr ""
 
-#: .\rptu4you\settings.py:261
+#: .\rptu4you\settings.py:182
 msgid "Französisch"
-msgstr "Francés"
+msgstr ""
 
 #: .\templates\base.html:31
 msgid "No Title"
-msgstr "Sin título"
+msgstr ""
 
 #: .\templates\news\account.html:5 .\templates\news\account.html:14
 #: .\templates\partials\navbar.html:91
 msgid "Account"
-msgstr "Cuenta"
+msgstr ""
 
 #: .\templates\news\account.html:20 .\templates\news\account.html:38
 msgid "Benutzername ändern"
-msgstr "Cambiar nombre de usuario"
+msgstr ""
 
 #: .\templates\news\account.html:30
 msgid "Neuer Benutzername"
-msgstr "Nuevo nombre de usuario"
+msgstr ""
 
 #: .\templates\news\account.html:49
 msgid "Sprache auswählen"
-msgstr "Seleccionar idioma"
+msgstr ""
 
 #: .\templates\news\account.html:57
 msgid "Sprache speichern"
-msgstr "Guardar idioma"
+msgstr ""
 
 #: .\templates\news\account.html:64 .\templates\news\account.html:111
 msgid "Passwort ändern"
-msgstr "Cambiar contraseña"
+msgstr ""
 
 #: .\templates\news\account.html:75 .\templates\news\register.html:29
 msgid "Passwort-Anforderungen"
-msgstr "Requisitos de contraseña"
+msgstr ""
 
 #: .\templates\news\account.html:78 .\templates\news\register.html:32
 msgid "Mindestens 8 Zeichen lang"
-msgstr "Al menos 8 caracteres de longitud"
+msgstr ""
 
 #: .\templates\news\account.html:79 .\templates\news\register.html:33
 msgid "Keine Ähnlichkeit zu persönlichen Informationen"
-msgstr "No debe ser similar a información personal"
+msgstr ""
 
 #: .\templates\news\account.html:80 .\templates\news\register.html:34
 msgid "Nicht nur Ziffern"
-msgstr "No solo números"
+msgstr ""
 
 #: .\templates\news\account.html:81 .\templates\news\register.html:35
 msgid "Nicht allgemein üblich"
-msgstr "No debe ser común"
+msgstr ""
 
 #: .\templates\news\account.html:85
 msgid "Aktuelles Passwort"
-msgstr "Contraseña actual"
+msgstr ""
 
 #: .\templates\news\account.html:94
 msgid "Neues Passwort"
-msgstr "Nueva contraseña"
+msgstr ""
 
 #: .\templates\news\account.html:103
 msgid "Neues Passwort wiederholen"
-msgstr "Repetir nueva contraseña"
+msgstr ""
 
 #: .\templates\news\calendar.html:6
 msgid "Dein Kalender"
-msgstr "Tu calendario"
+msgstr ""
+
+#: .\templates\news\calendar.html:23 .\templates\partials\navbar.html:14
+msgid "Kalender"
+msgstr ""
 
 #: .\templates\news\calendar.html:24
-msgid "Termin hinzufügen"
-msgstr "Agregar evento"
+msgid "Behalte all deine Uni-Termine im Blick"
+msgstr ""
 
-#: .\templates\news\calendar.html:29 .\templates\news\calendar.html:119
-msgid "Kalender importieren"
-msgstr "Importar calendario"
+#: .\templates\news\calendar.html:26
+msgid "Kalenderaktionen"
+msgstr ""
 
-#: .\templates\news\calendar.html:30 .\templates\news\calendar.html:120
-msgid "Kalender exportieren"
-msgstr "Exportar calendario"
-
-#: .\templates\news\calendar.html:49
+#: .\templates\news\calendar.html:28 .\templates\news\calendar.html:33
+#: .\templates\news\calendar.html:91
 msgid "Termin erstellen"
-msgstr "Crear evento"
+msgstr ""
 
-#: .\templates\news\calendar.html:58
-msgid "Ganztägig"
-msgstr "Todo el día"
+#: .\templates\news\calendar.html:39 .\templates\news\calendar.html:44
+msgid "Kalender importieren"
+msgstr ""
 
-#: .\templates\news\calendar.html:61
-msgid "Beginn"
-msgstr "Inicio"
-
-#: .\templates\news\calendar.html:63
-msgid "Startdatum"
-msgstr "Fecha de inicio"
-
-#: .\templates\news\calendar.html:65
-msgid "Startzeit"
-msgstr "Hora de inicio"
-
-#: .\templates\news\calendar.html:73
-msgid "Ende"
-msgstr "Fin"
-
-#: .\templates\news\calendar.html:75
-msgid "Endedatum"
-msgstr "Fecha de fin"
-
-#: .\templates\news\calendar.html:77
-msgid "Endzeit"
-msgstr "Hora de fin"
-
-#: .\templates\news\calendar.html:85
-msgid "Beschreibung"
-msgstr "Descripción"
-
-#: .\templates\news\calendar.html:88
-msgid "Weitere Optionen"
-msgstr "Opciones adicionales"
-
-#: .\templates\news\calendar.html:94
-msgid "Keine Wiederholung"
-msgstr "Sin repetición"
-
-#: .\templates\news\calendar.html:95
-msgid "Täglich"
-msgstr "Diariamente"
+#: .\templates\news\calendar.html:50 .\templates\news\calendar.html:55
+msgid "Kalender exportieren"
+msgstr ""
 
 #: .\templates\news\calendar.html:96
+msgid "Popup schließen"
+msgstr ""
+
+#: .\templates\news\calendar.html:102
+msgid "Dieser öffentliche Termin kann nur angezeigt werden."
+msgstr ""
+
+#: .\templates\news\calendar.html:115
+msgid "Terminoptionen"
+msgstr ""
+
+#: .\templates\news\calendar.html:117
+msgid "Ganztägig"
+msgstr ""
+
+#: .\templates\news\calendar.html:123
+msgid "Beginn (Datum)"
+msgstr ""
+
+#: .\templates\news\calendar.html:132
+msgid "Beginn (Zeit)"
+msgstr ""
+
+#: .\templates\news\calendar.html:145 .\templates\news\calendar.html:178
+msgid "Zeit auswählen"
+msgstr ""
+
+#: .\templates\news\calendar.html:158
+msgid "Ende (Datum)"
+msgstr ""
+
+#: .\templates\news\calendar.html:166
+msgid "Ende (Zeit)"
+msgstr ""
+
+#: .\templates\news\calendar.html:190
+msgid "Beschreibung"
+msgstr ""
+
+#: .\templates\news\calendar.html:197
+msgid "Weitere Optionen"
+msgstr ""
+
+#: .\templates\news\calendar.html:204
+msgid "Wiederholung"
+msgstr ""
+
+#: .\templates\news\calendar.html:206
+msgid "Keine Wiederholung"
+msgstr ""
+
+#: .\templates\news\calendar.html:207
+msgid "Täglich"
+msgstr ""
+
+#: .\templates\news\calendar.html:208
 msgid "Wöchentlich"
-msgstr "Semanalmente"
+msgstr ""
 
-#: .\templates\news\calendar.html:97
+#: .\templates\news\calendar.html:209
 msgid "Monatlich"
-msgstr "Mensualmente"
+msgstr ""
 
-#: .\templates\news\calendar.html:98
+#: .\templates\news\calendar.html:210
 msgid "Jährlich"
-msgstr "Anualmente"
+msgstr ""
 
-#: .\templates\news\calendar.html:100 .\templates\news\calendar.html:101
+#: .\templates\news\calendar.html:214
 msgid "Wiederholen bis"
-msgstr "Repetir hasta"
+msgstr ""
 
-#: .\templates\news\calendar.html:106
+#: .\templates\news\calendar.html:225
 msgid "Alle Termine dieser Serie bearbeiten/löschen"
-msgstr "Editar/eliminar todos los eventos de esta serie"
+msgstr ""
 
-#: .\templates\news\calendar.html:110
+#: .\templates\news\calendar.html:229
 msgid "Hinzufügen"
-msgstr "Agregar"
+msgstr ""
 
-#: .\templates\news\calendar.html:111
+#: .\templates\news\calendar.html:230
 msgid "Löschen"
-msgstr "Eliminar"
+msgstr ""
+
+#: .\templates\news\calendar.html:248
+msgid "Hinweis"
+msgstr ""
+
+#: .\templates\news\calendar.html:255
+msgid "Hinweis schließen"
+msgstr ""
+
+#: .\templates\news\calendar.html:272
+msgid "Bist du sicher?"
+msgstr ""
+
+#: .\templates\news\calendar.html:277
+msgid "Bestätigungsdialog schließen"
+msgstr ""
+
+#: .\templates\news\calendar.html:282
+msgid "Abbrechen"
+msgstr ""
+
+#: .\templates\news\calendar.html:283
+msgid "Bestätigen"
+msgstr ""
+
+#: .\templates\news\calendar.html:294
+msgid "Nur Anzeige"
+msgstr ""
+
+#: .\templates\news\calendar.html:295
+msgid "Öffentliche Termine können nicht bearbeitet werden."
+msgstr ""
+
+#: .\templates\news\calendar.html:296
+msgid "Bitte Eingaben prüfen"
+msgstr ""
+
+#: .\templates\news\calendar.html:297
+msgid "Termin erstellt"
+msgstr ""
+
+#: .\templates\news\calendar.html:298
+msgid "Termin aktualisiert"
+msgstr ""
+
+#: .\templates\news\calendar.html:299
+msgid "Fehler"
+msgstr ""
+
+#: .\templates\news\calendar.html:300
+msgid "Unbekannter Fehler."
+msgstr ""
+
+#: .\templates\news\calendar.html:301
+msgid "Netzwerkfehler"
+msgstr ""
+
+#: .\templates\news\calendar.html:302
+msgid "Event konnte nicht gespeichert werden. Bitte versuche es erneut."
+msgstr ""
+
+#: .\templates\news\calendar.html:303
+msgid "Termin gelöscht"
+msgstr ""
+
+#: .\templates\news\calendar.html:304
+msgid "Event wurde gelöscht."
+msgstr ""
+
+#: .\templates\news\calendar.html:305
+msgid "Löschen fehlgeschlagen"
+msgstr ""
+
+#: .\templates\news\calendar.html:306
+msgid "Unbekannter Fehler beim Löschen."
+msgstr ""
+
+#: .\templates\news\calendar.html:307
+msgid "Event konnte nicht gelöscht werden. Bitte versuche es erneut."
+msgstr ""
 
 #: .\templates\news\datenschutz.html:4 .\templates\news\datenschutz.html:12
-#: .\templates\partials\footer.html:7
+#: .\templates\partials\footer.html:6
 msgid "Datenschutz"
-msgstr "Protección de datos"
+msgstr ""
 
 #: .\templates\news\datenschutz.html:15
 msgid "Vorwort"
-msgstr "Prefacio"
+msgstr ""
 
 #: .\templates\news\datenschutz.html:17
 msgid ""
@@ -470,26 +573,20 @@ msgid ""
 "personenbezogenen Daten bei der Nutzung der Website verarbeitet werden und "
 "welche Cookies hierbei zum Einsatz kommen."
 msgstr ""
-"En esta declaración de protección de datos, RPTU4You informa sobre qué "
-"datos personales se procesan al usar el sitio web y qué cookies se utilizan "
-"en este proceso."
 
 #: .\templates\news\datenschutz.html:24
 msgid "Besuch der Website ohne Anmeldung"
-msgstr "Visita del sitio web sin iniciar sesión"
+msgstr ""
 
 #: .\templates\news\datenschutz.html:26
 msgid ""
 "Beim Aufruf der Website setzt RPTU4You einen CSRF-Cookie, um Cross-Site-"
 "Request-Forgery-Angriffe zu verhindern und die Integrität der Anwendung "
-"sicherzustellen. Der Cookie wird als zufällig generierte Zeichenfolge "
-"gespeichert und ermöglicht keine Identifikation einzelner Nutzerinnen oder "
-"Nutzer."
+"sicherzustellen. Zusätzlich wird ein Theme-Cookie (zur Speicherung der "
+"Helligkeitspräferenz) verwendet. Die Cookies werden als zufällig generierte "
+"oder technisch notwendige Werte gespeichert und ermöglichen keine "
+"Identifikation einzelner Nutzerinnen oder Nutzer."
 msgstr ""
-"Al acceder al sitio web, RPTU4You establece una cookie CSRF para prevenir "
-"ataques de falsificación de solicitudes entre sitios y garantizar la "
-"integridad de la aplicación. La cookie se almacena como una cadena generada "
-"aleatoriamente y no permite la identificación de usuarios individuales."
 
 #: .\templates\news\datenschutz.html:31
 msgid ""
@@ -497,13 +594,10 @@ msgid ""
 "anwenden\" bestätigt werden, werden ausschließlich temporär im jeweils "
 "aktiven Browser gehalten und nach dem Verlassen der Seite gelöscht."
 msgstr ""
-"La configuración de filtros seleccionada en \"Últimas noticias\" y "
-"confirmada mediante \"Aplicar filtro\" se mantiene exclusivamente de forma "
-"temporal en el navegador activo y se elimina después de salir de la página."
 
 #: .\templates\news\datenschutz.html:38
 msgid "Registrierung und Authentifizierung"
-msgstr "Registro y autenticación"
+msgstr ""
 
 #: .\templates\news\datenschutz.html:40
 msgid ""
@@ -514,26 +608,18 @@ msgid ""
 "interne Identifikationsnummer zugewiesen, die keine Rückschlüsse auf "
 "persönliche Daten zulässt."
 msgstr ""
-"Para el registro se requiere un nombre de usuario y una contraseña. El "
-"nombre de usuario se guarda en la cuenta de usuario. La contraseña se "
-"almacena exclusivamente en forma cifrada; no es posible recuperar la "
-"contraseña original. Además, se asigna a la cuenta un número de "
-"identificación interno que no permite conclusiones sobre datos personales."
 
 #: .\templates\news\datenschutz.html:45
 msgid ""
 "Nach erfolgreicher Anmeldung setzt RPTU4You einen Session-Cookie, um den "
-"Login-Zustand aufrechtzuerhalten. Dieser Cookie verfällt automatisch am "
-"ersten Tag des Folgemonats oder sobald Sie sich aktiv abmelden."
+"Login-Zustand aufrechtzuerhalten. Dieser Cookie verfällt automatisch nach "
+"spätestens zwei Wochen. Auch hier werden ein Theme-Cookie und ein CSRF-"
+"Cookie verwendet."
 msgstr ""
-"Después de iniciar sesión correctamente, RPTU4You establece una cookie de "
-"sesión para mantener el estado de inicio de sesión. Esta cookie expira "
-"automáticamente el primer día del mes siguiente o tan pronto como cierres "
-"sesión activamente."
 
 #: .\templates\news\datenschutz.html:52
 msgid "Trusted Accounts"
-msgstr "Cuentas de Confianza"
+msgstr ""
 
 #: .\templates\news\datenschutz.html:54
 msgid ""
@@ -543,14 +629,10 @@ msgid ""
 "nachvollziehbar zu dokumentieren. Die Daten bleiben unabhängig vom Ergebnis "
 "des Antrags erhalten."
 msgstr ""
-"Para solicitar una Cuenta de Confianza se requiere una justificación. Esta "
-"justificación se guarda junto con la cuenta de usuario correspondiente para "
-"documentar de manera comprensible la decisión del personal responsable. Los "
-"datos se conservan independientemente del resultado de la solicitud."
 
 #: .\templates\news\datenschutz.html:61
 msgid "Kalenderfunktionen"
-msgstr "Funciones del calendario"
+msgstr ""
 
 #: .\templates\news\datenschutz.html:63
 msgid ""
@@ -558,23 +640,18 @@ msgid ""
 "Termininhalte werden gespeichert, um sie im persönlichen Kalender sowie auf "
 "der 4YouPage anzuzeigen."
 msgstr ""
-"Después de iniciar sesión, los usuarios pueden crear sus propios eventos. "
-"El contenido de los eventos se guarda para mostrarlo en el calendario "
-"personal así como en la Página4You."
 
 #: .\templates\news\datenschutz.html:68
 msgid ""
 "Kalenderdateien, die über die Funktion \"Kalender importieren\" hochgeladen "
-"werden, werden in der Datenbank von RPTU4You abgelegt, damit sie dauerhaft "
-"in der Anwendung zur Verfügung stehen."
+"werden, werden beim Import einmalig in Kalendertermine umgewandelt; die "
+"ursprüngliche Datei selbst wird danach nicht dauerhaft auf dem Server "
+"gespeichert."
 msgstr ""
-"Los archivos de calendario que se cargan a través de la función \"Importar "
-"calendario\" se almacenan en la base de datos de RPTU4You para que estén "
-"disponibles permanentemente en la aplicación."
 
 #: .\templates\news\datenschutz.html:75
 msgid "Präferenzeinstellungen"
-msgstr "Configuración de preferencias"
+msgstr ""
 
 #: .\templates\news\datenschutz.html:77
 msgid ""
@@ -583,10 +660,6 @@ msgid ""
 "werden dem Benutzerkonto zugeordnet und bleiben bis zu einer Änderung durch "
 "die Nutzerin oder den Nutzer bestehen."
 msgstr ""
-"A través de la gestión de preferencias se pueden establecer filtros "
-"individuales para categorías de noticias, ubicaciones, grupos destinatarios "
-"y fuentes. La configuración se asigna a la cuenta de usuario y permanece "
-"hasta que el usuario la modifique."
 
 #: .\templates\news\datenschutz.html:82
 msgid ""
@@ -594,13 +667,10 @@ msgid ""
 "\"Präferenzen\" angepasst werden. Änderungen wirken sich unmittelbar auf die "
 "dargestellten Inhalte aus."
 msgstr ""
-"Los filtros se pueden ajustar en cualquier momento a través de la Página4You "
-"o el elemento del menú \"Preferencias\". Los cambios afectan inmediatamente "
-"al contenido mostrado."
 
 #: .\templates\news\datenschutz.html:89
 msgid "Datensicherheit und Weitergabe"
-msgstr "Seguridad de datos y divulgación"
+msgstr ""
 
 #: .\templates\news\datenschutz.html:91
 msgid ""
@@ -609,10 +679,6 @@ msgid ""
 "personenbezogener Daten an Dritte findet nicht statt, es sei denn, "
 "gesetzliche Vorgaben verpflichten RPTU4You hierzu."
 msgstr ""
-"RPTU4You toma medidas organizativas y técnicas para proteger los datos "
-"almacenados contra el acceso no autorizado. No se divulgan datos personales "
-"a terceros, a menos que las disposiciones legales obliguen a RPTU4You a "
-"hacerlo."
 
 #: .\templates\news\datenschutz.html:96
 msgid ""
@@ -621,609 +687,628 @@ msgid ""
 "veranlassen, sofern keine entgegenstehenden gesetzlichen "
 "Aufbewahrungspflichten bestehen."
 msgstr ""
-"Los usuarios pueden solicitar en cualquier momento información sobre los "
-"datos almacenados sobre su persona y solicitar su corrección o eliminación, "
-"siempre que no existan obligaciones legales de conservación que lo impidan."
 
-#: .\templates\news\datenschutz.html:103
+#: .\templates\news\datenschutz.html:103 .\templates\news\impressum.html:29
 msgid "Kontakt"
-msgstr "Contacto"
+msgstr ""
 
 #: .\templates\news\datenschutz.html:105
 msgid ""
 "Für datenschutzbezogene Anliegen steht Ihnen das RPTU4You-Team unter der im "
 "Impressum genannten Kontaktadresse zur Verfügung."
 msgstr ""
-"Para asuntos relacionados con la protección de datos, el equipo de RPTU4You "
-"está a su disposición en la dirección de contacto indicada en el aviso legal."
 
 #: .\templates\news\foryoupage.html:6 .\templates\partials\navbar.html:13
 msgid "4YouPage"
-msgstr "Página4You"
+msgstr ""
 
-#: .\templates\news\foryoupage.html:24
+#: .\templates\news\foryoupage.html:21
 msgid "Deine Präferenzen"
-msgstr "Tus preferencias"
+msgstr ""
 
-#: .\templates\news\foryoupage.html:25
-msgid "Passe deine Empfehlungen für die 4YouPage an."
-msgstr "Personaliza tus recomendaciones para la Página4You."
+#: .\templates\news\foryoupage.html:22
+msgid "Passe deine Präferenzen an"
+msgstr ""
 
-#: .\templates\news\foryoupage.html:90 .\templates\news\preferences.html:87
+#: .\templates\news\foryoupage.html:24 .\templates\news\news.html:25
+msgid "Filter schließen"
+msgstr ""
+
+#: .\templates\news\foryoupage.html:163 .\templates\news\preferences.html:90
+msgid "Zurücksetzen"
+msgstr ""
+
+#: .\templates\news\foryoupage.html:164 .\templates\news\preferences.html:91
 msgid "Speichern"
-msgstr "Guardar"
+msgstr ""
 
-#: .\templates\news\foryoupage.html:107 .\templates\news\news.html:115
+#: .\templates\news\foryoupage.html:184 .\templates\news\news.html:163
 msgid "Nächste Termine"
-msgstr "Próximos eventos"
+msgstr ""
 
-#: .\templates\news\foryoupage.html:120 .\templates\news\news.html:128
+#: .\templates\news\foryoupage.html:185 .\templates\news\news.html:164
+msgid "Ein Blick in den Kalender"
+msgstr ""
+
+#: .\templates\news\foryoupage.html:203 .\templates\news\news.html:182
+msgid "Alle Termine anzeigen"
+msgstr ""
+
+#: .\templates\news\foryoupage.html:206 .\templates\news\news.html:185
 msgid "Keine anstehenden Termine."
-msgstr "No hay eventos próximos."
+msgstr ""
 
-#: .\templates\news\impressum.html:4 .\templates\news\impressum.html:12
+#: .\templates\news\foryoupage.html:208 .\templates\news\news.html:187
+msgid "Zum Kalender"
+msgstr ""
+
+#: .\templates\news\impressum.html:5 .\templates\news\impressum.html:15
 #: .\templates\partials\footer.html:5
 msgid "Impressum"
-msgstr "Aviso legal"
-
-#: .\templates\news\impressum.html:14
-msgid ""
-"Hier finden Sie die Pflichtangaben nach § 5 TMG. Bitte ergänzen Sie die "
-"Inhalte entsprechend Ihrer Organisation."
 msgstr ""
-"Aquí encontrará la información obligatoria según el § 5 TMG. Por favor, "
-"complete el contenido de acuerdo con su organización."
+
+#: .\templates\news\impressum.html:17
+msgid "Nachfolgende Angaben dienen als fiktive Platzhalter."
+msgstr ""
+
+#: .\templates\news\impressum.html:30
+msgid "Telefon"
+msgstr ""
+
+#: .\templates\news\impressum.html:34
+msgid "Vertretungsberechtigt"
+msgstr ""
+
+#: .\templates\news\impressum.html:35
+msgid "USt-IdNr."
+msgstr ""
+
+#: .\templates\news\impressum.html:39
+msgid "Inhaltlich Verantwortliche"
+msgstr ""
+
+#: .\templates\news\impressum.html:39
+msgid "erreichbar unter"
+msgstr ""
 
 #: .\templates\news\links.html:6 .\templates\partials\navbar.html:15
 msgid "Uni-Links"
-msgstr "Enlaces universitarios"
+msgstr ""
 
-#: .\templates\news\links.html:20
-msgid "Alltags-Links"
-msgstr "Enlaces cotidianos"
+#: .\templates\news\links.html:15
+msgid "Wichtige Schnellzugriffe"
+msgstr ""
 
-#: .\templates\news\links.html:23
+#: .\templates\news\links.html:16
+msgid ""
+"Auch wenn wir die News zusammenfassen – alle Uni-Websites können wir (noch) "
+"nicht ersetzen"
+msgstr ""
+
+#: .\templates\news\links.html:20 .\templates\news\links.html:49
+msgid "OpenOLAT"
+msgstr ""
+
+#: .\templates\news\links.html:23 .\templates\news\links.html:50
 msgid "Mensa Kaiserslautern"
-msgstr "Comedor Kaiserslautern"
+msgstr ""
 
-#: .\templates\news\links.html:24
+#: .\templates\news\links.html:26 .\templates\news\links.html:51
 msgid "Mensa Landau"
-msgstr "Comedor Landau"
+msgstr ""
 
-#: .\templates\news\links.html:25
-msgid "QIS"
-msgstr "QIS"
-
-#: .\templates\news\links.html:26
+#: .\templates\news\links.html:29 .\templates\news\links.html:52
 msgid "KIS-Office"
-msgstr "KIS-Office"
+msgstr ""
 
-#: .\templates\news\links.html:27
-msgid "Open Olat"
-msgstr "Open Olat"
+#: .\templates\news\links.html:32 .\templates\news\links.html:53
+msgid "QIS"
+msgstr ""
 
-#: .\templates\news\links.html:28
+#: .\templates\news\links.html:35 .\templates\news\links.html:54
 msgid "Uni-Mail"
-msgstr "Correo universitario"
-
-#: .\templates\news\links.html:29
-msgid "KAI"
-msgstr "KAI"
-
-#: .\templates\news\links.html:30
-msgid "Campusplan Kaiserslautern"
-msgstr "Mapa del campus Kaiserslautern"
-
-#: .\templates\news\links.html:31
-msgid "Campusplan Landau"
-msgstr "Mapa del campus Landau"
-
-#: .\templates\news\links.html:39
-msgid "Fachschaften Kaiserslautern"
-msgstr "Departamentos estudiantiles Kaiserslautern"
-
-#: .\templates\news\links.html:42 .\templates\news\links.html:162
-msgid "Architektur"
-msgstr "Arquitectura"
-
-#: .\templates\news\links.html:43 .\templates\news\links.html:163
-msgid "Bauingenieurwesen"
-msgstr "Ingeniería civil"
-
-#: .\templates\news\links.html:44 .\templates\news\links.html:81
-#: .\templates\news\links.html:164
-msgid "Biologie"
-msgstr "Biología"
-
-#: .\templates\news\links.html:45 .\templates\news\links.html:165
-msgid "Chemie"
-msgstr "Química"
+msgstr ""
 
 #: .\templates\news\links.html:46
-msgid "Elektro- & Informationstechnik"
-msgstr "Ingeniería eléctrica e informática"
+msgid "Alltags-Links"
+msgstr ""
 
-#: .\templates\news\links.html:47 .\templates\news\links.html:168
-msgid "Informatik"
-msgstr "Informática"
+#: .\templates\news\links.html:55
+msgid "KAI"
+msgstr ""
 
-#: .\templates\news\links.html:48
-msgid "Maschinenbau & Verfahrenstechnik"
-msgstr "Ingeniería mecánica y de procesos"
+#: .\templates\news\links.html:56
+msgid "Campusplan Kaiserslautern"
+msgstr ""
 
-#: .\templates\news\links.html:49 .\templates\news\links.html:83
-#: .\templates\news\links.html:171
-msgid "Mathematik"
-msgstr "Matemáticas"
+#: .\templates\news\links.html:57
+msgid "Campusplan Landau"
+msgstr ""
 
-#: .\templates\news\links.html:50 .\templates\news\links.html:85
-#: .\templates\news\links.html:173
-msgid "Physik"
-msgstr "Física"
-
-#: .\templates\news\links.html:51
-msgid "Raum- & Umweltplanung"
-msgstr "Planificación espacial y ambiental"
-
-#: .\templates\news\links.html:52 .\templates\news\links.html:176
-msgid "Sozialwissenschaften"
-msgstr "Ciencias sociales"
-
-#: .\templates\news\links.html:53 .\templates\news\links.html:177
-msgid "Wirtschaftswissenschaften"
-msgstr "Ciencias económicas"
-
-#: .\templates\news\links.html:61
-msgid "Fachschaften Landau"
-msgstr "Departamentos estudiantiles Landau"
-
-#: .\templates\news\links.html:64
-msgid "Allgemeine Erziehungswissenschaften"
-msgstr "Ciencias de la educación general"
-
-#: .\templates\news\links.html:65
-msgid "Betriebspädagogik"
-msgstr "Pedagogía empresarial"
-
-#: .\templates\news\links.html:66
-msgid "Bildungswissenschaften"
-msgstr "Ciencias de la educación"
-
-#: .\templates\news\links.html:67
-msgid "Grundschulpädagogik"
-msgstr "Pedagogía primaria"
-
-#: .\templates\news\links.html:68
-msgid "Philosophie"
-msgstr "Filosofía"
+#: .\templates\news\links.html:65 .\templates\news\links.html:68
+msgid "UNISPORT"
+msgstr ""
 
 #: .\templates\news\links.html:69
-msgid "Sonderpädagogik"
-msgstr "Pedagogía especial"
+msgid "UNISPORT Angebot Kaiserslautern"
+msgstr ""
 
 #: .\templates\news\links.html:70
-msgid "Anglistik"
-msgstr "Filología inglesa"
-
-#: .\templates\news\links.html:71
-msgid "Darstellendes Spiel"
-msgstr "Teatro"
-
-#: .\templates\news\links.html:72
-msgid "Evangelische Theologie"
-msgstr "Teología protestante"
-
-#: .\templates\news\links.html:73
-msgid "Germanistik"
-msgstr "Filología alemana"
-
-#: .\templates\news\links.html:74
-msgid "Katholische Theologie"
-msgstr "Teología católica"
-
-#: .\templates\news\links.html:75
-msgid "Kunst"
-msgstr "Arte"
-
-#: .\templates\news\links.html:76
-msgid "Menschenrechtsbildung"
-msgstr "Educación en derechos humanos"
-
-#: .\templates\news\links.html:77
-msgid "Politikwissenschaft"
-msgstr "Ciencias políticas"
+msgid "UNISPORT Angebot Landau"
+msgstr ""
 
 #: .\templates\news\links.html:78
-msgid "Romanistik"
-msgstr "Filología románica"
+msgid "Zentrale Einrichtungen"
+msgstr ""
 
-#: .\templates\news\links.html:79
-msgid "Sozial- & Kommunikationswissenschaft"
-msgstr "Ciencias sociales y de la comunicación"
-
-#: .\templates\news\links.html:80
-msgid "Wirtschaft und Arbeit"
-msgstr "Economía y trabajo"
+#: .\templates\news\links.html:81
+msgid "CampusKultur"
+msgstr ""
 
 #: .\templates\news\links.html:82
-msgid "Geographie"
-msgstr "Geografía"
+msgid "Regionales Hochschulrechenzentrum"
+msgstr ""
+
+#: .\templates\news\links.html:83
+msgid "Universitätsbibliothek"
+msgstr ""
 
 #: .\templates\news\links.html:84
-msgid "Mensch und Umwelt"
-msgstr "Ser humano y medio ambiente"
+msgid "WÜbersicht weitere Einrichtungen"
+msgstr ""
 
-#: .\templates\news\links.html:86
-msgid "Umweltwissenschaften"
-msgstr "Ciencias ambientales"
+#: .\templates\news\links.html:92
+msgid "Fachschaften KL"
+msgstr ""
 
-#: .\templates\news\links.html:87
-msgid "Sport"
-msgstr "Deportes"
+#: .\templates\news\links.html:95 .\templates\news\links.html:153
+msgid "Architektur"
+msgstr ""
 
-#: .\templates\news\links.html:88 .\templates\news\links.html:174
-msgid "Psychologie"
-msgstr "Psicología"
+#: .\templates\news\links.html:96 .\templates\news\links.html:154
+msgid "Bauingenieurwesen"
+msgstr ""
 
-#: .\templates\news\links.html:96
-msgid "AStA"
-msgstr "AStA"
+#: .\templates\news\links.html:97 .\templates\news\links.html:121
+#: .\templates\news\links.html:155
+msgid "Biologie"
+msgstr ""
+
+#: .\templates\news\links.html:98 .\templates\news\links.html:156
+msgid "Chemie"
+msgstr ""
 
 #: .\templates\news\links.html:99
-msgid "AStA Kaiserslautern"
-msgstr "AStA Kaiserslautern"
+msgid "Elektro- & Informationstechnik"
+msgstr ""
 
-#: .\templates\news\links.html:100
-msgid "AStA Landau"
-msgstr "AStA Landau"
+#: .\templates\news\links.html:100 .\templates\news\links.html:159
+msgid "Informatik"
+msgstr ""
 
-#: .\templates\news\links.html:108
-msgid "Uni-Sport"
-msgstr "Deporte universitario"
+#: .\templates\news\links.html:101
+msgid "Maschinenbau & Verfahrenstechnik"
+msgstr ""
 
-#: .\templates\news\links.html:111
-msgid "Uni Sport allgemein"
-msgstr "Deporte universitario general"
+#: .\templates\news\links.html:102 .\templates\news\links.html:129
+#: .\templates\news\links.html:162
+msgid "Mathematik"
+msgstr ""
 
-#: .\templates\news\links.html:112
-msgid "Uni Sportangebot Kaiserslautern"
-msgstr "Oferta deportiva Kaiserslautern"
+#: .\templates\news\links.html:103 .\templates\news\links.html:133
+#: .\templates\news\links.html:164
+msgid "Physik"
+msgstr ""
 
-#: .\templates\news\links.html:113
-msgid "Uni Sportangebot Landau"
-msgstr "Oferta deportiva Landau"
+#: .\templates\news\links.html:104
+msgid "Raum- & Umweltplanung"
+msgstr ""
 
-#: .\templates\news\links.html:121
-msgid "Studierendenparlament"
-msgstr "Parlamento estudiantil"
+#: .\templates\news\links.html:105 .\templates\news\links.html:167
+msgid "Sozialwissenschaften"
+msgstr ""
+
+#: .\templates\news\links.html:106 .\templates\news\links.html:168
+msgid "Wirtschaftswissenschaften"
+msgstr ""
+
+#: .\templates\news\links.html:114
+msgid "Fachschaften Landau"
+msgstr ""
+
+#: .\templates\news\links.html:117
+msgid "Allgemeine Erziehungswissenschaften"
+msgstr ""
+
+#: .\templates\news\links.html:118
+msgid "Anglistik"
+msgstr ""
+
+#: .\templates\news\links.html:119
+msgid "Betriebspädagogik"
+msgstr ""
+
+#: .\templates\news\links.html:120
+msgid "Bildungswissenschaften"
+msgstr ""
+
+#: .\templates\news\links.html:122
+msgid "Darstellendes Spiel"
+msgstr ""
+
+#: .\templates\news\links.html:123
+msgid "Evangelische Theologie"
+msgstr ""
 
 #: .\templates\news\links.html:124
-msgid "Studierendenparlament Kaiserslautern"
-msgstr "Parlamento estudiantil Kaiserslautern"
+msgid "Geographie"
+msgstr ""
 
 #: .\templates\news\links.html:125
-msgid "Studierendenparlament Landau"
-msgstr "Parlamento estudiantil Landau"
+msgid "Germanistik"
+msgstr ""
 
-#: .\templates\news\links.html:133
-msgid "Hochschulgruppen"
-msgstr "Grupos universitarios"
+#: .\templates\news\links.html:126
+msgid "Grundschulpädagogik"
+msgstr ""
+
+#: .\templates\news\links.html:127
+msgid "Katholische Theologie"
+msgstr ""
+
+#: .\templates\news\links.html:128
+msgid "Kunst"
+msgstr ""
+
+#: .\templates\news\links.html:130
+msgid "Mensch und Umwelt"
+msgstr ""
+
+#: .\templates\news\links.html:131
+msgid "Menschenrechtsbildung"
+msgstr ""
+
+#: .\templates\news\links.html:132
+msgid "Philosophie"
+msgstr ""
+
+#: .\templates\news\links.html:134
+msgid "Politikwissenschaft"
+msgstr ""
+
+#: .\templates\news\links.html:135 .\templates\news\links.html:165
+msgid "Psychologie"
+msgstr ""
 
 #: .\templates\news\links.html:136
-msgid "Studentische Gruppen Übersicht"
-msgstr "Resumen de grupos estudiantiles"
+msgid "Romanistik"
+msgstr ""
 
-#: .\templates\news\links.html:144
-msgid "Zentrale Einrichtungen"
-msgstr "Instalaciones centrales"
+#: .\templates\news\links.html:137
+msgid "Sonderpädagogik"
+msgstr ""
 
-#: .\templates\news\links.html:147
-msgid "CampusKultur"
-msgstr "Cultura del campus"
+#: .\templates\news\links.html:138
+msgid "Sozial- & Kommunikationswissenschaft"
+msgstr ""
 
-#: .\templates\news\links.html:148
-msgid "Regionales Hochschulrechenzentrum"
-msgstr "Centro informático regional universitario"
+#: .\templates\news\links.html:139
+msgid "Sport"
+msgstr ""
+
+#: .\templates\news\links.html:140
+msgid "Umweltwissenschaften"
+msgstr ""
+
+#: .\templates\news\links.html:141
+msgid "Wirtschaft und Arbeit"
+msgstr ""
 
 #: .\templates\news\links.html:149
-msgid "Universitätsbibliothek"
-msgstr "Biblioteca universitaria"
+msgid "Fachbereiche"
+msgstr ""
 
-#: .\templates\news\links.html:150
-msgid "Weitere Einrichtungen Übersicht"
-msgstr "Resumen de otras instalaciones"
+#: .\templates\news\links.html:152
+msgid "Übersicht Fachbereiche"
+msgstr ""
+
+#: .\templates\news\links.html:157
+msgid "Elektrotechnik und Informationstechnik"
+msgstr ""
 
 #: .\templates\news\links.html:158
-msgid "Fachbereiche"
-msgstr "Departamentos"
+msgid "Erziehungswissenschaften"
+msgstr ""
+
+#: .\templates\news\links.html:160
+msgid "Kultur- und Sozialwissenschaften"
+msgstr ""
 
 #: .\templates\news\links.html:161
-msgid "Übersicht Fachbereiche"
-msgstr "Resumen de departamentos"
+msgid "Maschinenbau und Verfahrenstechnik"
+msgstr ""
+
+#: .\templates\news\links.html:163
+msgid "Natur- und Umweltwissenschaften"
+msgstr ""
 
 #: .\templates\news\links.html:166
-msgid "Elektrotechnik und Informationstechnik"
-msgstr "Ingeniería eléctrica e informática"
-
-#: .\templates\news\links.html:167
-msgid "Erziehungswissenschaften"
-msgstr "Ciencias de la educación"
-
-#: .\templates\news\links.html:169
-msgid "Kultur- und Sozialwissenschaften"
-msgstr "Ciencias culturales y sociales"
-
-#: .\templates\news\links.html:170
-msgid "Maschinenbau und Verfahrenstechnik"
-msgstr "Ingeniería mecánica y de procesos"
-
-#: .\templates\news\links.html:172
-msgid "Natur- und Umweltwissenschaften"
-msgstr "Ciencias naturales y ambientales"
-
-#: .\templates\news\links.html:175
 msgid "Raum- und Umweltplanung"
-msgstr "Planificación espacial y ambiental"
+msgstr ""
+
+#: .\templates\news\links.html:176
+msgid "AStA"
+msgstr ""
+
+#: .\templates\news\links.html:179
+msgid "AStA Kaiserslautern"
+msgstr ""
+
+#: .\templates\news\links.html:180
+msgid "AStA Landau"
+msgstr ""
+
+#: .\templates\news\links.html:188
+msgid "Studierendenparlament"
+msgstr ""
+
+#: .\templates\news\links.html:191
+msgid "Studierendenparlament Kaiserslautern"
+msgstr ""
+
+#: .\templates\news\links.html:192
+msgid "Studierendenparlament Landau"
+msgstr ""
+
+#: .\templates\news\links.html:200
+msgid "Hochschulgruppen"
+msgstr ""
+
+#: .\templates\news\links.html:203
+msgid "Übersicht Studentische Gruppen"
+msgstr ""
 
 #: .\templates\news\login.html:5 .\templates\news\login.html:13
 #: .\templates\news\login.html:32 .\templates\partials\navbar.html:99
 msgid "Anmelden"
-msgstr "Iniciar sesión"
+msgstr ""
 
 #: .\templates\news\login.html:23
 msgid "Benutzername:"
-msgstr "Nombre de usuario:"
+msgstr ""
 
 #: .\templates\news\login.html:28
 msgid "Passwort:"
-msgstr "Contraseña:"
+msgstr ""
 
 #: .\templates\news\login.html:35
 msgid "Noch keinen Account?"
-msgstr "¿No tienes cuenta?"
+msgstr ""
 
 #: .\templates\news\login.html:35
 msgid "Jetzt registrieren"
-msgstr "Regístrate ahora"
+msgstr ""
 
-#: .\templates\news\news.html:6 .\templates\partials\navbar.html:12
-msgid "Latest News"
-msgstr "Últimas noticias"
+#: .\templates\news\news.html:6
+msgid "Alle News"
+msgstr ""
 
-#: .\templates\news\news.html:24
+#: .\templates\news\news.html:22
 msgid "Filter"
-msgstr "Filtro"
+msgstr ""
 
-#: .\templates\news\news.html:94
+#: .\templates\news\news.html:23
+msgid "Verfeinere die News-Auswahl"
+msgstr ""
+
+#: .\templates\news\news.html:137
 msgid "Alles auswählen"
-msgstr "Seleccionar todo"
+msgstr ""
 
-#: .\templates\news\news.html:95
+#: .\templates\news\news.html:138
 msgid "Alles abwählen"
-msgstr "Deseleccionar todo"
+msgstr ""
 
-#: .\templates\news\news.html:96
+#: .\templates\news\news.html:139
 msgid "Filter anwenden"
-msgstr "Aplicar filtro"
+msgstr ""
 
-#: .\templates\news\partials\_news_card.html:10
-#: .\templates\news\partials\_news_detail.html:9
-msgid "Quelle:"
-msgstr "Fuente:"
-
-#: .\templates\news\partials\_news_card.html:12
-#: .\templates\news\partials\_news_detail.html:11
-msgid "Kategorien:"
-msgstr "Categorías:"
-
-#: .\templates\news\partials\_news_detail.html:8
-msgid "Erstellt am:"
-msgstr "Creado el:"
+#: .\templates\news\partials\_news_detail.html:13
+msgid "Erstellt am"
+msgstr ""
 
 #: .\templates\news\partials\_news_detail.html:17
-msgid "Standorte:"
-msgstr "Ubicaciones:"
+msgid "Uhr"
+msgstr ""
 
-#: .\templates\news\partials\_news_detail.html:23
-msgid "Zielgruppen:"
-msgstr "Grupos destinatarios:"
-
-#: .\templates\news\partials\_news_detail.html:29
-msgid "Zur Originalquelle"
-msgstr "A la fuente original"
+#: .\templates\news\partials\_news_detail.html:31
+msgid "Öffnet die Originalquelle"
+msgstr ""
 
 #: .\templates\news\partials\_news_detail.html:32
+#: .\templates\news\partials\_news_detail.html:41
+msgid "Quelle"
+msgstr ""
+
+#: .\templates\news\partials\_news_detail.html:43
 #, python-format
 msgid "Eingereicht von %(username)s"
-msgstr "Enviado por %(username)s"
+msgstr ""
 
-#: .\templates\news\partials\_news_detail.html:41
+#: .\templates\news\partials\_news_detail.html:52
+msgid "Metadaten der Nachricht"
+msgstr ""
+
+#: .\templates\news\partials\_news_detail.html:65
+msgid "Keine Kategorien hinterlegt"
+msgstr ""
+
+#: .\templates\news\partials\_news_detail.html:80
+msgid "Keine Standorte hinterlegt"
+msgstr ""
+
+#: .\templates\news\partials\_news_detail.html:97
+msgid "Keine Zielgruppe hinterlegt"
+msgstr ""
+
+#: .\templates\news\partials\_news_detail.html:110
 msgid "Kein Text in der gewählten Sprache verfügbar."
-msgstr "No hay texto disponible en el idioma seleccionado."
+msgstr ""
 
-#: .\templates\news\partials\_news_detail.html:45
+#: .\templates\news\partials\_news_detail.html:116
 msgid "Zurück zur Übersicht"
-msgstr "Volver al resumen"
+msgstr ""
 
 #: .\templates\news\partials\_news_list.html:6
 msgid "Keine News gefunden."
-msgstr "No se encontraron noticias."
+msgstr ""
 
 #: .\templates\news\partials\_news_list.html:11
 msgid "Mehr laden"
-msgstr "Cargar más"
+msgstr ""
 
 #: .\templates\news\preferences.html:5 .\templates\partials\navbar.html:92
 msgid "Präferenzen"
-msgstr "Preferencias"
+msgstr ""
 
-#: .\templates\news\preferences.html:27
+#: .\templates\news\preferences.html:30
 msgid "Meine Präferenzen"
-msgstr "Mis preferencias"
+msgstr ""
 
 #: .\templates\news\register.html:5 .\templates\news\register.html:13
 #: .\templates\news\register.html:51 .\templates\partials\navbar.html:102
 msgid "Registrieren"
-msgstr "Registrarse"
+msgstr ""
 
 #: .\templates\news\register.html:54
 msgid "Bereits registriert?"
-msgstr "¿Ya estás registrado?"
+msgstr ""
 
 #: .\templates\news\register.html:54
 msgid "Jetzt anmelden"
-msgstr "Inicia sesión ahora"
+msgstr ""
 
 #: .\templates\news\trusted_application.html:5
 #: .\templates\news\trusted_application_status.html:5
 msgid "Bewerbung Trusted Account"
-msgstr "Solicitud de Cuenta de Confianza"
+msgstr ""
 
 #: .\templates\news\trusted_application.html:14
 msgid "Bewirb dich als Trusted Account"
-msgstr "Solicita ser Cuenta de Confianza"
+msgstr ""
 
 #: .\templates\news\trusted_application.html:16
 msgid ""
 "Trusted Accounts können News direkt über RPTU4You einreichen. Verrate uns "
 "bitte kurz, warum du Zugriff erhalten solltest."
 msgstr ""
-"Las Cuentas de Confianza pueden enviar noticias directamente a través de "
-"RPTU4You. Por favor, cuéntanos brevemente por qué deberías recibir acceso."
 
 #: .\templates\news\trusted_application.html:19
 msgid ""
 "Nach dem Absenden deines Antrags kannst du auf dieser Seite den Status "
 "deiner Bewerbung einsehen."
 msgstr ""
-"Después de enviar tu solicitud, podrás ver el estado de tu solicitud en "
-"esta página."
 
 #: .\templates\news\trusted_application.html:24
 msgid "Letzter Antrag"
-msgstr "Última solicitud"
+msgstr ""
 
 #: .\templates\news\trusted_application.html:26
 #, python-format
 msgid "Status: <strong>%(status)s</strong> (%(date)s)"
-msgstr "Estado: <strong>%(status)s</strong> (%(date)s)"
+msgstr ""
 
 #: .\templates\news\trusted_application.html:32
 msgid ""
 "Du kannst dich erneut bewerben. Bitte beschreibe diesmal <strong>genauer</"
 "strong>, warum du News einreichen möchtest."
 msgstr ""
-"Puedes volver a solicitar. Por favor, describe esta vez <strong>con más "
-"detalle</strong> por qué te gustaría enviar noticias."
 
 #: .\templates\news\trusted_application.html:51
 msgid "Bewerbung abschicken"
-msgstr "Enviar solicitud"
+msgstr ""
 
 #: .\templates\news\trusted_application_status.html:14
 msgid "Bewerbung in Bearbeitung"
-msgstr "Solicitud en proceso"
+msgstr ""
 
 #: .\templates\news\trusted_application_status.html:15
 msgid "Vielen Dank für deine Bewerbung als Trusted Account."
-msgstr "Muchas gracias por tu solicitud como Cuenta de Confianza."
+msgstr ""
 
 #: .\templates\news\trusted_application_status.html:17
 msgid ""
 "Wir prüfen deine Angaben und melden uns schnellstmöglich. Bis dahin kannst "
 "du wie gewohnt News lesen und deine Präferenzen anpassen."
 msgstr ""
-"Estamos revisando tu información y nos pondremos en contacto contigo lo "
-"antes posible. Mientras tanto, puedes seguir leyendo noticias y ajustando "
-"tus preferencias como de costumbre."
 
 #: .\templates\news\trusted_application_status.html:23
 #, python-format
 msgid "Eingereicht am %(date)s"
-msgstr "Enviado el %(date)s"
+msgstr ""
 
 #: .\templates\news\trusted_application_status.html:28
 #, python-format
 msgid "Status: <strong>%(status)s</strong>"
-msgstr "Estado: <strong>%(status)s</strong>"
+msgstr ""
 
 #: .\templates\news\trusted_submission.html:5
 #: .\templates\news\trusted_submission.html:13
 #: .\templates\news\trusted_submission.html:82
 #: .\templates\partials\navbar.html:93
 msgid "News einreichen"
-msgstr "Enviar noticias"
+msgstr ""
 
 #: .\templates\news\trusted_submission.html:15
 msgid ""
 "Reiche hier deine News ein. Wir kümmern uns automatisch um das Aufbereiten, "
 "Übersetzen und Kategorisieren."
 msgstr ""
-"Envía tus noticias aquí. Nos encargamos automáticamente de procesarlas, "
-"traducirlas y categorizarlas."
 
 #: .\templates\partials\footer.html:4
 msgid "Footer navigation"
-msgstr "Navegación del pie de página"
+msgstr ""
 
-#: .\templates\partials\footer.html:6
+#: .\templates\partials\footer.html:7
 msgid "GitHub"
-msgstr "GitHub"
+msgstr ""
 
-#: .\templates\partials\navbar.html:14
-msgid "Kalender"
-msgstr "Calendario"
+#: .\templates\partials\navbar.html:12
+msgid "Latest News"
+msgstr ""
 
 #: .\templates\partials\navbar.html:23
 msgid "Aktuelle Sprache"
-msgstr "Idioma actual"
+msgstr ""
 
 #: .\templates\partials\navbar.html:31
 msgid "Deutsche Flagge"
-msgstr "Bandera alemana"
+msgstr ""
 
 #: .\templates\partials\navbar.html:39
 msgid "Englische Flagge"
-msgstr "Bandera inglesa"
+msgstr ""
 
 #: .\templates\partials\navbar.html:40
 msgid "English"
-msgstr "English"
+msgstr ""
 
 #: .\templates\partials\navbar.html:47
 msgid "Spanische Flagge"
-msgstr "Bandera española"
+msgstr ""
 
 #: .\templates\partials\navbar.html:48
 msgid "Español"
-msgstr "Español"
+msgstr ""
 
 #: .\templates\partials\navbar.html:55
 msgid "Französische Flagge"
-msgstr "Bandera francesa"
+msgstr ""
 
 #: .\templates\partials\navbar.html:56
 msgid "Français"
-msgstr "Français"
+msgstr ""
 
 #: .\templates\partials\navbar.html:94
 msgid "Abmelden"
-msgstr "Cerrar sesión"
-
-#~ msgid "Uni Links"
-#~ msgstr "Enlaces universitarios"
-
-#~ msgid "Fragebogen"
-#~ msgstr "Cuestionario"
-
-#~ msgid "No content"
-#~ msgstr "Sin contenido"
-
-#~ msgid "Zurück zur Startseite"
-#~ msgstr "Volver a la página principal"
-
-#~ msgid "Typ:"
-#~ msgstr "Tipo:"
-
-#~ msgid "Quellentyp:"
-#~ msgstr "Tipo de fuente:"
+msgstr ""
