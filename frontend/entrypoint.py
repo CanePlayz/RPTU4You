@@ -421,7 +421,7 @@ def _sync_source_entries(entries: Iterable[Dict[str, Any]]) -> None:
 # Datenbank-Elemente für Kategorien anlegen
 def create_category_translations():
     logger.info("Erstelle Kategorien-Objekte in verschiedenen Sprachen...")
-    data_file = Path(__file__).resolve().parent / "news" / "util" / "categories.json"
+    data_file = Path(__file__).resolve().parent / "news" / "data" / "categories.json"
     data = _load_vocab_data(data_file)
 
     with transaction.atomic():
@@ -438,7 +438,7 @@ def create_category_translations():
 # Datenbank-Elemente für Quellen anlegen
 def create_sources():
     logger.info("Synchronisiere Quellen...")
-    data_file = Path(__file__).resolve().parent / "news" / "util" / "categories.json"
+    data_file = Path(__file__).resolve().parent / "news" / "data" / "categories.json"
     data = _load_vocab_data(data_file)
 
     source_entries: list = data.get("sources", [])

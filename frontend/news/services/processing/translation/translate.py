@@ -1,4 +1,3 @@
-import datetime
 import os
 import re
 
@@ -16,7 +15,6 @@ def translate_html(
     openai_api_key: str,
     token_limit: int,
 ) -> tuple[str, str]:
-    # Dateipfade relativ zum aktuellen Verzeichnis konstruieren
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
     system_message_file_path = os.path.join(BASE_DIR, "system_message.txt")
@@ -28,7 +26,6 @@ def translate_html(
 
     openai = OpenAI(api_key=openai_api_key)
 
-    # Systemnachricht aus der Datei lesen
     with open(
         system_message_file_path,
         "r",
@@ -38,10 +35,8 @@ def translate_html(
 
     system_message = system_message.replace("%Sprache%", sprache.name_englisch)
 
-    # Prompt für OpenAI-API erstellen
     prompt = f"Titel: {article_title} \n\nText: {article_text}"
 
-    # OpenAI-API aufrufen, um Übersetzung des Textes zu erhalten
     try:
         response = openai.responses.create(
             model="gpt-5-mini",
@@ -66,7 +61,6 @@ def translate_html(
         )
         usage.refresh_from_db()
 
-    # Übersetzten Titel und Text zurückgeben
     match = re.search(
         r"\[Titel\]\s*(.*?)\s*\[Text\]\s*(.*)",
         response.output_text,

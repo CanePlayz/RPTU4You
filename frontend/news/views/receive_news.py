@@ -17,10 +17,15 @@ from django.views.decorators.csrf import csrf_exempt
 
 from ..models import *
 from ..my_logging import get_logger
+from ..services.db import close_db_connection
+from ..services.processing.categorization.categorize import (
+    get_categorization_from_openai,
+)
+from ..services.processing.cleanup.cleanup import (
+    extract_parts,
+    get_cleaned_text_from_openai,
+)
 from ..tasks import add_audiences_and_categories, add_missing_translations
-from ..util.close_db_connection import close_db_connection
-from .processing.categorization.categorize import get_categorization_from_openai
-from .processing.cleanup.cleanup import extract_parts, get_cleaned_text_from_openai
 
 RUNDMAIL_SOURCE_TYPES = {
     "Rundmail",

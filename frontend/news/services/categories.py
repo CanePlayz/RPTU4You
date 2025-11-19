@@ -8,7 +8,9 @@ from typing import Any, Final, Literal
 LanguageCode = Literal["de", "en", "es", "fr"]
 CategoryType = Literal["content", "audience", "location", "source"]
 
-_DATA_FILE: Final[Path] = Path(__file__).resolve().parent / "categories.json"
+_DATA_FILE: Final[Path] = (
+    Path(__file__).resolve().parent.parent / "data" / "categories.json"
+)
 _CATEGORY_KEY: Final[dict[CategoryType, str]] = {
     "content": "content_categories",
     "audience": "audience_categories",

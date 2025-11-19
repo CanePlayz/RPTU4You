@@ -1,4 +1,3 @@
-import datetime
 import os
 import re
 
@@ -12,9 +11,7 @@ from ..common import release_tokens, reserve_tokens
 def get_cleaned_text_from_openai(
     article_title: str, article_text: str, openai_api_key: str, token_limit: int
 ) -> str:
-    # Dateipfade relativ zum aktuellen Verzeichnis konstruieren
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
     system_message_file_path = os.path.join(BASE_DIR, "system_message.txt")
 
     usage = reserve_tokens(1500, token_limit)
@@ -24,7 +21,6 @@ def get_cleaned_text_from_openai(
 
     openai = OpenAI(api_key=openai_api_key)
 
-    # Systemnachricht aus der Datei lesen
     with open(
         system_message_file_path,
         "r",
@@ -32,10 +28,8 @@ def get_cleaned_text_from_openai(
     ) as file:
         system_message = file.read()
 
-    # Prompt für OpenAI-API erstellen
     prompt = f"Titel: {article_title} \n\nText: {article_text}"
 
-    # OpenAI-API aufrufen, um gecleante Version des Textes zu erhalten
     try:
         response = openai.responses.create(
             model="gpt-5-mini",
@@ -76,14 +70,12 @@ def extract_parts(response_text: str) -> dict[str, str]:
         re.DOTALL,
     )
 
-    # Prüfe, ob beide Teile vorhanden sind
     has_de = match_de is not None
     has_en = match_en is not None
 
     if not has_de or not has_en:
         raise Exception("Es wurde nicht für beide Sprachen ein Text gefunden.")
 
-    # Extrahierte Inhalte
     cleaned_title_de = match_de.group(1).strip() if match_de else ""
     cleaned_text_de = match_de.group(2).strip() if match_de else ""
     cleaned_title_en = match_en.group(1).strip() if match_en else ""

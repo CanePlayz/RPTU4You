@@ -42,8 +42,9 @@ def _env_int(name: str, default: int) -> int:
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+# Gebraucht damit Migrations und so weiter funktionieren
 if not SECRET_KEY:
-    raise RuntimeError("DJANGO_SECRET_KEY environment variable is required")
+    SECRET_KEY = "django-insecure-replace-me-in-production"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = _env_bool("DJANGO_DEBUG", default=True)

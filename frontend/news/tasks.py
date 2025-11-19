@@ -9,14 +9,16 @@ from django.utils.timezone import now
 
 from .models import *
 from .my_logging import get_logger
-from .util.category_registry import get_audience_categories, get_content_categories
-from .util.close_db_connection import close_db_connection
-from .views.processing.categorization.categorize import get_categorization_from_openai
-from .views.processing.cleanup.cleanup import (
+from .services.categories import get_audience_categories, get_content_categories
+from .services.db import close_db_connection
+from .services.processing.categorization.categorize import (
+    get_categorization_from_openai,
+)
+from .services.processing.cleanup.cleanup import (
     extract_parts,
     get_cleaned_text_from_openai,
 )
-from .views.processing.translation.translate import translate_html
+from .services.processing.translation.translate import translate_html
 
 
 def add_missing_translations(

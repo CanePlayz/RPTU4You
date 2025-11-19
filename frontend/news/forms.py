@@ -23,7 +23,7 @@ from .models import (
     User,
     Zielgruppe,
 )
-from .util.category_registry import (
+from .services.categories import (
     LanguageCode,
     get_audience_category_emoji_map,
     get_content_category_emoji_map,

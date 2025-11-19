@@ -9,8 +9,12 @@ from django.views.decorators.http import require_GET
 
 from ..forms import PreferencesForm
 from ..models import CalendarEvent, News, User
-from ..util.filter_objects import get_objects_with_metadata
-from .utils import FilterParams, get_filtered_queryset, paginate_queryset
+from ..services.news_filters import (
+    FilterParams,
+    get_filtered_queryset,
+    get_objects_with_metadata,
+    paginate_queryset,
+)
 
 
 def _build_active_filters(request: HttpRequest) -> FilterParams:

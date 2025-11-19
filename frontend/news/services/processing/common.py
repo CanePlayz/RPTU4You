@@ -16,7 +16,6 @@ def reserve_tokens(
         date=utc_today, defaults={"used_tokens": 0}
     )
 
-    # Update kann nur erfolgreich sein, wenn das Token-Limit nicht überschritten wird
     updated = OpenAITokenUsage.objects.filter(
         pk=usage.pk, used_tokens__lte=token_limit - expected_tokens
     ).update(used_tokens=F("used_tokens") + expected_tokens)

@@ -1,13 +1,11 @@
-import datetime
 import os
-import random
 import re
 
 from django.db.models import F
 from openai import OpenAI
 
 from ....models import OpenAITokenUsage
-from ....util.category_registry import get_audience_categories, get_content_categories
+from ...categories import get_audience_categories, get_content_categories
 from ..common import release_tokens, reserve_tokens
 
 
@@ -17,11 +15,9 @@ def get_categorization_from_openai(
     openai_api_key: str,
     token_limit: int,
 ) -> tuple[list[str], list[str]]:
-    # Dateipfade relativ zum aktuellen Verzeichnis konstruieren
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     system_message_file_path = os.path.join(BASE_DIR, "system_message.txt")
 
-    # Inhaltskategorien und Zielgruppen aus der zentralen Definition laden
     categories = get_content_categories()
     audiences = get_audience_categories()
 
@@ -32,7 +28,6 @@ def get_categorization_from_openai(
 
     openai = OpenAI(api_key=openai_api_key)
 
-    # Systemnachricht aus der Datei lesen und Kategorien ersetzen
     with open(
         system_message_file_path,
         "r",
@@ -43,10 +38,8 @@ def get_categorization_from_openai(
         "%Inhaltskategorien%", ", ".join(categories)
     ).replace("%Publikumskategorien%", ", ".join(audiences))
 
-    # Prompt für OpenAI-API erstellen
     prompt = f"Titel: {arctile_heading}\n\nText: {article_text}"
 
-    # OpenAI-API aufrufen, um Kategorien und Zielgruppen zu erhalten
     try:
         response = openai.responses.create(
             model="gpt-5-mini",
@@ -71,24 +64,20 @@ def get_categorization_from_openai(
         )
         usage.refresh_from_db()
 
-    # Ausgabe verarbeiten
     match = re.search(
         r"\[Inhaltskategorien\]\s*(.*?)\s*\[Publikumskategorien\]\s*(.*)",
         response.output_text,
         re.DOTALL,
     )
 
-    # Prüfe, ob beide Teile vorhanden sind
     if not match:
         raise Exception("Inhaltskategorien oder Zielgruppen fehlen.")
 
-    # Extrahierte Inhalte
     categories_response = match.group(1).strip().split(",")
     audiences_response = match.group(2).strip().split(",")
     categories_chatgpt = [category.strip() for category in categories_response]
     audiences_chatgpt = [audience.strip() for audience in audiences_response]
 
-    # Überprüfen, ob die Kategorien und Zielgruppen erlaubt sind
     for category in categories_chatgpt:
         if category not in categories:
             raise Exception(f"Unbekannte Inhaltskategorie: {category}")

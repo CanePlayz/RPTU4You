@@ -5,8 +5,7 @@ from typing import cast
 from django import template
 from django.utils import translation
 
-from ..util.category_registry import (
-    DEFAULT_LANGUAGE,
+from ..services.categories import (
     LanguageCode,
     get_audience_category_emoji_map,
     get_content_category_emoji_map,
