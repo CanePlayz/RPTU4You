@@ -233,7 +233,7 @@ def process_news_entry(news_entry, openai_api_key, logger: logging.Logger):
                 return
 
     # News-Objekt erstellen
-    # Überprüfen, ob bereits ein News-Objekt mit diesem Titel existiert
+    # Überprüfen, ob bereits ein News-Objekt mit diesem Titel und diesem Erstellungsdatum existiert
     news_item, created = News.objects.get_or_create(
         titel=news_entry["titel"],
         erstellungsdatum=erstellungsdatum,

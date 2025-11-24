@@ -40,7 +40,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     # API
     path("api/news/", ReceiveNews.as_view(), name="receive_news"),
-    path("api/news/rundmail/date", request_date, name="request_date"),
     # Kalender
     path("api/calendar-events/", calendar_events, name="calendar_events"),
     path(

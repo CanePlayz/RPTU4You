@@ -254,9 +254,6 @@ def process_rundmail(
 
 
 def main():
-    # Datum der letzten gescrapten Rundmail abrufen
-    last_scraped_date: datetime | None = frontend_interaction.request_date()
-
     # Rundmail-Archiv aufrufen und verarbeiten
     rundmail_archive: str = fetch_rundmail_archive()
     archive_entries: bs4.ResultSet[bs4.element.Tag] = parse_rundmail_archive(
@@ -267,14 +264,6 @@ def main():
     # Einträge im Archiv verarbeiten
     for archive_entry in archive_entries[:60]:
         entry: dict | list[dict] = process_archive_entry(archive_entry)
-
-        if isinstance(entry, dict):
-            date_of_news_entry = entry["erstellungsdatum"]
-        else:
-            date_of_news_entry = entry[0]["erstellungsdatum"]
-
-        if date_of_news_entry == last_scraped_date:
-            break
 
         if isinstance(entry, dict):
             news.append(entry)
