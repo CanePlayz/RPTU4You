@@ -623,7 +623,7 @@ body {
 
     /* Filter-Layouts (Desktop & mobil) */
     .filter-panel-card {
-        @apply md:sticky md:top-6 flex flex-col gap-4 w-full max-md:w-full min-w-0 min-h-0 md:flex-1;
+        @apply md:sticky md:top-6 flex flex-1 flex-col gap-4 w-full max-md:w-full min-w-0 min-h-0;
         max-height: calc(100vh - 4rem);
     }
 
@@ -631,6 +631,11 @@ body {
         .filter-panel-card {
             max-height: calc(100vh - 6rem);
         }
+    }
+
+    /* Damit der Gradient oben nicht verschwindet, wenn die Karte scrollt */
+    .filter-panel-card > * {
+        @apply shrink-0;
     }
 
     /* Einzelne Filterabschnitte samt Toggle-Verhalten */
