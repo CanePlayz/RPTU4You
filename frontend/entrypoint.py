@@ -477,9 +477,9 @@ def main():
             "--bind",
             "0.0.0.0:8000",
             "--workers",
-            "6",
+            "4",
             "--timeout",
-            "1000",
+            "120",
         ]
         os.execvp("gunicorn", gunicorn_cmd)  # ersetzt aktuellen Prozess
     elif server == "django":
