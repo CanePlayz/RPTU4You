@@ -38,7 +38,7 @@ def _post_chunk(chunk, api_key: str, source_type: str) -> int:
             "API-Key": api_key,
         },
     )
-    logger.info(f"{source_type} - Status Code: {response.status_code}")
+    logger.info(f"{source_type} – Status Code: {response.status_code}")
     return response.status_code
 
 
@@ -57,7 +57,7 @@ def send_data(data, source_type: str):
                 )
                 _post_chunk(chunk, api_key, source_type)
             logger.info(
-                f"{source_type} - Fertig: {total_items} Einträge in {total_batches} Batches gesendet"
+                f"{source_type} – Fertig: {total_items} Einträge in {total_batches} Batches gesendet"
             )
             return
 
