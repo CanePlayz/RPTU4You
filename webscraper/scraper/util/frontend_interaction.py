@@ -42,10 +42,10 @@ def _post_chunk(chunk, api_key: str, source_type: str) -> int:
     return response.status_code
 
 
-def send_data(data, source_type: str, batch_size: int):
+def send_data(data, source_type: str):
     """Daten an das Frontend senden, ggf. in Batches aufgeteilt."""
     api_key = os.getenv("API_KEY", "")
-    batch_size = int(os.getenv("SCRAPER_BATCH_SIZE", 25))
+    batch_size = 25
 
     if isinstance(data, Sequence) and not isinstance(data, (str, bytes, bytearray)):
         total_items = len(data)
