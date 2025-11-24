@@ -52,9 +52,7 @@ def send_data(data, source_type: str):
         if total_items > batch_size:
             total_batches = ceil(total_items / batch_size)
             for index, chunk in enumerate(_chunk_payload(data, batch_size), start=1):
-                logger.info(
-                    f"{source_type} - Sende Batch {index}/{total_batches} ({len(chunk)} Einträge)"
-                )
+                logger.info(f"{source_type} – Sende Batch {index}/{total_batches}")
                 _post_chunk(chunk, api_key, source_type)
             logger.info(
                 f"{source_type} – Fertig: {total_items} Einträge in {total_batches} Batches gesendet"
